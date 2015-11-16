@@ -1,0 +1,51 @@
+# -*-mode:conf-*-
+[user]
+    name = lgfang
+    email = lgfang78@nomail.com
+
+[core]
+    # editor = emacsclient -a \"\" -t
+
+[alias]
+    co = checkout
+    br = branch
+    ci = commit
+    amend = commit --amend
+    df = diff
+    ds = diff --stat
+    dc = diff --cached
+    rb = rebase
+    st = status
+
+    lg1 = log --graph --abbrev-commit --decorate --pretty=oneline
+    lg2 = log --graph --abbrev-commit --pretty=format:'%C(yellow)%h%Creset - %C(green)%s %C(cyan)<%an@%cr> %C(magenta)%d%Creset'
+    lg3 = log --graph --abbrev-commit --pretty=format:'%C(cyan)%h%C(reset) - %C(green)%s %C(dim white)- %cr (%an)%C(reset) %C(yellow)%d'
+    lg4 = log --graph --abbrev-commit  --format=format:'%C(bold green)%h%C(reset) - %C(bold cyan)%s%n          %C(white)%aD%C(dim white) - %an%C(reset)%C(bold yellow)%d'
+    lg = ! git lg3
+    ll = log --numstat --abbrev-commit --format=format:'%C(bold green)%h%C(reset) - %C(bold cyan)%s%n          %C(white)%aD%C(dim white) - %an%C(reset)%C(bold yellow)%d'
+    topo = log --graph --simplify-by-decoration --pretty=format:"%d%h" --all
+    last = log -1 HEAD
+
+    fl = log -u
+
+    # update local repository and removes remote-tracking branches that no
+    # longer exist on remote
+    up = pull --rebase --prune
+
+    # http proxy
+    hp = config --global http.proxy localhost:8888
+    nohp = config --global http.proxy ""
+
+    recent-branches = for-each-ref refs/heads --sort='-committerdate' --format='%(committerdate:iso) %(refname:short)%09 %(authorname)%09 - %(contents:subject)'
+
+[credential]
+    helper = cache --timeout=3600
+
+[color]
+   ui = auto
+
+[core]
+    excludesfile = ~/.gitignore # A global ignore file
+
+[apply]
+    whitespace = warn
