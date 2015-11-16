@@ -1,0 +1,27 @@
+# Created:  Fang lungang 03/06/2010
+# Modified: Fang lungang 08/24/2012 21:24>
+
+stop-xscreensaver=1
+ontop=0
+
+osdlevel=3
+subfont-osd-scale=2
+subfont-text-scale=3
+
+# Font for OSD
+# font="DejaVu Sans Mono"
+
+# Font for subtitle. If not specified, uses "font"
+subfont="wenquanyi micro hei" # Using FreeType fonts
+# subfont=/path/to/prefered/font.ttf # Using TrueType fonts
+
+# Most simplified Chinese sub are encoded in cp936
+subcp=cp936
+# iconv -fbig5 -tcp936 xxx.srt > yyy.srt
+
+#  Load all subs containing movie name
+sub-fuzziness=1
+# For embeded sub of *.mkv, *.ogm etc, run mplayer with '-sid 0' or '-sid 1'.
+
+# to prevent kde4 ScreenSaver
+# heartbeat-cmd="qdbus org.freedesktop.ScreenSaver /ScreenSaver SimulateUserActivity"
