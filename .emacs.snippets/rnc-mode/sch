@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: schematron pattern in rnc
+# --
+sch:pattern [
+   sch:rule [
+      context = "${1:context}"
+      sch:assert [
+         test = "${2:test}"
+         "${3:msg}"
+      ]
+   ]
+]
+$0
