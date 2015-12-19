@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 12/18/2015 22:04>
+;; Modified: Fang Lungang 12/19/2015 11:27>
 
 ;;; Commentary:
 
@@ -33,14 +33,6 @@
 
 ;; ;; woman path
 ;; (setq woman-manpath '("patha" "pathb"))
-
-;;; package
-
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(setq package-user-dir "~/.emacs.d/emacs-extensions/elpa")
-(package-initialize)
 
 ;;; cygwin wrappers
 ;; NOTE: put this section in the begining of my configure so that files I hacked
@@ -374,10 +366,10 @@ tmux's buffer"
 (fset 'from-tmux 'lgfang-get-from-tmux)
 
 ;;; color theme
-(add-to-list 'custom-theme-load-path (concat my-extension-path "themes"))
-(if (display-graphic-p) (load-theme 'wombat t) (load-theme 'wombat t))
-;; Themes I recommend: wombat, soloarized-dark, tango-dark, tango, gnome2. For
-;; themes ported to emacs24: https://github.com/emacs-jp/replace-colorthemes
+(setq custom-theme-load-path (concat my-extension-path "themes")
+      custom-theme-directory custom-theme-load-path)
+(if (display-graphic-p) (load-theme 'solarized-dark) (load-theme 'solarized-dark))
+;; Themes I recommend: soloarized-dark, wombat, tango-dark, gnome2,
 
 (column-number-mode t)
 
@@ -506,11 +498,11 @@ tmux's buffer"
 (when (and (>= emacs-major-version 23) window-system)
 
   ;; Recommended English fonts: "consolas", "DejaVu Sans Mono", "monofur"
-  (set-face-attribute 'default nil :font "consolas-12:weight=normal")
+  (set-face-attribute 'default nil :font "DejaVu Sans Mono-14:weight=normal")
 
   ;; Recommended Chinese fonts: "SimSun", "Microsoft YaHei", "WenQuanYi
   ;; Micro Hei Mono"
-  (let ((zh-font-family "SimSun"))
+  (let ((zh-font-family "WenQuanYi Micro Hei Mono"))
     ;; Set scale of zh font so that width of one chinese char equals that of two
     ;; english chars. (Windows Emacs has a bug in "scale", hardcode zh font size
     ;; instead)
@@ -521,7 +513,7 @@ tmux's buffer"
       (dolist (each '(han cjk-misc )) ;include kana, bopomofo, symbol?
         (set-fontset-font nil each
                           (font-spec :family zh-font-family)))
-      (setq face-font-rescale-alist (list (cons zh-font-family 1.2)))))
+      (setq face-font-rescale-alist (list (cons zh-font-family 1.3)))))
 
   ;; Resize using mouse wheel
   (let ()
@@ -1049,9 +1041,6 @@ selective-display"
 
 ;;; split horizontally if screen wide enough
 (setq split-width-threshold 150)
-
-;;; subword-mode
-(global-subword-mode)
 
 ;;; Tabbar
 ;; (when (and window-system (require 'tabbar nil t)) (tabbar-mode 1))
