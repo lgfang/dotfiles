@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 12/18/2015 22:04>
+;; Modified: Fang Lungang 12/25/2015 16:32>
 
 ;;; Commentary:
 
@@ -857,8 +857,11 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 
 ;;; Python mode hook
 (add-hook 'python-mode-hook
-          (lambda() (hs-minor-mode 1) (imenu-add-menubar-index)
-            (outline-minor-mode 1)))
+          (lambda()
+            (hs-minor-mode 1)
+            (outline-minor-mode 1)
+            (setq imenu-create-index-function 'python-imenu-create-flat-index)
+            (imenu-add-menubar-index)))
 
 (require 'pydoc-info nil t)
 
