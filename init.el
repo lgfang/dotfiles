@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 12/25/2015 16:32>
+;; Modified: Fang Lungang 01/05/2016 14:54>
 
 ;;; Commentary:
 
@@ -491,6 +491,13 @@ tmux's buffer"
 
     (progn
       ;; (setq-default flycheck-sh-shellcheck-executable "/path/to/shellcheck")
+      (add-hook 'c++-mode-hook
+                (lambda ()
+                  (setq
+                   ;; Depends on the compiler available, one of the two takes
+                   ;; effect. But, setting both does not hurt.
+                   flycheck-clang-language-standard "c++11"
+                   flycheck-gcc-language-standard "c++11")))
       (global-flycheck-mode 1))
 
   (require 'flymake)
