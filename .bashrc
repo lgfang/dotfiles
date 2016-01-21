@@ -1,4 +1,4 @@
-# Modified: Fang Lungang 12/18/2015 15:14>
+# Modified: Fang Lungang 01/21/2016 13:28>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -201,39 +201,33 @@ function mycd {
 }
 
 function mypushd {
-    #* 1. Behave like 'cd -' when called with no argument or with '-'.
-    ## 2. Don't bloat the history forever.
-    #* 3. shopt pushdsilent not available in bash, redirect to /dev/null
+    ## 1. Don't bloat the history forever.
+    #* 2. shopt pushdsilent not available in bash, redirect to /dev/null
 
     local dest=$1
 
-    if [[ "$dest" == "-" ]]; then
-        builtin pushd > /dev/null
-    else
-
-        if [[ "$dest" =~ ^\.\.\.\.*$ ]]; then
-            # expand "cd ...." to cd "../../.."
-            dest=${dest#..}
-            dest="..${dest//.//..}"
-        fi
-
-        builtin pushd "$dest" > /dev/null
-
-        # Remove duplication
-        local index stored new_one
-        new_one=$(builtin dirs +0)
-
-        for index in {1..10}; do
-            stored=$(builtin dirs +${index} 2>/dev/null) || break
-            if [ "$stored" == "$new_one" ]; then
-                popd -n +$index >/dev/null 2>&1
-                break
-            fi
-        done
-
-        # Delete 11th dir if there is, hence keep the stack size <=10.
-        builtin popd -n +11 >/dev/null 2>&1
+    if [[ "$dest" =~ ^\.\.\.\.*$ ]]; then
+        # expand "cd ...." to cd "../../.."
+        dest=${dest#..}
+        dest="..${dest//.//..}"
     fi
+
+    builtin pushd "$dest" > /dev/null
+
+    # Remove duplication
+    local index stored new_one
+    new_one=$(builtin dirs +0)
+
+    for index in {1..10}; do
+        stored=$(builtin dirs +${index} 2>/dev/null) || break
+        if [ "$stored" == "$new_one" ]; then
+            popd -n +$index >/dev/null 2>&1
+            break
+        fi
+    done
+
+    # Delete 11th dir if there is, hence keep the stack size <=10.
+    builtin popd -n +11 >/dev/null 2>&1
 }
 
 alias dirs='dirs -v'
