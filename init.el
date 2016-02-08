@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 12/19/2015 11:27>
+;; Modified: Fang Lungang 02/08/2016 14:23>
 
 ;;; Commentary:
 
@@ -468,8 +468,8 @@ tmux's buffer"
                            . font-lock-constant-face)))
 
 (require 'ffap)
-(ffap-bindings)
-;;(setq ffap-c-path (append ffap-c-path sourcepair-header-path))
+;; (ffap-bindings) ; Don't bind to `C-x C-f' etc., explicitly `M-x ffap' etc.
+;; (setq ffap-c-path (append ffap-c-path sourcepair-header-path))
 
 ;;; fill column
 (setq-default fill-column 80 comment-fill-column 72)
@@ -626,7 +626,8 @@ lgfang-hif-toggle-block"
 
 (require 'htmlize nil t)
 
-;;; ido ;; C-r/C-s for ido-next/previous-match
+;;; ido `C-r/C-s' for ido-next/previous-match, `C-f' to get out ido mode into
+;;; "normal" find file mode
 (ido-mode 1)
 (setq ido-enable-flex-matching t)
 
