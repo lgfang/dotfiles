@@ -1,10 +1,14 @@
-# Modified: Fang Lungang 12/14/2015 11:01>
+# Modified: Fang Lungang 02/27/2016 21:14>
 
 #* source in .bashrc
 
 [ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
 
 #* Env variables
+
+# For OS X homebrew coreutils
+PATH=/usr/local/opt/coreutils/libexec/gnubin:$PATH
+MANPATH=/usr/local/opt/coreutils/libexec/gnuman:$MANPATH
 
 export PATH=$HOME/.local/bin:$PATH
 export MANPATH=$HOME/.local/share/man:$MANPATH
