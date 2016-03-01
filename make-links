@@ -1,0 +1,29 @@
+#!/bin/bash
+
+FORCE="-f"
+
+for each in .bash_completion.d \
+                .bash_profile \
+                .bash_rc \
+                .dir_colors.xterm-256color \
+                .gitconfig \
+                .gitignore \
+                .tmux.d \
+                .tmux.conf \
+                .vimrc \
+                .pylintrc \
+                .mplayer \
+                .ssh/config \
+                .org.el \
+                .gnus.el \
+                .emacs.snippets \
+                .emacs.d/init.el
+do
+    target=$HOME/.dotfiles/$each
+    link_name=${target/.dotfiles\//}
+
+    if [ -e "$target" ]; then
+        echo "rm -f '$link_name'"
+        echo "ln -s $FORCE '$target' '$link_name'"
+    fi
+done
