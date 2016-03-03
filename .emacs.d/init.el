@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 03/03/2016 13:25>
+;; Modified: Fang Lungang 03/03/2016 13:30>
 
 ;;; Commentary:
 
@@ -28,8 +28,14 @@
 (add-to-list 'load-path my-backward-path t)
 
 ;; exec path
-(setq exec-path
-      (append '("/cygdrive/c/Program Files/Mozilla Firefox") exec-path))
+(cond
+ ((eq system-type 'cygwin)
+  (setq exec-path
+        (append '("/cygdrive/c/Program Files/Mozilla Firefox") exec-path)))
+ ((eq system-type 'darwin)
+  ;; cocoa emacs does not inherit PATH from Terminal setting
+  (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
+  (setq exec-path (append '("/usr/local/bin") exec-path))))
 
 ;; ;; woman path
 ;; (setq woman-manpath '("patha" "pathb"))
@@ -86,6 +92,16 @@
 ;;   (set-language-environment 'utf-8))
 
 ;;; global key bindings
+
+(when (eq system-type 'darwin)          ; OSX
+
+  ;; ;; Obsoleted, remap mackbook modifier keys globally instead of this
+  ;; (setq mac-option-modifier 'ctrl mac-command-modifier 'meta)
+
+  (unless (display-graphic-p)
+    ;; In OSX terminal, trackpad gestures for up/down mapped to mouse-4/5
+    (define-key global-map [mouse-4] '(lambda () (interactive) (scroll-down 1)))
+    (define-key global-map [mouse-5] '(lambda () (interactive) (scroll-up 1)))))
 
 ;; F1-F12
 (define-key global-map [f1] 'lgfang-recentf-open)
