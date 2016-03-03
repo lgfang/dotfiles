@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 02/08/2016 14:23>
+;; Modified: Fang Lungang 03/03/2016 13:25>
 
 ;;; Commentary:
 
@@ -414,8 +414,7 @@ tmux's buffer"
 ;;; dired etc.
 (setq dired-recursive-copies 'top dired-recursive-deletes 'top)
 (require 'dired-x)
-(add-hook 'dired-load-hook
-          (lambda () (load "dired-x") (dired-omit-mode 1)))
+(setq-default dired-omit-files-p t)
 (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
 ;;; guess of '!' action
 (add-to-list 'dired-guess-shell-alist-user
