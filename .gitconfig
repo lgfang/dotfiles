@@ -9,6 +9,7 @@
 [alias]
     co = checkout
     br = branch
+    rst = reset
     ci = commit
     amend = commit --amend
     df = diff
