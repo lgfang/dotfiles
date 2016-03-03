@@ -47,6 +47,7 @@
 
 [core]
     excludesfile = ~/.gitignore # A global ignore file
+    # pager = less -r   # uncomment this line to have "less" wrap long lines when 'git diff'
 
 [apply]
     whitespace = warn
