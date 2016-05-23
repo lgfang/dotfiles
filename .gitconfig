@@ -4,6 +4,10 @@
     email = lgfang78@nomail.com
 
 [core]
+    excludesfile = ~/.gitignore # A global ignore file
+    # autocrlf = false
+    # filemode = false
+    # pager = less -r   # uncomment this line to have "less" wrap long lines when 'git diff'
     # editor = emacsclient -a \"\" -t
 
 [alias]
@@ -43,11 +47,7 @@
     helper = cache --timeout=3600
 
 [color]
-   ui = auto
-
-[core]
-    excludesfile = ~/.gitignore # A global ignore file
-    # pager = less -r   # uncomment this line to have "less" wrap long lines when 'git diff'
+    ui = auto
 
 [apply]
     whitespace = warn
