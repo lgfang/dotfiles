@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 03/03/2016 13:30>
+;; Modified: Fang Lungang 05/24/2016 10:42>
 
 ;;; Commentary:
 
@@ -299,7 +299,8 @@
 (when (require 'browse-kill-ring nil t)
   (browse-kill-ring-default-keybindings))
 
-(setq browse-url-browser-function 'browse-url-firefox)
+(unless (eq system-type 'darwin)          ; OSX
+  (setq browse-url-browser-function 'browse-url-firefox))
 
 (require 'buffer-move nil t)
 
