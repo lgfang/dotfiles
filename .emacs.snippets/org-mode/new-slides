@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: new-slides
+# --
+# -*-mode:org;coding:utf-8-*-
+# Created:  `(format "%s %s" (user-full-name) (format-time-string "%m/%d/%Y"))`
+# Modified`(format ": %s %s" (user-full-name) (format-time-string "%m/%d/%Y %H:%M>"))`
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../cssjs/lgfang.css" />
+#+INFOJS_OPT: toc:t tdepth:1 ltoc:t view:showall path:../cssjs/org-info.js up:../index.html home:../../index.html
+#+OPTIONS: num:nil
+
+#+TITLE: ${1:title}
+
+* ${2:header1}
+$0

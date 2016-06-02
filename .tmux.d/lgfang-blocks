@@ -1,0 +1,38 @@
+# \file Name: lgfang-blocks -*-mode:conf-*-
+# Based on https://github.com/seebi/tmux-colors-solarized
+# Modified: Fang Lungang 04/03/2014 12:16>
+
+# default statusbar colors
+set-option -g status-fg colour235
+set-option -g status-bg colour244
+set-option -g status-attr default
+
+# default window title colors
+set-window-option -g window-status-fg default
+set-window-option -g window-status-bg colour64
+#set-window-option -g window-status-attr dim
+
+# current window title colors
+set-window-option -g window-status-current-bg colour166
+set-window-option -g window-status-current-fg default
+#set-window-option -g window-status-current-attr bright
+
+# activity indication
+set-window-option -g window-status-activity-bg red
+set-window-option -g window-status-activity-fg default
+set-window-option -g window-status-activity-attr none
+
+# pane border
+set-option -g pane-border-fg colour235
+set-option -g pane-active-border-fg colour240
+
+# message text
+set-option -g message-bg colour235
+set-option -g message-fg colour166
+
+# pane number display
+set-option -g display-panes-active-colour colour166
+set-option -g display-panes-colour colour33
+
+# clock
+set-window-option -g clock-mode-colour colour64

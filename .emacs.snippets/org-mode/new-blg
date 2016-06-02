@@ -1,0 +1,23 @@
+# -*- mode: snippet -*-
+# name: new-blg
+# --
+# -*-mode:org;coding:utf-8-*-
+# Created:  `(format "%s %s" (user-full-name) (format-time-string "%m/%d/%Y"))`
+# Modified`(format ": %s %s" (user-full-name) (format-time-string "%m/%d/%Y %H:%M>"))`
+
+#+OPTIONS: toc:nil num:nil
+#+BIND: org-html-link-home "`(replace-regexp-in-string "/home/lungangf/myblog" "http://lgfang.github.io/images" default-directory t t)`"
+
+#+TITLE: ${1:title}
+
+#+BEGIN_HTML
+---
+layout: post
+title: $1
+tagline:
+categories: ${2:computer}
+tags: [${3:emacs}]
+---
+#+END_HTML
+
+$0
