@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 05/24/2016 10:42>
+;; Modified: Fang Lungang 06/02/2016 17:06>
 
 ;;; Commentary:
 
@@ -65,7 +65,7 @@
 (setq user-full-name "My name"
       user-mail-address "nospam@company.com"
       ange-ftp-default-user "myname"
-      url-proxy-services '(("http" . "localhost:8888"))
+      ;; url-proxy-services '(("http" . "localhost:8888"))
       disqus_shortname "mydisqus"
       google_analytic_track_id_blog "my-google-track-id"
       calendar-latitude 36.06
