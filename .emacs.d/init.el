@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 06/02/2016 17:06>
+;; Modified: Fang Lungang 06/14/2016 11:15>
 
 ;;; Commentary:
 
@@ -1025,9 +1025,10 @@ selective-display"
 ;; (setq sentence-end
 ;;       "\\([。！？]\\|……\\|[.?!][]\"')}]*\\($\\|[ \t]\\)\\)[ \t\n]*")
 
-;;; server, use "emacs --daemon" instead.
-;; (require 'server)
-;; (unless (server-running-p) (server-start))
+;;; server (alternatively, you may use "emacs --daemon")
+(require 'server)
+(when (not (server-running-p))
+  (server-start))
 
 ;;; sh-mode-hook. Note that mode for shell script is sh-mode, NOT shell-mode
 (setq my-sh-imenu-generic-expression
