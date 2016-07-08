@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 06/14/2016 11:15>
+;; Modified: Fang Lungang 07/08/2016 12:11>
 
 ;;; Commentary:
 
@@ -403,8 +403,9 @@ tmux's buffer"
 ;;; compilation
 (eval-after-load "compile"
   '(progn
-     (setq compilation-scroll-output t
-           compile-command "python -m unittest ")
+     (setq compile-command "clang++ --std=c++11 "
+           ;; compile-command "python -m unittest "
+           compilation-scroll-output t)
      (define-key compilation-mode-map "n" 'next-error-no-select)
      (define-key compilation-mode-map "p" 'previous-error-no-select)
      (define-key compilation-mode-map " "
