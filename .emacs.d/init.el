@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 06/02/2016 17:06>
+;; Modified: Fang Lungang 07/08/2016 12:11>
 
 ;;; Commentary:
 
@@ -403,8 +403,9 @@ tmux's buffer"
 ;;; compilation
 (eval-after-load "compile"
   '(progn
-     (setq compilation-scroll-output t
-           compile-command "python -m unittest ")
+     (setq compile-command "clang++ --std=c++11 "
+           ;; compile-command "python -m unittest "
+           compilation-scroll-output t)
      (define-key compilation-mode-map "n" 'next-error-no-select)
      (define-key compilation-mode-map "p" 'previous-error-no-select)
      (define-key compilation-mode-map " "
@@ -1025,9 +1026,10 @@ selective-display"
 ;; (setq sentence-end
 ;;       "\\([。！？]\\|……\\|[.?!][]\"')}]*\\($\\|[ \t]\\)\\)[ \t\n]*")
 
-;;; server, use "emacs --daemon" instead.
-;; (require 'server)
-;; (unless (server-running-p) (server-start))
+;;; server (alternatively, you may use "emacs --daemon")
+(require 'server)
+(when (not (server-running-p))
+  (server-start))
 
 ;;; sh-mode-hook. Note that mode for shell script is sh-mode, NOT shell-mode
 (setq my-sh-imenu-generic-expression
