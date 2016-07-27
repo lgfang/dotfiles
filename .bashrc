@@ -1,4 +1,4 @@
-# Modified: Fang Lungang 01/21/2016 13:28>
+# Modified: Fang Lungang 07/27/2016 14:45>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -60,7 +60,7 @@ alias hex='od -Ax -tx1z -v'
 alias ls='ls --color=auto'
 alias rm='rm -I'                  # IMHO, much better than 'rm -i'
 alias scp='scp -o LogLevel=error' # don't print motd etc.
-alias mount='mount | column -t'   # a better format
+alias lsmnt='mount | column -t'   # a better format
 
 #** command history
 function nh {
