@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 07/08/2016 12:11>
+;; Modified: Fang Lungang 09/14/2016 12:27>
 
 ;;; Commentary:
 
@@ -888,6 +888,10 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
             (setq imenu-create-index-function 'python-imenu-create-flat-index)
             (imenu-add-menubar-index)))
 
+(when (functionp 'jedi:setup)
+  (add-hook 'python-mode-hook 'jedi:setup)
+  (setq jedi:complete-on-dot t))
+
 (require 'pydoc-info nil t)
 
 ;;; pylint
@@ -1200,9 +1204,10 @@ selective-display"
   (require 'cscope-filter nil t)
   ;; for large code base, set it to t.
   (setq cscope-do-not-update-database t)
-  ;; use xcscope for java too.
+  ;; use cscope for java etc. as well
   (add-hook 'java-mode-hook (function cscope:hook))
-  (add-hook 'eshell-mode-hook  (function cscope:hook))
+  (add-hook 'eshell-mode-hook (function cscope:hook))
+  (add-hook 'python-mode-hook (function cscope:hook))
 
   (setq
    cscope-database-regexps
