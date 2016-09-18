@@ -22,7 +22,7 @@
       '((type "INCOME(i!)" "TODO(t!)" "WAIT(w@)" "HOLD(h!)" "MAYBE(m!)"
               "|" "DONE(d!)" "CANCEL(c@)"))
       org-log-done 'time
-      org-agenda-span 'day
+      org-agenda-span 'week
       org-agenda-skip-deadline-if-done t
       org-agenda-skip-scheduled-if-done t
       org-agenda-skip-scheduled-if-deadline-is-shown t
