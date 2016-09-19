@@ -1372,6 +1372,7 @@ string,refer to format-time-string."
   )
 (fset 'mla 'lgfang-mode-line-all)
 
+(require 'cl)                           ; list-length defined in "cl.el"
 (defun lgfang-recentf-open ()
   "open recent files. In ido style if applicable"
   (interactive)
