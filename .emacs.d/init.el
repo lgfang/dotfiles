@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 09/14/2016 12:27>
+;; Modified: Fang Lungang 09/19/2016 13:48>
 
 ;;; Commentary:
 
@@ -530,7 +530,7 @@ tmux's buffer"
 (when (and (>= emacs-major-version 23) window-system)
 
   ;; Recommended English fonts: "consolas", "DejaVu Sans Mono", "monofur"
-  (set-face-attribute 'default nil :font "consolas-12:weight=normal")
+  (set-face-attribute 'default nil :font "monaco-12:weight=normal")
 
   ;; Recommended Chinese fonts: "SimSun", "Microsoft YaHei", "WenQuanYi
   ;; Micro Hei Mono"
