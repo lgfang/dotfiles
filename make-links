@@ -1,6 +1,8 @@
 #!/bin/bash
 
-FORCE="-f"
+# FORCE="-f"
+FORCE=""
+mkdir ~/.ssh ~/.emacs.d/
 
 for each in .bash_completion.d \
                 .bash_profile \
@@ -24,6 +26,6 @@ do
 
     if [ -e "$target" ]; then
         echo "rm -f '$link_name'"
-        echo "ln -s $FORCE '$target' '$link_name'"
+        ln -s $FORCE "$target" "$link_name"
     fi
 done
