@@ -61,7 +61,7 @@
          ((tags "project"
                 ((org-agenda-overriding-header "Active project list:")
                  (org-agenda-skip-function
-                  '(org-agenda-skip-subtree-if
+                  '(org-agenda-skip-entry-if
                     'todo
                     '("HOLD" "MAYBE" "DONE" "CANCEL")))))))
         ("w" "PENDING items" ((todo "WAIT")))
