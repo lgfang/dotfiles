@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 09/19/2016 13:48>
+;; Modified: Lungang FANG 10/10/2016 21:08>
 
 ;;; Commentary:
 
@@ -775,6 +775,10 @@ lgfang")))
  longlines-wrap-follows-window-size t
  ;; for visual-line-mode, indicates lines are wrapped
  visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
+
+;;; markdown; remember to package-install RET markdown-mode
+;; The "standard" markdown command line tool is not good enough
+(setq markdown-command "/usr/local/bin/pandoc")
 
 (menu-bar-mode -1)
 
