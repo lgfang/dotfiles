@@ -32,7 +32,7 @@
       org-deadline-warning-days 3
       org-tags-exclude-from-inheritance (list "project")
       org-agenda-custom-commands
-      '(("a" "TODO items"
+      '(("x" "TODO items @ALL@"
          ((todo "INCOME"
                 ((org-agenda-overriding-header "In-basket:")
                  (org-agenda-skip-function
@@ -44,11 +44,24 @@
                  (org-agenda-skip-function
                   '(org-agenda-skip-subtree-if 'scheduled))))
           (agenda)))
+        ("y" "TODO items @WORK@"
+         ((todo "INCOME"
+                ((org-agenda-overriding-header "In-basket:")
+                 (org-agenda-skip-function
+                  '(org-agenda-skip-subtree-if 'scheduled))))
+          (todo "TODO"
+                ;; In case foget to schedule a TODO item (to today if no
+                ;; specific target date)
+                ((org-agenda-overriding-header "TODOs:")
+                 (org-agenda-skip-function
+                  '(org-agenda-skip-subtree-if 'scheduled))
+                 (org-agenda-files '("~/mynotes/personal/professional.gtd"))))
+          (agenda "" ((org-agenda-files '("~/mynotes/personal/professional.gtd"))))))
         ("p" "Projects"
          ((tags "project"
                 ((org-agenda-overriding-header "Active project list:")
                  (org-agenda-skip-function
-                  '(org-agenda-skip-subtree-if
+                  '(org-agenda-skip-entry-if
                     'todo
                     '("HOLD" "MAYBE" "DONE" "CANCEL")))))))
         ("w" "PENDING items" ((todo "WAIT")))

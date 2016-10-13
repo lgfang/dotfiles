@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Fang Lungang 09/14/2016 12:27>
+;; Modified: Lungang FANG 10/13/2016 13:09>
 
 ;;; Commentary:
 
@@ -530,7 +530,7 @@ tmux's buffer"
 (when (and (>= emacs-major-version 23) window-system)
 
   ;; Recommended English fonts: "consolas", "DejaVu Sans Mono", "monofur"
-  (set-face-attribute 'default nil :font "consolas-12:weight=normal")
+  (set-face-attribute 'default nil :font "monaco-12:weight=normal")
 
   ;; Recommended Chinese fonts: "SimSun", "Microsoft YaHei", "WenQuanYi
   ;; Micro Hei Mono"
@@ -775,6 +775,11 @@ lgfang")))
  longlines-wrap-follows-window-size t
  ;; for visual-line-mode, indicates lines are wrapped
  visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
+
+;;; markdown; remember to package-install RET markdown-mode
+;; The "standard" markdown command line tool is not good enough
+(setq markdown-command "/usr/local/bin/pandoc")
+(add-hook 'markdown-mode-hook 'flyspell-mode)
 
 (menu-bar-mode -1)
 
@@ -1372,6 +1377,7 @@ string,refer to format-time-string."
   )
 (fset 'mla 'lgfang-mode-line-all)
 
+(require 'cl)                           ; list-length defined in "cl.el"
 (defun lgfang-recentf-open ()
   "open recent files. In ido style if applicable"
   (interactive)
