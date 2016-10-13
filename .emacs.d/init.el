@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Lungang FANG 10/10/2016 21:08>
+;; Modified: Lungang FANG 10/13/2016 13:09>
 
 ;;; Commentary:
 
@@ -779,6 +779,7 @@ lgfang")))
 ;;; markdown; remember to package-install RET markdown-mode
 ;; The "standard" markdown command line tool is not good enough
 (setq markdown-command "/usr/local/bin/pandoc")
+(add-hook 'markdown-mode-hook 'flyspell-mode)
 
 (menu-bar-mode -1)
 
