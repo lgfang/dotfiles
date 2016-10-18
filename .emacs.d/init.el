@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Lungang FANG 10/13/2016 13:09>
+;; Modified: Lungang FANG 10/18/2016 11:33>
 
 ;;; Commentary:
 
@@ -1208,7 +1208,8 @@ selective-display"
 (when (require 'xcscope nil t)
   (require 'cscope-filter nil t)
   ;; for large code base, set it to t.
-  (setq cscope-do-not-update-database t)
+  (setq cscope-do-not-update-database t
+        cscope-program "gtags-cscope")
   ;; use cscope for java etc. as well
   (add-hook 'java-mode-hook (function cscope:hook))
   (add-hook 'eshell-mode-hook (function cscope:hook))
