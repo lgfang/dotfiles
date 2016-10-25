@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Lungang FANG 10/18/2016 11:33>
+;; Modified: Lungang FANG 10/25/2016 23:19>
 
 ;;; Commentary:
 
@@ -575,15 +575,6 @@ tmux's buffer"
 ;;; hide-ifdef-mode settings
 (require 'hideif)
 
-(defun lgfang-hide-if-0()
-  "hide #if 0 blocks, inspired by internet."
-  (interactive)
-  (require 'hideif)
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward "^[ \t]*#if[ \t]*0" nil t)
-      (hide-ifdef-block))))
-
 (defun hif-overlay-at (position)
   "An imitation of the one in hide-show, used by
 lgfang-hif-toggle-block"
@@ -603,8 +594,23 @@ lgfang-hif-toggle-block"
     (if (hif-overlay-at (point)) (show-ifdef-block)
       (hide-ifdef-block))))
 
+;;; Fold ifdef blocks by default. This is safer than showing them by default
+;;; since when you see a code snippet folded, you know it is folded. In
+;;; contrast, if they are not folded, you may learn in a hard way that you are
+;;; in an undefined block.
+(setq hide-ifdef-initially t
+      hide-ifdef-define-alist
+      ;; Add/remove "define" alist per your own need
+      '((default)       ; An empty alist, makes every ifdef block folded, but
+                        ; not ifndef blocks. Hence, you are better off use a
+                        ; more appropriate one whenever possible
+        (plexus-atca LINUX ATCA USE_IPT_CLI) ; An example
+        (mongodb-mac-simple __APPLE__)
+        ))
+(defvar my-define-alist "default")
+
 (defun lgfang-hide-ifdef-use-define-alist (name)
-  "A simple wrapper for `hide-ifdef-use-define-alist'"
+  "A wrapper for `hide-ifdef-use-define-alist' to use NAME define alist."
   (interactive
    (list (let* ((prompt "Use MACRO define list: ")
                 (symbol-names
@@ -613,19 +619,14 @@ lgfang-hif-toggle-block"
            (if (require 'ido nil t)
                (ido-completing-read prompt symbol-names)
              (completing-read prompt symbol-names)))))
-  (setq hide-ifdef-initially t    ; also apply to buffers not opened yet
-        my-define-alist name)
-  (hide-ifdefs)                         ; for current file
+  (setq my-define-alist name) ; also apply this to buffers not opened yet
+  (hide-ifdefs)                         ; for current buffer
   (hide-ifdef-use-define-alist name))
 
-(setq hide-ifdef-initially nil)
-(defvar my-define-alist nil)
-(add-hook 'c-mode-hook
-          (lambda ()
-            (hide-ifdef-mode 1)
-            (lgfang-hide-if-0)
-            (when my-define-alist
-              (hide-ifdef-use-define-alist my-define-alist))))
+(dolist (hook '(c-mode-hook c++-mode-hook))
+  (add-hook hook (lambda () (hide-ifdef-mode 1)
+                   (hide-ifdef-use-define-alist my-define-alist))))
+
 (eval-after-load "cc-mode"
   '(define-key c-mode-base-map (kbd "M-'") 'lgfang-hif-toggle-block))
 
