@@ -1,4 +1,4 @@
-# Modified: Fang Lungang 07/27/2016 14:45>
+# Modified: Lungang FANG 10/28/2016 19:59>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -368,6 +368,50 @@ function tg { # Attach to specified tmux session
 
     done
 }
+
+function tt {
+    # List all tty used by tmux. If given a process name, find out all related
+    # tmux panes, go to one of it.
+
+    # usage: tt [process_name]
+
+    # Note: once you find a pane, you may send keys to that process WITHOUT
+    # going to that pane by running 'tmux send-keys -t s:w.p abcd'.
+
+    local process_name="$1"
+    local procs proc panes pane IFS PS3 choices choice
+
+    if [ -n "$process_name" ]; then
+        procs=$(ps -e | grep "\b$process_name" | grep -v '?')
+    else
+        procs=$(ps -e | grep -v '?')
+    fi
+
+    panes=$(tmux list-panes -a -F '#S:#I.#P #{pane_tty}')
+
+    IFS=$'\n'
+    for pane in $panes; do
+        tty=$(echo "$pane" | awk -v FS='/' '{print $NF}')
+        proc=$(echo "$procs" | grep "\b$tty\b")
+        if [ -n "$proc" ]; then
+            # got it, do a little format
+            proc=$'\n'"$proc"
+            choice=$(paste <(echo "$pane") <(echo "$proc"))
+            choices=("${choices[@]}" "$choice")
+        fi
+    done
+
+    PS3='Which pane to go? '
+    select choice in "${choices[@]}"; do
+        if [ -n "$choice" ]; then #
+            tmux switch-client -t "$(echo "$choice" | awk '{print $1; exit}')"
+            return
+        else
+            echo "Invalid '$REPLY', retry"
+        fi
+    done
+}
+export -f tt
 
 function to_tmux_buffer {
     # usage: cat file | this_function
