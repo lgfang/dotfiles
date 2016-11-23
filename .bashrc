@@ -1,4 +1,4 @@
-# Modified: Lungang FANG 10/28/2016 19:59>
+# Modified: Lungang FANG 11/24/2016 09:06>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -191,7 +191,7 @@ function mycd {
     elif [ $# -eq 1 ]; then
         dest=$1
     elif [ $# -eq 2 ]; then
-        dest=${PWD/$1/$2}
+        dest=${PWD//$1/$2}
     else
         echo "error: two many arguments" >&2
         return 1
