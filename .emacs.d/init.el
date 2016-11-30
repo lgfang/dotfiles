@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Lungang FANG 12/01/2016 10:13>
+;; Modified: Lungang FANG 12/01/2016 10:18>
 
 ;;; Commentary:
 
@@ -459,6 +459,23 @@ tmux's buffer"
 
 ;;; emms configure in another file
 (load "lgfang.emms" t nil nil)
+
+;;; erc (emacs client for IRC)
+(require 'erc)
+(add-to-list 'erc-modules 'notifications)
+(setq erc-auto-query 'buffer
+      erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
+                                "324" "329" "332" "333" "353" "477"))
+
+(defun my-slack ()
+  "Join join slack team of company."
+  (interactive)
+  ;; All confidential information defined in another file
+  (erc-tls :server slack-server
+           :port slack-port
+           :nick slack-nick
+           :password slack-pass
+           ))
 
 ;;; eshell: restore arrows(up/down) to their orginal functions
 (add-hook 'eshell-mode-hook
