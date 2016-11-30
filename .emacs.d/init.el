@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Lungang FANG 10/25/2016 23:19>
+;; Modified: Lungang FANG 12/01/2016 10:13>
 
 ;;; Commentary:
 
@@ -73,13 +73,16 @@
       calendar-location-name "QingDao"
       cn-weather-city "青岛"
       ;; world time 'M-x display-time-world', /usr/share/zoneinfo
-      display-time-world-list '(("Asia/Shanghai" "Qingdao")
-                                ("US/Eastern" "Westford")
-                                ("US/Central" "Indianhill")
-                                ("Europe/Paris" "Paris")
-                                ("Europe/Warsaw" "Poland")
-                                ("Australia/Sydney" "Sydney")
-                                ))
+      display-time-world-list '(("Australia/Sydney" "Sydney")
+                                ("Asia/Shanghai" "Qingdao")
+                                ("Asia/Kolkata" "Delhi")
+                                ("Asia/Tel_Aviv" "Tel Aviv")
+                                ("Europe/London" "Dublin")
+                                ("America/New_York" "New York")
+                                ("America/Chicago" "Chicago")
+                                ("America/Los_Angeles" "Palo Alto"))
+      )
+
 ;; Actual values of confidential information are in this file
 (load (concat my-personal-path "my-confidential") t nil nil)
 
