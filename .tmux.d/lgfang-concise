@@ -1,6 +1,6 @@
 # \file Name: lgfang-concise -*-mode:conf-*-
 # Based on https://github.com/seebi/tmux-colors-solarized
-# Modified: Fang lungang 12/08/2013 21:25>
+# Modified: Lungang FANG 12/07/2016 12:05>
 
 # default statusbar colors
 set-option -g status-fg colour244 #base0
@@ -22,8 +22,8 @@ set-window-option -g window-status-activity-fg red
 set-window-option -g window-status-activity-attr none
 
 # pane border
-set-option -g pane-border-fg colour235 #base02
-set-option -g pane-active-border-fg colour240 #base01
+set-option -g pane-border-fg green
+set-option -g pane-active-border-fg colour166
 
 # message text
 set-option -g message-bg colour235 #base02
