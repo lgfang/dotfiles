@@ -1,7 +1,8 @@
 (add-to-list 'load-path (concat my-extension-path "org-mode/lisp"))
-(add-to-list 'load-path (concat my-extension-path "org-mode/contrib"))
+(add-to-list 'load-path (concat my-extension-path "org-mode/contrib/lisp"))
 
 (require 'org nil t)
+(require 'ox-confluence nil t)
 
 (setq org-hide-leading-stars nil
       org-startup-folded t
@@ -165,7 +166,7 @@
       )
 
 (add-to-list 'auto-mode-alist
-             '("\\.\\(blog\\|org\\|lgf\\)$" . org-mode))
+             '("\\.\\(blog\\|org\\|lgf\\|jira\\)$" . org-mode))
 
 (add-to-list 'org-structure-template-alist
              '("n" "#+BEGIN_COMMENT\n?\n#+END_COMMENT" ""))
@@ -176,7 +177,12 @@
           (lambda()
             (imenu-add-menubar-index)
             (define-key org-mode-map [mouse-3] 'org-mark-ring-goto)
-            (highlight-lines-matching-regexp "lgf:" 'org-document-info)))
+            (highlight-lines-matching-regexp "lgf:" 'org-document-info)
+            (when (and (stringp buffer-file-name)
+                       (string-match "\\.jira\\'" buffer-file-name))
+              (flyspell-mode 1)
+              (setq-local org-export-with-toc nil)
+              (visual-line-mode 1))))
 
 (defun get-intranet-postamble (plist)
   (let ((title (plist-get plist :title))
