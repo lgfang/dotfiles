@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Lungang FANG 12/01/2016 10:18>
+;; Modified: Lungang FANG 12/14/2016 10:00>
 
 ;;; Commentary:
 
@@ -395,8 +395,8 @@ tmux's buffer"
 
 ;;; color theme
 (add-to-list 'custom-theme-load-path (concat my-extension-path "themes"))
-(if (display-graphic-p) (load-theme 'wombat t) (load-theme 'wombat t))
-;; Themes I recommend: wombat, soloarized-dark, tango-dark, tango, gnome2. For
+(if (display-graphic-p) (load-theme 'solarized-dark t) (load-theme 'wombat t))
+;; Themes I recommend: wombat, solarized-dark, tango-dark, tango, gnome2. For
 ;; themes ported to emacs24: https://github.com/emacs-jp/replace-colorthemes
 
 (column-number-mode t)
@@ -550,7 +550,7 @@ tmux's buffer"
 (when (and (>= emacs-major-version 23) window-system)
 
   ;; Recommended English fonts: "consolas", "DejaVu Sans Mono", "monofur"
-  (set-face-attribute 'default nil :font "monaco-12:weight=normal")
+  (set-face-attribute 'default nil :font "monaco-15:weight=normal")
 
   ;; Recommended Chinese fonts: "SimSun", "Microsoft YaHei", "WenQuanYi
   ;; Micro Hei Mono"
