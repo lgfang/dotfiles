@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Lungang FANG 12/14/2016 10:00>
+;; Modified: Lungang FANG 12/20/2016 16:21>
 
 ;;; Commentary:
 
@@ -24,7 +24,6 @@
 
 ;; load path
 (add-to-list 'load-path my-extension-path)
-(add-to-list 'load-path my-elisp-path)
 (add-to-list 'load-path my-backward-path t)
 
 ;; exec path
@@ -810,6 +809,10 @@ lgfang")))
   (midnight-delay-set 'midnight-delay "1:30am")
   (setq clean-buffer-list-delay-general 1))
 
+;;; mongolog: MongodDB log file mode
+(add-to-list 'load-path (concat my-elisp-path "mongolog"))
+(require 'mongolog nil t)
+
 ;;; mouse
 (setq mouse-yank-at-point t             ; instead of at mouse cursor
       mouse-drag-copy-region t)
@@ -1126,6 +1129,7 @@ selective-display"
 ;; (eval-after-load "thingatpt" '(require 'thingatpt+))
 
 ;;; Tiling
+(add-to-list 'load-path (concat my-elisp-path "tiling"))
 (require 'tiling nil t)
 
 ;;; time stamp
