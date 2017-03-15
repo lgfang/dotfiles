@@ -17,6 +17,9 @@ export HISTCONTROL="ignoredups"
 export HISTFILESIZE=1000
 export HISTSIZE=500
 
+# For OS X java
+export JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"
+
 #* load a variety of stuff
 if declare -f loaddm >/dev/null; then
     loaddm
