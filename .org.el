@@ -165,8 +165,9 @@
       org-export-allow-bind-keywords t  ; I like "#+BIND:var value"
       )
 
+;; tkt -> ticket
 (add-to-list 'auto-mode-alist
-             '("\\.\\(blog\\|org\\|lgf\\|jira\\)$" . org-mode))
+             '("\\.\\(blog\\|org\\|lgf\\|tkt\\)$" . org-mode))
 
 (add-to-list 'org-structure-template-alist
              '("n" "#+BEGIN_COMMENT\n?\n#+END_COMMENT" ""))
@@ -179,7 +180,8 @@
             (define-key org-mode-map [mouse-3] 'org-mark-ring-goto)
             (highlight-lines-matching-regexp "lgf:" 'org-document-info)
             (when (and (stringp buffer-file-name)
-                       (string-match "\\.jira\\'" buffer-file-name))
+                       (string-match "\\.tkt\\'" buffer-file-name))
+              ;; turn on fly spell for tkt (ticket)
               (flyspell-mode 1)
               (setq-local org-export-with-toc nil)
               (visual-line-mode 1))))
