@@ -184,6 +184,7 @@
               ;; turn on fly spell for tkt (ticket)
               (flyspell-mode 1)
               (setq-local org-export-with-toc nil)
+              (setq-local org-export-preserve-breaks t)
               (visual-line-mode 1))))
 
 (defun get-intranet-postamble (plist)
