@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: Lungang FANG 12/20/2016 16:21>
+;; Modified: Lungang FANG 03/17/2017 15:34>
 
 ;;; Commentary:
 
@@ -651,6 +651,9 @@ lgfang-hif-toggle-block"
 
 ;;; hide-show
 (setq hs-allow-nesting t hs-isearch-open t)
+(defun lgfang-toggle-level ()
+  "hide/show the next level"
+  (interactive) (hs-show-block) (hs-hide-level 1))
 
 ;;; highlight-tail
 ;; (when (require 'highlight-tail)
@@ -753,6 +756,13 @@ lgfang")))
       ;; ispell-dictionary-alist for details
       ispell-dictionary "english")
 
+;;; Javascript
+(add-hook 'js-mode-hook
+          (lambda()
+            (define-key js-mode-map (kbd "M-'") 'lgfang-toggle-level)
+            (define-key js-mode-map [mouse-3] 'lgfang-toggle-level)
+            (hs-minor-mode 1)))
+
 ;;; kill/copy current line
 ;;; from http://blog.waterlin.org
 (defadvice kill-ring-save (before slickcopy activate compile)
@@ -844,9 +854,6 @@ lgfang")))
                nxml-forward-element
                nil))
 
-(defun lgfang-toggle-level ()
-  "mainly to be used in nxml mode"
-  (interactive) (hs-show-block) (hs-hide-level 1))
 (eval-after-load "nxml-mode"
   '(progn
      (define-key nxml-mode-map (kbd "M-'") 'lgfang-toggle-level)
