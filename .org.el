@@ -278,6 +278,12 @@ according to modification time is good enough."
       (org-set-tags-to tags)
       (message "Task added to the project list"))))
 
+(defun export-ticket-comment ()
+  "Run a built-in export function according to buffer/file name."
+  (interactive)
+  (if (string-match "sf-" buffer-file-name) (org-gfm-export-as-markdown)
+      (org-confluence-export-as-confluence)))
+
 (eval-after-load "org-agenda"
   '(define-key org-agenda-mode-map (kbd "M-p") 'add-to-project-list))
 
