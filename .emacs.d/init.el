@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Fang lungang 2004
-;; Modified: My name 07/26/2017 09:38>
+;; Modified: My name 10/03/2017 13:00>
 
 ;;; Commentary:
 
@@ -72,7 +72,7 @@
       calendar-location-name "QingDao"
       cn-weather-city "青岛"
       ;; world time 'M-x display-time-world', /usr/share/zoneinfo
-      display-time-world-time-format "%Z\t%a %d %b %R"
+      display-time-world-time-format "%Z\t%z\t%a %d %b %R"
       display-time-world-list '(("Australia/Sydney" "Sydney")
                                 ("UTC" "UTC")
                                 ("America/New_York" "New York")
