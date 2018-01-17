@@ -243,8 +243,8 @@
      </script>
      "
      time creator
-     ;; The following variables are defined in private-info.el
-     disqus_shortname google_analytic_track_id_blog)))
+     ;; The following variables are defined in the my-confident
+     my-disqus-shortname my-blog-google-analytic-track-id)))
 
 (defun org-publish-find-date (file)
   "The official one takes toooo much time to run. For me, sort

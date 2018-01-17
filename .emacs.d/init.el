@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
-;; Created:  Fang lungang 2004
-;; Modified: My name 10/03/2017 13:00>
+;; Created:  Lungang Fang 2004
+;; Modified: Lungang Fang 01/17/2018 23:30>
 
 ;;; Commentary:
 
@@ -59,14 +59,14 @@
   path))
 
 ;;; Personal Info
-;; Note: Some values are place-holders, will be overwritten by those in
-;; 'my-confidential.el'.
-(setq user-full-name "My name"
-      user-mail-address "nospam@company.com"
-      ange-ftp-default-user "myname"
+
+;; Confidential info saved in this file.
+(load (concat my-personal-path "my-confidential") t nil nil)
+
+(setq user-full-name my-full-name
+      user-mail-address my-email
+      ange-ftp-default-user my-net-id
       ;; url-proxy-services '(("http" . "localhost:8888"))
-      disqus_shortname "mydisqus"
-      google_analytic_track_id_blog "my-google-track-id"
       calendar-latitude 36.06
       calendar-longitude 120.27
       calendar-location-name "QingDao"
@@ -85,7 +85,7 @@
       )
 
 ;; Actual values of confidential information are in this file
-(load (concat my-personal-path "my-confidential") t nil nil)
+
 
 ;;; Language Environment - no longer needed
 
