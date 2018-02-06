@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 01/17/2018 23:30>
+;; Modified: Lungang Fang 02/06/2018 12:15>
 
 ;;; Commentary:
 
@@ -915,6 +915,11 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
       cperl-continued-statement-offset 4
       cperl-indent-parens-as-block t
       cperl-tab-always-indent t)
+
+;;; PHP
+(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+;; Installed using M-x package-install
+(autoload 'php-mode "php-mode" "Major mode for editing PHP code." t)
 
 ;;; Python related
 
