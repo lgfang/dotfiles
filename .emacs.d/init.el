@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 02/06/2018 12:15>
+;; Modified: Lungang Fang 02/07/2018 15:45>
 
 ;;; Commentary:
 
@@ -114,7 +114,7 @@
 (define-key global-map [f5] 'whitespace-cleanup)
 (define-key global-map [f7] 'flyspell-mode)
 (define-key global-map [f8] 'flyspell-prog-mode)
-(define-key global-map [f9] 'org-clock-in-last)
+(define-key global-map [f9] 'org-clock-goto)
 (define-key global-map [f10] 'org-capture)
 ;; f11 : reserved for twm/tmux etc.
 ;; f12 : reserved for twm/tmux etc.

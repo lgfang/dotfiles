@@ -19,9 +19,13 @@
       org-agenda-files
       (mapcar (lambda (x) (concat my-personal-path x))
             (list "professional.gtd" "personal.gtd" "part-time.gtd"))
-      org-todo-keywords
-      '((type "INCOME(i!)" "TODO(t!)" "WAIT(w@)" "HOLD(h!)" "MAYBE(m!)"
-              "|" "DONE(d!)" "CANCEL(c@)"))
+
+      org-todo-keywords '(
+                          ;; !@ means attach timestamps/notes when changing to certain state
+                          ;; (type "INCOME(i!)" "TODO(t!)" "WAIT(w@)" "HOLD(h!)" "MAYBE(m!)" "|" "DONE(d!)" "CANCEL(c@)")
+                          (type "INCOME(i)" "TODO(t)" "WAIT(w)" "HOLD(h)" "MAYBE(m)" "|" "DONE(d)" "CANCEL(c)")
+                          )
+
       org-log-done 'time
       org-agenda-span 'week
       org-agenda-skip-deadline-if-done t
