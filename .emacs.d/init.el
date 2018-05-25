@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
-;; Created:  Fang lungang 2004
-;; Modified: My name 10/03/2017 13:00>
+;; Created:  Lungang Fang 2004
+;; Modified: Lungang Fang 02/07/2018 15:45>
 
 ;;; Commentary:
 
@@ -59,14 +59,14 @@
   path))
 
 ;;; Personal Info
-;; Note: Some values are place-holders, will be overwritten by those in
-;; 'my-confidential.el'.
-(setq user-full-name "My name"
-      user-mail-address "nospam@company.com"
-      ange-ftp-default-user "myname"
+
+;; Confidential info saved in this file.
+(load (concat my-personal-path "my-confidential") t nil nil)
+
+(setq user-full-name my-full-name
+      user-mail-address my-email
+      ange-ftp-default-user my-net-id
       ;; url-proxy-services '(("http" . "localhost:8888"))
-      disqus_shortname "mydisqus"
-      google_analytic_track_id_blog "my-google-track-id"
       calendar-latitude 36.06
       calendar-longitude 120.27
       calendar-location-name "QingDao"
@@ -85,7 +85,7 @@
       )
 
 ;; Actual values of confidential information are in this file
-(load (concat my-personal-path "my-confidential") t nil nil)
+
 
 ;;; Language Environment - no longer needed
 
@@ -114,7 +114,7 @@
 (define-key global-map [f5] 'whitespace-cleanup)
 (define-key global-map [f7] 'flyspell-mode)
 (define-key global-map [f8] 'flyspell-prog-mode)
-(define-key global-map [f9] 'org-clock-in-last)
+(define-key global-map [f9] 'org-clock-goto)
 (define-key global-map [f10] 'org-capture)
 ;; f11 : reserved for twm/tmux etc.
 ;; f12 : reserved for twm/tmux etc.
@@ -915,6 +915,11 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
       cperl-continued-statement-offset 4
       cperl-indent-parens-as-block t
       cperl-tab-always-indent t)
+
+;;; PHP
+(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+;; Installed using M-x package-install
+(autoload 'php-mode "php-mode" "Major mode for editing PHP code." t)
 
 ;;; Python related
 
