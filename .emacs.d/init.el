@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 02/07/2018 15:45>
+;; Modified: Lungang Fang 03/09/2018 09:00>
 
 ;;; Commentary:
 
@@ -461,22 +461,7 @@ tmux's buffer"
 ;;; emms configure in another file
 (load "lgfang.emms" t nil nil)
 
-;;; erc (emacs client for IRC)
-(require 'erc)
-(add-to-list 'erc-modules 'notifications)
-(setq erc-auto-query 'buffer
-      erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
-                                "324" "329" "332" "333" "353" "477"))
-
-(defun my-slack ()
-  "Join join slack team of company."
-  (interactive)
-  ;; All confidential information defined in another file
-  (erc-tls :server slack-server
-           :port slack-port
-           :nick slack-nick
-           :password slack-pass
-           ))
+;;; ERC - use RCIRC instead for cleaner code base
 
 ;;; eshell: restore arrows(up/down) to their orginal functions
 (add-hook 'eshell-mode-hook
@@ -985,6 +970,29 @@ message in the minibuffer"
           (end (if (region-active-p) (region-end) (point-max))))
       (save-excursion
         (shell-command-on-region beg end "pythontidy" nil t)))))
+
+;;; RCIRC - replaces ERC
+;; All confidential information defined in another file
+(setq rcirc-server-alist `((,slack-server
+                            :port ,slack-port
+                            :encryption tls
+                            :nick ,slack-nick
+                            :password ,(concat slack-pass "-no_mpdm_greet")
+                            :channels ("#tse-notifications"))
+                           ("irc.freenode.net"
+                            :channels ("#emacs" "#rcirc" "#mongodb"))
+                           )
+      ;; register nick name: https://freenode.net/kb/answer/registration
+      rcirc-authinfo `(("freenode" nickserv ,my-net-id ,my-pub-passwd))
+      rcirc-omit-responses '("JOIN" "PART" "QUIT" "NICK" "AWAY")
+      ;; rcirc-nick-completion-format "@%s"
+      rcirc-fill-flag nil
+      rcirc-default-nick my-net-id)
+
+(add-hook 'rcirc-mode-hook
+          (lambda ()
+            (rcirc-track-minor-mode 1)
+            (flyspell-mode 1)))
 
 ;;; recently opened file
 (require 'recentf)
