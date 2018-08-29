@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 03/09/2018 09:00>
+;; Modified: Lungang Fang 08/29/2018 17:30>
 
 ;;; Commentary:
 
@@ -99,10 +99,11 @@
 
 (when (eq system-type 'darwin)          ; OSX
 
-  ;; ;; Obsoleted, remap mackbook modifier keys globally instead of this
-  ;; (setq mac-option-modifier 'ctrl mac-command-modifier 'meta)
+  (if (display-graphic-p)
+      ;; Running Emacs with OSX native GUI, remap modifier within Emacs. Only do
+      ;; it when keyboard modifiers are not remapped globally.
+      (setq mac-option-modifier 'ctrl mac-command-modifier 'meta)
 
-  (unless (display-graphic-p)
     ;; In OSX terminal, trackpad gestures for up/down mapped to mouse-4/5
     (define-key global-map [mouse-4] '(lambda () (interactive) (scroll-down 1)))
     (define-key global-map [mouse-5] '(lambda () (interactive) (scroll-up 1)))))
@@ -374,7 +375,11 @@
         (append cal-china-x-chinese-holidays
                 holiday-christian-holidays)))
 
-;;; clipboard
+;;; ccrypt: auto encrypt/decrypt files using ccrypt
+(require 'ps-ccrypt nil t)
+
+;;; Clipboard
+;; from/to tmux buffer
 (defun lgfang-send-to-tmux ()
   "Send content of active region or HEAD of the kill-ring to
 tmux's buffer"
@@ -393,6 +398,20 @@ tmux's buffer"
 ;; aliases to type less characters
 (fset 'to-tmux 'lgfang-send-to-tmux)
 (fset 'from-tmux 'lgfang-get-from-tmux)
+
+;; From/to system clipboard. To use it in tmux, upgrade to tmux 2.6+.
+(when (eq system-type 'darwin)
+  (defun copy-from-osx ()
+    (shell-command-to-string "pbpaste"))
+
+  (defun paste-to-osx (text &optional push)
+    (let ((process-connection-type nil))
+      (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+        (process-send-string proc text)
+        (process-send-eof proc))))
+
+  (setq interprogram-cut-function 'paste-to-osx)
+  (setq interprogram-paste-function 'copy-from-osx))
 
 ;;; color theme
 (add-to-list 'custom-theme-load-path (concat my-extension-path "themes"))
@@ -421,8 +440,21 @@ tmux's buffer"
          (compile-goto-error) (delete-other-windows)))
      (define-key compilation-mode-map "q" 'quit-window)))
 
-;;; ccrypt: auto encrypt/decrypt files using ccrypt
-(require 'ps-ccrypt nil t)
+;;; Copy/cut current line
+;;; from http://blog.waterlin.org
+(defadvice kill-ring-save (before slickcopy activate compile)
+  "If region not active, copy current line."
+    (interactive
+     (if mark-active (list (region-beginning) (region-end))
+       (list (line-beginning-position)
+             (line-beginning-position 2)))))
+
+(defadvice kill-region (before slickcut activate compile)
+  "If region not active, kill current line."
+    (interactive
+     (if mark-active (list (region-beginning) (region-end))
+       (list (line-beginning-position)
+             (line-beginning-position 2)))))
 
 ;;; delete selection typed text replaces the selection (marked region)
 ;; (delete-selection-mode 0)
@@ -749,22 +781,6 @@ lgfang")))
             (define-key js-mode-map (kbd "M-'") 'lgfang-toggle-level)
             (define-key js-mode-map [mouse-3] 'lgfang-toggle-level)
             (hs-minor-mode 1)))
-
-;;; kill/copy current line
-;;; from http://blog.waterlin.org
-(defadvice kill-ring-save (before slickcopy activate compile)
-  "If region not active, copy current line."
-    (interactive
-     (if mark-active (list (region-beginning) (region-end))
-       (list (line-beginning-position)
-             (line-beginning-position 2)))))
-
-(defadvice kill-region (before slickcut activate compile)
-  "If region not active, kill current line."
-    (interactive
-     (if mark-active (list (region-beginning) (region-end))
-       (list (line-beginning-position)
-             (line-beginning-position 2)))))
 
 ;;; ldap mode for ldif files
 (autoload 'ldap-mode "ldap-mode" "Edit ldif files" t)
