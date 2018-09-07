@@ -1,4 +1,4 @@
-# Modified: Fang Lungang 02/27/2016 21:14>
+# Modified: Lungang Fang 09/07/2018 10:20>
 
 #* source in .bashrc
 
@@ -18,10 +18,11 @@ export HISTFILESIZE=1000
 export HISTSIZE=500
 
 # For OS X java
-export JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"
+# To get java home after installing JDK8, ' /usr/libexec/java_home -v 1.8'
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home"
+# export JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"
 
 #* load a variety of stuff
 if declare -f loaddm >/dev/null; then
     loaddm
 fi
-
