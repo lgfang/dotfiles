@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 08/29/2018 17:30>
+;; Modified: Lungang Fang 10/03/2018 13:44>
 
 ;;; Commentary:
 
@@ -99,11 +99,12 @@
 
 (when (eq system-type 'darwin)          ; OSX
 
-  (if (display-graphic-p)
-      ;; Running Emacs with OSX native GUI, remap modifier within Emacs. Only do
-      ;; it when keyboard modifiers are not remapped globally.
-      (setq mac-option-modifier 'ctrl mac-command-modifier 'meta)
+  ;; (if (display-graphic-p)
+  ;;     ;; Running Emacs with OSX native GUI, remap modifier within Emacs. Only do
+  ;;     ;; it when keyboard modifiers are not remapped globally.
+  ;;     (setq mac-option-modifier 'ctrl mac-command-modifier 'meta))
 
+  (unless (display-graphic-p)
     ;; In OSX terminal, trackpad gestures for up/down mapped to mouse-4/5
     (define-key global-map [mouse-4] '(lambda () (interactive) (scroll-down 1)))
     (define-key global-map [mouse-5] '(lambda () (interactive) (scroll-up 1)))))
