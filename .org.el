@@ -9,7 +9,7 @@
       org-cycle-include-plain-lists t
       org-src-fontify-natively t
       org-reverse-note-order t
-      org-archive-location (concat my-personal-path "%s_archive.gtd::")
+      org-archive-location (concat my-personal-path "archive.org::* From %s")
 
       org-time-clocksum-use-effort-durations t
       ;; refer to variable org-effort-durations
@@ -38,30 +38,24 @@
       org-tags-exclude-from-inheritance (list "project")
       org-agenda-custom-commands
       '(("x" "TODO items @ALL@"
-         ((todo "INCOME"
-                ((org-agenda-overriding-header "In-basket:")
-                 (org-agenda-skip-function
-                  '(org-agenda-skip-subtree-if 'scheduled))))
-          (todo "TODO"
-                ;; In case foget to schedule a TODO item (to today if no
-                ;; specific target date)
-                ((org-agenda-overriding-header "TODOs:")
-                 (org-agenda-skip-function
-                  '(org-agenda-skip-subtree-if 'scheduled))))
-          (agenda)))
+         ((todo "INCOME")
+          (todo "TODO")
+          (agenda "" ((org-agenda-span 1)
+                      (org-deadline-warning-days 7)
+                      (org-agenda-skip-function
+                       '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
+                      ))))
         ("y" "TODO items @WORK@"
          ((todo "INCOME"
-                ((org-agenda-overriding-header "In-basket:")
-                 (org-agenda-skip-function
-                  '(org-agenda-skip-subtree-if 'scheduled))))
+                ((org-agenda-files '("~/mynotes/personal/professional.gtd"))))
           (todo "TODO"
-                ;; In case foget to schedule a TODO item (to today if no
-                ;; specific target date)
-                ((org-agenda-overriding-header "TODOs:")
-                 (org-agenda-skip-function
-                  '(org-agenda-skip-subtree-if 'scheduled))
-                 (org-agenda-files '("~/mynotes/personal/professional.gtd"))))
-          (agenda "" ((org-agenda-files '("~/mynotes/personal/professional.gtd"))))))
+                ((org-agenda-files '("~/mynotes/personal/professional.gtd"))))
+          (agenda ""
+                  ((org-agenda-span 1)
+                   (org-deadline-warning-days 7)
+                   (org-agenda-skip-function
+                    '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
+                   (org-agenda-files '("~/mynotes/personal/professional.gtd"))))))
         ("p" "Projects"
          ((tags "project"
                 ((org-agenda-overriding-header "Active project list:")
