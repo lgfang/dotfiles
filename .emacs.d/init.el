@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 10/03/2018 13:44>
+;; Modified: Lungang Fang 02/27/2019 14:30>
 
 ;;; Commentary:
 
@@ -456,6 +456,14 @@ tmux's buffer"
      (if mark-active (list (region-beginning) (region-end))
        (list (line-beginning-position)
              (line-beginning-position 2)))))
+
+;;; Current path+filename
+(defun current-file-path ()
+  "Copy current path/to/file_name to the kill ring."
+  (interactive)
+  (let ((string (buffer-file-name)))
+    (message (concat "current file: " string))
+    (kill-new string)))
 
 ;;; delete selection typed text replaces the selection (marked region)
 ;; (delete-selection-mode 0)
