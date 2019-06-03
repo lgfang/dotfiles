@@ -1,4 +1,5 @@
-# Modified: Lungang FANG 11/24/2016 09:06>
+# shellcheck disable=SC1090,SC1091
+# Modified: Lungang Fang 06/04/2019 09:35>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -419,6 +420,10 @@ function to_tmux_buffer {
         tmux set-buffer "$line"
     done
 }
+
+#* Kubenetes
+# if kubectl installed, set up kubectl autocomplete
+which kubectl && source <(kubectl completion bash)
 
 #* .inputrc stuff, BASH ONLY
 
