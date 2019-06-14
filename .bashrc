@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 06/04/2019 09:35>
+# Modified: Lungang Fang 06/14/2019 09:36>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -39,9 +39,8 @@ shopt -s checkwinsize
 PS1='\n'                           # begin with a newline
 PS1=$PS1'\[\e[38;5;101m\]\! \t '   # time and command history number
 PS1=$PS1'\[\e[38;5;106m\]\u@\h '   # user@host
-PS1=$PS1'\[\e[7;35m\]${MY_WARN}\[\e[0m\] ' # warning message if there is any
-PS1=$PS1'\[\e[38;5;10m\]${MY_EXTRA} '      # extra info if there is any
-PS1=$PS1'\[\e[0;36m\]$(git_branch_4_ps1) ' # git_branch_4_ps1 defined below
+PS1=$PS1'\[\e[7;35m\]${MY_WARN}\[\e[0m\]' # warning message if there is any
+PS1=$PS1'\[\e[0;36m\]$(git_4_ps1) $(kube_4_ps1) ' # defined below
 PS1=$PS1'\[\e[38;5;33m\]\w'        # working directory
 PS1=$PS1'\n\[\e[32m\]\$ '          # "$"/"#" sign on a new line
 PS1=$PS1'\[\e[0m\]'                # restore to default color
@@ -248,10 +247,12 @@ function ep { # go to current directory of emacs(daemon)
 
 #** git
 
-function git_branch_4_ps1 {     # get git branch of pwd
+function git_4_ps1 {
+    command -v git >/dev/null || return
+    # get git branch of pwd
     local branch="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
     if [ -n "$branch" ]; then
-        echo "(git: $branch)"
+        echo "git:$branch"
     fi
 }
 
@@ -259,10 +260,24 @@ function gerrit {
     # submit current commit to gerrit for review
     local branch=$1
     [ -n "$branch" ] || branch=$(git name-rev --name-only HEAD)
-    # NOTE: Do NOT use the following measure in git_branch_4_ps1 since this
+    # NOTE: Do NOT use the following measure in git_4_ps1 since this
     # command cannot deal with detached checkout
     [ -n "$branch" ] || echo "ERROR: not in a valid branch!" >&2
     git push origin "HEAD:refs/for/$branch"
+}
+
+#** kubenetes
+
+# kubectl autocomplete if this command is installed
+command -v kubectl >/dev/null && source <(kubectl completion bash)
+
+function kube_4_ps1 {
+    command -v kubectl >/dev/null || return
+    local kube_context="$(kubectl config current-context)"
+    local kube_namespace="$(kubectl config view --output 'jsonpath={..namespace}')"
+    if [ -n "$kube_context" -o -n "$kube_namespace" ]; then
+	echo "kube:$kube_context.$kube_namespace"
+    fi
 }
 
 #** ssh
@@ -420,10 +435,6 @@ function to_tmux_buffer {
         tmux set-buffer "$line"
     done
 }
-
-#* Kubenetes
-# if kubectl installed, set up kubectl autocomplete
-which kubectl && source <(kubectl completion bash)
 
 #* .inputrc stuff, BASH ONLY
 
