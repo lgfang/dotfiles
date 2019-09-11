@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 06/14/2019 09:36>
+# Modified: Lungang Fang 09/11/2019 15:44>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -273,7 +273,7 @@ command -v kubectl >/dev/null && source <(kubectl completion bash)
 
 function kube_4_ps1 {
     command -v kubectl >/dev/null || return
-    local kube_context="$(kubectl config current-context)"
+    local kube_context="$(kubectl config current-context 2>/dev/null)"
     local kube_namespace="$(kubectl config view --output 'jsonpath={..namespace}')"
     if [ -n "$kube_context" -o -n "$kube_namespace" ]; then
 	echo "kube:$kube_context.$kube_namespace"
