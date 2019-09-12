@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 02/27/2019 14:30>
+;; Modified: Lungang Fang 09/12/2019 10:55>
 
 ;;; Commentary:
 
@@ -1157,7 +1157,7 @@ selective-display"
 ;; (load "lgfang-skeleton" t nil nil)
 
 ;;; split horizontally if screen wide enough
-(setq split-width-threshold 150)
+(setq split-width-threshold 300)
 
 ;;; subword-mode
 (global-subword-mode)
