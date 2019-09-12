@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 09/11/2019 15:44>
+# Modified: Lungang Fang 09/12/2019 14:00>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -49,6 +49,9 @@ PS1=$PS1'\[\e[0m\]'                # restore to default color
 # PS1='[$PWD]\$ '
 
 #* auto-completion
+if [ -r "/usr/local/etc/profile.d/bash_completion.sh" ]; then
+    source "/usr/local/etc/profile.d/bash_completion.sh"
+fi
 if [ -d "$HOME/.bash_completion.d" ]; then
     for each in $HOME/.bash_completion.d/*; do
         source "$each"
