@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 09/12/2019 14:00>
+# Modified: Lungang Fang 10/09/2019 15:37>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -282,6 +282,9 @@ function kube_4_ps1 {
 	echo "kube:$kube_context.$kube_namespace"
     fi
 }
+
+alias k=kubectl
+complete -F __start_kubectl k
 
 #** ssh
 
