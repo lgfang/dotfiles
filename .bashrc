@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 10/09/2019 15:37>
+# Modified: Lungang Fang 11/15/2019 12:20>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -243,9 +243,8 @@ alias et='emacsclient -a "" -t'
 alias ew='emacs-w32&'           # start GUI emacs, for cygwin
 
 function ep { # go to current directory of emacs(daemon)
-    cd "$(emacsclient -e \
-                     '(with-current-buffer (window-buffer) default-directory)' \
-                | tr -d \")"
+    cd "$(emacsclient -e '(expand-file-name
+        (with-current-buffer (window-buffer) default-directory))' | tr -d \")"
 }
 
 #** git
