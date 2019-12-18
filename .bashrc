@@ -285,6 +285,14 @@ function kube_4_ps1 {
 alias k=kubectl
 complete -F __start_kubectl k
 
+#*** GKE
+if [ -f "$HOME/.local/google-cloud-sdk/path.bash.inc" ]; then
+    source "$HOME/.local/google-cloud-sdk/path.bash.inc"
+fi
+if [ -f "$HOME/.local/google-cloud-sdk/completion.bash.inc" ]; then
+     source "$HOME/.local/google-cloud-sdk/completion.bash.inc"
+fi
+
 #** ssh
 
 alias scp='scp -o LogLevel=error' # don't print motd etc.
