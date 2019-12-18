@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 11/15/2019 12:20>
+# Modified: Lungang Fang 12/18/2019 15:24>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -273,6 +273,10 @@ function gerrit {
 # kubectl autocomplete if this command is installed
 command -v kubectl >/dev/null && source <(kubectl completion bash)
 
+# alias 'k' and ensure autocomplete also works for it.
+alias k=kubectl
+complete -F __start_kubectl k
+
 function kube_4_ps1 {
     command -v kubectl >/dev/null || return
     local kube_context="$(kubectl config current-context 2>/dev/null)"
@@ -281,9 +285,6 @@ function kube_4_ps1 {
 	echo "kube:$kube_context.$kube_namespace"
     fi
 }
-
-alias k=kubectl
-complete -F __start_kubectl k
 
 #*** GKE
 if [ -f "$HOME/.local/google-cloud-sdk/path.bash.inc" ]; then
