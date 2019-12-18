@@ -276,7 +276,7 @@ command -v kubectl >/dev/null && source <(kubectl completion bash)
 function kube_4_ps1 {
     command -v kubectl >/dev/null || return
     local kube_context="$(kubectl config current-context 2>/dev/null)"
-    local kube_namespace="$(kubectl config view --output 'jsonpath={..namespace}')"
+    local kube_namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
     if [ -n "$kube_context" -o -n "$kube_namespace" ]; then
 	echo "kube:$kube_context.$kube_namespace"
     fi
