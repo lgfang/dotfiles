@@ -34,6 +34,7 @@
       org-agenda-start-on-weekday nil
       ;; org-agenda-include-diary t
       org-deadline-warning-days 3
+      org-agenda-skip-deadline-prewarning-if-scheduled t
       org-tags-exclude-from-inheritance (list "project")
       org-agenda-custom-commands
       '(("x" "TODO items @ALL@"
