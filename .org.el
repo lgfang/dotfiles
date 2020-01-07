@@ -9,7 +9,7 @@
       org-cycle-include-plain-lists t
       org-src-fontify-natively t
       org-reverse-note-order t
-      org-archive-location (concat my-personal-path "archive.org::* From %s")
+      org-archive-location (concat my-personal-path "archive.gtd::* From %s")
 
       org-time-clocksum-use-effort-durations t
       ;; refer to variable org-effort-durations
