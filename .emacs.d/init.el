@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 09/12/2019 10:55>
+;; Modified: Lungang Fang 01/09/2020 14:44>
 
 ;;; Commentary:
 
@@ -618,6 +618,10 @@ tmux's buffer"
 
 ;;; gdb
 ;; (setq gdb-many-windows t)
+
+;;; golang
+(add-hook 'go-mode-hook
+          (lambda() (add-hook 'before-save-hook 'gofmt-before-save)))
 
 ;;; hide-ifdef-mode settings
 (require 'hideif)
