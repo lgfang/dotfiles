@@ -10,7 +10,7 @@
 
 #+TITLE: ${1:title}
 
-#+BEGIN_HTML
+#+BEGIN_EXPORT html
 ---
 layout: post
 title: $1
@@ -18,6 +18,6 @@ tagline:
 categories: ${2:computer}
 tags: [${3:emacs}]
 ---
-#+END_HTML
+#+END_EXPORT
 
 $0
