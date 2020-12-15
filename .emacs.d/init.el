@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 01/09/2020 14:44>
+;; Modified: Lungang Fang 12/15/2020 17:02>
 
 ;;; Commentary:
 
@@ -42,8 +42,7 @@
 ;;; package
 
 (require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (setq package-user-dir "~/.emacs.d/emacs-extensions/elpa")
 (package-initialize)
 
@@ -256,7 +255,6 @@
       backup-by-copying-when-linked t)
 
 ;;; bbdb & bbdb-vcard-export
-(add-to-list 'load-path (concat my-extension-path "bbdb/lisp"))
 (when (require 'bbdb nil t)
   (require 'qp)
   (bbdb-initialize 'gnus 'message)
@@ -1080,7 +1078,7 @@ See URL `https://github.com/TreeRex/rnc-mode' and
 
 ;;; save minibuffer history and place of cursor between sessions
 (savehist-mode t)
-(setq-default save-place t)
+(setq-default save-place-mode t)
 (require 'saveplace)
 
 (setq scroll-margin 0 scroll-conservatively 100) ;  scroll-step ?
