@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 12/15/2020 17:02>
+;; Modified: Lungang Fang 12/23/2020 09:43>
 
 ;;; Commentary:
 
@@ -372,13 +372,58 @@
 (dolist (hook '(c-mode-hook c++-mode-hook java-mode-hook))
   (add-hook hook 'imenu-add-menubar-index))
 
-;; calendar for Chinese
+;;; Calendar Chinese & Aussie NSW Holidays
 (when (require 'cal-china-x nil t)
+  (defun holiday-new-year-bank-holiday ()
+    "This & next copied from https://emacs.stackexchange.com/a/45352/9670"
+    (let ((m displayed-month) (y displayed-year))
+      (calendar-increment-month m y 1)
+      (when (<= m 3)
+        (let ((d (calendar-day-of-week (list 1 1 y))))
+          (cond ((= d 6)
+                 (list (list (list 1 3 y)
+                             "NSW: New Year's Day (day in lieu)")))
+                ((= d 0)
+                 (list (list (list 1 2 y)
+                             "NSW: New Year's Day (day in lieu)"))))))))
+  (defun holiday-christmas-bank-holidays ()
+    (let ((m displayed-month) (y displayed-year))
+      (calendar-increment-month m y -1)
+      (when (>= m 10)
+        (let ((d (calendar-day-of-week (list 12 25 y))))
+          (cond ((= d 5)
+                 (list (list (list 12 28 y)
+                             "NSW: Boxing Day (day in lieu)")))
+                ((= d 6)
+                 (list (list (list 12 27 y)
+                             "NSW: Boxing Day (day in lieu)")
+                       (list (list 12 28 y)
+                             "NSW: Christmas Day (day in lieu)")))
+                ((= d 0)
+                 (list (list (list 12 27 y)
+                             "NSW: Christmas Day (day in lieu)"))))))))
   (setq mark-holidays-in-calendar t
-        ;; calendar-chinese-all-holidays-flag t
-        calendar-holidays
-        (append cal-china-x-chinese-holidays
-                holiday-christian-holidays)))
+        holiday-nsw-holidays '((holiday-fixed 1 1 "NSW: New Year's Day")
+                               (holiday-new-year-bank-holiday)
+                               (holiday-fixed 1 26 "NSW: Austrlia Day")
+                               (holiday-easter-etc -2 "NSW: Good Friday")
+                               (holiday-easter-etc -1 "NSW: Easter Saturday")
+                               (holiday-easter-etc 0 "NSW: Easter Sunday")
+                               (holiday-easter-etc 1 "NSW: Easter Monday")
+                               (holiday-easter-etc 1 "NSW: Easter Monday")
+                               (holiday-fixed 4 25 "NSW: Anzac Day")
+                               (holiday-float 6 1 2 "NSW: Queen's Birthday")
+                               (holiday-float 10 1 1 "NSW: Labour Day")
+                               (holiday-fixed 12 25 "NSW: Christmas Day")
+                               (holiday-fixed 12 26 "NSW: Boxing Day")
+                               (holiday-christmas-bank-holidays))
+        holiday-other-holidays '((holiday-lunar 1 15 "元宵节")
+                                 (holiday-fixed 10 31 "Halloween"))
+        calendar-holidays (append
+                           cal-china-x-chinese-holidays
+                           holiday-nsw-holidays
+                           holiday-other-holidays
+                           )))
 
 ;;; ccrypt: auto encrypt/decrypt files using ccrypt
 (require 'ps-ccrypt nil t)
