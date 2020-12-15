@@ -66,10 +66,16 @@
       user-mail-address my-email
       ange-ftp-default-user my-net-id
       ;; url-proxy-services '(("http" . "localhost:8888"))
-      calendar-latitude 36.06
-      calendar-longitude 120.27
-      calendar-location-name "QingDao"
-      cn-weather-city "青岛"
+
+      ;; calendar-latitude 36.11605374450079
+      ;; calendar-longitude 120.45061678303212
+      ;; calendar-location-name "尚东区"
+      ;; cn-weather-city "青岛"
+
+      calendar-latitude -33.75149418492999
+      calendar-longitude 150.97878219898155
+      calendar-location-name "Delaigh Ave."
+
       ;; world time 'M-x display-time-world', /usr/share/zoneinfo
       display-time-world-time-format "%Z\t%z\t%a %d %b %R"
       display-time-world-list '(("Australia/Sydney" "Sydney")
