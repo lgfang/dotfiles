@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 12/23/2020 09:43>
+;; Modified: Lungang Fang 12/23/2020 09:45>
 
 ;;; Commentary:
 
@@ -1594,6 +1594,15 @@ string,refer to format-time-string."
                (file-name (format "/%s:%s@%s:/" protocol user ip)))
 
           (ffap file-name))))))
+
+;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
+(defun unfill-paragraph (&optional region)
+  "Takes a multi-line paragraph and makes it into a single line of text."
+  (interactive (progn (barf-if-buffer-read-only) '(t)))
+  (let ((fill-column (point-max))
+        ;; This would override `fill-column' if it's an integer.
+        (emacs-lisp-docstring-fill-column t))
+    (fill-paragraph nil region)))
 
 ;;; ------ end MyFunction ------
 (load "tmp.el" t nil nil)
