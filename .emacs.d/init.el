@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 01/09/2020 14:44>
+;; Modified: Lungang Fang 12/23/2020 09:45>
 
 ;;; Commentary:
 
@@ -42,8 +42,7 @@
 ;;; package
 
 (require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (setq package-user-dir "~/.emacs.d/emacs-extensions/elpa")
 (package-initialize)
 
@@ -67,10 +66,16 @@
       user-mail-address my-email
       ange-ftp-default-user my-net-id
       ;; url-proxy-services '(("http" . "localhost:8888"))
-      calendar-latitude 36.06
-      calendar-longitude 120.27
-      calendar-location-name "QingDao"
-      cn-weather-city "青岛"
+
+      ;; calendar-latitude 36.11605374450079
+      ;; calendar-longitude 120.45061678303212
+      ;; calendar-location-name "尚东区"
+      ;; cn-weather-city "青岛"
+
+      calendar-latitude -33.75149418492999
+      calendar-longitude 150.97878219898155
+      calendar-location-name "Delaigh Ave."
+
       ;; world time 'M-x display-time-world', /usr/share/zoneinfo
       display-time-world-time-format "%Z\t%z\t%a %d %b %R"
       display-time-world-list '(("Australia/Sydney" "Sydney")
@@ -256,7 +261,6 @@
       backup-by-copying-when-linked t)
 
 ;;; bbdb & bbdb-vcard-export
-(add-to-list 'load-path (concat my-extension-path "bbdb/lisp"))
 (when (require 'bbdb nil t)
   (require 'qp)
   (bbdb-initialize 'gnus 'message)
@@ -368,13 +372,58 @@
 (dolist (hook '(c-mode-hook c++-mode-hook java-mode-hook))
   (add-hook hook 'imenu-add-menubar-index))
 
-;; calendar for Chinese
+;;; Calendar Chinese & Aussie NSW Holidays
 (when (require 'cal-china-x nil t)
+  (defun holiday-new-year-bank-holiday ()
+    "This & next copied from https://emacs.stackexchange.com/a/45352/9670"
+    (let ((m displayed-month) (y displayed-year))
+      (calendar-increment-month m y 1)
+      (when (<= m 3)
+        (let ((d (calendar-day-of-week (list 1 1 y))))
+          (cond ((= d 6)
+                 (list (list (list 1 3 y)
+                             "NSW: New Year's Day (day in lieu)")))
+                ((= d 0)
+                 (list (list (list 1 2 y)
+                             "NSW: New Year's Day (day in lieu)"))))))))
+  (defun holiday-christmas-bank-holidays ()
+    (let ((m displayed-month) (y displayed-year))
+      (calendar-increment-month m y -1)
+      (when (>= m 10)
+        (let ((d (calendar-day-of-week (list 12 25 y))))
+          (cond ((= d 5)
+                 (list (list (list 12 28 y)
+                             "NSW: Boxing Day (day in lieu)")))
+                ((= d 6)
+                 (list (list (list 12 27 y)
+                             "NSW: Boxing Day (day in lieu)")
+                       (list (list 12 28 y)
+                             "NSW: Christmas Day (day in lieu)")))
+                ((= d 0)
+                 (list (list (list 12 27 y)
+                             "NSW: Christmas Day (day in lieu)"))))))))
   (setq mark-holidays-in-calendar t
-        ;; calendar-chinese-all-holidays-flag t
-        calendar-holidays
-        (append cal-china-x-chinese-holidays
-                holiday-christian-holidays)))
+        holiday-nsw-holidays '((holiday-fixed 1 1 "NSW: New Year's Day")
+                               (holiday-new-year-bank-holiday)
+                               (holiday-fixed 1 26 "NSW: Austrlia Day")
+                               (holiday-easter-etc -2 "NSW: Good Friday")
+                               (holiday-easter-etc -1 "NSW: Easter Saturday")
+                               (holiday-easter-etc 0 "NSW: Easter Sunday")
+                               (holiday-easter-etc 1 "NSW: Easter Monday")
+                               (holiday-easter-etc 1 "NSW: Easter Monday")
+                               (holiday-fixed 4 25 "NSW: Anzac Day")
+                               (holiday-float 6 1 2 "NSW: Queen's Birthday")
+                               (holiday-float 10 1 1 "NSW: Labour Day")
+                               (holiday-fixed 12 25 "NSW: Christmas Day")
+                               (holiday-fixed 12 26 "NSW: Boxing Day")
+                               (holiday-christmas-bank-holidays))
+        holiday-other-holidays '((holiday-lunar 1 15 "元宵节")
+                                 (holiday-fixed 10 31 "Halloween"))
+        calendar-holidays (append
+                           cal-china-x-chinese-holidays
+                           holiday-nsw-holidays
+                           holiday-other-holidays
+                           )))
 
 ;;; ccrypt: auto encrypt/decrypt files using ccrypt
 (require 'ps-ccrypt nil t)
@@ -1080,7 +1129,7 @@ See URL `https://github.com/TreeRex/rnc-mode' and
 
 ;;; save minibuffer history and place of cursor between sessions
 (savehist-mode t)
-(setq-default save-place t)
+(setq-default save-place-mode t)
 (require 'saveplace)
 
 (setq scroll-margin 0 scroll-conservatively 100) ;  scroll-step ?
@@ -1545,6 +1594,15 @@ string,refer to format-time-string."
                (file-name (format "/%s:%s@%s:/" protocol user ip)))
 
           (ffap file-name))))))
+
+;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
+(defun unfill-paragraph (&optional region)
+  "Takes a multi-line paragraph and makes it into a single line of text."
+  (interactive (progn (barf-if-buffer-read-only) '(t)))
+  (let ((fill-column (point-max))
+        ;; This would override `fill-column' if it's an integer.
+        (emacs-lisp-docstring-fill-column t))
+    (fill-paragraph nil region)))
 
 ;;; ------ end MyFunction ------
 (load "tmp.el" t nil nil)
