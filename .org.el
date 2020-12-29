@@ -126,7 +126,7 @@
          :sitemap-file-entry-format "%t")
 
         ("blog-attachments"
-         :base-directory "~/myblog"
+         :base-directory "~/myblog/images"
          :base-extension "png\\|jpg"
          :recursive t
          :publishing-directory "~/websites/blog/images"

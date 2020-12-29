@@ -6,7 +6,8 @@
 # Modified`(format ": %s %s" (user-full-name) (format-time-string "%m/%d/%Y %H:%M>"))`
 
 #+OPTIONS: toc:nil num:nil
-#+BIND: org-html-link-home "`(replace-regexp-in-string "/home/lungangf/myblog" "http://lgfang.github.io/images" default-directory t t)`"
+#+BIND: org-html-link-home "`(replace-regexp-in-string (expand-file-name "~/myblog") my-org-html-link-home default-directory t t)`"
+
 
 #+TITLE: ${1:title}
 
