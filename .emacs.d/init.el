@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 12/23/2020 09:45>
+;; Modified: Lungang Fang 02/19/2021 09:51>
 
 ;;; Commentary:
 
@@ -409,7 +409,6 @@
                                (holiday-easter-etc -2 "NSW: Good Friday")
                                (holiday-easter-etc -1 "NSW: Easter Saturday")
                                (holiday-easter-etc 0 "NSW: Easter Sunday")
-                               (holiday-easter-etc 1 "NSW: Easter Monday")
                                (holiday-easter-etc 1 "NSW: Easter Monday")
                                (holiday-fixed 4 25 "NSW: Anzac Day")
                                (holiday-float 6 1 2 "NSW: Queen's Birthday")
