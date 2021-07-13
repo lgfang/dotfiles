@@ -23,7 +23,7 @@
     st = status
 
     lg1 = log --graph --abbrev-commit --decorate --pretty=oneline
-    lg2 = log --graph --abbrev-commit --pretty=format:'%C(yellow)%h%Creset - %C(green)%s %C(cyan)<%an@%cr> %C(magenta)%d%Creset'
+    lg2 = log --graph --abbrev-commit --pretty=format:'%C(yellow)%h%Creset - %C(green)%s %C(cyan)<%an@%cd> %C(magenta)%d%Creset' --date=iso-local
     lg = log --graph --abbrev-commit --pretty=format:'%C(cyan)%h%C(reset) - %C(green)%s %C(dim white)- %cr (%an)%C(reset) %C(yellow)%d'
     lg4 = log --graph --abbrev-commit  --format=format:'%C(bold green)%h%C(reset) - %C(bold cyan)%s%n          %C(white)%aD%C(dim white) - %an%C(reset)%C(bold yellow)%d'
     # lg = ! git lg3    # This does not work well when evoked as 'git lg path/to/file'
