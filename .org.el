@@ -4,6 +4,14 @@
 (require 'org nil t)
 (require 'ox-confluence nil t)
 
+;; Org mode -> reveal.js presentations
+(require 'ox-reveal)
+;; Ensure the following are done
+;; - `brew install node'
+;; - `git clone https://github.com/hakimel/reveal.js.git ~/source/reveal.js'
+(setq org-reveal-title-slide 'auto
+      org-reveal-root (file-name-as-directory (expand-file-name "~/source/reveal.js")))
+
 (setq org-hide-leading-stars nil
       org-startup-folded t
       org-cycle-include-plain-lists t
