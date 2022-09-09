@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 12/18/2019 15:24>
+# Modified: Lungang Fang 09/09/2022 16:45>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -268,6 +268,19 @@ function gerrit {
     git push origin "HEAD:refs/for/$branch"
 }
 
+#** json/jq
+# convert bson dump to valid json for jq
+function bson2json {
+    # usage: cat test.json | bson2json | jq '...'
+    sed -e 's/BinData([0-9]*,\([^)]*\))/\1/g' \
+        -e 's/Timestamp(\([0-9]*\)[^)]*)/\1/g' \
+        -e 's/ISODate("\([^"]*\)"[^)]*)/"\1"/g' \
+        -e 's/NumberLong("\([^"]*\)"[^)]*)/"\1"/g' \
+        -e 's/NumberLong(\([^)]*\))/"\1"/g' \
+        -e 's/ObjectId("\([^"]*\)"[^)]*)/"\1"/g' \
+        -e 's/LUUID("\([^"]*\)"[^)]*)/"\1"/g'\
+        -e 's/UUID("\([^"]*\)"[^)]*)/"\1"/g'
+}
 #** kubenetes
 
 # kubectl autocomplete if this command is installed
