@@ -1,5 +1,4 @@
-(add-to-list 'load-path (concat my-extension-path "org-mode/lisp"))
-(add-to-list 'load-path (concat my-extension-path "org-mode/contrib/lisp"))
+;;; Use built-in org mode, remember to M-x package-install org-contrib
 
 (require 'org nil t)
 (require 'ox-confluence nil t)
@@ -175,8 +174,9 @@
 (add-to-list 'auto-mode-alist
              '("\\.\\(blog\\|org\\|lgf\\|tkt\\)$" . org-mode))
 
-(add-to-list 'org-structure-template-alist
-             '("n" "#+BEGIN_COMMENT\n?\n#+END_COMMENT" ""))
+;; Enable structure templates, i.e. type `< s TAB' to insert #+begin_src etc.
+(require 'org-tempo)
+(add-to-list 'org-structure-template-alist '("st" . "src text"))
 
 (add-hook 'remember-mode-hook 'org-remember-apply-template)
 
@@ -198,7 +198,7 @@
         (creator (plist-get plist :creator))
         (time (format-time-string org-html-metadata-timestamp-format)))
     (format
-     "
+     "¯
      <p>
      <span class=\"date\">Created: %s</span>
      by <span class=\"creator\">%s</span>
