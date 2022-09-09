@@ -1,4 +1,4 @@
-# Modified: Lungang Fang 09/07/2018 10:20>
+# Modified: Lungang Fang 09/09/2022 16:28>
 
 #* source in .bashrc
 
@@ -6,9 +6,15 @@
 
 #* Env variables
 
-# For OS X homebrew coreutils
-PATH=/usr/local/opt/coreutils/libexec/gnubin:$PATH
-MANPATH=/usr/local/opt/coreutils/libexec/gnuman:$MANPATH
+# For OS X homebrew commands
+PATH="/opt/homebrew/bin:$PATH"
+PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+MANPATH=/opt/homebrew/share/man:$MANPATH
+
+# For OS X homebrew openssl
+PATH=/usr/local/opt/openssl@1.1/bin:$PATH
+
+export PATH=$HOME/Library/Python/2.7/bin:$PATH # for AWS cli
 
 export PATH=$HOME/.local/bin:$PATH
 export MANPATH=$HOME/.local/share/man:$MANPATH
