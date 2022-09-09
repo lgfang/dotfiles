@@ -175,8 +175,9 @@
 (add-to-list 'auto-mode-alist
              '("\\.\\(blog\\|org\\|lgf\\|tkt\\)$" . org-mode))
 
-(add-to-list 'org-structure-template-alist
-             '("n" "#+BEGIN_COMMENT\n?\n#+END_COMMENT" ""))
+;; Enable structure templates, i.e. type `< s TAB' to insert #+begin_src etc.
+(require 'org-tempo)
+(add-to-list 'org-structure-template-alist '("st" . "src text"))
 
 (add-hook 'remember-mode-hook 'org-remember-apply-template)
 
