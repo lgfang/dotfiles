@@ -1,5 +1,4 @@
-(add-to-list 'load-path (concat my-extension-path "org-mode/lisp"))
-(add-to-list 'load-path (concat my-extension-path "org-mode/contrib/lisp"))
+;;; Use built-in org mode, remember to M-x package-install org-contrib
 
 (require 'org nil t)
 (require 'ox-confluence nil t)
@@ -199,7 +198,7 @@
         (creator (plist-get plist :creator))
         (time (format-time-string org-html-metadata-timestamp-format)))
     (format
-     "
+     "¯
      <p>
      <span class=\"date\">Created: %s</span>
      by <span class=\"creator\">%s</span>
