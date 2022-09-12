@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 02/19/2021 09:51>
+;; Modified: Lungang Fang 09/12/2022 18:05>
 
 ;;; Commentary:
 
@@ -1605,3 +1605,6 @@ string,refer to format-time-string."
 
 ;;; ------ end MyFunction ------
 (load "tmp.el" t nil nil)
+(custom-set-variables
+ '(package-selected-packages
+   '(org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode jedi-direx ht go-mode flycheck f)))
