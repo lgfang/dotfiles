@@ -286,7 +286,7 @@ function bson2json {
         -e 's/LUUID("\([^"]*\)"[^)]*)/"\1"/g'\
         -e 's/UUID("\([^"]*\)"[^)]*)/"\1"/g'
 }
-#** kubenetes
+#** kubernetes
 
 # kubectl autocomplete if this command is installed
 command -v kubectl >/dev/null && source <(kubectl completion bash)
@@ -300,8 +300,18 @@ function kube_4_ps1 {
     local kube_context="$(kubectl config current-context 2>/dev/null)"
     local kube_namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
     if [ -n "$kube_context" -o -n "$kube_namespace" ]; then
-	echo "kube:$kube_context.$kube_namespace"
+        echo "kube:$kube_context.$kube_namespace"
     fi
+}
+
+function kns {
+    # set namespace. It is not worthwhile to `brew install kubectx' for kubens
+    if [[ -z "$1" ]]; then
+        echo "Usage: kns <namespace>" >&2
+        return 1
+    fi
+
+    kubectl config set-context $(kubectl config current-context) --namespace="$1"
 }
 
 #*** GKE
