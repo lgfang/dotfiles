@@ -1,4 +1,4 @@
-# Modified: Lungang Fang 09/09/2022 16:28>
+# Modified: Lungang Fang 10/10/2022 17:58>
 
 #* source in .bashrc
 
@@ -27,8 +27,3 @@ export HISTSIZE=500
 # To get java home after installing JDK8, ' /usr/libexec/java_home -v 1.8'
 export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home"
 # export JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"
-
-#* load a variety of stuff
-if declare -f loaddm >/dev/null; then
-    loaddm
-fi
