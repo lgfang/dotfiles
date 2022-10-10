@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 09/09/2022 16:49>
+# Modified: Lungang Fang 10/10/2022 18:01>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -67,7 +67,6 @@ fi
 alias hex='od -Ax -tx1z -v'
 alias ls='ls --color=auto'
 alias rm='rm -I'                  # IMHO, much better than 'rm -i'
-alias scp='scp -o LogLevel=error' # don't print motd etc.
 alias lsmnt='mount | column -t'   # a better format
 
 #** command history
