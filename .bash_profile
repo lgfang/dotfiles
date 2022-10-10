@@ -1,4 +1,4 @@
-# Modified: Lungang Fang 10/10/2022 17:58>
+# Modified: Lungang Fang 10/10/2022 18:20>
 
 #* source in .bashrc
 
@@ -27,3 +27,7 @@ export HISTSIZE=500
 # To get java home after installing JDK8, ' /usr/libexec/java_home -v 1.8'
 export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home"
 # export JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"
+
+# Attach to (or start) a tmux session when opening a new terminal
+[ -n "$TMUX" ] || tg
+

@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 10/10/2022 18:01>
+# Modified: Lungang Fang 10/10/2022 18:17>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -374,6 +374,11 @@ function tg { # Attach to specified tmux session
 
     # A simple/naive replacement of this "bloated" function:
     # tmux -2 attach -t "$session_name" || tmux -2 new -s "$session_name"
+
+    if ! command -v tmux >/dev/null; then
+        echo "Warn: tmux could not be found, not starting any tmux session"
+        return
+    fi
 
     local usage="tg [-d] [session_name]"
     local detach_others=""
