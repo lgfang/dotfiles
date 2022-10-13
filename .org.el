@@ -1,7 +1,18 @@
 ;;; Use built-in org mode, remember to M-x package-install org-contrib
 
 (require 'org nil t)
-(require 'ox-confluence nil t)
+
+(when (require 'ox-confluence nil t)
+
+  ;; Confluence wiki/jira does not remove newlines, so need to unfill
+  ;; paragraphs in org-confluence-export-as-confluence
+
+  (defun org-confluence-paragraph (paragraph contents info)
+    "An emulation of org-gfm-paragraph"
+    (unless (plist-get info :preserve-breaks)
+      (setq contents (concat (mapconcat 'identity (split-string contents) " ") "\n")))
+    contents)
+  )
 
 ;; Org mode -> reveal.js presentations
 (require 'ox-reveal)
@@ -189,9 +200,7 @@
                        (string-match "\\.tkt\\'" buffer-file-name))
               ;; turn on fly spell for tkt (ticket)
               (flyspell-mode 1)
-              (setq-local org-export-with-toc nil)
-              (setq-local org-export-preserve-breaks t)
-              (visual-line-mode 1))))
+              (setq-local org-export-with-toc nil))))
 
 (defun get-intranet-postamble (plist)
   (let ((title (plist-get plist :title))
