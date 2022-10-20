@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 10/10/2022 18:17>
+# Modified: Lungang Fang 10/20/2022 19:05>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -304,13 +304,21 @@ function kube_4_ps1 {
 }
 
 function kns {
-    # set namespace. It is not worthwhile to `brew install kubectx' for kubens
-    if [[ -z "$1" ]]; then
-        echo "Usage: kns <namespace>" >&2
-        return 1
-    fi
+    # a function to set namespace. It is not worthwhile to `brew install kubectx' for kubens
 
-    kubectl config set-context $(kubectl config current-context) --namespace="$1"
+    if [[ -n "$2" ]]; then
+        # Two or more parameters, error out
+        echo "Usage: kns [namespace]" >&2
+        return 1
+    elif [[ -z "$1" ]]; then
+        # No namespace specified, list existing ones
+        kubectl get namespace
+    elif ! kubectl get namespace "$1" >/dev/null 2>&1; then
+        echo "Error: namespace '$1' does not exist" >&2
+        return 1
+    else
+        kubectl config set-context $(kubectl config current-context) --namespace="$1"
+    fi
 }
 
 #*** GKE
