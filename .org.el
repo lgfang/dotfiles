@@ -187,6 +187,8 @@
 
 ;; Enable structure templates, i.e. type `< s TAB' to insert #+begin_src etc.
 (require 'org-tempo)
+(add-to-list 'org-structure-template-alist '("sb" . "src bash"))
+(add-to-list 'org-structure-template-alist '("sj" . "src javascript"))
 (add-to-list 'org-structure-template-alist '("st" . "src text"))
 
 (add-hook 'remember-mode-hook 'org-remember-apply-template)
