@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 09/12/2022 18:05>
+;; Modified: Lungang Fang 02/03/2023 09:22>
 
 ;;; Commentary:
 
@@ -1436,7 +1436,15 @@ Cambridge, MA 02139, USA.
 
 (define-auto-insert
   (cons "\\.py\\'" "Python Script")
-  'lgfang-copy-left t)
+  '(insert
+    "#!/usr/bin/env python3\n\n"
+    "# Created:  " (user-full-name) " " (format-time-string "%m/%d/%Y") "\n"
+    "# Modified: >\n\n"
+    "import unittest\n\n"
+    "if __name__ == '__main__':\n"
+    "    unittest.main()\n"
+    )
+  t)
 
 (define-auto-insert
   (cons "\\.sh\\'" "Shell Script")
