@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 02/03/2023 09:22>
+;; Modified: Lungang Fang 2023/03/09 15:24>
 
 ;;; Commentary:
 
@@ -1233,7 +1233,7 @@ selective-display"
 
 ;;; time stamp
 (add-hook 'write-file-hooks 'time-stamp)
-(setq time-stamp-format "%U %02m/%02d/%:y %02H:%02M"
+(setq time-stamp-format "%U %Y-%02m-%02dT%02H:%02M:%02S%5z"
       time-stamp-start "\\(Modified\\|last-edit\\): *\\\\?"
       time-stamp-end "\\\\?>"
       ;; no Chinese chars in time stamps even in Chinese locale.
@@ -1394,7 +1394,7 @@ selective-display"
      "\\file Name: "
      (file-name-nondirectory buffer-file-name) "\n"
      "Created:  " (user-full-name) " "
-     (format-time-string "%m/%d/%Y") "\n"
+     (format-time-string "%Y-%m-%d") "\n"
      "Modified: >\n"
      "\n"
      "\\brief\n"
@@ -1438,7 +1438,7 @@ Cambridge, MA 02139, USA.
   (cons "\\.py\\'" "Python Script")
   '(insert
     "#!/usr/bin/env python3\n\n"
-    "# Created:  " (user-full-name) " " (format-time-string "%m/%d/%Y") "\n"
+    "# Created:  " (user-full-name) " " (format-time-string "%Y-%m-%d") "\n"
     "# Modified: >\n\n"
     "import unittest\n\n"
     "if __name__ == '__main__':\n"
@@ -1497,7 +1497,7 @@ rfcview.el a try."
 newsgroup: gnu.emacs.help.  To customize format of date
 string,refer to format-time-string."
   (interactive)
-  (insert (format-time-string "%m/%d/%Y")))
+  (insert (format-time-string "%Y-%m-%d")))
 
 (defun lgfang-mode-line-all ()              ; long/long/ago
   "Sometimes there are too many infomation in mode line to show
