@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023/03/09 15:24>
+;; Modified: Lungang Fang 2023-03-13T11:42:51+1100>
 
 ;;; Commentary:
 
@@ -440,7 +440,7 @@ tmux's buffer"
     (delete-file file)))
 
 (defun lgfang-get-from-tmux ()
-  "Get current tmux buffer"
+  "Get current tmux buffer."
   (interactive)
   (call-process "tmux" nil t nil "show-buffer"))
 
@@ -625,7 +625,7 @@ tmux's buffer"
 (when (and (>= emacs-major-version 23) window-system)
 
   ;; Recommended English fonts: "consolas", "DejaVu Sans Mono", "monofur"
-  (set-face-attribute 'default nil :font "monaco-15:weight=normal")
+  (set-face-attribute 'default nil :font "monaco-16:weight=normal")
 
   ;; Recommended Chinese fonts: "SimSun", "Microsoft YaHei", "WenQuanYi
   ;; Micro Hei Mono"
