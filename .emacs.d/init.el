@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-03-13T11:42:51+1100>
+;; Modified: Lungang Fang 2023-03-14T15:47:33+1100>
 
 ;;; Commentary:
 
@@ -649,6 +649,14 @@ tmux's buffer"
       (setq up (kbd "<C-mouse-4>") down (kbd "<C-mouse-5>")))
     (define-key global-map up 'text-scale-increase)
     (define-key global-map down 'text-scale-decrease))
+  )
+;; Emoji ZWJ (Zero Width Joiner) handling. Though not strictly a font thing, put
+;; them together as they both are about rendering contents.
+(unless (display-graphic-p)
+  ;; Disable auto-complete-mode if running in a terminal as most terminal
+  ;; emulators cannot handle Emoji ZWJ. NOTE: disabling it on the fly does not
+  ;; work very well, must restart the emacs.
+  (setq-default auto-composition-mode nil)
   )
 
 ;;; frame position/size; emacs22 or later supports 'emacs --fullscreen'
