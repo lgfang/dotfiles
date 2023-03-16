@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-03-14T15:47:33+1100>
+;; Modified: Lungang Fang 2023-03-16T22:07:10+1100>
 
 ;;; Commentary:
 
@@ -103,11 +103,10 @@
 ;;; global key bindings
 
 (when (eq system-type 'darwin)          ; OSX
-
-  ;; (if (display-graphic-p)
-  ;;     ;; Running Emacs with OSX native GUI, remap modifier within Emacs. Only do
-  ;;     ;; it when keyboard modifiers are not remapped globally.
-  ;;     (setq mac-option-modifier 'ctrl mac-command-modifier 'meta))
+  ;; Not all Emacs builds support this modifier remap. At the moment, it works
+  ;; for my GUI Emacs. For terminal emacs, please remap modifiers in
+  ;; corresponding terminal emulator instead.
+  (setq mac-option-modifier 'control mac-command-modifier 'meta)
 
   (unless (display-graphic-p)
     ;; In OSX terminal, trackpad gestures for up/down mapped to mouse-4/5
