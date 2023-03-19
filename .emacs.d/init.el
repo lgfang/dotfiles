@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-03-16T22:07:10+1100>
+;; Modified: Lungang Fang 2023-03-19T22:40:35+1100>
 
 ;;; Commentary:
 
@@ -450,7 +450,8 @@ tmux's buffer"
 ;; From/to system clipboard. To use it in tmux, upgrade to tmux 2.6+.
 (when (eq system-type 'darwin)
   (defun copy-from-osx ()
-    (shell-command-to-string "pbpaste"))
+    (let ((tramp-mode nil) (default-directory "~"))
+      (shell-command-to-string "pbpaste")))
 
   (defun paste-to-osx (text &optional push)
     (let ((process-connection-type nil))
