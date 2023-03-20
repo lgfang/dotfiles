@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-03-19T22:40:35+1100>
+;; Modified: Lungang Fang 2023-03-20T12:37:04+1100>
 
 ;;; Commentary:
 
@@ -60,21 +60,12 @@
 ;;; Personal Info
 
 ;; Confidential info saved in this file.
-(load (concat my-personal-path "my-confidential") t nil nil)
+(unless (load (concat my-personal-path "my-confidential") t nil nil)
+  ;; If this file doesn't exist, set dumb values to allow emacs to start.
+  (setq user-full-name "Full Name" user-mail-address "you@email.com"))
 
-(setq user-full-name my-full-name
-      user-mail-address my-email
-      ange-ftp-default-user my-net-id
+(setq
       ;; url-proxy-services '(("http" . "localhost:8888"))
-
-      ;; calendar-latitude 36.11605374450079
-      ;; calendar-longitude 120.45061678303212
-      ;; calendar-location-name "尚东区"
-      ;; cn-weather-city "青岛"
-
-      calendar-latitude -33.75149418492999
-      calendar-longitude 150.97878219898155
-      calendar-location-name "Delaigh Ave."
 
       ;; world time 'M-x display-time-world', /usr/share/zoneinfo
       display-time-world-time-format "%Z\t%z\t%a %d %b %R"
@@ -88,9 +79,6 @@
                                 ("Asia/Tel_Aviv" "Tel Aviv")
                                 ("Europe/London" "Dublin"))
       )
-
-;; Actual values of confidential information are in this file
-
 
 ;;; Language Environment - no longer needed
 
@@ -1057,27 +1045,29 @@ message in the minibuffer"
         (shell-command-on-region beg end "pythontidy" nil t)))))
 
 ;;; RCIRC - replaces ERC
-;; All confidential information defined in another file
-(setq rcirc-server-alist `((,slack-server
-                            :port ,slack-port
-                            :encryption tls
-                            :nick ,slack-nick
-                            :password ,(concat slack-pass "-no_mpdm_greet")
-                            :channels ("#tse-notifications"))
-                           ("irc.freenode.net"
-                            :channels ("#emacs" "#rcirc" "#mongodb"))
-                           )
-      ;; register nick name: https://freenode.net/kb/answer/registration
-      rcirc-authinfo `(("freenode" nickserv ,my-net-id ,my-pub-passwd))
-      rcirc-omit-responses '("JOIN" "PART" "QUIT" "NICK" "AWAY")
-      ;; rcirc-nick-completion-format "@%s"
-      rcirc-fill-flag nil
-      rcirc-default-nick my-net-id)
+(when (require 'my-confidential nil t)
+  ;; configure RCIRC only when my confidential information is available.
+  (setq rcirc-server-alist `((,slack-server
+                              :port ,slack-port
+                              :encryption tls
+                              :nick ,slack-nick
+                              :password ,(concat slack-pass "-no_mpdm_greet")
+                              :channels ("#tse-notifications"))
+                             ("irc.freenode.net"
+                              :channels ("#emacs" "#rcirc" "#mongodb"))
+                             )
+        ;; register nick name: https://freenode.net/kb/answer/registration
+        rcirc-authinfo `(("freenode" nickserv ,my-net-id ,my-pub-passwd))
+        rcirc-omit-responses '("JOIN" "PART" "QUIT" "NICK" "AWAY")
+        ;; rcirc-nick-completion-format "@%s"
+        rcirc-fill-flag nil
+        rcirc-default-nick my-net-id)
 
-(add-hook 'rcirc-mode-hook
-          (lambda ()
-            (rcirc-track-minor-mode 1)
-            (flyspell-mode 1)))
+  (add-hook 'rcirc-mode-hook
+   (lambda ()
+     (rcirc-track-minor-mode 1)
+     (flyspell-mode 1)))
+  )
 
 ;;; recently opened file
 (require 'recentf)
