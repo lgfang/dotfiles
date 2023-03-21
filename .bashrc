@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 10/20/2022 19:05>
+# Modified: Lungang Fang 2023-03-21T14:06:07+1100>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -65,6 +65,8 @@ fi
 
 #* aliases and functions (note: prefer functions than aliases)
 alias hex='od -Ax -tx1z -v'
+alias no_color='sed -e "s/\x1b\[[0-9;]*m//g"' # remove escape sequences for ANSI
+                                              # color etc.
 alias ls='ls --color=auto'
 alias rm='rm -I'                  # IMHO, much better than 'rm -i'
 alias lsmnt='mount | column -t'   # a better format
