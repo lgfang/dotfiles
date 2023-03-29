@@ -282,17 +282,6 @@ according to modification time is good enough."
       org-ditaa-jar-path (concat my-extension-path "ditaa.jar")
       org-plantuml-jar-path (concat my-extension-path "plantuml.jar"))
 
-(defun add-to-project-list ()
-  (interactive)
-  (let ((tags))
-    (save-excursion
-      (org-agenda-goto)
-      (org-todo 'none)
-      (setq tags (org-get-tags))
-      (add-to-list 'tags "project")
-      (org-set-tags-to tags)
-      (message "Task added to the project list"))))
-
 (defun export-ticket-comment ()
   "Run a built-in export function according to buffer/file name."
   (interactive)
