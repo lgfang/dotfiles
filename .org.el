@@ -74,14 +74,12 @@
                    (org-agenda-skip-function
                     '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
                    (org-agenda-files '("~/mynotes/personal/professional.gtd"))))))
-        ("p" "Projects"
-         ((tags "project"
+        ("w" "PENDING items"
+         ((todo "WAIT")
+          (tags "project"
                 ((org-agenda-overriding-header "Active project list:")
                  (org-agenda-skip-function
-                  '(org-agenda-skip-entry-if
-                    'todo
-                    '("HOLD" "MAYBE" "DONE" "CANCEL")))))))
-        ("w" "PENDING items" ((todo "WAIT")))
+                  '(org-agenda-skip-entry-if 'todo '("HOLD" "MAYBE" "DONE" "CANCEL")))))))
         ("h" "HOLD/MAYBE items"
          ((todo "HOLD") (todo "MAYBE")))
         ("b" "My bookmark" search nil
