@@ -80,6 +80,8 @@
                 ((org-agenda-overriding-header "Active project list:")
                  (org-agenda-skip-function
                   '(org-agenda-skip-entry-if 'todo '("HOLD" "MAYBE" "DONE" "CANCEL")))))))
+        ("r" "Report work 1 week" tags "+CLOSED>\"<-7d>\""
+         ((org-agenda-files '("~/mynotes/personal/professional.gtd"))))
         ("h" "HOLD/MAYBE items"
          ((todo "HOLD") (todo "MAYBE")))
         ("b" "My bookmark" search nil
