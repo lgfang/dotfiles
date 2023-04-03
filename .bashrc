@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 2023-03-22T22:23:34+1100>
+# Modified: Lungang Fang 2023-04-03T11:55:49+1000>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -492,7 +492,7 @@ function to_tmux_buffer {
     done
 }
 
-function clean_tmux_buffers {
+function tmux_clean_buffers {
     # Tmux paste buffer is mainly for copy/paste between CLI. If a large chunk
     # of documentation or source code is saved into a tmux paste buffer. Pasting
     # such content into CLI (or even editors) via tmux can cause issues. Run
