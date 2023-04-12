@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-04-03T11:15:45+1000>
+;; Modified: Lungang Fang 2023-04-12T17:50:08+1000>
 
 ;;; Commentary:
 
@@ -136,11 +136,11 @@
 (define-key global-map (kbd "C-}") 'enlarge-window-horizontally)
 (define-key global-map (kbd "C-^") 'enlarge-window)
 
-;; Navgate using windmove
-(define-key global-map (kbd "C-<up>"   ) 'windmove-up)
-(define-key global-map (kbd "C-<down>" ) 'windmove-down)
-(define-key global-map (kbd "C-<right>" ) 'windmove-right)
-(define-key global-map (kbd "C-<left>") 'windmove-left)
+;; Move between windows using Shift + <arrow>
+(define-key global-map (kbd "S-<up>") 'windmove-up)
+(define-key global-map (kbd "S-<down>") 'windmove-down)
+(define-key global-map (kbd "S-<right>") 'windmove-right)
+(define-key global-map (kbd "S-<left>") 'windmove-left)
 
 ;; Swap buffers: M-<up> etc.
 (define-key global-map (kbd "M-<up>"   ) 'buf-move-up)
