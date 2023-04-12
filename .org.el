@@ -51,6 +51,11 @@
                           (type "INCOME(i!)" "TODO(t!)" "WAIT(w@)" "HOLD(h!)" "MAYBE(m!)" "|" "DONE(d!)" "CANCEL(c@)")
                           )
 
+      ;; For easily refile todo items: mark possible targets with the tag
+      ;; "headline". Do not use multiple levels of headers because that
+      ;; generates too many targets.
+      org-refile-targets '((org-agenda-files . (:tag . "headline")))
+
       org-log-done 'time
       org-agenda-span 'week
       org-agenda-skip-deadline-if-done t
