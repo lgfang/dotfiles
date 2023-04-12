@@ -29,8 +29,16 @@
       org-reverse-note-order t
       org-archive-location (concat my-personal-path "archive.gtd::* From %s")
 
-      org-time-clocksum-use-effort-durations t
-      ;; refer to variable org-effort-durations
+      ;; At the moment, I clock heavily. In such situation, the default value
+      ;; "(closed clock)" becomes annoying in org-agenda-log-mode because is
+      ;; CLOSED entries are kinda out of order due to sorting using the start
+      ;; times.
+
+      ;;  18:00-18:10 Clocked:   (0:10) DONE task1
+      ;;  18:10-18:15 Clocked:   (0:05) DONE task2
+      ;;  18:10...... Closed:     DONE task1 <--- I wish this entry move one line up
+      ;;  18:15...... Closed:     DONE task2
+      org-agenda-log-mode-items '(clock)
 
       ;;; GTD related
       ;; refer to [[file:./org-gtd.lgf]] for the usage
