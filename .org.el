@@ -68,8 +68,13 @@
           (todo "TODO")
           (agenda "" ((org-agenda-span 1)
                       (org-deadline-warning-days 7)
-                      (org-agenda-skip-function
-                       '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
+                      ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
+                                        ; Do not skip scheduled todo items. 1)
+                                        ; As per my org-gtd, few items have both
+                                        ; schedule and a todo tag. So I don't
+                                        ; expect it would cause many troubles 2)
+                                        ; I do want to see the clocked todo
+                                        ; items in org-agenda-log-mode.
                       ))))
         ("y" "TODO items @WORK@"
          ((todo "INCOME"
@@ -79,8 +84,8 @@
           (agenda ""
                   ((org-agenda-span 1)
                    (org-deadline-warning-days 7)
-                   (org-agenda-skip-function
-                    '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
+                   ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
+                                        ; see above for why no longer skip todo items.
                    (org-agenda-files '("~/mynotes/personal/professional.gtd"))))))
         ("w" "PENDING items"
          ((todo "WAIT")
