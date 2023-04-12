@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-03-20T12:37:04+1100>
+;; Modified: Lungang Fang 2023-04-03T11:15:45+1000>
 
 ;;; Commentary:
 
@@ -600,6 +600,7 @@ tmux's buffer"
                    flycheck-gcc-language-standard "c++11")))
       (global-flycheck-mode 1))
 
+  ;; if flycheck not available, use flymake
   (require 'flymake)
   (setq flymake-no-changes-timeout 2    ; don't grab too much cpu time
         flymake-allowed-file-name-masks
@@ -1612,5 +1613,15 @@ string,refer to format-time-string."
 ;;; ------ end MyFunction ------
 (load "tmp.el" t nil nil)
 (custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode jedi-direx ht go-mode flycheck f)))
+   '(highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode jedi-direx ht go-mode flycheck f)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
