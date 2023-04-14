@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-04-14T11:37:17+1000>
+;; Modified: Lungang Fang 2023-04-17T18:22:34+1000>
 
 ;;; Commentary:
 
@@ -171,6 +171,40 @@
 (define-key global-map (kbd "ESC M-[ d" ) 'tiling-tile-left)
 
 ;;; abbrev - conflicts with auto-complete-mode, use yasnippet instead.
+
+;; ansi code handling
+(defun ansi-color-after-scroll (window start)
+  "Used by ansi-color-mode minor mode"
+  (ansi-color-apply-on-region start (window-end window t) t))
+
+(define-minor-mode ansi-color-mode
+  "A very primitive minor mode to view log files containing ANSI color codes.
+
+Pros: this minor mode runs `ansi-color-apply-on-region' lazily,
+i.e. only the visible part of the buffer. Hence, it does NOT
+freeze Emacs even if the log file is huge.
+
+Cons: a) when the minor code is toggled off, it does not undo
+what has already been ansi colorized. b) assumes the buffer
+content etc. does not change. c) jumping to random places within
+the buffer may incur incorrect/incomplete colorization.
+
+How to install: put this code into your init.el, then evaluate it or
+restart Emacs for the code to take effect.
+
+How to use: in the log buffer of need run `M-x ansi-color-mode'.
+Alternatively, feel free to enable this minor mode via mode hooks
+so that you needn't enable it manually.
+
+-- lgfang
+"
+  :global nil
+  :lighter ""
+  (if ansi-color-mode
+      (progn
+        (ansi-color-apply-on-region (window-start) (window-end) t)
+        (add-hook 'window-scroll-functions 'ansi-color-after-scroll 80 t))
+    (remove-hook 'window-scroll-functions 'ansi-color-after-scroll t)))
 
 ;;; ascii mode
 (autoload 'ascii-display "ascii" "Toggle ASCII code display." t)
