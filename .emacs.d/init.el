@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-04-12T17:50:08+1000>
+;; Modified: Lungang Fang 2023-04-14T11:37:17+1000>
 
 ;;; Commentary:
 
@@ -883,6 +883,7 @@ lgfang")))
 ;;; mongolog: MongodDB log file mode
 (add-to-list 'load-path (concat my-elisp-path "mongolog"))
 (require 'mongolog nil t)
+(add-to-list 'auto-mode-alist '("mongod.*\\.log" . js-mode))
 
 ;;; mouse
 (setq mouse-yank-at-point t             ; instead of at mouse cursor
