@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-04-17T18:22:34+1000>
+;; Modified: Lungang Fang 2023-04-26T09:20:59+1000>
 
 ;;; Commentary:
 
@@ -175,7 +175,8 @@
 ;; ansi code handling
 (defun ansi-color-after-scroll (window start)
   "Used by ansi-color-mode minor mode"
-  (ansi-color-apply-on-region start (window-end window t) t))
+  (let ((ansi-color-context-region nil))
+    (ansi-color-apply-on-region start (window-end window t) t)))
 
 (define-minor-mode ansi-color-mode
   "A very primitive minor mode to view log files containing ANSI color codes.
