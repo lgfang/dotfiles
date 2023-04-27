@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-05-01T19:54:08+1000>
+;; Modified: Lungang Fang 2023-04-27T20:29:40+1000>
 
 ;;; Commentary:
 
@@ -1009,10 +1009,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
   ;; M-x list-colors-display to see named colors
   (setq hl-paren-colors '("brown" "orange" "yellow" "forest green"
                           "cyan" "blue" "violet"))
-  (define-globalized-minor-mode global-highlight-parentheses-mode
-    highlight-parentheses-mode
-    (lambda ()
-      (highlight-parentheses-mode t)))
   (global-highlight-parentheses-mode t))
 
 ;;; perl: using cperl-mode instead
@@ -1667,7 +1663,7 @@ string,refer to format-time-string."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode jedi-direx ht go-mode flycheck f)))
+   '(highlight-parentheses highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode jedi-direx ht go-mode flycheck f)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
