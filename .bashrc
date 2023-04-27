@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 2023-04-03T11:55:49+1000>
+# Modified: Lungang Fang 2023-04-17T21:34:23+1000>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -499,7 +499,7 @@ function tmux_clean_buffers {
     # this function manually to delete suspiciously large buffers (> 2048 bytes
     # by default) to avoid accidentally pasting such buffers.
 
-    local threshold=${1:-2048}
+    local threshold=${1:-256}
     tmux list-buffers | awk -v threshold=$threshold '{if($2 > threshold){print $1, $2, $3}}' | while read line; do
         echo "Deleting ${line%:*}"
         tmux delete-buffer -b ${line%%:*};
