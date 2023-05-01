@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-04-26T09:20:59+1000>
+;; Modified: Lungang Fang 2023-05-01T19:54:08+1000>
 
 ;;; Commentary:
 
@@ -874,6 +874,19 @@ lgfang")))
             (define-key js-mode-map (kbd "M-'") 'lgfang-toggle-level)
             (define-key js-mode-map [mouse-3] 'lgfang-toggle-level)
             (hs-minor-mode 1)))
+
+;;; Large files
+(defun my-find-file-huge-file-hook ()
+  "Turn off features that make Emacs super slow with large log
+files and avoid accidental modifications."
+  (when (> (buffer-size) (* 1024 1024 8)) ; 8 MB
+    (setq buffer-read-only t)
+    (buffer-disable-undo)
+    (fundamental-mode)
+    (which-func-mode -1)
+    (if (fboundp 'highlight-parentheses-mode) (highlight-parentheses-mode -1))
+    ))
+(add-hook 'find-file-hook 'my-find-file-huge-file-hook)
 
 ;;; ldap mode for ldif files
 (autoload 'ldap-mode "ldap-mode" "Edit ldif files" t)
