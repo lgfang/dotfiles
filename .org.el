@@ -71,7 +71,7 @@
       '(("x" "TODO items @ALL@"
          ((todo "INCOME")
           (todo "TODO")
-          (agenda "" ((org-agenda-span 1)
+          (agenda "" ((org-agenda-span 2)
                       (org-deadline-warning-days 7)
                       ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
                                         ; Do not skip scheduled todo items. 1)
@@ -87,7 +87,7 @@
           (todo "TODO"
                 ((org-agenda-files '("~/mynotes/personal/professional.gtd"))))
           (agenda ""
-                  ((org-agenda-span 1)
+                  ((org-agenda-span 2)
                    (org-deadline-warning-days 7)
                    ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
                                         ; see above for why no longer skip todo items.
