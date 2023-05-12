@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-05-12T11:27:54+1000>
+;; Modified: Lungang Fang 2023-05-12T12:44:54+1000>
 
 ;;; Commentary:
 
@@ -1043,27 +1043,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 
 (require 'pydoc-info nil t)
 
-;;; pylint
-(unless (or (> emacs-major-version 24)
-            (and (= emacs-major-version 24) (>= emacs-minor-version 3)))
-  ;; for emacs24.3 or above, use flycheck, which does not require explicit
-  ;; configuration
-
-  (load "pylint" t nil nil)
-  (load "pylint-flymake" t nil nil)
-  (require 'cl)
-  ;; From http://docs.pylint.org/ide-integration
-  (defun show-fly-err-at-point ()
-    "If the cursor is sitting on a flymake error, display the
-message in the minibuffer"
-    (interactive)
-    (let ((line-no (line-number-at-pos)))
-      (dolist (elem flymake-err-info)
-        (if (eq (car elem) line-no)
-            (let ((err (car (second elem))))
-              (message "%s" (flymake-ler-text err)))))))
-  (add-hook 'post-command-hook 'show-fly-err-at-point))
-
 ;;; ropemacs and pymacs
 (setq ropemacs-enable-shortcuts t
       ropemacs-global-prefix nil        ; the default one already used
@@ -1556,7 +1535,6 @@ string,refer to format-time-string."
   )
 (fset 'mla 'lgfang-mode-line-all)
 
-(require 'cl)                           ; list-length defined in "cl.el"
 (defun lgfang-recentf-open ()
   "open recent files. In ido style if applicable"
   (interactive)
@@ -1576,7 +1554,7 @@ string,refer to format-time-string."
           (progn
             (add-to-list 'candidates (cdr afile)))))
 
-    (if (> (list-length candidates) 1)
+    (if (> (length candidates) 1)
         (find-file (ido-completing-read "full path:" candidates))
       (find-file (cdr (assoc fname path-table))))))
 
@@ -1665,7 +1643,7 @@ string,refer to format-time-string."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(terraform-mode highlight-parentheses highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode jedi-direx ht go-mode flycheck f)))
+   '(emms json-reformat windata w3m solarized-theme showtip terraform-mode highlight-parentheses highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode jedi-direx ht go-mode flycheck f)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
