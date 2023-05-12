@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-05-05T21:44:21+1000>
+;; Modified: Lungang Fang 2023-05-12T11:27:54+1000>
 
 ;;; Commentary:
 
@@ -633,6 +633,8 @@ tmux's buffer"
                    ;; effect. But, setting both does not hurt.
                    flycheck-clang-language-standard "c++11"
                    flycheck-gcc-language-standard "c++11")))
+      (setq flycheck-python-flake8-executable "flake8"
+            flycheck-flake8rc ".flake8")
       (global-flycheck-mode 1))
 
   ;; if flycheck not available, use flymake
