@@ -40,6 +40,14 @@
       ;;  18:15...... Closed:     DONE task2
       org-agenda-log-mode-items '(clock)
 
+      org-clock-update-period 300
+      org-duration-format '(("y")("m")("w")("d") (special . h:mm))
+      org-duration-units `(("min" . 1) ("h" . 60)
+                           ("d" . ,(* 60 7.6)) ; 7.6 hours per day (Aussie law)
+                           ("w" . ,(* 60 7.6 5)) ; 38 hours per week
+                           ("m" . ,(* 60 7.6 22))  ; ~22 days per month
+                           ("y" . ,(* 60 7.6 250))) ; ~250 working days per year
+
       ;;; GTD related
       ;; refer to [[file:./org-gtd.lgf]] for the usage
       org-agenda-files
