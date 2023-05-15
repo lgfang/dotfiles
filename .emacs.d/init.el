@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-05-12T12:44:54+1000>
+;; Modified: Lungang Fang 2023-05-15T13:17:59+1000>
 
 ;;; Commentary:
 
@@ -623,9 +623,14 @@ tmux's buffer"
 
 ;;; flymake & flycheck (Prefer flycheck when possible)
 (if (require 'flycheck nil t)
-
     (progn
-      ;; (setq-default flycheck-sh-shellcheck-executable "/path/to/shellcheck")
+      ;; NOTE: to debug, open a source file and 'M-x flycheck-verify-setup' to
+      ;; see what checkers are/aren't being used.
+
+      (global-flycheck-mode 1)
+
+      ;; (setq-default flycheck-sh-shellcheck-executable "path/to/shellcheck")
+
       (add-hook 'c++-mode-hook
                 (lambda ()
                   (setq
@@ -633,9 +638,22 @@ tmux's buffer"
                    ;; effect. But, setting both does not hurt.
                    flycheck-clang-language-standard "c++11"
                    flycheck-gcc-language-standard "c++11")))
-      (setq flycheck-python-flake8-executable "flake8"
-            flycheck-flake8rc ".flake8")
-      (global-flycheck-mode 1))
+
+      ;; Install flake8 and mypy
+      (setq flycheck-python-flake8-executable "flake8")
+
+      (flycheck-define-checker rnc
+        "Check rnc files using jing.jar See URL
+`https://github.com/TreeRex/rnc-mode' and
+`http://www.thaiopensource.com/relaxng/jing.html'"
+        :command ("java" "-jar" (eval (cygpath rnc-jing-jar-file)) "-c"
+                  (eval (cygpath (flycheck-save-buffer-to-temp
+                                  #'flycheck-temp-file-system "flycheck"))))
+        :error-patterns
+        ((error line-start (zero-or-more anything) ":" line ":"
+                column ": error:" (message) line-end)) :modes rnc-mode)
+      (add-to-list 'flycheck-checkers 'rnc)
+      )
 
   ;; if flycheck not available, use flymake
   (require 'flymake)
@@ -1121,20 +1139,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
       rnc-jing-jar-file (expand-file-name
                          (concat my-extension-path "jing/bin/jing.jar")))
 
-(when (require 'flycheck nil t)
-  (flycheck-define-checker rnc
-    "Check rnc files using jing.jar
-
-See URL `https://github.com/TreeRex/rnc-mode' and
-`http://www.thaiopensource.com/relaxng/jing.html'"
-    :command ("java" "-jar" (eval (cygpath rnc-jing-jar-file)) "-c"
-              (eval (cygpath (flycheck-save-buffer-to-temp
-                              #'flycheck-temp-file-system "flycheck"))))
-    :error-patterns
-    ((error line-start (zero-or-more anything) ":" line ":"
-            column ": error:" (message) line-end)) :modes rnc-mode)
-
-  (add-to-list 'flycheck-checkers 'rnc))
 ;; ;; Had not been the java, it could be this:
 ;; (flycheck-define-checker rnc
 ;;   :command ("java" "-jar" (eval rnc-jing-jar-file) "-c" source)
