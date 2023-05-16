@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-05-16T22:38:58+1000>
+;; Modified: Lungang Fang 2023-05-17T00:06:50+1000>
 
 ;;; Commentary:
 
@@ -610,9 +610,24 @@ tmux's buffer"
                         '(("\\<\\(TRUE\\|FALSE\\)\\>"
                            . font-lock-constant-face)))
 
-(require 'ffap)
+(when (require 'ffap nil t)
 ;; (ffap-bindings) ; Don't bind to `C-x C-f' etc., explicitly `M-x ffap' etc.
 ;; (setq ffap-c-path (append ffap-c-path sourcepair-header-path))
+
+  ;; My extensions to ffap jira/sfsc tickets. Remember to define my-employer in
+  ;; my-confidential.el
+  (defun ffap-jira (name) ; ffap HELP-12345 etc. opens corresponding jira ticket
+    (let ((company (if (boundp 'my-employer) my-employer "example")))
+      (format "https://jira.%s.org/browse/%s" company name)))
+  (add-to-list 'ffap-alist '("\\`\\(HELP\\|EVG\\|BF\\)-[0-9]+\\'" . ffap-jira))
+  ;;                            ^^^ Or simply "\\`\\([A-Z]+\\)-[0-9]+" ?
+
+  (defun ffap-sfsc (name)  ; ffap 123456 opens corresponding SFSC ticket
+    (let ((company (if (boundp 'my-employer) my-employer "example")))
+      (format "https://support.%s.com/case/%s%s"
+              company (make-string (- 8 (length name)) ?0)  name)))
+  (add-to-list 'ffap-alist '("\\`[0-9]\\{6,8\\}\\'" . ffap-sfsc))
+)
 
 ;;; fill column
 (setq-default fill-column 80 comment-fill-column 72)
