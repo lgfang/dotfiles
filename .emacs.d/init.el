@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-05-15T13:17:59+1000>
+;; Modified: Lungang Fang 2023-05-16T22:38:58+1000>
 
 ;;; Commentary:
 
@@ -1050,12 +1050,14 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 ;;; Python mode hook
 (add-hook 'python-mode-hook
           (lambda()
+            (setq tab-width 4)  ; "python-mode" sets it to 8, change it back.
             (hs-minor-mode 1)
             (outline-minor-mode 1)
             (setq imenu-create-index-function 'python-imenu-create-flat-index)
             (imenu-add-menubar-index)))
 
 (when (functionp 'jedi:setup)
+  ;; for python3, pip3 install epc jedi first
   (add-hook 'python-mode-hook 'jedi:setup)
   (setq jedi:complete-on-dot t))
 
@@ -1327,7 +1329,7 @@ selective-display"
 ;;; whitespace related
 ;; (setq-default show-trailing-whitespace t) ; use whitespace mode instead
 (setq-default indent-tabs-mode nil ; inserts space instead of <tab> when indent
-              tab-stop-list '(4) ; starts at 4th column, each stop + tab-width
+              tab-stop-list nil    ; stops every ‘tab-width’ columns
               tab-width 4)
 (setq whitespace-line-column nil
       whitespace-style '(face
@@ -1364,9 +1366,10 @@ selective-display"
   (setq cscope-do-not-update-database t
         cscope-program "gtags-cscope")
   ;; use cscope for java etc. as well
-  (add-hook 'java-mode-hook (function cscope:hook))
-  (add-hook 'eshell-mode-hook (function cscope:hook))
-  (add-hook 'python-mode-hook (function cscope:hook))
+  (when (functionp (function cscope:hook))
+    (add-hook 'java-mode-hook (function cscope:hook))
+    (add-hook 'eshell-mode-hook (function cscope:hook))
+    (add-hook 'python-mode-hook (function cscope:hook)))
 
   (setq
    cscope-database-regexps
