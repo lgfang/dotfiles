@@ -16,6 +16,7 @@ for each in .bash_completion.d \
                 .ssh/config \
                 .org.el \
                 .gnus.el \
+                .shellcheckrc \
                 .emacs.snippets \
                 .emacs.d/init.el
 do

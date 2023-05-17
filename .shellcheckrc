@@ -1,0 +1,1 @@
+disable=SC2002        # So called useless cat. I like 'cat file | ...'!
