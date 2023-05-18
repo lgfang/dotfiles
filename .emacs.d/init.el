@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-05-17T00:06:50+1000>
+;; Modified: Lungang Fang 2023-05-18T22:28:19+1000>
 
 ;;; Commentary:
 
@@ -136,39 +136,40 @@
 (define-key global-map (kbd "C-}") 'enlarge-window-horizontally)
 (define-key global-map (kbd "C-^") 'enlarge-window)
 
-;; Move between windows using Shift + <arrow>
-(define-key global-map (kbd "S-<up>") 'windmove-up)
-(define-key global-map (kbd "S-<down>") 'windmove-down)
-(define-key global-map (kbd "S-<right>") 'windmove-right)
-(define-key global-map (kbd "S-<left>") 'windmove-left)
+;; Move cursor between buffers
+(define-key global-map (kbd "C-x <up>") 'windmove-up)
+(define-key global-map (kbd "C-x <down>") 'windmove-down)
+(define-key global-map (kbd "C-x <right>") 'windmove-right)
+(define-key global-map (kbd "C-x <left>") 'windmove-left)
 
-;; Swap buffers: M-<up> etc.
-(define-key global-map (kbd "M-<up>"   ) 'buf-move-up)
-(define-key global-map (kbd "M-<down>" ) 'buf-move-down)
-(define-key global-map (kbd "M-<right>") 'buf-move-right)
-(define-key global-map (kbd "M-<left>" ) 'buf-move-left)
+;; Swap buffers
+(define-key global-map (kbd "C-x S-<up>"   ) 'buf-move-up)
+(define-key global-map (kbd "C-x S-<down>" ) 'buf-move-down)
+(define-key global-map (kbd "C-x S-<right>") 'buf-move-right)
+(define-key global-map (kbd "C-x S-<left>" ) 'buf-move-left)
 
 ;; Change Layout
 (define-key global-map (kbd "C-\\") 'tiling-cycle)
-(define-key global-map (kbd "S-C-<up>") 'tiling-tile-up)
-(define-key global-map (kbd "S-C-<down>") 'tiling-tile-down)
-(define-key global-map (kbd "S-C-<right>") 'tiling-tile-right)
-(define-key global-map (kbd "S-C-<left>") 'tiling-tile-left)
-;; Another type of representation of same keys, in case your terminal
-;; doesn't recognize above key-binding. Tip: C-h k C-up etc. to see into
-;; what your terminal tranlated the key sequence.
-(define-key global-map (kbd "M-[ a"     ) 'windmove-up)
-(define-key global-map (kbd "M-[ b"     ) 'windmove-down)
-(define-key global-map (kbd "M-[ c"     ) 'windmove-right)
-(define-key global-map (kbd "M-[ d"     ) 'windmove-left)
-(define-key global-map (kbd "ESC <up>"   ) 'buf-move-up)
-(define-key global-map (kbd "ESC <down>" ) 'buf-move-down)
-(define-key global-map (kbd "ESC <right>") 'buf-move-right)
-(define-key global-map (kbd "ESC <left>" ) 'buf-move-left)
-(define-key global-map (kbd "ESC M-[ a" ) 'tiling-tile-up)
-(define-key global-map (kbd "ESC M-[ b" ) 'tiling-tile-down)
-(define-key global-map (kbd "ESC M-[ c" ) 'tiling-tile-right)
-(define-key global-map (kbd "ESC M-[ d" ) 'tiling-tile-left)
+(define-key global-map (kbd "C-x C-S-<up>") 'tiling-tile-up)
+(define-key global-map (kbd "C-x C-S-<down>") 'tiling-tile-down)
+(define-key global-map (kbd "C-x C-S-<right>") 'tiling-tile-right)
+(define-key global-map (kbd "C-x C-S-<left>") 'tiling-tile-left)
+
+;; ;; Another type of representation of same keys, in case your terminal
+;; ;; doesn't recognize above key-binding. Tip: C-h k C-up etc. to see into
+;; ;; what your terminal tranlated the key sequence.
+;; (define-key global-map (kbd "M-[ a"     ) 'windmove-up)
+;; (define-key global-map (kbd "M-[ b"     ) 'windmove-down)
+;; (define-key global-map (kbd "M-[ c"     ) 'windmove-right)
+;; (define-key global-map (kbd "M-[ d"     ) 'windmove-left)
+;; (define-key global-map (kbd "ESC <up>"   ) 'buf-move-up)
+;; (define-key global-map (kbd "ESC <down>" ) 'buf-move-down)
+;; (define-key global-map (kbd "ESC <right>") 'buf-move-right)
+;; (define-key global-map (kbd "ESC <left>" ) 'buf-move-left)
+;; (define-key global-map (kbd "ESC M-[ a" ) 'tiling-tile-up)
+;; (define-key global-map (kbd "ESC M-[ b" ) 'tiling-tile-down)
+;; (define-key global-map (kbd "ESC M-[ c" ) 'tiling-tile-right)
+;; (define-key global-map (kbd "ESC M-[ d" ) 'tiling-tile-left)
 
 ;;; abbrev - conflicts with auto-complete-mode, use yasnippet instead.
 
