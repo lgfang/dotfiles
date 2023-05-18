@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 2023-04-17T21:34:23+1000>
+# Modified: Lungang Fang 2023-05-18T15:17:52+1000>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -36,14 +36,14 @@ shopt -s checkwinsize
 #* PS1
 # *NOTE* must use single quotes NOT double quotes so that escape backslashes are
 # not escaped.
-PS1='\n'                           # begin with a newline
-PS1=$PS1'\[\e[38;5;101m\]\! \t '   # time and command history number
-PS1=$PS1'\[\e[38;5;106m\]\u@\h '   # user@host
-PS1=$PS1'\[\e[7;35m\]${MY_WARN}\[\e[0m\]' # warning message if there is any
+PS1='\n'                                   # begin with a newline
+PS1=$PS1'\[\e[7;35m\]${MY_WARN}\[\e[0m\] ' # warning message if there is any
+PS1=$PS1'\[\e[38;5;106m\]\u@\h '           # user@host
 PS1=$PS1'\[\e[0;36m\]$(git_4_ps1) $(kube_4_ps1) ' # defined below
-PS1=$PS1'\[\e[38;5;33m\]\w'        # working directory
-PS1=$PS1'\n\[\e[32m\]\$ '          # "$"/"#" sign on a new line
-PS1=$PS1'\[\e[0m\]'                # restore to default color
+PS1=$PS1'\[\e[38;5;101m\]\t \! ' # time and command history number
+PS1=$PS1'\[\e[38;5;33m\]\w '     # working directory
+PS1=$PS1'\n\[\e[32m\]\$ '        # "$"/"#" sign on a new line
+PS1=$PS1'\[\e[0m\]'              # restore to default color
 # for ksh:
 # PS1='$(print "[$LOGNAME@`hostname`:${PWD/$HOME/~}]\n$ ")'
 # PS1='[$PWD]\$ '
