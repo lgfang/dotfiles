@@ -1658,6 +1658,13 @@ string,refer to format-time-string."
         (emacs-lisp-docstring-fill-column t))
     (fill-paragraph nil region)))
 
+(defun org-confluence-verbatim (verbatim contents info)
+  (let ((content (org-element-property :value verbatim)))
+    (format "\{\{%s\}\}" (string-replace "{" "\\{" content))))
+(defun org-confluence-code (code contents info)
+  (let ((content (org-element-property :value code)))
+    (format "\{\{%s\}\}" (string-replace "{" "\\{" content))))
+
 ;;; ------ end MyFunction ------
 (load "tmp.el" t nil nil)
 (custom-set-variables
