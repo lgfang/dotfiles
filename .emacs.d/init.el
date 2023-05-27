@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-05-27T22:46:14+1000>
+;; Modified: Lungang Fang 2023-05-28T00:26:47+1000>
 
 ;;; Commentary:
 
@@ -653,9 +653,6 @@ tmux's buffer"
                    flycheck-clang-language-standard "c++11"
                    flycheck-gcc-language-standard "c++11")))
 
-      ;; Install flake8 and mypy
-      (setq flycheck-python-flake8-executable "flake8")
-
       (flycheck-define-checker rnc
         "Check rnc files using jing.jar See URL
 `https://github.com/TreeRex/rnc-mode' and
@@ -1067,43 +1064,27 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
             (setq tab-width 4)  ; "python-mode" sets it to 8, change it back.
             (hs-minor-mode 1)
             (outline-minor-mode 1)
+            (blacken-mode 1)            ; relies on the command black
             (setq imenu-create-index-function 'python-imenu-create-flat-index)
             (imenu-add-menubar-index)))
 
-(when (functionp 'jedi:setup)
-  ;; for python3, pip3 install epc jedi first
-  (add-hook 'python-mode-hook 'jedi:setup)
-  (setq jedi:complete-on-dot t))
-
 (require 'pydoc-info nil t)
 
-;;; ropemacs and pymacs
-(setq ropemacs-enable-shortcuts t
-      ropemacs-global-prefix nil        ; the default one already used
-      ropemacs-guess-project t
-      ropemacs-confirm-saving 'nil)
-(autoload 'pymacs-apply "pymacs")
-(autoload 'pymacs-call "pymacs")
-(autoload 'pymacs-eval "pymacs" nil t)
-(autoload 'pymacs-exec "pymacs" nil t)
-(autoload 'pymacs-load "pymacs" nil t)
-(autoload 'pymacs-autoload "pymacs")
-(defun load-ropemacs ()
-  (interactive)
-  (when (and (require 'pymacs nil t)
-             (pymacs-load "ropemacs" "rope-" t))
-    ;; (ac-ropemacs-setup)       ; this does not work?
-    (define-key python-mode-map (kbd "M-/") 'rope-code-assist)))
+(if (require 'flycheck nil t)
+      ;; if flake8, mypy and/or pyright are installed, flycheck uses them out of
+      ;; box except for this line. Run `M-x flycheck-verify-setup' in a python
+      ;; buffer for more information.
+      (setq flycheck-python-flake8-executable "flake8")
+  )
 
-;; PythonTidy: download and put it into PATH as "pythontidy"
-(defun lgfang-python-tidy ()
-  (interactive)
-  (if (not (string= mode-name "Python"))
-      (message "Buffer is not python mode")
-    (let ((beg (if (region-active-p) (region-beginning) (point-min)))
-          (end (if (region-active-p) (region-end) (point-max))))
-      (save-excursion
-        (shell-command-on-region beg end "pythontidy" nil t)))))
+;; for cross referrence, pip3 install pyright and then use eglot (`M-x eglot' or
+;; `C-u M-x eglot' in a python buffer).
+(add-hook 'eglot-managed-mode-hook
+          (lambda()
+            ;; eglot sets it to nil but I like t as it shows me what the
+            ;; identifier at point is.
+            (setq xref-prompt-for-identifier t)
+            ))
 
 ;;; RCIRC - replaces ERC
 (when (require 'my-confidential nil t)
@@ -1675,7 +1656,7 @@ string,refer to format-time-string."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(git-link csv-mode emms json-reformat windata w3m solarized-theme showtip terraform-mode highlight-parentheses highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode jedi-direx ht go-mode flycheck f)))
+   '(eglot blacken git-link csv-mode emms json-reformat windata w3m solarized-theme showtip terraform-mode highlight-parentheses highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode ht go-mode flycheck f)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
