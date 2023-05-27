@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-05-23T15:58:25+1000>
+;; Modified: Lungang Fang 2023-05-27T22:46:14+1000>
 
 ;;; Commentary:
 
@@ -122,8 +122,6 @@
 (define-key global-map (kbd "C-x c a") 'org-agenda)
 (define-key global-map (kbd "C-x c o") 'org-open-at-point-global)
 (define-key global-map (kbd "M-/") 'hippie-expand)
-(define-key global-map (kbd "M-,") 'hs-toggle-hiding)
-(define-key global-map (kbd "M-.") 'lgfang-toggle-selective-display)
 (define-key global-map (kbd "M-g c") 'move-to-column)
 (define-key global-map (kbd "M-g ]") 'lgfang-goto-page)
 (define-key global-map (kbd "C-h d") 'sdcv-search-pointer)
@@ -1398,6 +1396,10 @@ selective-display"
       ;;("/remote/.../b2008.09_icc_us02/syn/icc_sh/cscope.out.bak")
       ))))
 
+;;; xref
+(setq xref-prompt-for-identifier t) ; always prompt for identifier to search
+
+;;; yasnippet
 (add-to-list 'load-path (concat my-extension-path "yasnippet"))
 ;; NOTE: download http://elpa.gnu.org/packages/cl-lib.html if needed
 (when (require 'yasnippet nil t)
