@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-05-28T00:26:47+1000>
+;; Modified: Lungang Fang 2023-05-28T18:46:38+1000>
 
 ;;; Commentary:
 
@@ -1064,6 +1064,7 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
             (setq tab-width 4)  ; "python-mode" sets it to 8, change it back.
             (hs-minor-mode 1)
             (outline-minor-mode 1)
+            (anaconda-mode)             ; for cross reference
             (blacken-mode 1)            ; relies on the command black
             (setq imenu-create-index-function 'python-imenu-create-flat-index)
             (imenu-add-menubar-index)))
@@ -1077,14 +1078,14 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
       (setq flycheck-python-flake8-executable "flake8")
   )
 
-;; for cross referrence, pip3 install pyright and then use eglot (`M-x eglot' or
-;; `C-u M-x eglot' in a python buffer).
-(add-hook 'eglot-managed-mode-hook
-          (lambda()
-            ;; eglot sets it to nil but I like t as it shows me what the
-            ;; identifier at point is.
-            (setq xref-prompt-for-identifier t)
-            ))
+;; ;; for cross referrence, pip3 install pyright and then use eglot (`M-x eglot' or
+;; ;; `C-u M-x eglot' in a python buffer).
+;; (add-hook 'eglot-managed-mode-hook
+;;           (lambda()
+;;             ;; eglot sets it to nil but I like t as it shows me what the
+;;             ;; identifier at point is.
+;;             (setq xref-prompt-for-identifier t)
+;;             ))
 
 ;;; RCIRC - replaces ERC
 (when (require 'my-confidential nil t)
@@ -1656,7 +1657,7 @@ string,refer to format-time-string."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(eglot blacken git-link csv-mode emms json-reformat windata w3m solarized-theme showtip terraform-mode highlight-parentheses highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode ht go-mode flycheck f)))
+   '(anaconda-mode eglot blacken git-link csv-mode emms json-reformat windata w3m solarized-theme showtip terraform-mode highlight-parentheses highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode ht go-mode flycheck f)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
