@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-05-28T18:46:38+1000>
+;; Modified: Lungang Fang 2023-05-31T17:43:49+1000>
 
 ;;; Commentary:
 
@@ -171,7 +171,7 @@
 
 ;;; abbrev - conflicts with auto-complete-mode, use yasnippet instead.
 
-;; ansi code handling
+;;; ansi color code handling
 (defun ansi-color-after-scroll (window start)
   "Used by ansi-color-mode minor mode"
   (let ((ansi-color-context-region nil))
@@ -205,6 +205,10 @@ so that you needn't enable it manually.
         (ansi-color-apply-on-region (window-start) (window-end) t)
         (add-hook 'window-scroll-functions 'ansi-color-after-scroll 80 t))
     (remove-hook 'window-scroll-functions 'ansi-color-after-scroll t)))
+
+;; process & render color codes in the compilation buffer. NOTE:
+;; ansi-color-compilation-filter is unavailable before emacs 28.
+(add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
 
 ;;; ascii mode
 (autoload 'ascii-display "ascii" "Toggle ASCII code display." t)
