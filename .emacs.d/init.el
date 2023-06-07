@@ -329,7 +329,9 @@ so that you needn't enable it manually.
                 (write-region (point-min) (point-max) file nil)))
             (file-expand-wildcards (concat path "*.vcf"))))))
 
-;;; bookmark+ - breaks org-mode + flyspell
+;;; bookmark/bookmark+ - breaks org-mode + flyspell
+;; Note: if `C-x r m` (i.e. bookmark-set) emits "end of file during parsing",
+;; review (or simply delete) ~/.emacs.d/bookmarks.
 
 (when (require 'browse-kill-ring nil t)
   (browse-kill-ring-default-keybindings))
