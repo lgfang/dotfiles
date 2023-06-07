@@ -624,7 +624,7 @@ tmux's buffer"
   (defun ffap-jira (name) ; ffap HELP-12345 etc. opens corresponding jira ticket
     (let ((company (if (boundp 'my-employer) my-employer "example")))
       (format "https://jira.%s.org/browse/%s" company name)))
-  (add-to-list 'ffap-alist '("\\`\\(HELP\\|EVG\\|BF\\)-[0-9]+\\'" . ffap-jira))
+  (add-to-list 'ffap-alist '("\\`\\(HELP\\|EVG\\|BF\\|TIG\\)-[0-9]+\\'" . ffap-jira))
   ;;                            ^^^ Or simply "\\`\\([A-Z]+\\)-[0-9]+" ?
 
   (defun ffap-sfsc (name)  ; ffap 123456 opens corresponding SFSC ticket
