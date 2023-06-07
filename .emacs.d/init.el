@@ -394,8 +394,8 @@ so that you needn't enable it manually.
             (turn-on-cwarn-mode)
             ;; (eldoc-mode 1)
             ))
-;;; Can't hook imenu-add-menubar-index to c-mode-common-hook since awk
-;;; mode don't support it
+;; Can't hook imenu-add-menubar-index to c-mode-common-hook since awk mode don't
+;; support it
 (dolist (hook '(c-mode-hook c++-mode-hook java-mode-hook))
   (add-hook hook 'imenu-add-menubar-index))
 
@@ -555,7 +555,7 @@ tmux's buffer"
 (require 'dired-x)
 (setq-default dired-omit-files-p t)
 (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
-;;; guess of '!' action
+;; guess of '!' action
 (add-to-list 'dired-guess-shell-alist-user
              (list "\\.\\(avi\\|mkv\\|mpg\\|rmvb\\|rm\\)\\'" "mplayer"))
 (add-to-list 'dired-guess-shell-alist-user (list "\\.\\(rar\\)\\'" "7z x"))
@@ -735,6 +735,9 @@ tmux's buffer"
 
 ;;; gdb
 ;; (setq gdb-many-windows t)
+
+;;; git-link
+(setq git-link-open-in-browser t)
 
 ;;; golang
 (add-hook 'go-mode-hook
