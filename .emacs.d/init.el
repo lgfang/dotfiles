@@ -80,13 +80,21 @@
                                 ("Europe/London" "Dublin"))
       )
 
-;;; Language Environment - no longer needed
+;;; Language Environment - these settings are normally no longer needed
 
 ;; (if (eq system-type 'windows-nt)
 ;;     (if (>= emacs-major-version 23)
 ;;         (set-language-environment 'Chinese-GB18030)
-;;       (set-language-environment 'Chinese-GB))
-;;   (set-language-environment 'utf-8))
+;;       (set-language-environment 'Chinese-GB)))
+
+;; (set-language-environment 'utf-8)
+;; (set-keyboard-coding-system 'utf-8)
+;; (prefer-coding-system 'utf-8)
+;; ;; set terminal coding system to utf-8 explictly to display unicode chars
+;; ;; (including emojis/Chinese chars) correctly. This is needed when utf-8 is
+;; ;; supported but emacs does not detect and set set it correctly due to wrong
+;; ;; shell locale etc.
+;; (set-terminal-coding-system 'utf-8)
 
 ;;; global key bindings
 
