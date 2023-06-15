@@ -25,6 +25,7 @@
 ;; load path
 (add-to-list 'load-path my-extension-path)
 (add-to-list 'load-path my-backward-path t)
+(add-to-list 'load-path my-elisp-path t)
 
 ;; exec path
 (cond
