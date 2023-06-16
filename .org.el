@@ -316,6 +316,17 @@ according to modification time is good enough."
   (if (string-match "sf-" buffer-file-name) (org-gfm-export-as-markdown)
       (org-confluence-export-as-confluence)))
 
+(defun export-commit-msg ()
+  "Export the message to a git commit friendly markdown"
+  (interactive)
+  (let (;; Preserve line breaks, making the message terminal friendly.
+        (org-export-preserve-breaks t)
+        ;; Do not use the default (atx) style headlines because they start with
+        ;; '#' and are ignored by 'git commit' as commments.
+        (org-md-headline-style 'setext)
+        )
+    (org-gfm-export-as-markdown)))
+
 (eval-after-load "org-agenda"
   '(define-key org-agenda-mode-map (kbd "M-p") 'add-to-project-list))
 
