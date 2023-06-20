@@ -100,10 +100,10 @@
 ;;; global key bindings
 
 (when (eq system-type 'darwin)          ; OSX
-  ;; Not all Emacs builds support this modifier remap. At the moment, it works
-  ;; for my GUI Emacs. For terminal emacs, please remap modifiers in
-  ;; corresponding terminal emulator instead.
-  (setq mac-option-modifier 'control mac-command-modifier 'meta)
+  ;; ;; Not all Emacs builds support this modifier remap. At the moment, it works
+  ;; ;; for my GUI Emacs. For terminal emacs, please remap modifiers in
+  ;; ;; corresponding terminal emulator instead.
+  ;; (setq mac-option-modifier 'control mac-command-modifier 'meta)
 
   (unless (display-graphic-p)
     ;; In OSX terminal, trackpad gestures for up/down mapped to mouse-4/5
