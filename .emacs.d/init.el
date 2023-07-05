@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-05-31T17:43:49+1000>
+;; Modified: Lungang Fang 2023-07-05T15:35:11+1000>
 
 ;;; Commentary:
 
@@ -1373,28 +1373,35 @@ selective-display"
 ;;; to make the cursor as wide as the character it is over
 (setq x-stretch-cursor t)
 
-;;; xcscope for cscope
+;;; xcscope,
+;; NOTE: cscope is now just a backup. Normally eglot + clangd is more convient.
+;; Just `M-x eglot` in a C/C++ buffer to activate eglot.
 (when (require 'xcscope nil t)
-  (require 'cscope-filter nil t)
-  ;; for large code base, set it to t.
-  (setq cscope-do-not-update-database t
-        cscope-program "gtags-cscope")
-  ;; use cscope for java etc. as well
-  (when (functionp (function cscope:hook))
-    (add-hook 'java-mode-hook (function cscope:hook))
-    (add-hook 'eshell-mode-hook (function cscope:hook))
-    (add-hook 'python-mode-hook (function cscope:hook)))
+  (cscope-setup)
 
   (setq
-   cscope-database-regexps
-   '(("\\(sandbox/trunk\\)"
-      (t) ;; local cscope.out first
-      ("/home/lgfang/projects/vsg/sandbox/lcp_lite/")
-      ("/home/lgfang/projects/vsg/sandbox/libsoap-1.1.0/libcsoap/")
-      ("/home/lgfang/projects/vsg/sandbox/libxml2/")
-      t ;; 't' doesn't work, comment out useless database-dir
-      ;;("/remote/.../b2008.09_icc_us02/syn/icc_sh/cscope.out.bak")
-      ))))
+   ;; use gtags-cscope instead of the legacy cscope
+   cscope-program "gtags-cscope"
+   ;; set cscope-database-file accordingly. Otherwise xcscope looks for
+   ;; "cscope.out" and fails and then build the database in the current
+   ;; directory.
+   cscope-database-file "GTAGS")
+
+  ;; ;; Below are for huge code bases. No need of them at the moment
+  ;; (require 'cscope-filter nil t)
+  ;; (setq
+  ;;  cscope-do-not-update-database t ; do not rebuild database for every search.
+  ;;  cscope-database-regexps
+  ;;  '(("\\(sandbox/trunk\\)"
+  ;;     (t) ;; local cscope.out first
+  ;;     ("/home/lgfang/projects/vsg/sandbox/lcp_lite/")
+  ;;     ("/home/lgfang/projects/vsg/sandbox/libsoap-1.1.0/libcsoap/")
+  ;;     ("/home/lgfang/projects/vsg/sandbox/libxml2/")
+  ;;     t ; 't' doesn't work, comment out useless database-dir
+  ;;     ;;("/remote/.../b2008.09_icc_us02/syn/icc_sh/cscope.out.bak")
+  ;;     )))
+
+  )
 
 ;;; xref
 (setq xref-prompt-for-identifier t) ; always prompt for identifier to search
