@@ -310,15 +310,29 @@ according to modification time is good enough."
       org-ditaa-jar-path (concat my-extension-path "ditaa.jar")
       org-plantuml-jar-path (concat my-extension-path "plantuml.jar"))
 
+(defun mark-page-excluding-page-marker ()
+  "An customized version of `mark-page` ofr my export-xxx function.
+
+It make page the active region, exluding the ending ^L."
+  (forward-page -1)
+  (push-mark nil t t)
+  (forward-page)
+  (if (string= (string (char-before (region-end))) "\f")
+      ;; \f == ^L == page delimiter
+      (backward-char))
+  )
+
 (defun export-ticket-comment ()
   "Run a built-in export function according to buffer/file name."
   (interactive)
+  (mark-page-excluding-page-marker)
   (if (string-match "sf-" buffer-file-name) (org-gfm-export-as-markdown)
       (org-confluence-export-as-confluence)))
 
 (defun export-commit-msg ()
-  "Export the message to a git commit friendly markdown"
+  "Export the message to a git commit friendly markdown."
   (interactive)
+  (mark-page-excluding-page-marker)
   (let (;; Preserve line breaks, making the message terminal friendly.
         (org-export-preserve-breaks t)
         ;; Do not use the default (atx) style headlines because they start with
@@ -331,4 +345,4 @@ according to modification time is good enough."
   '(define-key org-agenda-mode-map (kbd "M-p") 'add-to-project-list))
 
 (provide 'lgfang.org)
-;;; lgfang.org.el ends here
+;;; .org.el ends here
