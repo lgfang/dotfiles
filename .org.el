@@ -77,8 +77,8 @@
       org-tags-exclude-from-inheritance (list "project")
       org-agenda-custom-commands
       '(("x" "TODO items @ALL@"
-         ((todo "INCOME")
-          (todo "TODO")
+         ((todo "INCOME" ((org-agenda-todo-ignore-scheduled 'future)))
+          (todo "TODO" ((org-agenda-todo-ignore-scheduled 'future)))
           (agenda "" ((org-agenda-span 2)
                       (org-deadline-warning-days 7)
                       ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
@@ -91,9 +91,11 @@
                       ))))
         ("y" "TODO items @WORK@"
          ((todo "INCOME"
-                ((org-agenda-files '("~/mynotes/personal/professional.gtd"))))
+                ((org-agenda-files '("~/mynotes/personal/professional.gtd"))
+                 (org-agenda-todo-ignore-scheduled 'future)))
           (todo "TODO"
-                ((org-agenda-files '("~/mynotes/personal/professional.gtd"))))
+                ((org-agenda-files '("~/mynotes/personal/professional.gtd"))
+                 (org-agenda-todo-ignore-scheduled 'future)))
           (agenda ""
                   ((org-agenda-span 2)
                    (org-deadline-warning-days 7)
