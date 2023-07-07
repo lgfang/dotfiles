@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-07-05T15:35:11+1000>
+;; Modified: Lungang Fang 2023-07-07T15:08:56+1000>
 
 ;;; Commentary:
 
@@ -1315,7 +1315,7 @@ selective-display"
 ;;; verilog mode
 (autoload 'verilog-mode "verilog-mode" "Verilog mode" t )
 
-;;; version control
+;;; version control: git, vc, clearcase etc.
 (load "lgfang.vc" t nil nil)
 (add-to-list 'load-path (concat my-extension-path "vc-clearcase"))
 (load "vc-clearcase-auto" t nil nil)
@@ -1323,6 +1323,8 @@ selective-display"
       ;; vc-clearcase-diff-switches "-diff_format" ; if diff unavailable
       ;; vc-git-diff-switches "-w"         ; ignore diff of whitespace
       )
+;; magit show CommitDate instead of AuthorDate in log mode
+(setq magit-log-margin-show-committer-date t)
 
 ;;; vimrc mode
 (autoload 'vimrc-mode "vimrc-mode")
