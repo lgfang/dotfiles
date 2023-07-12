@@ -42,11 +42,12 @@
 
       org-clock-update-period 300
       org-duration-format '(("y")("m")("w")("d") (special . h:mm))
-      org-duration-units `(("min" . 1) ("h" . 60)
-                           ("d" . ,(* 60 7.6)) ; 7.6 hours per day (Aussie law)
-                           ("w" . ,(* 60 7.6 5)) ; 38 hours per week
-                           ("m" . ,(* 60 7.6 22))  ; ~22 days per month
-                           ("y" . ,(* 60 7.6 250))) ; ~250 working days per year
+      org-duration-units `(("min" . 1)  ; IMPORTANT: must round all units to integers
+                           ("h" . 60)
+                           ("d" . ,(round (* 60 7.6))) ; 7.6 hours per day (Aussie law)
+                           ("w" . ,(round (* 60 7.6 5))) ; 38 hours per week
+                           ("m" . ,(round (* 60 7.6 22)))  ; ~22 days per month
+                           ("y" . ,(round (* 60 7.6 250)))) ; ~250 working days per year
 
       ;;; GTD related
       ;; refer to [[file:./org-gtd.lgf]] for the usage
