@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-07-07T15:08:56+1000>
+;; Modified: Lungang Fang 2023-07-27T11:31:10+1000>
 
 ;;; Commentary:
 
@@ -1283,6 +1283,9 @@ selective-display"
       time-stamp-end "\\\\?>"
       ;; no Chinese chars in time stamps even in Chinese locale.
       system-time-locale "C")
+
+;;; Terraform (package install terraform-mode)
+(setq-default terraform-indent-level 4)
 
 ;;; toggle-window-dedicated.el
 (load "toggle-window-dedicated" t nil nil)
