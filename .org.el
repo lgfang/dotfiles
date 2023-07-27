@@ -314,9 +314,9 @@ according to modification time is good enough."
       org-plantuml-jar-path (concat my-extension-path "plantuml.jar"))
 
 (defun mark-page-excluding-page-marker ()
-  "An customized version of `mark-page` ofr my export-xxx function.
+  "An customized version of `mark-page` for my export-xxx function.
 
-It make page the active region, exluding the ending ^L."
+It make the current page the active region, exluding the ending ^L."
   (forward-page -1)
   (push-mark nil t t)
   (forward-page)
@@ -326,20 +326,31 @@ It make page the active region, exluding the ending ^L."
   )
 
 (defun export-ticket-comment ()
-  "Run a built-in export function according to buffer/file name."
+  "Export the current page to gfm or confluence(jira) markdown according to the buffer name prefix."
   (interactive)
   (mark-page-excluding-page-marker)
   (if (string-match "sf-" buffer-file-name) (org-gfm-export-as-markdown)
       (org-confluence-export-as-confluence)))
 
 (defun export-commit-msg ()
-  "Export the message to a git commit friendly markdown."
+  "Export the current page to git commit friendly markdown."
   (interactive)
   (mark-page-excluding-page-marker)
   (let (;; Preserve line breaks, making the message terminal friendly.
         (org-export-preserve-breaks t)
         ;; Do not use the default (atx) style headlines because they start with
         ;; '#' and are ignored by 'git commit' as commments.
+        (org-md-headline-style 'setext)
+        )
+    (org-gfm-export-as-markdown)))
+
+(defun export-github-msg ()
+  "Export the current page to a github web UI message.
+It is the same as export-commit-msg except that it does not wrap
+long lines"
+  (interactive)
+  (mark-page-excluding-page-marker)
+  (let ((org-export-preserve-breaks nil)
         (org-md-headline-style 'setext)
         )
     (org-gfm-export-as-markdown)))
