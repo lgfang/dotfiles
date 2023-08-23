@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-07-27T11:31:10+1000>
+;; Modified: Lungang Fang 2023-08-23T10:21:01+1000>
 
 ;;; Commentary:
 
@@ -781,13 +781,14 @@ lgfang-hif-toggle-block"
 (setq hide-ifdef-initially t
       hide-ifdef-define-alist
       ;; Add/remove "define" alist per your own need
-      '((default)       ; An empty alist, makes every ifdef block folded, but
-                        ; not ifndef blocks. Hence, you are better off use a
-                        ; more appropriate one whenever possible
-        (plexus-atca LINUX ATCA USE_IPT_CLI) ; An example
-        (mongodb-mac-simple __APPLE__)
+      '((default)  ; An empty alist, makes every ifdef block folded, but not
+                   ; ifndef blocks. See below for an example of how to define a
+                   ; list per your project/environment.
+        (mongodb-mac __APPLE__
+                     (__LIBCPP_STD_VER . 14)
+                     )
         ))
-(defvar my-define-alist "default")
+(defvar my-define-alist "mongodb-mac")
 
 (defun lgfang-hide-ifdef-use-define-alist (name)
   "A wrapper for `hide-ifdef-use-define-alist' to use NAME define alist."
