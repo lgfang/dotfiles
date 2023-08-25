@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-08-23T10:21:01+1000>
+;; Modified: Lungang Fang 2023-08-25T11:42:54+1000>
 
 ;;; Commentary:
 
@@ -117,7 +117,10 @@
 (define-key global-map [f5] 'whitespace-cleanup)
 (define-key global-map [f7] 'flyspell-mode)
 (define-key global-map [f8] 'flyspell-prog-mode)
-(define-key global-map [f9] 'org-clock-goto)
+;; f9 to clock in last, `C-u f9' to select from recent tasks.
+(define-key global-map [f9] 'org-clock-in-last)
+;; shift-f9 to clock in last, `C-u f9' to select from recent tasks.
+(define-key global-map (kbd "S-<f9>") 'org-clock-out)
 (define-key global-map [f10] 'org-capture)
 ;; f11 : reserved for twm/tmux etc.
 ;; f12 : reserved for twm/tmux etc.
