@@ -668,8 +668,8 @@ tmux's buffer"
                   (setq
                    ;; Depends on the compiler available, one of the two takes
                    ;; effect. But, setting both does not hurt.
-                   flycheck-clang-language-standard "c++11"
-                   flycheck-gcc-language-standard "c++11")))
+                   flycheck-clang-language-standard "c++20"
+                   flycheck-gcc-language-standard "c++20")))
 
       (flycheck-define-checker rnc
         "Check rnc files using jing.jar See URL
