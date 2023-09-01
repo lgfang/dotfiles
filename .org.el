@@ -302,7 +302,10 @@ according to modification time is good enough."
 (org-babel-do-load-languages 'org-babel-load-languages
                              '((ditaa . t)
                                (plantuml . t)
-                               (dot . t)))
+                               (dot . t)
+                               ;; install mermaid cli: 'npm install -g @mermaid-js/mermaid-cli'
+                               (mermaid . t)
+                               ))
 ;; don't ask before evaluating
 (defun my-org-confirm-babel-evaluate (lang body)
   (not (or (string= lang "ditaa")
