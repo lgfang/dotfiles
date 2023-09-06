@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-09-05T22:07:12+1000>
+;; Modified: Lungang Fang 2023-09-06T10:04:27+1000>
 
 ;;; Commentary:
 
@@ -1679,14 +1679,8 @@ string,refer to format-time-string."
         (emacs-lisp-docstring-fill-column t))
     (fill-paragraph nil region)))
 
-(defun org-confluence-verbatim (verbatim contents info)
-  (let ((content (org-element-property :value verbatim)))
-    (format "\{\{%s\}\}" (string-replace "{" "\\{" content))))
-(defun org-confluence-code (code contents info)
-  (let ((content (org-element-property :value code)))
-    (format "\{\{%s\}\}" (string-replace "{" "\\{" content))))
-
 ;;; ------ end MyFunction ------
+
 (load "tmp.el" t nil nil)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
