@@ -318,13 +318,14 @@ according to modification time is good enough."
   "An customized version of `mark-page` for my export-xxx function.
 
 It make the current page the active region, exluding the ending ^L."
-  (forward-page -1)
-  (push-mark nil t t)
-  (forward-page)
-  (if (string= (string (char-before (region-end))) "\f")
-      ;; \f == ^L == page delimiter
-      (backward-char))
-  )
+  (unless (region-active-p)
+    (forward-page -1)
+    (push-mark nil t t)
+    (forward-page)
+    (if (string= (string (char-before (region-end))) "\f")
+        ;; \f == ^L == page delimiter
+        (backward-char))
+    ))
 
 (defun export-ticket-comment ()
   "Export the current page to gfm or confluence(jira) markdown according to the buffer name prefix."
