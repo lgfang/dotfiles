@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-09-07T15:29:45+1000>
+;; Modified: Lungang Fang 2023-09-15T10:35:12+1000>
 
 ;;; Commentary:
 
@@ -749,28 +749,35 @@ tmux's buffer"
 ;; (setq gdb-many-windows t)
 
 ;;; git-gutter
-;; (when (require 'git-gutter)
+;; Choose this over diff-hl because the later does not work in 'emacs -nw'.
+(when (require 'git-gutter)
 
-;;   ;; To diff with a revision other than the latest one, in the repo root
-;;   ;; directory, add to the emacs directory local variable file (.dir-locals.el)
-;;   ;; add content similar to the following:
-;;   ;;
-;;   ;; ((prog-mode . ((git-gutter:start-revision . "my_branch"))))
+  ;; To diff with a revision other than the latest one, in the repo root
+  ;; directory, add to the emacs directory local variable file (.dir-locals.el)
+  ;; add content similar to the following:
+  ;;
+  ;; ((prog-mode . ((git-gutter:start-revision . "my_branch"))))
 
-;;   (global-git-gutter-mode t)
+  (global-git-gutter-mode t)
 
-;;   ;; Jump to next/previous hunk
-;;   (global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
-;;   (global-set-key (kbd "C-x n") 'git-gutter:next-hunk)
+  ;; Jump to next/previous hunk
+  (global-set-key (kbd "C-x v [") 'git-gutter:previous-hunk)
+  (global-set-key (kbd "C-x v ]") 'git-gutter:next-hunk)
 
-;;   ;; Stage current hunk
-;;   (global-set-key (kbd "C-x v s") 'git-gutter:stage-hunk)
+  (global-set-key (kbd "C-x v =") 'git-gutter:popup-hunk)
 
-;;   ;; Revert current hunk
-;;   (global-set-key (kbd "C-x v r") 'git-gutter:revert-hunk)
+  ;; Stage current hunk
+  (global-set-key (kbd "C-x v s") 'git-gutter:stage-hunk)
+  ;; Revert current hunk
+  (global-set-key (kbd "C-x v r") 'git-gutter:revert-hunk)
 
-;;   (global-set-key (kbd "C-x v =") 'git-gutter:popup-hunk)
-;;   )
+  (set-face-background 'git-gutter:modified "DarkOrange")
+  (set-face-background 'git-gutter:added "green")
+  (set-face-background 'git-gutter:deleted "red")
+  (setq git-gutter:modified-sign " "
+        git-gutter:added-sign " "
+        git-gutter:deleted-sign " ")
+  )
 
 ;;; git-link
 (setq git-link-open-in-browser t)
