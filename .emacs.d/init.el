@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-09-15T10:35:12+1000>
+;; Modified: Lungang Fang 2023-09-15T14:53:46+1000>
 
 ;;; Commentary:
 
@@ -585,7 +585,22 @@ tmux's buffer"
 (add-hook 'emacs-lisp-mode-hook
           (lambda() (imenu-add-menubar-index) (hs-minor-mode 1)))
 
-;; TODO:
+;;; eglot: an LSP client
+;; (add-hook 'eglot-managed-mode-hook
+;;           (lambda()
+;;             ;; eglot sets it to nil but I like t as it shows me what the
+;;             ;; identifier at point is.
+;;             (setq xref-prompt-for-identifier t)
+;;             ))
+
+;; Python cross referrence, approach 1: package install anaconda-mode and
+;; add it into python-mode-hoo; approach 2: pip3 or brew install pyright (an LSP
+;; server) and then use eglot (an LSP client), which is a more general solution
+;; not limited to python.
+
+;; Note for pyright: on MacOS it may easily reach the maxfile limit (256) and
+;; fail (you'll see the message if you enable debug-on-error in emacs.). Hence
+;; you may want to increase the limit if you plan to use pyright.
 
 ;;; emms configure in another file
 (load "lgfang.emms" t nil nil)
@@ -1120,7 +1135,7 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
             (setq tab-width 4)  ; "python-mode" sets it to 8, change it back.
             (hs-minor-mode 1)
             (outline-minor-mode 1)
-            (anaconda-mode)             ; for cross reference
+            ;; (anaconda-mode)             ; for cross reference, also see eglot
             (blacken-mode 1)            ; relies on the command black
             (setq imenu-create-index-function 'python-imenu-create-flat-index)
             (imenu-add-menubar-index)))
@@ -1133,15 +1148,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
       ;; buffer for more information.
       (setq flycheck-python-flake8-executable "flake8")
   )
-
-;; ;; for cross referrence, pip3 install pyright and then use eglot (`M-x eglot' or
-;; ;; `C-u M-x eglot' in a python buffer).
-;; (add-hook 'eglot-managed-mode-hook
-;;           (lambda()
-;;             ;; eglot sets it to nil but I like t as it shows me what the
-;;             ;; identifier at point is.
-;;             (setq xref-prompt-for-identifier t)
-;;             ))
 
 ;;; RCIRC - replaces ERC
 (when (require 'my-confidential nil t)
