@@ -116,10 +116,10 @@
 ;; f3/f4: define keyboard macros
 (define-key global-map [f5] 'whitespace-cleanup)
 (define-key global-map [f7] 'flyspell-mode)
-(define-key global-map [f8] 'flyspell-prog-mode)
+(define-key global-map [f8] 'bury-buffer)
 ;; f9 to clock in last, `C-u f9' to select from recent tasks.
 (define-key global-map [f9] 'org-clock-in-last)
-;; shift-f9 to clock in last, `C-u f9' to select from recent tasks.
+;; shift-f9 to clock out
 (define-key global-map (kbd "S-<f9>") 'org-clock-out)
 (define-key global-map [f10] 'org-capture)
 ;; f11 : reserved for twm/tmux etc.
