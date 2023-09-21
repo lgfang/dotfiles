@@ -403,7 +403,6 @@ so that you needn't enable it manually.
             (c-set-style "lgfang")
             (c-toggle-hungry-state 1)
             (hs-minor-mode 1)
-            (turn-on-cwarn-mode)
             ;; (eldoc-mode 1)
             ))
 ;; Can't hook imenu-add-menubar-index to c-mode-common-hook since awk mode don't
