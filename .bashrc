@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 2023-05-18T15:17:52+1000>
+# Modified: Lungang Fang 2023-10-25T14:10:11+1100>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -36,17 +36,40 @@ shopt -s checkwinsize
 #* PS1
 # *NOTE* must use single quotes NOT double quotes so that escape backslashes are
 # not escaped.
-PS1='\n'                                   # begin with a newline
-PS1=$PS1'\[\e[7;35m\]${MY_WARN}\[\e[0m\] ' # warning message if there is any
-PS1=$PS1'\[\e[38;5;106m\]\u@\h '           # user@host
-PS1=$PS1'\[\e[0;36m\]$(git_4_ps1) $(kube_4_ps1) ' # defined below
-PS1=$PS1'\[\e[38;5;101m\]\t \! ' # time and command history number
+# TODO: replace color escape codes with 'tput setaf' etc.?
+PS1='\n'                      # An extra line to separte previous output and PS1
+PS1=$PS1'\[\e[32m\]╭ '        # 1st line, additional info
+PS1=$PS1'\[\e[38;5;101m\]\! \t ' # time and command history number
+PS1=$PS1'$(ps1_git)'
+PS1=$PS1'$(ps1_kube)'
+PS1=$PS1'\n\[\e[32m\]│ '         # 2nd line, common info in PS1
+PS1=$PS1'$(ps1_warn_msg)'        # warning message if there is any
+PS1=$PS1'\[\e[38;5;106m\]\u@\h:' # user@host
 PS1=$PS1'\[\e[38;5;33m\]\w '     # working directory
-PS1=$PS1'\n\[\e[32m\]\$ '        # "$"/"#" sign on a new line
-PS1=$PS1'\[\e[0m\]'              # restore to default color
-# for ksh:
-# PS1='$(print "[$LOGNAME@`hostname`:${PWD/$HOME/~}]\n$ ")'
-# PS1='[$PWD]\$ '
+PS1=$PS1'\n\[\e[32m\]╰ \$ '      # 3rd line, "$"/"#" sign on a new line
+PS1=$PS1'\[\e[0m\]'              # restore to the default color
+
+function ps1_warn_msg {
+    [ -z "$MY_WARN" ] || printf '\e[7;35m%s\e[0m ' "$MY_WARN"
+}
+
+function ps1_git {
+    command -v git >/dev/null || return
+    # get git branch of pwd
+    local branch="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    if [ -n "$branch" ]; then
+        printf '\e[0;36m%s ' "git:$branch"
+    fi
+}
+
+function ps1_kube {
+    command -v kubectl >/dev/null || return
+    local kube_context="$(kubectl config current-context 2>/dev/null)"
+    local kube_namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
+    if [ -n "$kube_context" -o -n "$kube_namespace" ]; then
+        printf '\e[0;36m%s ' "kube:$kube_context/$kube_namespace"
+    fi
+}
 
 #* auto-completion
 if [ -r "/usr/local/etc/profile.d/bash_completion.sh" ]; then
@@ -255,15 +278,6 @@ function ep { # go to current directory of emacs(daemon)
 
 #** git
 
-function git_4_ps1 {
-    command -v git >/dev/null || return
-    # get git branch of pwd
-    local branch="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
-    if [ -n "$branch" ]; then
-        echo "git:$branch"
-    fi
-}
-
 function gerrit {
     # submit current commit to gerrit for review
     local branch=$1
@@ -287,6 +301,7 @@ function bson2json {
         -e 's/LUUID("\([^"]*\)"[^)]*)/"\1"/g'\
         -e 's/UUID("\([^"]*\)"[^)]*)/"\1"/g'
 }
+
 #** kubernetes
 
 # kubectl autocomplete if this command is installed
@@ -295,15 +310,6 @@ command -v kubectl >/dev/null && source <(kubectl completion bash)
 # alias 'k' and ensure autocomplete also works for it.
 alias k=kubectl
 complete -F __start_kubectl k
-
-function kube_4_ps1 {
-    command -v kubectl >/dev/null || return
-    local kube_context="$(kubectl config current-context 2>/dev/null)"
-    local kube_namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
-    if [ -n "$kube_context" -o -n "$kube_namespace" ]; then
-        echo "kube:$kube_context.$kube_namespace"
-    fi
-}
 
 function kns {
     # a function to set namespace. It is not worthwhile to `brew install kubectx' for kubens
