@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 2023-10-25T14:10:11+1100>
+# Modified: Lungang Fang 2023-10-25T22:29:26+1100>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -56,7 +56,8 @@ function ps1_warn_msg {
 function ps1_git {
     command -v git >/dev/null || return
     # get git branch of pwd
-    local branch="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    local branch
+    branch="$(git symbolic-ref --short -q HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)"
     if [ -n "$branch" ]; then
         printf '\e[0;36m%s ' "git:$branch"
     fi
