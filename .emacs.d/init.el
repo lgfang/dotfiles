@@ -661,7 +661,7 @@ tmux's buffer"
 )
 
 ;;; fill column
-(setq-default fill-column 80 comment-fill-column 72)
+(setq-default fill-column 80 comment-fill-column nil)
 (require 'fill-column-indicator nil t) ;; run "(fci-mode)"
 ;; (define-globalized-minor-mode
 ;;   global-fci-mode fci-mode (lambda () (fci-mode 1)))
