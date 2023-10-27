@@ -592,14 +592,10 @@ tmux's buffer"
 ;;             (setq xref-prompt-for-identifier t)
 ;;             ))
 
-;; Python cross referrence, approach 1: package install anaconda-mode and
-;; add it into python-mode-hoo; approach 2: pip3 or brew install pyright (an LSP
-;; server) and then use eglot (an LSP client), which is a more general solution
-;; not limited to python.
-
-;; Note for pyright: on MacOS it may easily reach the maxfile limit (256) and
-;; fail (you'll see the message if you enable debug-on-error in emacs.). Hence
-;; you may want to increase the limit if you plan to use pyright.
+;; Note for Eglot + Pyright on MacOS: you may want to increase the "open files"
+;; limit (`ulimit -n'), say to 65536. The default value is 256, which pyright
+;; easily hits when the python project is non-trivial. (You'll see the error
+;; message if you set debug-on-error to t and then enable eglot.).
 
 ;;; emms configure in another file
 (load "lgfang.emms" t nil nil)
