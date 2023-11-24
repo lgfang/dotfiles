@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-09-15T14:53:46+1000>
+;; Modified: Lungang Fang 2023-11-24T19:27:57+1100>
 
 ;;; Commentary:
 
@@ -985,21 +985,13 @@ files and avoid accidental modifications."
 ;;; ldap mode for ldif files
 (autoload 'ldap-mode "ldap-mode" "Edit ldif files" t)
 
-;;; linum
-(when (not (window-system))
-  (setq linum-format
-        (lambda (linum)
-          (propertize
-           (format
-            (concat
-             "%"
-             (number-to-string
-              (length (number-to-string
-                       (count-lines (point-min) (point-max)))))
-             "d| ") linum) 'face 'linum))))
-(require 'linum nil t)
-;;(global-linum-mode t)
+;;; line number
+;; (setq-default
+;;  ;; Note that corresponding faces maybe undefined and hence the major/minor
+;;  ;; ticks are not shown.
+;;  display-line-numbers-major-tick 50 display-line-numbers-minor-tick 10)
 
+;;; log mode
 (autoload 'log-mode "log-mode" "my mode to view log files" t)
 (add-to-list 'auto-mode-alist '("\\.log\\(\\.[0-9]+\\)?\\'" . log-mode) t)
 
