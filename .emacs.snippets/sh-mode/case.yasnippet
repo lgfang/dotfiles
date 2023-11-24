@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# key: case
+# name: case
+# --
+case "\$$1" in
+    ${2:x})
+            ${3:do_sth}
+            ;;
+    *)
+            ${4:default action}
+            ;;
+esac
