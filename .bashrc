@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 2023-10-25T22:29:26+1100>
+# Modified: Lungang Fang 2023-11-24T20:28:50+1100>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -366,19 +366,40 @@ function get_ssh_agent {        # print ssh agent info
 }
 
 #** terminal window
-function mytitle { # set window title. Reset if no argument.
-    # usage: title [text]
-    if [ -z "$ORG_PROMPT_COMMAND" ]; then
-        # for bash: store system default
-        ORG_PROMPT_COMMAND=$PROMPT_COMMAND
+function mytitle {
+    ## usage: mytitle [text]
+    # Set the "terminal title" to "text"; if no argument provided, try to reset
+    # the title if possible. Things can get complicated with tmux & emulator
+    # tabs. Assuming the shell is in a tmux session in an terminal emulator tab,
+    # then there are 4 titles: i.e. emulator window title, emulator pane/tab
+    # title, tmux pane title, tmux window title. In this scenario, this function
+    # sets the tmux pane title. To set the emulator pane/tab title, you can use
+    # "tmux set-option -g set-titles-string '...'"
+
+    if [ -z "${PROMPT_COMMAND[*]}" ]; then
+        # PROMPT_COMMAND is unset/empty, simply echo the escape sequence once is
+        # enough.
+        echo -ne "\033]0;$1\007"
+        return
     fi
 
+    # PROMPT_COMMAND is not empty. It may or may not set title. For simplicity,
+    # just assume it does. Instead of trying to find and replace corresponding
+    # command, we just set/overwrite title at the end.
     if [ $# -gt 0 ]; then
-        PROMPT_COMMAND="" # for bash
-        echo -ne "\033]0;$1\007"
+        if [ -z "${ORG_PROMPT_COMMAND+x}" ]; then
+            # ORG_PROMPT_COMMAND is unset, must be calling this function for the
+            # first time, store the system default PROMPT_COMMAND into
+            # ORG_PROMPT_COMMAND.
+            ORG_PROMPT_COMMAND=("${PROMPT_COMMAND[@]}") # copy array
+        fi
+        PROMPT_COMMAND=("${ORG_PROMPT_COMMAND[@]}" "echo -ne '\033]0;$1\007'")
     else
-        # restore system default # for bash
-        PROMPT_COMMAND=$ORG_PROMPT_COMMAND
+        # restore system default
+        if [ -n "$ORG_PROMPT_COMMAND" ]; then
+            PROMPT_COMMAND=("${ORG_PROMPT_COMMAND[@]}")
+            unset ORG_PROMPT_COMMAND
+        fi
     fi
 }
 export -f mytitle
