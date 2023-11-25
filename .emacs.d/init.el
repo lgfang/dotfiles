@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-11-24T19:27:57+1100>
+;; Modified: Lungang Fang 2023-11-25T11:41:04+1100>
 
 ;;; Commentary:
 
@@ -861,7 +861,14 @@ lgfang-hif-toggle-block"
   "hide/show the next level"
   (interactive) (hs-show-block) (hs-hide-level 1))
 
-;;; highlight-tail
+;;; highlight current line: use the built in `hl-line'
+;; Note that this and other similar functions (such as beacon) only works with
+;; *active* cursor. Therefore, none of them highlights the "current" line/point
+;; of another buffer. For example, in a compilation/grep buffer, you press n/p
+;; to move the cursor in another buffer. Because you don't jump to that buffer,
+;; the highlight in that buffer does not change.
+
+;;; highlight cursor of insertion: `highlight-tail'
 ;; (when (require 'highlight-tail)
 ;;   (setq highlight-tail-colors '(("black" . 0)
 ;;                                 ("#bc2525" . 25)
@@ -870,6 +877,24 @@ lgfang-hif-toggle-block"
 ;;         highlight-tail-timer 1
 ;;         highlight-tail-posterior-type 'const)
 ;;   (highlight-tail-mode 1))
+
+;;; highlight indetation levels
+(when (require 'highlight-indentation)
+  (setq highlight-indentation-blank-lines t)
+  ;; Not enabling this feature by default. Manually turn it when desired.
+  )
+
+;;; highlight parenthesis: `highlight-parentheses'
+;; It's better than `show-paren-mode', which matches parentheseses at point
+;; only.
+(when (require 'highlight-parentheses nil t)
+  ;; M-x list-colors-display to see named colors
+  (setq hl-paren-colors '("brown" "orange" "yellow" "forest green"
+                          "cyan" "blue" "violet"))
+  (global-highlight-parentheses-mode t))
+
+;;; highlight region
+(setq-default transient-mark-mode t)
 
 ;;; hippie expand
 (setq hippie-expand-try-functions-list
@@ -1091,14 +1116,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 
 ;;; org mode
 (load "~/.org" t nil nil)
-
-;;; parenthesis highlighting, Use highlight-parentheses instead
-;; (show-paren-mode nil)(setq show-paren-style 'expression)
-(when (require 'highlight-parentheses nil t)
-  ;; M-x list-colors-display to see named colors
-  (setq hl-paren-colors '("brown" "orange" "yellow" "forest green"
-                          "cyan" "blue" "violet"))
-  (global-highlight-parentheses-mode t))
 
 ;;; perl: using cperl-mode instead
 (defalias 'perl-mode 'cperl-mode)
@@ -1328,9 +1345,6 @@ selective-display"
 (require 'tramp)
 (setq tramp-debug-buffer t)
 (add-to-list 'tramp-default-method-alist '("localhost" nil "su"))
-
-;;; highlight selected region
-(setq-default transient-mark-mode t)
 
 ;;; trash
 (when (>= emacs-major-version 23)
