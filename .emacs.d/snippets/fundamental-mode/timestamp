@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# key: fts
+# name: file mode and timestamp
+
+# Note: Insert the string and comment it in a tmp buffer and the copy it into
+# the current buffer. This is to avoid the warning 'modified buffer in a
+# backquote expression'.
+
+# --
+`(let* ((mode major-mode))
+   (with-temp-buffer
+     (insert "-*-mode:org;coding:utf-8-*-\n"
+             (format "Created: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d"))
+             (format "Modified: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d")))
+     (funcall mode)
+     (comment-region (point-min) (point-max))
+     (buffer-string)))`

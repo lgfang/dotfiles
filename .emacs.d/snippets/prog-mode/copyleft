@@ -1,0 +1,29 @@
+# -*- mode: snippet -*-
+# key: copyleft
+# name: Copy-left
+
+# Note: manipulate the content in a tmp buffer first and the copy it to the
+# designated buffer. This is avoid the warning 'modified buffer in a backquote
+# expression'.
+
+# --
+`(let ((mode major-mode))
+   (with-temp-buffer
+     (insert
+      "This program is free software; you can redistribute it
+and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+Had you not received a copy of the GNU General Public License
+yet, write to the Free Software Foundation, 675 Mass Ave,
+Cambridge, MA 02139, USA.")
+     (funcall mode)
+     (comment-region (point-min) (point-max))
+     (fill-region (point-min) (point-max))
+     (buffer-string)))`
