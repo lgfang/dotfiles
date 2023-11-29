@@ -17,7 +17,7 @@ for each in .bash_completion.d \
                 .org.el \
                 .gnus.el \
                 .shellcheckrc \
-                .emacs.snippets \
+                .emacs.d/snippets \
                 .emacs.d/init.el
 do
     target=$HOME/.dotfiles/$each
