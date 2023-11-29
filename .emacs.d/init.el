@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-11-25T11:41:04+1100>
+;; Modified: Lungang Fang 2023-11-29T15:59:58+1100>
 
 ;;; Commentary:
 
@@ -44,7 +44,6 @@
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(setq package-user-dir "~/.emacs.d/emacs-extensions/elpa")
 (package-initialize)
 
 ;;; cygwin wrappers
@@ -229,55 +228,44 @@ so that you needn't enable it manually.
 (setq-default asm-comment-char 35)      ; 35 -> ascii code for '#'
 
 ;;; auto-complete
-(let ((my-path-to-auto-complete (concat my-extension-path "auto-complete")))
-  (add-to-list 'load-path my-path-to-auto-complete)
-  (when (require 'auto-complete-config nil t)
-    (add-to-list 'ac-dictionary-directories
-                 (concat my-path-to-auto-complete "/dict"))
-    (add-to-list 'ac-dictionary-directories
-                 (concat my-extension-path "/my-ac-dict"))
-    (add-to-list 'ac-sources ac-source-yasnippet)
-    (define-key ac-complete-mode-map "\C-s" 'ac-next)
-    (define-key ac-complete-mode-map "\C-r" 'ac-previous)
-    ;; (setq-default ac-sources ac-sources) ; works, though tricky
-    ;; ;; common source
-    ;; (setq-default ac-sources '(ac-source-imenu ac-source-abbrev
-    ;;               ac-source-words-in-buffer
-    ;;               ac-source-files-in-current-dir ac-source-filename
-    ;;               ))
-    (ac-config-default)
-    (setq ac-dwim t
-          ac-auto-start 2               ; start ac after 3 chars
-          ;; modes that automatically startup auto-complete-mode
-          ac-modes '(asm-mode
-                     c++-mode ;; c-mode
-                     cc-mode
-                     emacs-lisp-mode
-                     java-mode
-                     lisp-interaction-mode
-                     lisp-mode
-                     makefile-mode
-                     makefile-gmake-mode
-                     org-mode
-                     cperl-mode
-                     python-mode
-                     sh-mode
-                     tcl-mode
-                     org-mode
-                     text-mode
-                     conf-mode))
-    ;; (global-set-key "\M-/" 'ac-start)
-    (dolist (hook '(emacs-lisp-mode-hook
-                    lisp-interaction-mode-hook
-                    shell-mode-hook
-                    tcl-mode-hook))
-      (add-hook hook (lambda()
-                       (add-to-list 'ac-sources ac-source-filename))))))
-
-;;; auto insert
-(setq auto-insert t
-      auto-insert-directory (concat my-emacs-base "auto-insert/"))
-(add-hook 'find-file-hooks 'auto-insert)
+(when (require 'auto-complete-config nil t)
+  (add-to-list 'ac-sources ac-source-yasnippet)
+  (define-key ac-complete-mode-map "\C-s" 'ac-next)
+  (define-key ac-complete-mode-map "\C-r" 'ac-previous)
+  ;; (setq-default ac-sources ac-sources) ; works, though tricky
+  ;; ;; common source
+  ;; (setq-default ac-sources '(ac-source-imenu ac-source-abbrev
+  ;;               ac-source-words-in-buffer
+  ;;               ac-source-files-in-current-dir ac-source-filename
+  ;;               ))
+  (ac-config-default)
+  (setq ac-dwim t
+        ac-auto-start 2               ; start ac after 3 chars
+        ;; modes that automatically startup auto-complete-mode
+        ac-modes '(asm-mode
+                   c++-mode ;; c-mode
+                   cc-mode
+                   emacs-lisp-mode
+                   java-mode
+                   lisp-interaction-mode
+                   lisp-mode
+                   makefile-mode
+                   makefile-gmake-mode
+                   org-mode
+                   cperl-mode
+                   python-mode
+                   sh-mode
+                   tcl-mode
+                   org-mode
+                   text-mode
+                   conf-mode))
+  ;; (global-set-key "\M-/" 'ac-start)
+  (dolist (hook '(emacs-lisp-mode-hook
+                  lisp-interaction-mode-hook
+                  shell-mode-hook
+                  tcl-mode-hook))
+    (add-hook hook (lambda()
+                     (add-to-list 'ac-sources ac-source-filename)))))
 
 ;;; auto mode list
 (setq auto-mode-alist (append
@@ -1457,13 +1445,12 @@ selective-display"
 (setq xref-prompt-for-identifier t) ; always prompt for identifier to search
 
 ;;; yasnippet
-(add-to-list 'load-path (concat my-extension-path "yasnippet"))
-;; NOTE: download http://elpa.gnu.org/packages/cl-lib.html if needed
 (when (require 'yasnippet nil t)
-  (setq yas/root-directory
-        (list (concat my-extension-path "yasnippet/snippets")))
-  (when (file-exists-p "~/.emacs.snippets")
-    (add-to-list 'yas/root-directory "~/.emacs.snippets"))
+  ;; Put personal/customized snippets into the first dir of `yas-snippet-dirs',
+  ;; which is `~/.emacs.d/snippets' by default. NOTE: it is `yas-snippet-dirs'
+  ;; NOT `yasnippet-snippets-dir'. The later is where the package
+  ;; `yasnippet-snippets' stores its snippets).
+  ; TODO: cleanup duplicated/similar snippets in different dirs.
 
   ;; Org-mode specific
   (defun yas/org-very-safe-expand ()
@@ -1491,74 +1478,8 @@ selective-display"
 
 ;;; ------ begin MyFunction ------
 
-;; auto insert TODO: use yasnippet?
-(defun lgfang-copy-left ()
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (let ((beg (point)))
-    (insert
-     "\\file Name: "
-     (file-name-nondirectory buffer-file-name) "\n"
-     "Created:  " (user-full-name) " "
-     (format-time-string "%Y-%m-%d") "\n"
-     "Modified: >\n"
-     "\n"
-     "\\brief\n"
-     "\n"
-     "\\details\n"
-     "\n"
-     )
-    (comment-region beg (point)))
-    (let ((beg (point)))
-      (insert
-       "This program is free software; you can redistribute it
-and/or modify it under the terms of the GNU General Public
-License as published by the Free Software Foundation; either
-version 2, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-Had you not received a copy of the GNU General Public License
-yet, write to the Free Software Foundation, 675 Mass Ave,
-Cambridge, MA 02139, USA.
-")
-      (let ((fill-column (- fill-column 6))) ;; make room for comment
-        (fill-region beg (point)))
-      (comment-region beg (point))
-      )
-    ))
-
-(define-auto-insert
-  (cons "\\.\\([Hh]\\|hh\\|hpp\\)\\'" "C / C++ header")
-  'lgfang-copy-left t)
-
-;; autoinsert C/C++ header
-(define-auto-insert
-  (cons "\\.\\([Cc]\\|cc\\|cpp\\)\\'" "C / C++ program")
-  'lgfang-copy-left t)
-
-(define-auto-insert
-  (cons "\\.py\\'" "Python Script")
-  '(insert
-    "#!/usr/bin/env python3\n\n"
-    "# Created:  " (user-full-name) " " (format-time-string "%Y-%m-%d") "\n"
-    "# Modified: >\n\n"
-    "import unittest\n\n"
-    "if __name__ == '__main__':\n"
-    "    unittest.main()\n"
-    )
-  t)
-
-(define-auto-insert
-  (cons "\\.sh\\'" "Shell Script")
-  'lgfang-copy-left t)
-
 (defadvice comment-dwim (before lgfang-comment-wim activate compile)
-  "if neiter mark-active not at end of line, comment current
+  "if neiter mark-active nor at end of line, comment current
 line (by making the whole line an active region). This gets you a
 really cool behavior :)."
   (unless (or mark-active (looking-at "[ \t]*$"))
