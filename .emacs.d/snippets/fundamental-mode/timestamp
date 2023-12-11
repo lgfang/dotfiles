@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# key: fts
+# key: ts
 # name: file mode and timestamp
 
 # Note: Insert the string and comment it in a tmp buffer and the copy it into
@@ -9,7 +9,8 @@
 # --
 `(let* ((mode major-mode))
    (with-temp-buffer
-     (insert "-*-mode:org;coding:utf-8-*-\n"
+     (insert (format "-*-mode:%s;coding:utf-8-*-\n"
+                 (replace-regexp-in-string "-mode$" "" (symbol-name mode)))
              (format "Created: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d"))
              (format "Modified: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d")))
      (funcall mode)
