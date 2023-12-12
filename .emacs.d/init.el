@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-11-29T15:59:58+1100>
+;; Modified: Lungang Fang 2023-12-12T14:52:19+1100>
 
 ;;; Commentary:
 
@@ -1141,30 +1141,7 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
       (setq flycheck-python-flake8-executable "flake8")
   )
 
-;;; RCIRC - replaces ERC
-(when (require 'my-confidential nil t)
-  ;; configure RCIRC only when my confidential information is available.
-  (setq rcirc-server-alist `((,slack-server
-                              :port ,slack-port
-                              :encryption tls
-                              :nick ,slack-nick
-                              :password ,(concat slack-pass "-no_mpdm_greet")
-                              :channels ("#tse-notifications"))
-                             ("irc.freenode.net"
-                              :channels ("#emacs" "#rcirc" "#mongodb"))
-                             )
-        ;; register nick name: https://freenode.net/kb/answer/registration
-        rcirc-authinfo `(("freenode" nickserv ,my-net-id ,my-pub-passwd))
-        rcirc-omit-responses '("JOIN" "PART" "QUIT" "NICK" "AWAY")
-        ;; rcirc-nick-completion-format "@%s"
-        rcirc-fill-flag nil
-        rcirc-default-nick my-net-id)
-
-  (add-hook 'rcirc-mode-hook
-   (lambda ()
-     (rcirc-track-minor-mode 1)
-     (flyspell-mode 1)))
-  )
+;;; RCIRC - removed, use IRC no more.
 
 ;;; recently opened file
 (require 'recentf)
