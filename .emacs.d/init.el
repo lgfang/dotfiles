@@ -285,49 +285,7 @@ so that you needn't enable it manually.
       version-control 'never
       backup-by-copying-when-linked t)
 
-;;; bbdb & bbdb-vcard-export
-(when (require 'bbdb nil t)
-  (require 'qp)
-  (bbdb-initialize 'gnus 'message)
-  (setq bbdb-default-area-code 532
-        bbdb-default-country "China"
-        bbdb-file (concat my-personal-path "my-bbdb")
-        bbdb-north-american-phone-numbers-p nil
-        bbdb-user-mail-names (regexp-opt
-                              '("myname@163.com" "another@smth.org"))
-        bbdb-complete-name-allow-cycling t
-        bbdb-use-pop-up nil)
-  ;;  (add-hook 'gnus-startup-hook 'bbdb-insinuate-gns)
-
-  (if (require 'bbdb-vcard nil t)
-      (setq bbdb-vcard-export-coding-system 'utf-8-unix))
-
-  (defun lgfang-bbdb-to-vcards()
-    "Adapted to nokia E72"
-    (interactive)
-    (let ((path "~/tmp/exported-vcards/"))
-      (bbdb "" nil)                       ; have to run this first
-      (bbdb-vcard-export path t t)
-      (mapc (lambda(file)
-              (with-temp-buffer
-                (insert-file-contents-literally file)
-                (quoted-printable-encode-region (point-min) (point-max))
-                ;; delete useless field
-                (replace-regexp "^\\(FN\\|NICKNAME\\):.*$" ""
-                                nil (point-min) (point-max))
-                ;; corrections of quoted-printable-encode-region
-                (replace-regexp "^VERSION:3.0" "VERSION:2.1"
-                                nil (point-min) (point-max))
-                (replace-string ";TYPE=3D" ";"
-                                nil (point-min) (point-max))
-                (replace-regexp "^EMAIL:" "EMAIL;INTERNET:"
-                                nil (point-min) (point-max))
-                (replace-regexp "^\\(ADR[^:]*\\|N\\|ORG\\):"
-                                "\\1;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:"
-                                nil (point-min) (point-max))
-
-                (write-region (point-min) (point-max) file nil)))
-            (file-expand-wildcards (concat path "*.vcf"))))))
+;;; bbdb & bbdb-vcard-export - removed, use google/apple contacts etc.
 
 ;;; bookmark/bookmark+ - breaks org-mode + flyspell
 ;; Note: if `C-x r m` (i.e. bookmark-set) emits "end of file during parsing",
