@@ -9,10 +9,8 @@
 # --
 `(let* ((mode major-mode))
    (with-temp-buffer
-     (insert (format "-*-mode:%s;coding:utf-8-*-\n"
-                 (replace-regexp-in-string "-mode$" "" (symbol-name mode)))
-             (format "Created: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d"))
-             (format "Modified: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d")))
+     (insert (format "Created: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d"))
+             (format "Modified: >\n"))
      (funcall mode)
      (comment-region (point-min) (point-max))
      (buffer-string)))`
