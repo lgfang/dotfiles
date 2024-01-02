@@ -53,7 +53,7 @@
       ;; refer to [[file:./org-gtd.lgf]] for the usage
       org-agenda-files
       (mapcar (lambda (x) (concat my-personal-path x))
-            (list "professional.gtd" "personal.gtd" "part-time.gtd"))
+            (list "work.gtd" "personal.gtd" "part-time.gtd"))
 
       org-todo-keywords '(
                           ;; !@ means attach timestamps/notes when changing to certain state
@@ -92,17 +92,17 @@
                       ))))
         ("y" "TODO items @WORK@"
          ((todo "INCOME"
-                ((org-agenda-files '("~/mynotes/personal/professional.gtd"))
+                ((org-agenda-files '("~/mynotes/personal/work.gtd"))
                  (org-agenda-todo-ignore-scheduled 'future)))
           (todo "TODO"
-                ((org-agenda-files '("~/mynotes/personal/professional.gtd"))
+                ((org-agenda-files '("~/mynotes/personal/work.gtd"))
                  (org-agenda-todo-ignore-scheduled 'future)))
           (agenda ""
                   ((org-agenda-span 2)
                    (org-deadline-warning-days 7)
                    ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
                                         ; see above for why no longer skip todo items.
-                   (org-agenda-files '("~/mynotes/personal/professional.gtd"))))))
+                   (org-agenda-files '("~/mynotes/personal/work.gtd"))))))
         ("w" "PENDING items"
          ((todo "WAIT")
           (tags "project"
@@ -110,7 +110,7 @@
                  (org-agenda-skip-function
                   '(org-agenda-skip-entry-if 'todo '("HOLD" "MAYBE" "DONE" "CANCEL")))))))
         ("r" "Report work 1 week" tags "+CLOSED>\"<-7d>\""
-         ((org-agenda-files '("~/mynotes/personal/professional.gtd"))))
+         ((org-agenda-files '("~/mynotes/personal/work.gtd"))))
         ("h" "HOLD/MAYBE items"
          ((todo "HOLD") (todo "MAYBE")))
         ("b" "My bookmark" search nil
@@ -123,7 +123,7 @@
       org-capture-templates
       (list
        (list "w" "work related" 'entry
-             (list 'file+olp (concat my-personal-path "professional.gtd") "Misc.")
+             (list 'file+olp (concat my-personal-path "work.gtd") "Misc.")
              "* INCOME %?" :prepend t)    ; number of * doesn't matter
        (list "p" "personal task" 'entry
              (list 'file+olp (concat my-personal-path "personal.gtd") "Misc.")
