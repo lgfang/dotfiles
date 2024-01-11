@@ -328,8 +328,18 @@ according to modification time is good enough."
   "Export the current page to gfm or confluence(jira) markdown according to the buffer name prefix."
   (interactive)
   (my-mark-comment)
-  (if (string-match "sf-" buffer-file-name) (org-gfm-export-as-markdown)
-      (org-confluence-export-as-confluence)))
+  (let ((my-get-relative-level (lambda (headline info)
+                                 (+ 2
+                                    (org-element-property :level headline)
+                                    (or (plist-get info :headline-offset) 0)))))
+    ;; Start the headline level from 3 because h1, h2 are too big in jira/sfsc
+    ;; for most ticket comments. If, we do want to start with h1, say we are
+    ;; posting an article, instead of calling this function, (manually select
+    ;; the region and) run org-confluence-export-as-confluence.
+    (advice-add 'org-export-get-relative-level :override my-get-relative-level)
+    (if (string-match "sf-" buffer-file-name) (org-gfm-export-as-markdown)
+      (org-confluence-export-as-confluence))
+    (advice-remove 'org-export-get-relative-level my-get-relative-level)))
 
 (defun export-commit-msg ()
   "Export the current page to git commit friendly markdown."
