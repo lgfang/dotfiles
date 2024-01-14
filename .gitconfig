@@ -3,6 +3,9 @@
     name = lgfang
     email = lgfang78@nomail.com
 
+[checkout]
+    defaultRemote=origin
+
 [core]
     excludesfile = ~/.gitignore # A global ignore file
     # autocrlf = false
