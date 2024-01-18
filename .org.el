@@ -372,6 +372,21 @@ long lines"
         )
     (org-gfm-export-as-markdown)))
 
+(defun truncate-ps1()
+  "Remove the extra information in my PS1.
+
+When I copy a screen output into an Emacs buffer as a note or to
+share with others, the extra info in PS1 is not only irrelevant
+but may also cause confusion."
+  (interactive)
+  (my-mark-comment)
+  ;; An example PS1:
+  ;; ╭ 1251 16:16:04 kube:api.prod.corp.mongodb.com/devprod-platform
+  ;; │ lungang.fang@M-WLHDWV17VH:~
+  ;; ╰ $
+  (replace-regexp-in-region "^\\( *\\)╭ .*\n *│ .*\n *╰ " "\\1"
+                            (region-beginning) (region-end)))
+
 (eval-after-load "org-agenda"
   '(define-key org-agenda-mode-map (kbd "M-p") 'add-to-project-list))
 
