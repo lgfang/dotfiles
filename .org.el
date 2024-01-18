@@ -319,10 +319,18 @@ according to modification time is good enough."
 
  This is for my export-xxx functions. Each top level heading is
  one comment."
-  (unless (region-active-p)
+  (cond
+   ((region-active-p) nil)
+   ((org-before-first-heading-p)
+    (push-mark (point-min))
+    (goto-char (+ (or (outline-next-heading) (point-max)) -1))
+    ;; ^^^ move 1 char back so that we are not on the header line of the next
+    ;; subtree
+    (activate-mark))
+   (t
     (org-mark-subtree 100)        ; 100 levels up -> go to the top level heading
-    (forward-line 1)
-    ))
+    (forward-line 1)              ; skip the header
+    )))
 
 (defun export-ticket-comment ()
   "Export the current page to gfm or confluence(jira) markdown according to the buffer name prefix."
