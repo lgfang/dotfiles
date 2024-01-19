@@ -60,6 +60,12 @@
                           (type "INCOME(i!)" "TODO(t!)" "WAIT(w@)" "HOLD(h!)" "MAYBE(m!)" "|" "DONE(d!)" "CANCEL(c@)")
                           )
 
+      ;;; Todo dependencies
+      ;; block changing to DONE until all tasks it depends on are done.
+      org-enforce-todo-dependencies t
+      ;; hide the task in org agenda until it is  unblocked.
+      org-agenda-dim-blocked-tasks 'invisible
+
       ;; For easily refile todo items: mark possible targets with the tag
       ;; "headline". Do not use multiple levels of headers because that
       ;; generates too many targets.
