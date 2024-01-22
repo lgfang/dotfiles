@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2023-12-12T14:52:19+1100>
+;; Modified: Lungang Fang 2024-01-22T16:33:31+1100>
 
 ;;; Commentary:
 
@@ -180,7 +180,7 @@
 ;; (define-key global-map (kbd "ESC M-[ c" ) 'tiling-tile-right)
 ;; (define-key global-map (kbd "ESC M-[ d" ) 'tiling-tile-left)
 
-;;; abbrev - conflicts with auto-complete-mode, use yasnippet instead.
+;;; abbrev - use yasnippet instead.
 
 ;;; ansi color code handling
 (defun ansi-color-after-scroll (window start)
@@ -227,45 +227,7 @@ so that you needn't enable it manually.
 ;;; asm mode
 (setq-default asm-comment-char 35)      ; 35 -> ascii code for '#'
 
-;;; auto-complete
-(when (require 'auto-complete-config nil t)
-  (add-to-list 'ac-sources ac-source-yasnippet)
-  (define-key ac-complete-mode-map "\C-s" 'ac-next)
-  (define-key ac-complete-mode-map "\C-r" 'ac-previous)
-  ;; (setq-default ac-sources ac-sources) ; works, though tricky
-  ;; ;; common source
-  ;; (setq-default ac-sources '(ac-source-imenu ac-source-abbrev
-  ;;               ac-source-words-in-buffer
-  ;;               ac-source-files-in-current-dir ac-source-filename
-  ;;               ))
-  (ac-config-default)
-  (setq ac-dwim t
-        ac-auto-start 2               ; start ac after 3 chars
-        ;; modes that automatically startup auto-complete-mode
-        ac-modes '(asm-mode
-                   c++-mode ;; c-mode
-                   cc-mode
-                   emacs-lisp-mode
-                   java-mode
-                   lisp-interaction-mode
-                   lisp-mode
-                   makefile-mode
-                   makefile-gmake-mode
-                   org-mode
-                   cperl-mode
-                   python-mode
-                   sh-mode
-                   tcl-mode
-                   org-mode
-                   text-mode
-                   conf-mode))
-  ;; (global-set-key "\M-/" 'ac-start)
-  (dolist (hook '(emacs-lisp-mode-hook
-                  lisp-interaction-mode-hook
-                  shell-mode-hook
-                  tcl-mode-hook))
-    (add-hook hook (lambda()
-                     (add-to-list 'ac-sources ac-source-filename)))))
+;;; auto-complete - use company mode instead
 
 ;;; auto mode list
 (setq auto-mode-alist (append
@@ -456,6 +418,9 @@ tmux's buffer"
 (column-number-mode t)
 
 (setq comment-style 'extra-line)
+
+;;; company - auto completion
+(global-company-mode)
 
 ;;; compilation
 (eval-after-load "compile"
@@ -1066,8 +1031,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
             (message "/%s" (mapconcat 'identity path "/"))
           (format "/%s" (mapconcat 'identity path "/")))))))
 
-(require 'auto-complete-nxml nil t)
-
 ;;; occur
 (define-key occur-mode-map "n" 'next-error-no-select)
 (define-key occur-mode-map "p" 'previous-error-no-select)
@@ -1587,7 +1550,7 @@ string,refer to format-time-string."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(cue-mode git-gutter mermaid-mode protobuf-mode cmake-mode magit anaconda-mode eglot blacken git-link csv-mode emms json-reformat windata w3m solarized-theme showtip terraform-mode highlight-parentheses highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode ht go-mode flycheck f)))
+   '(company cue-mode git-gutter mermaid-mode protobuf-mode cmake-mode magit anaconda-mode eglot blacken git-link csv-mode emms json-reformat windata w3m solarized-theme showtip terraform-mode highlight-parentheses highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode ht go-mode flycheck f)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
