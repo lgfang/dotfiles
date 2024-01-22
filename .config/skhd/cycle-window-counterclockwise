@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Created: Lungang Fang 2024-01-22
+# Modified: Lungang Fang 2024-01-22T19:50:00+1100>
+
+set -o errexit
+set -o pipefail
+
+# a safeguard, ensure no inifite loop
+i=8
+
+win=$(yabai -m query --windows --window last | jq '.id')
+while yabai -m window $win --swap prev &> /dev/null && [ $i -gt 0 ]; do
+    i=$((i-1))
+done
