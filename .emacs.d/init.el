@@ -988,6 +988,22 @@ files and avoid accidental modifications."
   (midnight-delay-set 'midnight-delay "1:30am")
   (setq clean-buffer-list-delay-general 1))
 
+;;; mode line
+(defvar mode-line-format-original nil
+  "Stores the mode line format before shorten-mode-line is ever run.")
+(defun shorten-mode-line ()
+  "Hide unnecessary information to make room for more important information."
+  (interactive)
+  (unless mode-line-format-original
+    (setq mode-line-format-original (copy-tree mode-line-format)))
+  (setq-default mode-line-format (delq 'mode-line-modes mode-line-format)))
+(defun restore-mode-line ()
+  "Show the original/default full mode line."
+  (interactive)
+  (when mode-line-format-original
+    (setq-default mode-line-format (copy-tree mode-line-format-original))))
+(shorten-mode-line)
+
 ;;; mongolog: MongodDB log file mode
 (add-to-list 'load-path (concat my-elisp-path "mongolog"))
 (require 'mongolog nil t)
@@ -1461,17 +1477,6 @@ newsgroup: gnu.emacs.help.  To customize format of date
 string,refer to format-time-string."
   (interactive)
   (insert (format-time-string "%Y-%m-%d")))
-
-(defun lgfang-mode-line-all ()              ; long/long/ago
-  "Sometimes there are too many infomation in mode line to show
-  it in one line. Using this function to show it in an message
-  box (or pop-up tool tip)"
-  (interactive)
-  (message "%s" (format-mode-line mode-line-format t))
-  ;; (tooltip-show (format-mode-line mode-line-format t))
-  ;; (message-box "%s" (format-mode-line mode-line-format t))
-  )
-(fset 'mla 'lgfang-mode-line-all)
 
 (defun lgfang-recentf-open ()
   "open recent files. In ido style if applicable"
