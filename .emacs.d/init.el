@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-01-22T16:33:31+1100>
+;; Modified: Lungang Fang 2024-02-06T14:01:07+1100>
 
 ;;; Commentary:
 
@@ -1090,13 +1090,17 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 ;;; Always end a file with a newline
 (setq require-final-newline t)
 
-;;; rfcview
+;;; rfc
 (add-to-list 'auto-mode-alist
              '("/\\(rfc[0-9]+\\|draft-.+\\)\\.txt\\(\\.gz\\)?\\'"
                . rfcview-mode))
+;; so far this one renders RFCs best. But no longer available online(?)
 (autoload 'rfcview-mode "rfcview")
-;; ffap try find RFCs in ffap-rfc-directories before downloading
-(setq ffap-rfc-directories '("~/rfc" "~/projects/rfc"))
+;; ffap tries to find RFCs in these directories before giving a URL
+(setq ffap-rfc-directories '("~/projects/rfc"))
+;; ffap no longer downloads RFCs, `rfc-mode-read` downloads the RFC at point to
+;; this directory.
+(setq rfc-mode-directory "~/projects/rfc")
 
 ;;; rnc mode - nxml mode uses rnc files
 (add-to-list 'auto-mode-alist '("\\.rnc\\'" . rnc-mode))
