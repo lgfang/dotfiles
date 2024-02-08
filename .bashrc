@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 2023-11-24T20:28:50+1100>
+# Modified: Lungang Fang 2024-02-11T17:59:55+1100>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -278,6 +278,35 @@ function ep { # go to current directory of emacs(daemon)
 }
 
 #** git
+
+function git-clean-branches {
+    local OPTIND=1
+    local optstring="nm:"
+    local not_dry_run=""
+    # First round, set flags before performing any task
+    while getopts $optstring opt; do
+        case $opt in
+            n) not_dry_run="x";;
+            m) master_branch_name="$OPTARG";;
+            *) return 1;;
+        esac
+    done
+
+    git fetch -p
+    merged=( $(git branch --merged="$master_branch_name" | grep -v "$master_branch_name") )
+    remote_deleted=( $(git for-each-ref --format='%(if:equals=[gone])%(upstream:track)%(then)%(refname:short)%(end)' refs/heads) )
+
+    echo "merged: ${merged[*]}"
+    echo "deleted: ${remote_deleted[*]}"
+
+    if [ "${not_dry_run}" == "x" ]; then
+        for each in "${merged[@]}" "${remote_deleted[@]}"; do
+            git branch -D "$each"
+        done
+    else
+        echo "Re-run with '-n' to delete the above branches"
+    fi
+}
 
 function gerrit {
     # submit current commit to gerrit for review
