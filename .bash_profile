@@ -1,8 +1,4 @@
-# Modified: Lungang Fang 10/10/2022 18:20>
-
-#* source in .bashrc
-
-[ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
+# Modified: Lungang Fang 2024-02-08T11:35:59+1100>
 
 #* Env variables
 
@@ -24,6 +20,14 @@ export HISTSIZE=500
 # For OS X java
 # remove JAVA_HOME etc., brew install openjdk and "ln -s" properly.
 
-# Attach to (or start) a tmux session when opening a new terminal
+# For golang
+export GOPATH=$HOME/golang
+
+#* source in .bashrc *after* the ENVs (PATH etc.) are set.
+[ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
+
+#* load a variety of stuff
+
+#* Attach to (or start) a tmux session when opening a new terminal
 [ -n "$TMUX" ] || tg
 
