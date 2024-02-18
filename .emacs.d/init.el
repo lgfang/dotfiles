@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-02-06T14:01:07+1100>
+;; Modified: Lungang Fang 2024-02-19T10:49:55+1100>
 
 ;;; Commentary:
 
@@ -913,7 +913,7 @@ files and avoid accidental modifications."
     (setq buffer-read-only t)
     (buffer-disable-undo)
     (fundamental-mode)
-    (which-func-mode -1)
+    (which-function-mode -1)
     (if (fboundp 'highlight-parentheses-mode) (highlight-parentheses-mode -1))
     ))
 (add-hook 'find-file-hook 'my-find-file-huge-file-hook)
