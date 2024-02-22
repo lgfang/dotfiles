@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 2024-02-11T17:59:55+1100>
+# Modified: Lungang Fang 2024-02-23T09:29:25+1100>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -279,11 +279,12 @@ function ep { # go to current directory of emacs(daemon)
 
 #** git
 
-function git-clean-branches {
+function git_clean_branches {
     local OPTIND=1
     local optstring="nm:"
     local not_dry_run=""
-    # First round, set flags before performing any task
+    local master_branch_name="master"
+
     while getopts $optstring opt; do
         case $opt in
             n) not_dry_run="x";;
