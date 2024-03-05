@@ -1,6 +1,6 @@
 # -*-mode:conf-*-
 # Created: Lungang Fang 2024-01-22
-# Modified: Lungang Fang 2024-01-25T21:39:02+1100>
+# Modified: Lungang Fang 2024-03-05T11:46:04+1100>
 
 # mainly uses ctrl + cmd, reserving ctrl + alt for emacs
 
@@ -43,3 +43,10 @@ ctrl + cmd - up: yabai -m window --resize bottom:0:-20 || yabai -m window --resi
 
 # Toggle full screen
 ctrl + cmd - return: yabai -m window --toggle zoom-fullscreen
+
+# Open/select applications
+cmd - 6: open -a "Visual Studio Code.app"
+cmd - 7: open -a safari.app
+cmd - 8: open -a iterm.app
+cmd - 9: open -a "google chrome.app"
+cmd - 0: open -a slack.app
