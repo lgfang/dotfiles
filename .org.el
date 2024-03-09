@@ -57,7 +57,8 @@
 
       org-todo-keywords '(
                           ;; !@ means attach timestamps/notes when changing to certain state
-                          (type "INCOME(i!)" "TODO(t!)" "WAIT(w@)" "HOLD(h!)" "MAYBE(m!)" "|" "DONE(d!)" "CANCEL(c@)")
+                          (type "INCOME(i!)" "TODO(t!)" "WAIT(w@)" "HOLD(h!)" "MAYBE(m!)"
+                                "|" "DONE(d!)" "CANCEL(c@)" "DELEGATE(!@)")
                           )
 
       ;;; Todo dependencies
@@ -109,16 +110,10 @@
                    ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
                                         ; see above for why no longer skip todo items.
                    (org-agenda-files '("~/mynotes/personal/work.gtd"))))))
-        ("w" "PENDING items"
-         ((todo "WAIT")
-          (tags "project"
-                ((org-agenda-overriding-header "Active project list:")
-                 (org-agenda-skip-function
-                  '(org-agenda-skip-entry-if 'todo '("HOLD" "MAYBE" "DONE" "CANCEL")))))))
+        ("p" "PENDING items"
+         ((todo "WAIT") (todo "HOLD")  (todo "MAYBE")))
         ("r" "Report work 1 week" tags "+CLOSED>\"<-7d>\""
          ((org-agenda-files '("~/mynotes/personal/work.gtd"))))
-        ("h" "HOLD/MAYBE items"
-         ((todo "HOLD") (todo "MAYBE")))
         ("b" "My bookmark" search nil
          ((org-agenda-files '("~/mynotes/personal/bookmarks.lgf"))))
         ("c" "Bookmark category" tags nil
