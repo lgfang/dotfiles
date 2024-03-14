@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-02-28T15:54:06+1100>
+;; Modified: Lungang Fang 2024-03-15T10:19:23+1100>
 
 ;;; Commentary:
 
@@ -410,10 +410,7 @@ tmux's buffer"
   (setq interprogram-paste-function 'copy-from-osx))
 
 ;;; color theme
-(add-to-list 'custom-theme-load-path (concat my-extension-path "themes"))
 (if (display-graphic-p) (load-theme 'solarized-dark t) (load-theme 'wombat t))
-;; Themes I recommend: wombat, solarized-dark, tango-dark, tango, gnome2. For
-;; themes ported to emacs24: https://github.com/emacs-jp/replace-colorthemes
 
 (column-number-mode t)
 
