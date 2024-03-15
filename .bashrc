@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 2024-02-23T09:29:25+1100>
+# Modified: Lungang Fang 2024-03-15T14:55:56+1100>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -34,23 +34,33 @@ shopt -s checkwinsize
 # shopt -q progcomp
 
 #* PS1
-# *NOTE* must use single quotes NOT double quotes so that escape backslashes are
-# not escaped.
-# TODO: replace color escape codes with 'tput setaf' etc.?
+## *NOTE* must use single quotes NOT double quotes so that escape backslashes
+## are not escaped.
+#- color codes: https://misc.flogisoft.com/bash/tip_colors_and_formatting
+MY_RESET='\[\e[0m\]'            # '\[...\]' -enclosed are non-printing chars
+MY_REVERSE='\[\e[7m\]'
+MY_GREEN='\[\e[32m\]'
+MY_BLUE='\[\e[38;5;33m\]'
+MY_PURPLE='\[\e[35m\]'
+MY_CYAN='\[\e[36m\]'
+MY_KAHKI='\[\e[38;5;101m\]'
+MY_YEGRE='\[\e[38;5;106m\]'
 PS1='\n'                      # An extra line to separte previous output and PS1
-PS1=$PS1'\[\e[32m\]╭ '        # 1st line, additional info
-PS1=$PS1'\[\e[38;5;101m\]\! \t ' # time and command history number
-PS1=$PS1'$(ps1_git)'
+PS1=$PS1$MY_GREEN'╭'          # 1st line, additional info
+PS1=$PS1$MY_KAHKI' \! \t'     # time and command history number
+PS1=$PS1$MY_CYAN'$(ps1_git)'
 PS1=$PS1'$(ps1_kube)'
-PS1=$PS1'\n\[\e[32m\]│ '         # 2nd line, common info in PS1
-PS1=$PS1'$(ps1_warn_msg)'        # warning message if there is any
-PS1=$PS1'\[\e[38;5;106m\]\u@\h:' # user@host
-PS1=$PS1'\[\e[38;5;33m\]\w '     # working directory
-PS1=$PS1'\n\[\e[32m\]╰ \$ '      # 3rd line, "$"/"#" sign on a new line
-PS1=$PS1'\[\e[0m\]'              # restore to the default color
+PS1=$PS1'\n'
+PS1=$PS1$MY_GREEN'│'                       # 2nd line, common info in PS1
+PS1=$PS1$MY_REVERSE$MY_PURPLE'$(ps1_warn_msg)'$MY_RESET # my warning message if there is any
+PS1=$PS1$MY_YEGRE' \u@\h:'        # user@host
+PS1=$PS1$MY_BLUE'\w'            # working directory
+PS1=$PS1'\n'
+PS1=$PS1$MY_GREEN'╰ \$ '        # 3rd line, "$"/"#" sign on a new line
+PS1=$PS1$MY_RESET               # restore to the default color
 
 function ps1_warn_msg {
-    [ -z "$MY_WARN" ] || printf '\e[7;35m%s\e[0m ' "$MY_WARN"
+    [ -z "$MY_WARN" ] || echo " $MY_WARN"
 }
 
 function ps1_git {
@@ -59,7 +69,7 @@ function ps1_git {
     local branch
     branch="$(git symbolic-ref --short -q HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)"
     if [ -n "$branch" ]; then
-        printf '\e[0;36m%s ' "git:$branch"
+        echo " git:$branch"
     fi
 }
 
@@ -68,7 +78,7 @@ function ps1_kube {
     local kube_context="$(kubectl config current-context 2>/dev/null)"
     local kube_namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
     if [ -n "$kube_context" -o -n "$kube_namespace" ]; then
-        printf '\e[0;36m%s ' "kube:$kube_context/$kube_namespace"
+        echo " k8s:$kube_context/$kube_namespace"
     fi
 }
 
