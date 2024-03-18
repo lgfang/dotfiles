@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-03-15T10:19:23+1100>
+;; Modified: Lungang Fang 2024-03-18T20:31:25+1100>
 
 ;;; Commentary:
 
@@ -1065,9 +1065,7 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 ;; Installed using M-x package-install
 (autoload 'php-mode "php-mode" "Major mode for editing PHP code." t)
 
-;;; Python related
-
-;;; Python mode hook
+;;; python related
 (add-hook 'python-mode-hook
           (lambda()
             (setq tab-width 4)  ; "python-mode" sets it to 8, change it back.
@@ -1077,6 +1075,8 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
             (blacken-mode 1)            ; relies on the command black
             (setq imenu-create-index-function 'python-imenu-create-flat-index)
             (imenu-add-menubar-index)))
+
+(setq python-fill-docstring-style 'django) ; triple quotes on their own lines
 
 (require 'pydoc-info nil t)
 
