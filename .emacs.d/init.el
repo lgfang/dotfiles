@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-03-18T20:31:25+1100>
+;; Modified: Lungang Fang 2024-03-19T10:16:36+1100>
 
 ;;; Commentary:
 
@@ -1215,6 +1215,9 @@ selective-display"
        (local-set-key (kbd "`") 'skeleton-pair-insert-maybe)
        (local-set-key (kbd "\"") 'skeleton-pair-insert-maybe)))))
 ;; (load "lgfang-skeleton" t nil nil)
+
+;;; spelling check
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
 ;;; split horizontally if screen wide enough
 (setq split-width-threshold 300)
