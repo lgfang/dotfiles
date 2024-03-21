@@ -58,7 +58,7 @@
       org-todo-keywords '(
                           ;; !@ means attach timestamps/notes when changing to certain state
                           (type "INCOME(i!)" "TODO(t!)" "WAIT(w@)" "HOLD(h!)" "MAYBE(m!)"
-                                "|" "DONE(d!)" "CANCEL(c@)" "DELEGATE(!@)")
+                                "|" "DONE(d!)" "CANCEL(c@)" "DELEGATE(@)")
                           )
 
       ;;; Todo dependencies
