@@ -373,20 +373,27 @@ long lines"
         )
     (org-gfm-export-as-markdown)))
 
-(defun truncate-ps1()
-  "Remove the extra information in my PS1.
+(defun comment-sanitize()
+  "Remove the personal information in my screen outputs.
 
-When I copy a screen output into an Emacs buffer as a note or to
-share with others, the extra info in PS1 is not only irrelevant
-but may also cause confusion."
+Run this function after a screen output is copied into an Emacs
+buffer so that my personal info is not saved/shared."
   (interactive)
   (my-mark-comment)
+
+  ;; remove the extra info in my PS1, which may be unnecessary & confusing.
   ;; An example PS1:
-  ;; ╭ 1251 16:16:04 kube:api.prod.corp.mongodb.com/devprod-platform
-  ;; │ lungang.fang@M-WLHDWV17VH:~
+  ;; ╭ 1251 16:16:18 git:master kube:api.prod.corp.company.com/my-namespace
+  ;; │ lungang.fang@laptop:~/source/org-contrib
   ;; ╰ $
   (replace-regexp-in-region "^\\( *\\)╭ .*\n *│ .*\n *╰ " "\\1"
-                            (region-beginning) (region-end)))
+                            (region-beginning) (region-end))
+  ;; remove my username, don't want to be super smart with regex.
+  (replace-regexp-in-region "lungang\\(.\\)fang" "<given_name>\\1<family_name>"
+                            (region-beginning) (region-end))
+  (replace-regexp-in-region "fang\\(.\\)lungang" "<family_name>\\1<given_name>"
+                            (region-beginning) (region-end))
+  )
 
 (eval-after-load "org-agenda"
   '(define-key org-agenda-mode-map (kbd "M-p") 'add-to-project-list))
