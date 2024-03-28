@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-03-19T10:16:36+1100>
+;; Modified: Lungang Fang 2024-03-28T19:45:52+1100>
 
 ;;; Commentary:
 
@@ -949,7 +949,6 @@ files and avoid accidental modifications."
 ;;; markdown; remember to package-install RET markdown-mode
 ;; The "standard" markdown command line tool is not good enough
 (setq markdown-command "/usr/local/bin/pandoc")
-(add-hook 'markdown-mode-hook 'flyspell-mode)
 
 ;;; mermaid mode: package-installed, just remember to install mermaid cli:
 ;; 'npm install -g @mermaid-js/mermaid-cli'
@@ -1218,6 +1217,8 @@ selective-display"
 
 ;;; spelling check
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+(add-hook 'markdown-mode-hook 'flyspell-mode)
+(add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell)
 
 ;;; split horizontally if screen wide enough
 (setq split-width-threshold 300)
