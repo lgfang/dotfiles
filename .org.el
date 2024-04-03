@@ -213,7 +213,7 @@
 
 ;; tkt -> ticket
 (add-to-list 'auto-mode-alist
-             '("\\.\\(blog\\|org\\|lgf\\|tkt\\)$" . org-mode))
+             '("\\.\\(blog\\|org\\|lgf\\|tkt\\|gtd\\)$" . org-mode))
 
 ;; Enable structure templates, i.e. type `< s TAB' to insert #+begin_src etc.
 (require 'org-tempo)
