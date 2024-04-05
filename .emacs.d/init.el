@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-03-28T19:45:52+1100>
+;; Modified: Lungang Fang 2024-04-05T11:59:58+1100>
 
 ;;; Commentary:
 
@@ -801,7 +801,9 @@ lgfang-hif-toggle-block"
 ;;; highlight indetation levels
 (when (require 'highlight-indentation)
   (setq highlight-indentation-blank-lines t)
-  ;; Not enabling this feature by default. Manually turn it when desired.
+  ;; ;; manually set the face if desired ("gray20" suits dark themes)
+  ;; (set-face-background 'highlight-indentation-face "gray20")
+  (add-hook 'python-mode-hook 'highlight-indentation-mode)
   )
 
 ;;; highlight parenthesis: `highlight-parentheses'
