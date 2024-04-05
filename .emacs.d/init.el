@@ -410,7 +410,10 @@ tmux's buffer"
   (setq interprogram-paste-function 'copy-from-osx))
 
 ;;; color theme
-(if (display-graphic-p) (load-theme 'solarized-dark t) (load-theme 'wombat t))
+(if (require 'solarized-theme nil t)
+    (load-theme 'solarized-gruvbox-dark t)
+  ;; else, fallback to this builtin theme
+  (load-theme 'wombat))
 
 (column-number-mode t)
 
