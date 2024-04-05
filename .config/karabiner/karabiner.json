@@ -18,6 +18,30 @@
         },
         "rules": [
           {
+            "description": "use right ctrl as right command when outside iTerm2",
+            "manipulators": [
+              {
+                "conditions": [
+                  {
+                    "bundle_identifiers": [
+                      "^com.googlecode.iterm2"
+                    ],
+                    "type": "frontmost_application_unless"
+                  }
+                ],
+                "from": {
+                  "key_code": "right_control"
+                },
+                "to": [
+                  {
+                    "key_code": "right_command"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
             "description": "sleep/lock screen",
             "manipulators": [
               {
