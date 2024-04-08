@@ -18,19 +18,32 @@
         },
         "rules": [
           {
-            "description": "use right ctrl as right command when outside iTerm2",
+            "description": "right ctrl+option as right command",
             "manipulators": [
               {
-                "conditions": [
+                "from": {
+                  "key_code": "right_control",
+                  "modifiers": {
+                    "mandatory": [
+                      "right_option"
+                    ]
+                  }
+                },
+                "to": [
                   {
-                    "bundle_identifiers": [
-                      "^com.googlecode.iterm2"
-                    ],
-                    "type": "frontmost_application_unless"
+                    "key_code": "right_command"
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
-                  "key_code": "right_control"
+                  "key_code": "right_option",
+                  "modifiers": {
+                    "mandatory": [
+                      "right_control"
+                    ]
+                  }
                 },
                 "to": [
                   {
