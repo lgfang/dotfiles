@@ -1,7 +1,7 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-04-05T11:59:58+1100>
+;; Modified: Lungang Fang 2024-04-10T21:32:35+1000>
 
 ;;; Commentary:
 
@@ -803,7 +803,10 @@ lgfang-hif-toggle-block"
 
 ;;; highlight indetation levels
 (when (require 'highlight-indentation)
-  (setq highlight-indentation-blank-lines t)
+  ;; Explicitly turn off highlight-indentation-blank-lines, which makes C-a
+  ;; unable to go to the beginning of blank lines. And make other issues.
+  (setq highlight-indentation-blank-lines nil)
+
   ;; ;; manually set the face if desired ("gray20" suits dark themes)
   ;; (set-face-background 'highlight-indentation-face "gray20")
   (add-hook 'python-mode-hook 'highlight-indentation-mode)
