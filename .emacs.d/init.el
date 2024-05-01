@@ -810,6 +810,7 @@ lgfang-hif-toggle-block"
   ;; ;; manually set the face if desired ("gray20" suits dark themes)
   ;; (set-face-background 'highlight-indentation-face "gray20")
   (add-hook 'python-mode-hook 'highlight-indentation-mode)
+  (add-hook 'yaml-mode-hook 'highlight-indentation-current-column-mode)
   )
 
 ;;; highlight parenthesis: `highlight-parentheses'
