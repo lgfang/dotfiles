@@ -1,7 +1,7 @@
-;;; lgfang.init.el --- my configuration file
+;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-01T15:44:21+1000>
+;; Modified: Lungang Fang 2024-05-01T23:05:33+1000>
 
 ;;; Commentary:
 
@@ -58,7 +58,55 @@
   :init
   (marginalia-mode 1)
   )
-;;; old configurations
+
+;;; Looks
+
+;;;; Frame & Window
+(menu-bar-mode (if (display-graphic-p) 1 -1)) ; turn it on for GUI only
+(tool-bar-mode -1)                            ; turn it off
+
+(when (display-graphic-p)
+  (add-to-list 'default-frame-alist '(fullscreen . maximized)))
+
+;;;; Fonts
+(when (display-graphic-p)
+  (set-face-attribute 'default nil :font "monaco-18:weight=normal")
+
+  ;; Select the font for Chinese characters using `set-fontset-font'. This
+  ;; command sets the fallback font when the default font (set above) doesn't
+  ;; support the current character. By default, Emacs iterates all the fonts
+  ;; until it finds one that supports the character.
+  (let ((zh-font "SimSong"))
+    (if ;; Check the availability first to avoid error
+        (member zh-font (font-family-list))
+        ;; "fall back" to the designated zh font for `han' characters. Guard the
+        ;; following expression with `fboundp' to avoid the warning: "function
+        ;; ... is not known to be defined" .
+        (and (fboundp 'set-fontset-font) (set-fontset-font t 'han zh-font))))
+
+  ;; Scale Chinese fonts so that the width of 1 Chinese char equals that of two
+  ;; English chars. This list is manually maintained as the scale factors for
+  ;; different fonts are determined through trial and error. Note: a) To check
+  ;; the font of the current character, run `C-u C-x ='. b) To get more accurate
+  ;; data, compare longer lines of English/Chinese.
+  (setq face-font-rescale-alist '(("SimSong" . 1.25)
+                                  ("PingFang SC" . 1.25)
+                                  ))
+  )
+
+;;;; ZWJ (Zero Width Joiner) emoji handling. See a ZWJ example in
+;;;; ~/mynotes/emacs/emacs-unicode-test.org
+(unless (display-graphic-p)
+  ;; Disable auto-complete-mode if running when in a terminal as most terminal
+  ;; emulators cannot handle Emoji ZWJ. NOTE: disabling it on the fly does not
+  ;; work very well, must restart Emacs.
+  (setq-default auto-composition-mode nil)
+  )
+
+;;;; Start up screen
+(setq inhibit-startup-screen t)
+
+;;; --- old configurations ---
 
 ;;; paths
 
@@ -133,6 +181,7 @@
 ;;     (if (>= emacs-major-version 23)
 ;;         (set-language-environment 'Chinese-GB18030)
 ;;       (set-language-environment 'Chinese-GB)))
+
 
 ;; (set-language-environment 'utf-8)
 ;; (set-keyboard-coding-system 'utf-8)
@@ -662,58 +711,7 @@ tmux's buffer"
               ;;       g++/gcc -o nul -Wall -S $(CHK_SOURCES)
               flymake-allowed-file-name-masks)))
 
-;;; fonts
-(when (and (>= emacs-major-version 23) window-system)
-
-  ;; Recommended English fonts: "consolas", "DejaVu Sans Mono", "monofur"
-  (set-face-attribute 'default nil :font "monaco-16:weight=normal")
-
-  ;; Recommended Chinese fonts: "SimSun", "Microsoft YaHei", "WenQuanYi
-  ;; Micro Hei Mono"
-  (let ((zh-font-family "SimSun"))
-    ;; Set scale of zh font so that width of one chinese char equals that of two
-    ;; english chars. (Windows Emacs has a bug in "scale", hardcode zh font size
-    ;; instead)
-    (if (eq window-system 'w32)
-        (dolist (each '(han cjk-misc))
-          (set-fontset-font nil each
-                            (font-spec :family zh-font-family :size 22)))
-      (dolist (each '(han cjk-misc )) ;include kana, bopomofo, symbol?
-        (set-fontset-font nil each
-                          (font-spec :family zh-font-family)))
-      (setq face-font-rescale-alist (list (cons zh-font-family 1.2)))))
-
-  ;; Resize using mouse wheel
-  (let ()
-    (if (eq window-system 'w32)
-        (setq up (kbd "<C-wheel-up>") down (kbd "<C-wheel-down>"))
-      (setq up (kbd "<C-mouse-4>") down (kbd "<C-mouse-5>")))
-    (define-key global-map up 'text-scale-increase)
-    (define-key global-map down 'text-scale-decrease))
-  )
-;; Emoji ZWJ (Zero Width Joiner) handling. Though not strictly a font thing, put
-;; them together as they both are about rendering contents.
-(unless (display-graphic-p)
-  ;; Disable auto-complete-mode if running in a terminal as most terminal
-  ;; emulators cannot handle Emoji ZWJ. NOTE: disabling it on the fly does not
-  ;; work very well, must restart the emacs.
-  (setq-default auto-composition-mode nil)
-  )
-
-;;; frame position/size; emacs22 or later supports 'emacs --fullscreen'
-;; (when (> emacs-major-version 23)
-;;   (setq init-frame-alist
-;;         '((top . 1) (left . 1) (width . 80) (height . 24)
-;;            ;; (alpha 90 50)                 ;transparency
-;;           )))
-
-;;; frame title: hostname:current file name
-(setq frame-title-format
-      (list (replace-regexp-in-string "\\..*$" "" system-name)
-            ":" '(buffer-file-name
-                  "%f" (dired-directory dired-directory "%b"))))
-
-;;; gdb
+;; gdb
 ;; (setq gdb-many-windows t)
 
 ;;; Generative AI (GAI) - copilot
@@ -891,28 +889,6 @@ lgfang-hif-toggle-block"
       imenu-auto-rescan t
       imenu-use-popup-menu 'on-mouse)
 
-;;; init
-(setq inhibit-startup-message t
-      inhibit-splash-screen t)
-(eval-after-load "outline"
-  '(setq initial-scratch-message
-         (if (file-exists-p "~/.tod.org")
-             (with-temp-buffer
-               (insert-file-contents "~/.tod.org")
-               ;; jump to somewhere randomly, must after first heading
-               (outline-next-heading)
-               ;; set random seed, otherwise "emacs -nw" always get same
-               ;; tip
-               (random t)
-               (goto-char (+ (random (- (point-max) (point))) (point)))
-               (outline-mark-subtree)
-               (let* ((beg (point))
-                      (end (mark)))
-                 (buffer-substring beg end)))
-           "Hello My Buddy,\n
-You may want to get a copy of 'Tip Of the Day'.\n
-lgfang")))
-
 ;;; ispell - aspell instead
 (setq ispell-program-name "aspell"
       ;; regardless locale settings, always use english refer to
@@ -964,8 +940,6 @@ files and avoid accidental modifications."
 
 ;;; mermaid mode: package-installed, just remember to install mermaid cli:
 ;; 'npm install -g @mermaid-js/mermaid-cli'
-
-(menu-bar-mode -1)
 
 (setq messages-buffer-max-lines 500)    ; default value too small
 
@@ -1151,8 +1125,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 (require 'saveplace)
 
 (setq scroll-margin 0 scroll-conservatively 100) ;  scroll-step ?
-(when (and (> emacs-major-version 21) window-system)
-  (set-scroll-bar-mode nil))
 
 (when (require 'sdcv nil t)
   (setq sdcv-dictionary-simple-list
@@ -1268,9 +1240,6 @@ selective-display"
 
 ;;; toggle-window-dedicated.el
 (load "toggle-window-dedicated" t nil nil)
-
-;;; tool-bar - I need no tool bar
-(tool-bar-mode -1)
 
 ;;; tramp
 (require 'tramp)
