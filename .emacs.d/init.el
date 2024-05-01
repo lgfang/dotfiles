@@ -1,15 +1,66 @@
 ;;; lgfang.init.el --- my configuration file
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-04-10T21:32:35+1000>
+;; Modified: Lungang Fang 2024-05-01T15:44:21+1000>
 
 ;;; Commentary:
 
-;; My Emacs configure
+;; Lungang's Emacs configuration file, initiated in 2004 and has been undergoing
+;; an overhaul since 2024-05-01.
 
 ;;; Code:
 
-;;; Paths
+;;; First things first
+
+;;;; setup package
+
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(package-initialize)
+
+;;; Completion
+
+(use-package vertico
+  :ensure t
+  :defer t
+  :bind (:map vertico-map
+              ("C-o" . vertico-quick-exit))
+
+  :custom
+  (vertico-resize nil)
+  (vertico-cycle nil)
+  (vertico-buffer-display-action '(display-buffer-at-bottom
+                                   (window-height . 16)))
+  ;; Avoid `reverse' + `mouse', they are not compatible at the moment.
+  (vertico-multiform-categories '(
+                                  (buffer flat)
+                                  ;; default, enable buffer & mouse
+                                  (t buffer mouse)
+                                  ))
+  (vertico-multiform-commands '(("imenu" buffer mouse)
+                                ("recentf-.*" buffer mouse)
+                                ))
+  :init
+  (vertico-mode 1)
+  (vertico-multiform-mode 1)
+  )
+
+(use-package orderless
+  :ensure t
+  :defer t
+  :custom
+  (completion-styles '(orderless flex substring basic))
+  )
+
+(use-package marginalia
+  :ensure t
+  :defer t
+  :init
+  (marginalia-mode 1)
+  )
+;;; old configurations
+
+;;; paths
 
 (defvar my-emacs-base
   (file-name-as-directory (expand-file-name "~/.emacs.d")))
@@ -40,11 +91,7 @@
 ;; ;; woman path
 ;; (setq woman-manpath '("patha" "pathb"))
 
-;;; package
-
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
+;;; Completion
 
 ;;; cygwin wrappers
 ;; NOTE: put this section in the begining of my configure so that files I hacked
@@ -110,9 +157,9 @@
     (define-key global-map [mouse-5] '(lambda () (interactive) (scroll-up 1)))))
 
 ;; F1-F12
-(define-key global-map [f1] 'lgfang-recentf-open)
-(define-key global-map [f2] 'ido-goto-symbol)
-;; f3/f4: define keyboard macros
+(define-key global-map [f1] 'recentf-open)
+(define-key global-map [f2] 'imenu)
+;; f3/f4: built-in key bindings to define keyboard macros
 (define-key global-map [f5] 'whitespace-cleanup)
 (define-key global-map [f7] 'flyspell-mode)
 (define-key global-map [f8] 'bury-buffer)
@@ -764,9 +811,7 @@ lgfang-hif-toggle-block"
                 (symbol-names
                  (mapcar (lambda (a) (symbol-name (car a)))
                          hide-ifdef-define-alist)))
-           (if (require 'ido nil t)
-               (ido-completing-read prompt symbol-names)
-             (completing-read prompt symbol-names)))))
+           (completing-read prompt symbol-names))))
   (setq my-define-alist name) ; also apply this to buffers not opened yet
   (hide-ifdefs)                         ; for current buffer
   (hide-ifdef-use-define-alist name))
@@ -841,52 +886,10 @@ lgfang-hif-toggle-block"
 
 (require 'htmlize nil t)
 
-;;; ido `C-r/C-s' for ido-next/previous-match, `C-f' to get out ido mode into
-;;; "normal" find file mode
-(ido-mode 1)
-(setq ido-enable-flex-matching t)
-
 ;;; imenu
 (setq imenu-sort-function 'imenu--sort-by-name
       imenu-auto-rescan t
       imenu-use-popup-menu 'on-mouse)
-
-(defun ido-goto-symbol ()
-  "Will update the imenu index and then use ido to select a
-symbol to navigate to.  From emacswiki, by shjk"
-  (interactive)
-  (imenu--make-index-alist)
-  (let ((name-and-pos '()) (symbol-names '()))
-    (flet
-        ((addsymbols
-          (symbol-list)
-          (when (listp symbol-list)
-            (dolist (symbol symbol-list)
-              (let ((name nil) (position nil))
-                (cond
-                 ((and (listp symbol) (imenu--subalist-p symbol))
-                  (addsymbols symbol))
-
-                 ((listp symbol)
-                  (setq name (car symbol))
-                  (setq position (cdr symbol)))
-
-                 ((stringp symbol)
-                  (setq name symbol)
-                  (setq position
-                        (get-text-property
-                         1 'org-imenu-marker symbol))))
-
-                (unless (or (null position) (null name))
-                  (add-to-list 'symbol-names name)
-                  (add-to-list 'name-and-pos (cons name position))))))))
-      (addsymbols imenu--index-alist))
-      (let* ((selected-symbol
-              (ido-completing-read "jump to: " symbol-names nil nil
-                                   (thing-at-point 'symbol)))
-             (position (cdr (assoc selected-symbol name-and-pos))))
-        (push-mark)
-        (goto-char position))))
 
 ;;; init
 (setq inhibit-startup-message t
@@ -1466,29 +1469,6 @@ newsgroup: gnu.emacs.help.  To customize format of date
 string,refer to format-time-string."
   (interactive)
   (insert (format-time-string "%Y-%m-%d")))
-
-(defun lgfang-recentf-open ()
-  "open recent files. In ido style if applicable"
-  (interactive)
-  (let* ((prompt "File Name: ")
-         (path-table (mapcar
-                      (lambda (x) (cons (file-name-nondirectory x) x))
-                      recentf-list))
-         (fname (if (require 'ido nil t)
-                    (ido-completing-read
-                     prompt
-                     (mapcar (lambda(x) (file-name-nondirectory
-                                         x)) recentf-list))
-                  (completing-read prompt path-table)))
-         candidates )
-    (dolist (afile path-table)
-      (if (string-equal (car afile) fname)
-          (progn
-            (add-to-list 'candidates (cdr afile)))))
-
-    (if (> (length candidates) 1)
-        (find-file (ido-completing-read "full path:" candidates))
-      (find-file (cdr (assoc fname path-table))))))
 
 ;;; replace strings in parallel
 (defun lgfang-paralle-repl (replacement-alist)
