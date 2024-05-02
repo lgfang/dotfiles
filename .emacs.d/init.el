@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-01T23:05:33+1000>
+;; Modified: Lungang Fang 2024-05-02T21:35:13+1000>
 
 ;;; Commentary:
 
@@ -11,6 +11,10 @@
 ;;; Code:
 
 ;;; First things first
+
+;;;; Paths
+;; (defvar my-emacs-d
+;;   (file-name-as-directory (expand-file-name "~/.emacs.d")))
 
 ;;;; setup package
 
@@ -23,8 +27,8 @@
 (use-package vertico
   :ensure t
   :defer t
-  :bind (:map vertico-map
-              ("C-o" . vertico-quick-exit))
+
+  :bind (:map vertico-map ("C-o" . vertico-quick-exit))
 
   :custom
   (vertico-resize nil)
@@ -40,6 +44,7 @@
   (vertico-multiform-commands '(("imenu" buffer mouse)
                                 ("recentf-.*" buffer mouse)
                                 ))
+
   :init
   (vertico-mode 1)
   (vertico-multiform-mode 1)
@@ -106,10 +111,36 @@
 ;;;; Start up screen
 (setq inhibit-startup-screen t)
 
+;;; Syntax highlight (Tree-sitter)
+(use-package treesit
+  ;; Run `treesit-install-language-grammar' to install the grammar
+  ;; for each designated language.
+  :when
+  (and (fboundp 'treesit-available-p) (treesit-available-p))
+
+  :custom
+  (major-mode-remap-alist
+   '(
+     (bash-mode . bash-ts-mode)
+     (c++-mode . c++-ts-mode)
+     (c-mode . c-ts-mode)
+     (cmake-mode . cmake-ts-mode)
+     (conf-toml-mode . toml-ts-mode)
+     (js-json-mode . json-ts-mode)
+     (python-mode . python-ts-mode)
+     (yaml-mode . yaml-ts-mode)
+     ))
+  )
+
+(use-package treesit-fold
+  ;; Place holder, this package is not ready yet.
+  :after treesit
+  ;; :load-path (lambda() (concat my-emacs-d "treesit-fold"))
+  )
+
 ;;; --- old configurations ---
 
 ;;; paths
-
 (defvar my-emacs-base
   (file-name-as-directory (expand-file-name "~/.emacs.d")))
 (defvar my-extension-path
