@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-03T17:36:27+1000>
+;; Modified: Lungang Fang 2024-05-03T21:35:10+1000>
 
 ;;; Commentary:
 
@@ -21,75 +21,6 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
-
-;;; Completion
-
-;;;; Company
-(use-package company
-  :ensure t
-  :init (global-company-mode)
-  )
-
-;;;; Yasnippet
-(use-package yasnippet
-  ;; Put personal/customized snippets into the first dir of `yas-snippet-dirs',
-  ;; which is `~/.emacs.d/snippets' by default. NOTE: it is `yas-snippet-dirs'
-  ;; NOT `yasnippet-snippets-dir'. The later is where the package
-  ;; `yasnippet-snippets' stores its snippets).
-  ; TODO: cleanup duplicated/similar snippets in different directories.
-  :ensure t
-  :init (yas-global-mode 1)
-  )
-
-(use-package yasnippet-snippets
-  :after yasnippet-snippets)
-
-;;; Looks
-
-;;;; Frame & Window
-(menu-bar-mode (if (display-graphic-p) 1 -1)) ; turn it on for GUI only
-(tool-bar-mode -1)                            ; turn it off
-
-(when (display-graphic-p)
-  (add-to-list 'default-frame-alist '(fullscreen . maximized)))
-
-;;;; Fonts
-(when (display-graphic-p)
-  (set-face-attribute 'default nil :font "monaco-18:weight=normal")
-
-  ;; Select the font for Chinese characters using `set-fontset-font'. This
-  ;; command sets the fallback font when the default font (set above) doesn't
-  ;; support the current character. By default, Emacs iterates all the fonts
-  ;; until it finds one that supports the character.
-  (let ((zh-font "SimSong"))
-    (if ;; Check the availability first to avoid error
-        (member zh-font (font-family-list))
-        ;; "fall back" to the designated zh font for `han' characters. Guard the
-        ;; following expression with `fboundp' to avoid the warning: "function
-        ;; ... is not known to be defined" .
-        (and (fboundp 'set-fontset-font) (set-fontset-font t 'han zh-font))))
-
-  ;; Scale Chinese fonts so that the width of 1 Chinese char equals that of two
-  ;; English chars. This list is manually maintained as the scale factors for
-  ;; different fonts are determined through trial and error. Note: a) To check
-  ;; the font of the current character, run `C-u C-x ='. b) To get more accurate
-  ;; data, compare longer lines of English/Chinese.
-  (setq face-font-rescale-alist '(("SimSong" . 1.25)
-                                  ("PingFang SC" . 1.25)
-                                  ))
-  )
-
-;;;; ZWJ (Zero Width Joiner) emoji handling. See a ZWJ example in
-;;;; ~/mynotes/emacs/emacs-unicode-test.org
-(unless (display-graphic-p)
-  ;; Disable auto-complete-mode if running when in a terminal as most terminal
-  ;; emulators cannot handle Emoji ZWJ. NOTE: disabling it on the fly does not
-  ;; work very well, must restart Emacs.
-  (setq-default auto-composition-mode nil)
-  )
-
-;;;; Start up screen
-(setq inhibit-startup-screen t)
 
 ;;; Mini-buffer Interaction
 
@@ -133,6 +64,53 @@
   (marginalia-mode 1)
   )
 
+;;; Looks
+
+;;;; Frame & Window
+(menu-bar-mode (if (display-graphic-p) 1 -1)) ; turn it on for GUI only
+(tool-bar-mode -1)                            ; turn it off
+
+(when (display-graphic-p)
+  (add-to-list 'default-frame-alist '(fullscreen . maximized)))
+
+;;;; Fonts
+(when (display-graphic-p)
+  (set-face-attribute 'default nil :font "monaco-18:weight=normal")
+
+  ;; Select the font for Chinese characters using `set-fontset-font'. This
+  ;; command sets the fallback font when the default font (set above) doesn't
+  ;; support the current character. By default, Emacs iterates all the fonts
+  ;; until it finds one that supports the character.
+  (let ((zh-font "SimSong"))
+    (if ;; Check the availability first to avoid error
+        (member zh-font (font-family-list))
+        ;; "fall back" to the designated zh font for `han' characters. Guard the
+        ;; following expression with `fboundp' to avoid the warning: "function
+        ;; ... is not known to be defined" .
+        (and (fboundp 'set-fontset-font) (set-fontset-font t 'han zh-font))))
+
+  ;; Scale Chinese fonts so that the width of 1 Chinese char equals that of two
+  ;; English chars. This list is manually maintained as the scale factors for
+  ;; different fonts are determined through trial and error. Note: a) To check
+  ;; the font of the current character, run `C-u C-x ='. b) To get more accurate
+  ;; data, compare longer lines of English/Chinese.
+  (setq face-font-rescale-alist '(("SimSong" . 1.25)
+                                  ("PingFang SC" . 1.25)
+                                  ))
+  )
+
+;;;; ZWJ (Zero Width Joiner) emoji handling.
+;; See a ZWJ example in ~/mynotes/emacs/emacs-unicode-test.org
+(unless (display-graphic-p)
+  ;; Disable auto-complete-mode if running when in a terminal as most terminal
+  ;; emulators cannot handle Emoji ZWJ. NOTE: disabling it on the fly does not
+  ;; work very well, must restart Emacs.
+  (setq-default auto-composition-mode nil)
+  )
+
+;;;; Start up screen
+(setq inhibit-startup-screen t)
+
 ;;; Spelling check
 (use-package flyspell
   :config
@@ -142,6 +120,28 @@
   (add-hook 'markdown-mode-hook 'flyspell-mode)
   (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell)
   )
+
+;;; Completion
+
+;;;; Company
+(use-package company
+  :ensure t
+  :init (global-company-mode)
+  )
+
+;;;; Yasnippet
+(use-package yasnippet
+  ;; Put personal/customized snippets into the first dir of `yas-snippet-dirs',
+  ;; which is `~/.emacs.d/snippets' by default. NOTE: it is `yas-snippet-dirs'
+  ;; NOT `yasnippet-snippets-dir'. The later is where the package
+  ;; `yasnippet-snippets' stores its snippets).
+  ; TODO: cleanup duplicated/similar snippets in different directories.
+  :ensure t
+  :init (yas-global-mode 1)
+  )
+
+(use-package yasnippet-snippets
+  :after yasnippet-snippets)
 
 ;;; Syntax parser (Tree-sitter)
 (use-package treesit
@@ -178,7 +178,7 @@
   ;; error message if you set debug-on-error to t and then enable Eglot.).
   )
 
-;;; Syntax check
+;;; Syntax check (flymake)
 (use-package flymake
   ;; To list all the diagnostics, use `flymake-show-buffer-diagnostics' and
   ;; `flymake-show-project-diagnostics'. For checkers being used, see the buffer
