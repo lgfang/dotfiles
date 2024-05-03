@@ -114,11 +114,11 @@
 ;;; Spelling check
 (use-package flyspell
   :config
-  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-  (add-hook 'yaml-mode-hook 'flyspell-prog-mode)
-  (add-hook 'yaml-ts-mode-hook 'flyspell-prog-mode)
-  (add-hook 'markdown-mode-hook 'flyspell-mode)
-  (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell)
+  :hook ((prog-mode . flyspell-prog-mode)
+         (yaml-mode . flyspell-prog-mode)
+         (yaml-ts-mode . flyspell-prog-mode)
+         (markdown-mode . flyspell-mode)
+         (git-commit-setup . flyspell-mode))
   )
 
 ;;; Completion
@@ -188,9 +188,7 @@
               ("C-c p" . flymake-goto-prev-error)
               ("C-c n" . flymake-goto-next-error))
 
-  :init
-  (add-hook 'prog-mode-hook 'flymake-mode)
-  (add-hook 'yaml-ts-mode-hook 'flymake-mode)
+  :hook (prog-mode yaml-ts-mode)
 )
 
 (use-package flymake-ruff
@@ -203,7 +201,7 @@
 (use-package flymake-yamllint
   :ensure t
   :after flymake
-  :config (add-hook 'yaml-ts-mode-hook 'flymake-yamllint-setup)
+  :hook ((yaml-ts-mode . flymake-yamllint-setup))
   )
 
 ;;; --- old configurations ---
