@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-03T12:17:53+1000>
+;; Modified: Lungang Fang 2024-05-03T13:59:49+1000>
 
 ;;; Commentary:
 
@@ -24,45 +24,25 @@
 
 ;;; Completion
 
-(use-package vertico
+;;;; Company
+(use-package company
   :ensure t
-  :defer t
-
-  :bind (:map vertico-map ("C-o" . vertico-quick-exit))
-
-  :custom
-  (vertico-resize nil)
-  (vertico-cycle nil)
-  (vertico-buffer-display-action '(display-buffer-at-bottom
-                                   (window-height . 16)))
-  ;; Avoid `reverse' + `mouse', they are not compatible at the moment.
-  (vertico-multiform-categories '(
-                                  (buffer flat)
-                                  ;; default, enable buffer & mouse
-                                  (t buffer mouse)
-                                  ))
-  (vertico-multiform-commands '(("imenu" buffer mouse)
-                                ("recentf-.*" buffer mouse)
-                                ))
-
-  :init
-  (vertico-mode 1)
-  (vertico-multiform-mode 1)
+  :init (global-company-mode)
   )
 
-(use-package orderless
+;;;; Yasnippet
+(use-package yasnippet
+  ;; Put personal/customized snippets into the first dir of `yas-snippet-dirs',
+  ;; which is `~/.emacs.d/snippets' by default. NOTE: it is `yas-snippet-dirs'
+  ;; NOT `yasnippet-snippets-dir'. The later is where the package
+  ;; `yasnippet-snippets' stores its snippets).
+  ; TODO: cleanup duplicated/similar snippets in different directories.
   :ensure t
-  :defer t
-  :custom
-  (completion-styles '(orderless flex substring basic))
+  :init (yas-global-mode 1)
   )
 
-(use-package marginalia
-  :ensure t
-  :defer t
-  :init
-  (marginalia-mode 1)
-  )
+(use-package yasnippet-snippets
+  :after yasnippet-snippets)
 
 ;;; Looks
 
@@ -110,6 +90,48 @@
 
 ;;;; Start up screen
 (setq inhibit-startup-screen t)
+
+;;; Mini-buffer Interaction
+
+(use-package vertico
+  :ensure t
+  :defer t
+
+  :bind (:map vertico-map ("C-o" . vertico-quick-exit))
+
+  :custom
+  (vertico-resize nil)
+  (vertico-cycle nil)
+  (vertico-buffer-display-action '(display-buffer-at-bottom
+                                   (window-height . 16)))
+  ;; Avoid `reverse' + `mouse', they are not compatible at the moment.
+  (vertico-multiform-categories '(
+                                  (buffer flat)
+                                  ;; default, enable buffer & mouse
+                                  (t buffer mouse)
+                                  ))
+  (vertico-multiform-commands '(("imenu" buffer mouse)
+                                ("recentf-.*" buffer mouse)
+                                ))
+
+  :init
+  (vertico-mode 1)
+  (vertico-multiform-mode 1)
+  )
+
+(use-package orderless
+  :ensure t
+  :defer t
+  :custom
+  (completion-styles '(orderless flex substring basic))
+  )
+
+(use-package marginalia
+  :ensure t
+  :defer t
+  :init
+  (marginalia-mode 1)
+  )
 
 ;;; Syntax highlight (Tree-sitter)
 (use-package treesit
@@ -307,7 +329,7 @@
 ;; (define-key global-map (kbd "ESC M-[ c" ) 'tiling-tile-right)
 ;; (define-key global-map (kbd "ESC M-[ d" ) 'tiling-tile-left)
 
-;;; abbrev - use yasnippet instead.
+
 
 ;;; ansi color code handling
 (defun ansi-color-after-scroll (window start)
@@ -547,7 +569,7 @@ tmux's buffer"
 (setq comment-style 'extra-line)
 
 ;;; company - auto completion
-(global-company-mode)
+
 
 ;;; compilation
 (eval-after-load "compile"
@@ -1205,31 +1227,6 @@ selective-display"
           (bash2 . bash)
           (sh5 . sh))))
 
-;;; skeleton, use yasnippet instead
-;; avoid skeleton/abbrev recursion
-(setq-default skeleton-further-elements '((abbrev-mode nil)))
-;; skeleton-pair-insert
-(setq
- ;; turn on/off skeleton-pair-insert
- skeleton-pair nil
- ;; inhibit paired insertion before/inside a word
- skeleton-pair-on-word nil)
-(when skeleton-pair                     ; if turned on
-  (dolist (hook '(c-mode-common-hook
-                  tcl-mode-hook org-mode-hook
-                  latex-mode-hook nxml-mode-hook
-                  rnc-mode-hook))
-    (add-hook
-     hook
-     (lambda ()
-       (local-set-key (kbd "(") 'skeleton-pair-insert-maybe)
-       (local-set-key (kbd "[") 'skeleton-pair-insert-maybe)
-       (local-set-key (kbd "{") 'skeleton-pair-insert-maybe)
-       (local-set-key (kbd "'") 'skeleton-pair-insert-maybe)
-       (local-set-key (kbd "`") 'skeleton-pair-insert-maybe)
-       (local-set-key (kbd "\"") 'skeleton-pair-insert-maybe)))))
-;; (load "lgfang-skeleton" t nil nil)
-
 ;;; spelling check
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 (add-hook 'markdown-mode-hook 'flyspell-mode)
@@ -1387,28 +1384,6 @@ selective-display"
 ;;; xref
 (setq xref-prompt-for-identifier t) ; always prompt for identifier to search
 
-;;; yasnippet
-(when (require 'yasnippet nil t)
-  ;; Put personal/customized snippets into the first dir of `yas-snippet-dirs',
-  ;; which is `~/.emacs.d/snippets' by default. NOTE: it is `yas-snippet-dirs'
-  ;; NOT `yasnippet-snippets-dir'. The later is where the package
-  ;; `yasnippet-snippets' stores its snippets).
-  ; TODO: cleanup duplicated/similar snippets in different dirs.
-
-  ;; Org-mode specific
-  (defun yas/org-very-safe-expand ()
-    (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
-  (add-hook
-   'org-mode-hook
-   (lambda ()
-     ;; yasnippet (using the new org-cycle hooks)
-     (make-variable-buffer-local 'yas/trigger-key)
-     (setq yas/trigger-key [tab])
-     (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
-     (define-key yas/keymap [tab] 'yas/next-field)))
-
-  (yas-global-mode 1))
-
 ;;; yaml
 (when (require 'yaml-mode nil t)
   (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
@@ -1553,7 +1528,7 @@ string,refer to format-time-string."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(editorconfig company cue-mode git-gutter mermaid-mode protobuf-mode cmake-mode magit anaconda-mode eglot blacken git-link csv-mode emms json-reformat windata w3m solarized-theme showtip terraform-mode highlight-parentheses highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode ht go-mode flycheck f)))
+   '(editorconfig cue-mode git-gutter mermaid-mode protobuf-mode cmake-mode magit anaconda-mode eglot blacken git-link csv-mode emms json-reformat windata w3m solarized-theme showtip terraform-mode highlight-parentheses highlight-indentation org-contrib hide-lines ox-gfm  pydoc-info pydoc markdown-mode jira-markup-mode ht go-mode flycheck f)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
