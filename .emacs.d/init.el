@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-02T21:35:13+1000>
+;; Modified: Lungang Fang 2024-05-03T12:17:53+1000>
 
 ;;; Commentary:
 
@@ -1413,9 +1413,6 @@ selective-display"
 (when (require 'yaml-mode nil t)
   (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
   (require 'yaml-path))
-
-;;; y/n instead of yes/no
-(fset 'yes-or-no-p 'y-or-n-p)
 
 ;;; ------ end General ------
 
