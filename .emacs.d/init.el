@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-03T13:59:49+1000>
+;; Modified: Lungang Fang 2024-05-03T17:36:27+1000>
 
 ;;; Commentary:
 
@@ -133,7 +133,17 @@
   (marginalia-mode 1)
   )
 
-;;; Syntax highlight (Tree-sitter)
+;;; Spelling check
+(use-package flyspell
+  :config
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+  (add-hook 'yaml-mode-hook 'flyspell-prog-mode)
+  (add-hook 'yaml-ts-mode-hook 'flyspell-prog-mode)
+  (add-hook 'markdown-mode-hook 'flyspell-mode)
+  (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell)
+  )
+
+;;; Syntax parser (Tree-sitter)
 (use-package treesit
   ;; Run `treesit-install-language-grammar' to install the grammar
   ;; for each designated language.
@@ -158,6 +168,42 @@
   ;; Place holder, this package is not ready yet.
   :after treesit
   ;; :load-path (lambda() (concat my-emacs-d "treesit-fold"))
+  )
+
+;;; LSP (eglot)
+(use-package eglot
+  ;; Note for Eglot + Pyright on MacOS: you may want to increase the "open
+  ;; files" limit (`ulimit -n'), say to 65536. The default value is 256, which
+  ;; Pyright easily hits when the python project is non-trivial. (You'll see the
+  ;; error message if you set debug-on-error to t and then enable Eglot.).
+  )
+
+;;; Syntax check
+(use-package flymake
+  ;; To list all the diagnostics, use `flymake-show-buffer-diagnostics' and
+  ;; `flymake-show-project-diagnostics'. For checkers being used, see the buffer
+  ;; local var `flymake-diagnostic-functions'.
+
+  :bind (:map flymake-mode-map
+              ("C-c p" . flymake-goto-prev-error)
+              ("C-c n" . flymake-goto-next-error))
+
+  :init
+  (add-hook 'prog-mode-hook 'flymake-mode)
+  (add-hook 'yaml-ts-mode-hook 'flymake-mode)
+)
+
+(use-package flymake-ruff
+  :ensure t
+  :after flymake
+  :custom
+  (python-flymake-command '("ruff" "--quiet" "--stdin-filename=stdin" "-"))
+  )
+
+(use-package flymake-yamllint
+  :ensure t
+  :after flymake
+  :config (add-hook 'yaml-ts-mode-hook 'flymake-yamllint-setup)
   )
 
 ;;; --- old configurations ---
@@ -263,7 +309,6 @@
 (define-key global-map [f2] 'imenu)
 ;; f3/f4: built-in key bindings to define keyboard macros
 (define-key global-map [f5] 'whitespace-cleanup)
-(define-key global-map [f7] 'flyspell-mode)
 (define-key global-map [f8] 'bury-buffer)
 ;; f9 to clock in last, `C-u f9' to select from recent tasks.
 (define-key global-map [f9] 'org-clock-in-last)
@@ -274,9 +319,6 @@
 ;; f12 : reserved for twm/tmux etc.
 
 ;; C-, M-, C-M- ... :(
-(define-key global-map (kbd "C-c p") 'flymake-goto-prev-error)
-(define-key global-map (kbd "C-c n") 'flymake-goto-next-error)
-(define-key global-map (kbd "C-c m") 'flymake-display-err-menu-for-current-line)
 (define-key global-map (kbd "C-x C-b") 'ibuffer)
 (define-key global-map (kbd "C-x c l") 'org-store-link)
 (define-key global-map (kbd "C-x c a") 'org-agenda)
@@ -398,9 +440,6 @@ so that you needn't enable it manually.
 
 ;;; bbdb & bbdb-vcard-export - removed, use google/apple contacts etc.
 
-;;; bookmark/bookmark+ - breaks org-mode + flyspell
-;; Note: if `C-x r m` (i.e. bookmark-set) emits "end of file during parsing",
-;; review (or simply delete) ~/.emacs.d/bookmarks.
 
 (when (require 'browse-kill-ring nil t)
   (browse-kill-ring-default-keybindings))
@@ -644,18 +683,6 @@ tmux's buffer"
 (add-hook 'emacs-lisp-mode-hook
           (lambda() (imenu-add-menubar-index) (hs-minor-mode 1)))
 
-;;; eglot: an LSP client
-;; (add-hook 'eglot-managed-mode-hook
-;;           (lambda()
-;;             ;; eglot sets it to nil but I like t as it shows me what the
-;;             ;; identifier at point is.
-;;             (setq xref-prompt-for-identifier t)
-;;             ))
-
-;; Note for Eglot + Pyright on MacOS: you may want to increase the "open files"
-;; limit (`ulimit -n'), say to 65536. The default value is 256, which pyright
-;; easily hits when the python project is non-trivial. (You'll see the error
-;; message if you set debug-on-error to t and then enable eglot.).
 
 ;;; emms configure in another file
 (load "lgfang.emms" t nil nil)
@@ -723,46 +750,6 @@ tmux's buffer"
 ;;   global-fci-mode fci-mode (lambda () (fci-mode 1)))
 ;; (global-fci-mode t)
 
-;;; flymake & flycheck (Prefer flycheck when possible)
-(if (require 'flycheck nil t)
-    (progn
-      ;; NOTE: to debug, open a source file and 'M-x flycheck-verify-setup' to
-      ;; see what checkers are/aren't being used.
-
-      (global-flycheck-mode 1)
-
-      ;; (setq-default flycheck-sh-shellcheck-executable "path/to/shellcheck")
-
-      (add-hook 'c++-mode-hook
-                (lambda ()
-                  (setq
-                   ;; Depends on the compiler available, one of the two takes
-                   ;; effect. But, setting both does not hurt.
-                   flycheck-clang-language-standard "c++20"
-                   flycheck-gcc-language-standard "c++20")))
-
-      (flycheck-define-checker rnc
-        "Check rnc files using jing.jar See URL
-`https://github.com/TreeRex/rnc-mode' and
-`http://www.thaiopensource.com/relaxng/jing.html'"
-        :command ("java" "-jar" (eval (cygpath rnc-jing-jar-file)) "-c"
-                  (eval (cygpath (flycheck-save-buffer-to-temp
-                                  #'flycheck-temp-file-system "flycheck"))))
-        :error-patterns
-        ((error line-start (zero-or-more anything) ":" line ":"
-                column ": error:" (message) line-end)) :modes rnc-mode)
-      (add-to-list 'flycheck-checkers 'rnc)
-      )
-
-  ;; if flycheck not available, use flymake
-  (require 'flymake)
-  (setq flymake-no-changes-timeout 2    ; don't grab too much cpu time
-        flymake-allowed-file-name-masks
-        (cons '("\\.cc\\'" flymake-simple-make-init) ; C++ source file
-              ;; remember to add target in makefile
-              ;; check-syntax:
-              ;;       g++/gcc -o nul -Wall -S $(CHK_SOURCES)
-              flymake-allowed-file-name-masks)))
 
 ;; gdb
 ;; (setq gdb-many-windows t)
@@ -1118,13 +1105,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 
 (require 'pydoc-info nil t)
 
-(if (require 'flycheck nil t)
-      ;; if flake8, mypy and/or pyright are installed, flycheck uses them out of
-      ;; box except for this line. Run `M-x flycheck-verify-setup' in a python
-      ;; buffer for more information.
-      (setq flycheck-python-flake8-executable "flake8")
-  )
-
 ;;; RCIRC - removed, use IRC no more.
 
 ;;; recently opened file
@@ -1155,13 +1135,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 (setq rnc-enable-imenu t
       rnc-jing-jar-file (expand-file-name
                          (concat my-extension-path "jing/bin/jing.jar")))
-
-;; ;; Had not been the java, it could be this:
-;; (flycheck-define-checker rnc
-;;   :command ("java" "-jar" (eval rnc-jing-jar-file) "-c" source)
-;;   :error-patterns ((error line-start (file-name) ":" line ":"
-;;   column (message) line-end)) :modes rnc-mode)
-
 (defun rnc2rng ()
   (interactive)
   (let* ((rnc (buffer-file-name))
@@ -1227,11 +1200,6 @@ selective-display"
           (bash2 . bash)
           (sh5 . sh))))
 
-;;; spelling check
-(add-hook 'prog-mode-hook 'flyspell-prog-mode)
-(add-hook 'markdown-mode-hook 'flyspell-mode)
-(add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell)
-
 ;;; split horizontally if screen wide enough
 (setq split-width-threshold 300)
 
@@ -1247,9 +1215,6 @@ selective-display"
             (imenu-add-menubar-index)
             (hs-minor-mode 1)))
 (add-to-list 'interpreter-mode-alist '("expect" . tcl-mode))
-
-;;; thingatpt+ - breaks org-mode + flyspell
-;; (eval-after-load "thingatpt" '(require 'thingatpt+))
 
 ;;; Tiling
 (add-to-list 'load-path (concat my-elisp-path "tiling"))
@@ -1527,8 +1492,9 @@ string,refer to format-time-string."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(highlight-parentheses-colors '("#689d6a" "#d79921" "#458588" "#b16286" "#98971a"))
  '(package-selected-packages
-   '(editorconfig cue-mode git-gutter mermaid-mode protobuf-mode cmake-mode magit anaconda-mode eglot blacken git-link csv-mode emms json-reformat windata w3m solarized-theme showtip terraform-mode highlight-parentheses highlight-indentation org-contrib hide-lines ox-gfm  pydoc-info pydoc markdown-mode jira-markup-mode ht go-mode flycheck f)))
+   '(flymake-yamllint editorconfig company cue-mode git-gutter mermaid-mode protobuf-mode cmake-mode magit anaconda-mode eglot blacken git-link csv-mode emms json-reformat windata w3m solarized-theme showtip terraform-mode highlight-parentheses highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode ht go-mode flycheck f)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
