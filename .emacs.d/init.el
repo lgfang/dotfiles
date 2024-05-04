@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-03T21:35:10+1000>
+;; Modified: Lungang Fang 2024-05-04T12:48:41+1000>
 
 ;;; Commentary:
 
@@ -27,9 +27,9 @@
 (use-package vertico
   :ensure t
   :defer t
-
+  :defines vertico-map
+  :functions vertico-mode vertico-multiform-mode
   :bind (:map vertico-map ("C-o" . vertico-quick-exit))
-
   :custom
   (vertico-resize nil)
   (vertico-cycle nil)
@@ -60,6 +60,7 @@
 (use-package marginalia
   :ensure t
   :defer t
+  :functions marginalia-mode
   :init
   (marginalia-mode 1)
   )
@@ -126,6 +127,7 @@
 ;;;; Company
 (use-package company
   :ensure t
+  :functions global-company-mode
   :init (global-company-mode)
   )
 
@@ -137,6 +139,7 @@
   ;; `yasnippet-snippets' stores its snippets).
   ; TODO: cleanup duplicated/similar snippets in different directories.
   :ensure t
+  :functions yas-global-mode
   :init (yas-global-mode 1)
   )
 
