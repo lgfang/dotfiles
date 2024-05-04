@@ -204,6 +204,19 @@
   :hook ((yaml-ts-mode . flymake-yamllint-setup))
   )
 
+;;; DAP (dape)
+(use-package dape
+  ;; For Python, `pip3 install debugpy'. Run adapter `debugpy' to test a
+  ;; program, adapter `debugpy-module' for testing a module.
+
+  :ensure t
+  :after eglot
+  :config
+  ;; Save files before sessions, useful for interpreted languages, such as
+  ;; python; Cannot use `:hook' since this hook name doesn't end with "-hook"
+  (add-hook 'dape-on-start-hooks 'save-some-buffers)
+  )
+
 ;;; --- old configurations ---
 
 ;;; paths
