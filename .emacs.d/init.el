@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-04T20:36:57+1000>
+;; Modified: Lungang Fang 2024-05-04T21:48:16+1000>
 
 ;;; Commentary:
 
@@ -233,7 +233,6 @@
   )
 
 ;;; --- old configurations ---
-
 ;;; paths
 (defvar my-emacs-base
   (file-name-as-directory (expand-file-name "~/.emacs.d")))
@@ -332,7 +331,8 @@
 (define-key global-map [f2] 'imenu)
 ;; f3/f4: built-in key bindings to define keyboard macros
 (define-key global-map [f5] 'whitespace-cleanup)
-(define-key global-map [f8] 'bury-buffer)
+(define-key global-map [f8]  (lambda() "bury in case only one window"
+                               (interactive) (bury-buffer) (delete-window)))
 ;; f9 to clock in last, `C-u f9' to select from recent tasks.
 (define-key global-map [f9] 'org-clock-in-last)
 ;; shift-f9 to clock out
