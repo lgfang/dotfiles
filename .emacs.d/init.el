@@ -102,15 +102,6 @@
                                   ))
   )
 
-;;;; ZWJ (Zero Width Joiner) emoji handling.
-;; See a ZWJ example in ~/mynotes/emacs/emacs-unicode-test.org
-(unless (display-graphic-p)
-  ;; Disable auto-complete-mode if running when in a terminal as most terminal
-  ;; emulators cannot handle Emoji ZWJ. NOTE: disabling it on the fly does not
-  ;; work very well, must restart Emacs.
-  (setq-default auto-composition-mode nil)
-  )
-
 ;;;; Start up screen
 (setq inhibit-startup-screen t)
 
@@ -151,6 +142,28 @@
   :bind (:map global-map ("C-\\" . tiling-cycle))
   ;; Out of key bindings, just `M-x` the commands directly.
   :commands tiling-tile-up tiling-tile-down tiling-tile-left tiling-tile-right
+  )
+
+;;; Language and coding system
+
+;;;; UTF-8: normally no configuration required
+;; Set terminal coding system to utf-8 explictly to display unicode chars
+;; (including emojis/Chinese chars) correctly. This is needed when utf-8 is
+;; supported but emacs does not detect and set set it correctly, due to wrong
+;; shell locale etc.
+;; (set-terminal-coding-system 'utf-8)
+
+;; (prefer-coding-system 'utf-8)
+;; (set-keyboard-coding-system 'utf-8)
+;; (set-language-environment 'utf-8)
+
+;;;; ZWJ (Zero Width Joiner) emoji handling.
+;; See a ZWJ example in ~/mynotes/emacs/emacs-unicode-test.org
+(unless (display-graphic-p)
+  ;; Disable auto-complete-mode if running when in a terminal as most terminal
+  ;; emulators cannot handle Emoji ZWJ. NOTE: disabling it on the fly does not
+  ;; work very well, must restart Emacs.
+  (setq-default auto-composition-mode nil)
   )
 
 ;;; Completion
@@ -298,23 +311,6 @@
                                 ("Asia/Tel_Aviv" "Tel Aviv")
                                 ("Europe/London" "Dublin"))
       )
-
-;;; Language Environment - these settings are normally no longer needed
-
-;; (if (eq system-type 'windows-nt)
-;;     (if (>= emacs-major-version 23)
-;;         (set-language-environment 'Chinese-GB18030)
-;;       (set-language-environment 'Chinese-GB)))
-
-
-;; (set-language-environment 'utf-8)
-;; (set-keyboard-coding-system 'utf-8)
-;; (prefer-coding-system 'utf-8)
-;; ;; set terminal coding system to utf-8 explictly to display unicode chars
-;; ;; (including emojis/Chinese chars) correctly. This is needed when utf-8 is
-;; ;; supported but emacs does not detect and set set it correctly due to wrong
-;; ;; shell locale etc.
-;; (set-terminal-coding-system 'utf-8)
 
 ;;; global key bindings
 
