@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-04T21:48:16+1000>
+;; Modified: Lungang Fang 2024-05-05T19:20:53+1000>
 
 ;;; Commentary:
 
@@ -122,6 +122,35 @@
          (yaml-ts-mode . flyspell-prog-mode)
          (markdown-mode . flyspell-mode)
          (git-commit-setup . flyspell-mode))
+  )
+
+;;; Window layout
+(use-package winner
+  :config
+  (winner-mode 1)
+  )
+
+(use-package windmove
+  :bind (:map global-map
+              ;; move between windows
+              ("S-<up>"        . windmove-up)
+              ("S-<down>"      . windmove-down)
+              ("S-<right>"     . windmove-right)
+              ("S-<left>"      . windmove-left)
+              ;; move windows
+              ("C-x S-<up>"    . windmove-swap-states-up)
+              ("C-x S-<down>"  . windmove-swap-states-down)
+              ("C-x S-<right>" . windmove-swap-states-right)
+              ("C-x S-<left>"  . windmove-swap-states-left)
+              )
+  )
+
+(use-package lgf-tiling
+  :after windmove
+  :load-path (lambda() (concat my-elisp-path "tiling"))
+  :bind (:map global-map ("C-\\" . tiling-cycle))
+  ;; Out of key bindings, just `M-x` the commands directly.
+  :commands tiling-tile-up tiling-tile-down tiling-tile-left tiling-tile-right
   )
 
 ;;; Completion
@@ -351,51 +380,6 @@
 (define-key global-map (kbd "M-g ]") 'lgfang-goto-page)
 (define-key global-map (kbd "C-h d") 'sdcv-search-pointer)
 (define-key global-map (kbd "C-h D") 'sdcv-search-pointer+)
-
-;; Split & Resize Windows
-(define-key global-map (kbd "C-x |") 'split-window-horizontally)
-(define-key global-map (kbd "C-x _") 'split-window-vertically)
-(define-key global-map (kbd "C-{") 'shrink-window-horizontally)
-(define-key global-map (kbd "C-}") 'enlarge-window-horizontally)
-(define-key global-map (kbd "C-^") 'enlarge-window)
-
-;; Move cursor between buffers
-(define-key global-map (kbd "C-x <up>") 'windmove-up)
-(define-key global-map (kbd "C-x <down>") 'windmove-down)
-(define-key global-map (kbd "C-x <right>") 'windmove-right)
-(define-key global-map (kbd "C-x <left>") 'windmove-left)
-
-;; Swap buffers
-(define-key global-map (kbd "C-x S-<up>"   ) 'buf-move-up)
-(define-key global-map (kbd "C-x S-<down>" ) 'buf-move-down)
-(define-key global-map (kbd "C-x S-<right>") 'buf-move-right)
-(define-key global-map (kbd "C-x S-<left>" ) 'buf-move-left)
-
-;; Change Layout
-(define-key global-map (kbd "C-\\") 'tiling-cycle)
-(define-key global-map (kbd "C-x C-S-<up>") 'tiling-tile-up)
-(define-key global-map (kbd "C-x C-S-<down>") 'tiling-tile-down)
-(define-key global-map (kbd "C-x C-S-<right>") 'tiling-tile-right)
-(define-key global-map (kbd "C-x C-S-<left>") 'tiling-tile-left)
-
-;; ;; Another type of representation of same keys, in case your terminal
-;; ;; doesn't recognize above key-binding. Tip: C-h k C-up etc. to see into
-;; ;; what your terminal tranlated the key sequence.
-;; (define-key global-map (kbd "M-[ a"     ) 'windmove-up)
-;; (define-key global-map (kbd "M-[ b"     ) 'windmove-down)
-;; (define-key global-map (kbd "M-[ c"     ) 'windmove-right)
-;; (define-key global-map (kbd "M-[ d"     ) 'windmove-left)
-;; (define-key global-map (kbd "ESC <up>"   ) 'buf-move-up)
-;; (define-key global-map (kbd "ESC <down>" ) 'buf-move-down)
-;; (define-key global-map (kbd "ESC <right>") 'buf-move-right)
-;; (define-key global-map (kbd "ESC <left>" ) 'buf-move-left)
-;; (define-key global-map (kbd "ESC M-[ a" ) 'tiling-tile-up)
-;; (define-key global-map (kbd "ESC M-[ b" ) 'tiling-tile-down)
-;; (define-key global-map (kbd "ESC M-[ c" ) 'tiling-tile-right)
-;; (define-key global-map (kbd "ESC M-[ d" ) 'tiling-tile-left)
-
-
-
 
 ;;; ascii mode
 (autoload 'ascii-display "ascii" "Toggle ASCII code display." t)
@@ -1201,10 +1185,6 @@ selective-display"
             (hs-minor-mode 1)))
 (add-to-list 'interpreter-mode-alist '("expect" . tcl-mode))
 
-;;; Tiling
-(add-to-list 'load-path (concat my-elisp-path "tiling"))
-(require 'tiling nil t)
-
 ;;; time stamp
 (add-hook 'write-file-hooks 'time-stamp)
 (setq time-stamp-format "%U %Y-%02m-%02dT%02H:%02M:%02S%5z"
@@ -1285,11 +1265,6 @@ selective-display"
 ;; Editting others' files with whitespace-mode turned on can be boresome as they
 ;; never clean up whitespace. Therefore, M-x whitespace-mode only when needed.
 (global-whitespace-mode 0)
-
-;;; windmove - autoloaded
-
-;;; Winner-mode - autoloaded
-(winner-mode 1)
 
 ;;; woman
 (setq woman-use-own-frame nil
