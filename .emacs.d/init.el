@@ -276,32 +276,6 @@
 (add-to-list 'load-path my-extension-path)
 (add-to-list 'load-path my-backward-path t)
 
-;; exec path
-(cond
- ((eq system-type 'cygwin)
-  (setq exec-path
-        (append '("/cygdrive/c/Program Files/Mozilla Firefox") exec-path)))
- ((eq system-type 'darwin)
-  ;; cocoa emacs does not inherit PATH from Terminal setting
-  (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
-  (setq exec-path (append '("/usr/local/bin") exec-path))))
-
-;; ;; woman path
-;; (setq woman-manpath '("patha" "pathb"))
-
-;;; Completion
-
-;;; cygwin wrappers
-;; NOTE: put this section in the begining of my configure so that files I hacked
-;; can make used of these functions.
-
-(defun cygpath (path)
-  "Convert the PATH to  Java etc. does not read the cygwin PATH."
-  (if (eq system-type 'cygwin)
-      (substring ;; delete trailing new-line added
-       (shell-command-to-string (format "cygpath -m \"%s\"" path)) 0 -1)
-  path))
-
 ;;; Personal Info
 
 ;; Confidential info saved in this file.
