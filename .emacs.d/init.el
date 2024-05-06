@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-05T19:20:53+1000>
+;; Modified: Lungang Fang 2024-05-06T10:49:46+1000>
 
 ;;; Commentary:
 
@@ -238,19 +238,6 @@
   :hook (prog-mode yaml-ts-mode)
 )
 
-(use-package flymake-ruff
-  :ensure t
-  :after flymake
-  :custom
-  (python-flymake-command '("ruff" "--quiet" "--stdin-filename=stdin" "-"))
-  )
-
-(use-package flymake-yamllint
-  :ensure t
-  :after flymake
-  :hook ((yaml-ts-mode . flymake-yamllint-setup))
-  )
-
 ;;; DAP (dape)
 (use-package dape
   ;; For Python, `pip3 install debugpy'. Run adapter `debugpy' to test a
@@ -264,6 +251,11 @@
   (add-hook 'dape-on-start-hooks 'save-some-buffers)
   )
 
+;;; Reformatter
+(use-package reformatter
+  :ensure t
+  )
+
 ;;; ANSI color code
 (use-package ansi-color
   :hook (;; render color codes in the compilation buffer.
@@ -272,6 +264,24 @@
 
 (use-package lgf-ansi-color-mode
   :after ansi-color
+  )
+
+;;; Python
+(use-package flymake-ruff
+  :after flymake
+  :hook ((python-mode python-ts-mode) . flymake-ruff-load)
+  )
+
+(use-package ruff-format
+  :after reformatter
+  :hook ((python-mode python-ts-mode) . ruff-format-on-save-mode)
+  )
+
+;;; YAML
+(use-package flymake-yamllint
+  :ensure t
+  :after flymake
+  :hook ((yaml-ts-mode . flymake-yamllint-setup))
   )
 
 ;;; --- old configurations ---
@@ -1036,7 +1046,7 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
             (hs-minor-mode 1)
             (outline-minor-mode 1)
             ;; (anaconda-mode)             ; for cross reference, also see eglot
-            (blacken-mode 1)            ; relies on the command black
+            ;; (blacken-mode 1)            ; relies on the command black
             (setq imenu-create-index-function 'python-imenu-create-flat-index)
             (imenu-add-menubar-index)))
 
