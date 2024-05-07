@@ -137,7 +137,6 @@
   )
 
 (use-package lgf-tiling
-  :after windmove
   :load-path (lambda() (concat my-elisp-path "tiling"))
   :bind (:map global-map ("C-\\" . tiling-cycle))
   ;; Out of key bindings, just `M-x` the commands directly.
