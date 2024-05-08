@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-06T10:49:46+1000>
+;; Modified: Lungang Fang 2024-05-08T11:45:40+1000>
 
 ;;; Commentary:
 
@@ -67,6 +67,10 @@
   (marginalia-mode 1)
   )
 
+(use-package consult
+  :ensure t
+  :bind (:map global-map ("<f2>" . consult-imenu))
+  )
 ;;; Looks
 
 ;;;; Frame & Window
@@ -218,10 +222,15 @@
 
 ;;; LSP (eglot)
 (use-package eglot
+  :ensure t
   ;; Note for Eglot + Pyright on MacOS: you may want to increase the "open
   ;; files" limit (`ulimit -n'), say to 65536. The default value is 256, which
   ;; Pyright easily hits when the python project is non-trivial. (You'll see the
   ;; error message if you set debug-on-error to t and then enable Eglot.).
+
+  :config
+  ;; (add-to-list 'eglot-stay-out-of 'imenu)
+  ;; ;; so that imenu-list is based on positions in buffer
   )
 
 ;;; Syntax check (flymake)
@@ -254,6 +263,15 @@
 (use-package reformatter
   :ensure t
   )
+
+;;; Imenu
+(use-package imenu
+  :ensure t
+  :custom (imenu-auto-rescan t)
+  )
+
+(use-package imenu-list
+  :ensure t)
 
 ;;; ANSI color code
 (use-package ansi-color
@@ -336,7 +354,7 @@
 
 ;; F1-F12
 (define-key global-map [f1] 'recentf-open)
-(define-key global-map [f2] 'imenu)
+;; (define-key global-map [f2] 'imenu)
 ;; f3/f4: built-in key bindings to define keyboard macros
 (define-key global-map [f5] 'whitespace-cleanup)
 (define-key global-map [f8]  (lambda() "bury in case only one window"
@@ -451,8 +469,8 @@
             ))
 ;; Can't hook imenu-add-menubar-index to c-mode-common-hook since awk mode don't
 ;; support it
-(dolist (hook '(c-mode-hook c++-mode-hook java-mode-hook))
-  (add-hook hook 'imenu-add-menubar-index))
+;; (dolist (hook '(c-mode-hook c++-mode-hook java-mode-hook))
+;;   (add-hook hook 'imenu-add-menubar-index))
 
 ;;; Calendar Chinese & Aussie NSW Holidays
 (when (require 'cal-china-x nil t)
@@ -629,7 +647,7 @@ tmux's buffer"
 
 ;;; elisp
 (add-hook 'emacs-lisp-mode-hook
-          (lambda() (imenu-add-menubar-index) (hs-minor-mode 1)))
+          (lambda()  (hs-minor-mode 1)))
 
 
 ;;; emms configure in another file
@@ -872,11 +890,6 @@ lgfang-hif-toggle-block"
 
 (require 'htmlize nil t)
 
-;;; imenu
-(setq imenu-sort-function 'imenu--sort-by-name
-      imenu-auto-rescan t
-      imenu-use-popup-menu 'on-mouse)
-
 ;;; ispell - aspell instead
 (setq ispell-program-name "aspell"
       ;; regardless locale settings, always use english refer to
@@ -1026,7 +1039,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 
 ;;; perl: using cperl-mode instead
 (defalias 'perl-mode 'cperl-mode)
-(add-hook 'cperl-mode-hook 'imenu-add-menubar-index)
 (setq cperl-indent-level 4
       cperl-close-paren-offset -4
       cperl-continued-statement-offset 4
@@ -1046,8 +1058,9 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
             (outline-minor-mode 1)
             ;; (anaconda-mode)             ; for cross reference, also see eglot
             ;; (blacken-mode 1)            ; relies on the command black
-            (setq imenu-create-index-function 'python-imenu-create-flat-index)
-            (imenu-add-menubar-index)))
+            ;; (setq imenu-create-index-function 'python-imenu-create-flat-index)
+            ;; (imenu-add-menubar-index)
+            ))
 
 (setq python-fill-docstring-style 'django) ; triple quotes on their own lines
 
@@ -1080,7 +1093,7 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 ;;; rnc mode - nxml mode uses rnc files
 (add-to-list 'auto-mode-alist '("\\.rnc\\'" . rnc-mode))
 (autoload 'rnc-mode "rnc-mode")
-(setq rnc-enable-imenu t
+(setq ;; rnc-enable-imenu t
       rnc-jing-jar-file (expand-file-name
                          (concat my-extension-path "jing/bin/jing.jar")))
 (defun rnc2rng ()
