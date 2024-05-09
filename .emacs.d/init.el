@@ -259,9 +259,26 @@
   (add-hook 'dape-on-start-hooks 'save-some-buffers)
   )
 
-;;; Reformatter
+;;; Formatter
 (use-package reformatter
+  ;; depended on by ruff-format etc.
   :ensure t
+  )
+
+(use-package prettier
+  ;; Format json, yaml, markdown etc.;
+  ;;
+  ;; IMPORTANT:
+  ;;
+  ;; - install the package *globally*(`-g'): npm install -g prettier
+  ;;
+  ;; - One principle of prettier is to eliminate debates over formatting;
+  ;;   Therefore, it's generally recommended to stick with the default settings.
+  ;;   But, to stop yamllint from complaining "too many spaces inside braces",
+  ;;   add `bracketSpacing: false' to your ".prettierrc"
+
+  :ensure t
+  :hook (yaml-mode yaml-ts-mode)
   )
 
 ;;; Highlight indentation levels
