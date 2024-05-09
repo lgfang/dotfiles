@@ -298,7 +298,15 @@
   :after ansi-color
   )
 
-;;; Python
+;;; Python specific
+(use-package python
+  :custom
+  ;; triple quotes on their own lines
+  (python-fill-docstring-style 'django)
+  ;; for empty python files, as existing files use existing indent offset.
+  (python-indent-offset 4)
+  )
+
 (use-package flymake-ruff
   :after flymake
   :hook ((python-mode python-ts-mode) . flymake-ruff-load)
@@ -1052,22 +1060,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 ;; Installed using M-x package-install
 (autoload 'php-mode "php-mode" "Major mode for editing PHP code." t)
-
-;;; python related
-(add-hook 'python-mode-hook
-          (lambda()
-            (setq tab-width 4)  ; "python-mode" sets it to 8, change it back.
-            (hs-minor-mode 1)
-            (outline-minor-mode 1)
-            ;; (anaconda-mode)             ; for cross reference, also see eglot
-            ;; (blacken-mode 1)            ; relies on the command black
-            ;; (setq imenu-create-index-function 'python-imenu-create-flat-index)
-            ;; (imenu-add-menubar-index)
-            ))
-
-(setq python-fill-docstring-style 'django) ; triple quotes on their own lines
-
-(require 'pydoc-info nil t)
 
 ;;; RCIRC - removed, use IRC no more.
 
