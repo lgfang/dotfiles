@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-08T11:45:40+1000>
+;; Modified: Lungang Fang 2024-05-09T22:31:47+1000>
 
 ;;; Commentary:
 
@@ -262,6 +262,21 @@
 ;;; Reformatter
 (use-package reformatter
   :ensure t
+  )
+
+;;; Highlight indentation levels
+(use-package highlight-indentation
+  :ensure t
+  :custom
+  ;; Disable highlight-indentation-blank-lines, as it prevents `C-a' from going
+  ;; to the beginning of blank lines and causes some other issues.
+  (highlight-indentation-blank-lines nil)
+  ;; ;; manually set the face if desired ("gray20" suits dark themes)
+  ;; (set-face-background 'highlight-indentation-face "gray20")
+
+  :hook (((python-mode python-ts-mode) . highlight-indentation-mode)
+         ((yaml-mode yaml-ts-mode)     . highlight-indentation-current-column-mode)
+         )
   )
 
 ;;; Imenu
@@ -849,18 +864,6 @@ lgfang-hif-toggle-block"
 ;;         highlight-tail-timer 1
 ;;         highlight-tail-posterior-type 'const)
 ;;   (highlight-tail-mode 1))
-
-;;; highlight indetation levels
-(when (require 'highlight-indentation)
-  ;; Explicitly turn off highlight-indentation-blank-lines, which makes C-a
-  ;; unable to go to the beginning of blank lines. And make other issues.
-  (setq highlight-indentation-blank-lines nil)
-
-  ;; ;; manually set the face if desired ("gray20" suits dark themes)
-  ;; (set-face-background 'highlight-indentation-face "gray20")
-  (add-hook 'python-mode-hook 'highlight-indentation-mode)
-  (add-hook 'yaml-mode-hook 'highlight-indentation-current-column-mode)
-  )
 
 ;;; highlight parenthesis: `highlight-parentheses'
 ;; It's better than `show-paren-mode', which matches parentheseses at point
