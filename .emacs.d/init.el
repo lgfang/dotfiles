@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-09T22:31:47+1000>
+;; Modified: Lungang Fang 2024-05-10T12:23:52+1000>
 
 ;;; Commentary:
 
@@ -13,8 +13,8 @@
 ;;; First things first
 
 ;;;; Paths
-(defvar my-elisp-path
-  (file-name-as-directory (expand-file-name "~/.emacs.d/my-elisp")))
+(defvar my-emacs-d (file-name-as-directory (expand-file-name "~/.emacs.d")))
+(defvar my-elisp-path (file-name-as-directory (concat my-emacs-d "my-elisp")))
 
 (add-to-list 'load-path my-elisp-path t)
 
@@ -55,8 +55,7 @@
 (use-package orderless
   :ensure t
   :defer t
-  :custom
-  (completion-styles '(orderless flex substring basic))
+  :custom (completion-styles '(orderless flex substring basic))
   )
 
 (use-package marginalia
@@ -108,16 +107,6 @@
 
 ;;;; Start up screen
 (setq inhibit-startup-screen t)
-
-;;; Spelling check
-(use-package flyspell
-  :config
-  :hook ((prog-mode . flyspell-prog-mode)
-         (yaml-mode . flyspell-prog-mode)
-         (yaml-ts-mode . flyspell-prog-mode)
-         (markdown-mode . flyspell-mode)
-         (git-commit-setup . flyspell-mode))
-  )
 
 ;;; Window layout
 (use-package winner
@@ -193,7 +182,30 @@
 (use-package yasnippet-snippets
   :after yasnippet-snippets)
 
-;;; Syntax parser (Tree-sitter)
+;;; Spelling check
+(use-package flyspell
+  :config
+  :hook ((prog-mode . flyspell-prog-mode)
+         (yaml-mode . flyspell-prog-mode)
+         (yaml-ts-mode . flyspell-prog-mode)
+         (markdown-mode . flyspell-mode)
+         (git-commit-setup . flyspell-mode))
+  )
+
+;;; Syntax check (flymake)
+(use-package flymake
+  ;; To list all the diagnostics, use `flymake-show-buffer-diagnostics' and
+  ;; `flymake-show-project-diagnostics'. For checkers being used, see the buffer
+  ;; local var `flymake-diagnostic-functions'.
+
+  :bind (:map flymake-mode-map
+              ("C-c p" . flymake-goto-prev-error)
+              ("C-c n" . flymake-goto-next-error))
+
+  :hook (prog-mode yaml-ts-mode)
+)
+
+;;; Syntax parser - Tree-sitter
 (use-package treesit
   ;; Run `treesit-install-language-grammar' to install the grammar
   ;; for each designated language.
@@ -220,7 +232,7 @@
   ;; :load-path (lambda() (concat my-emacs-d "treesit-fold"))
   )
 
-;;; LSP (eglot)
+;;; LSP - eglot
 (use-package eglot
   :ensure t
   ;; Note for Eglot + Pyright on MacOS: you may want to increase the "open
@@ -233,20 +245,7 @@
   ;; ;; so that imenu-list is based on positions in buffer
   )
 
-;;; Syntax check (flymake)
-(use-package flymake
-  ;; To list all the diagnostics, use `flymake-show-buffer-diagnostics' and
-  ;; `flymake-show-project-diagnostics'. For checkers being used, see the buffer
-  ;; local var `flymake-diagnostic-functions'.
-
-  :bind (:map flymake-mode-map
-              ("C-c p" . flymake-goto-prev-error)
-              ("C-c n" . flymake-goto-next-error))
-
-  :hook (prog-mode yaml-ts-mode)
-)
-
-;;; DAP (dape)
+;;; DAP - dape
 (use-package dape
   ;; For Python, `pip3 install debugpy'. Run adapter `debugpy' to test a
   ;; program, adapter `debugpy-module' for testing a module.
