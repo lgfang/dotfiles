@@ -258,6 +258,24 @@
   (add-hook 'dape-on-start-hooks 'save-some-buffers)
   )
 
+;;; Generative AI (GAI) - copilot
+(use-package copilot
+  ;; What I'm after is not code completion but "copilot chat". Code completion
+  ;; provided by static type checkers (Pyright for instance) are already good
+  ;; enough for me.
+  :load-path (lambda() (concat my-emacs-d "copilot.el"))
+  :bind (:map copilot-completion-map
+              ("TAB"       . copilot-next-completion)
+              ("<backtab>" . copilot-previous-completion)
+              ("M-f"       . copilot-accept-completion-by-word)
+              ("C-e"       . copilot-accept-completion)
+              )
+  :custom (copilot-log-max 50000)
+
+  ;; try copilot completion with python.
+  :hook (python-ts-mode python)
+  )
+
 ;;; Formatter
 (use-package reformatter
   ;; depended on by ruff-format etc.
@@ -758,18 +776,6 @@ tmux's buffer"
 
 ;; gdb
 ;; (setq gdb-many-windows t)
-
-;;; Generative AI (GAI) - copilot
-;; Note: not enabling it by default as what I'm after is copilot chat not
-;; completion, in which static type checkers excels.
-(add-to-list 'load-path (concat my-extension-path "copilot.el"))
-(when (require 'copilot)
-  (setq copilot-log-max 50000)
-  (define-key copilot-completion-map (kbd "TAB") 'copilot-next-completion)
-  (define-key copilot-completion-map (kbd "<backtab>") 'copilot-previous-completion)
-  (define-key copilot-completion-map (kbd "M-f") 'copilot-accept-completion-by-word)
-  (define-key copilot-completion-map (kbd "C-e") 'copilot-accept-completion)
-  )
 
 ;;; git-gutter
 ;; Choose this over diff-hl because the later does not work in 'emacs -nw'.
