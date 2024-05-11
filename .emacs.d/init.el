@@ -306,10 +306,25 @@
      ))
   )
 
-(use-package treesit-fold
-  ;; Place holder, this package is not ready yet.
+;;;; treesitter context
+;; My main request is folding code. The focus mode and context mode are bonus,
+;; which only work in GUI Emacs. At the moment the functionality of folding
+;; appears to be not supper good. TODO: check the last progress of
+;; `treesit-fold', which was said to be a good one.
+
+(use-package treesitter-context         ; works for GUI emacs only
   :after treesit
-  ;; :load-path (lambda() (concat my-emacs-d "treesit-fold"))
+  :load-path (lambda() (concat my-downloads "treesitter-context.el"))
+  )
+
+(use-package treesitter-context-focus   ; works for GUI emacs only
+  :after treesit
+  :load-path (lambda() (concat my-downloads "treesitter-context.el"))
+  )
+
+(use-package treesitter-context-fold   ; functionality appears to be limited atm
+  :after treesit
+  :load-path (lambda() (concat my-downloads "treesitter-context.el"))
   )
 
 ;;; LSP - eglot
