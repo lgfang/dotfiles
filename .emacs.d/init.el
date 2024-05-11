@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-10T12:23:52+1000>
+;; Modified: Lungang Fang 2024-05-11T21:09:20+1000>
 
 ;;; Commentary:
 
@@ -13,16 +13,20 @@
 ;;; First things first
 
 ;;;; Paths
-(defvar my-emacs-d (file-name-as-directory (expand-file-name "~/.emacs.d")))
-(defvar my-elisp-path (file-name-as-directory (concat my-emacs-d "my-elisp")))
-
-(add-to-list 'load-path my-elisp-path t)
+(use-package emacs
+  :config
+  (defvar my-emacs-d (file-name-as-directory (expand-file-name "~/.emacs.d")))
+  (defvar my-elisp-path (file-name-as-directory (concat my-emacs-d "my-elisp")))
+  (add-to-list 'load-path my-elisp-path t)
+)
 
 ;;;; setup package
 
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
+(use-package package
+  :config
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (package-initialize)
+)
 
 ;;; Mini-buffer Interaction
 
@@ -70,9 +74,10 @@
   :ensure t
   :bind (:map global-map ("<f2>" . consult-imenu))
   )
+
 ;;; Looks
 
-;;;; Frame & Window
+;;;; Frame
 (menu-bar-mode (if (display-graphic-p) 1 -1)) ; turn it on for GUI only
 (tool-bar-mode -1)                            ; turn it off
 
@@ -80,7 +85,9 @@
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
 ;;;; Fonts
-(when (display-graphic-p)
+(use-package emacs
+  :if (display-graphic-p)
+  :config
   (set-face-attribute 'default nil :font "monaco-18:weight=normal")
 
   ;; Select the font for Chinese characters using `set-fontset-font'. This
@@ -107,6 +114,78 @@
 
 ;;;; Start up screen
 (setq inhibit-startup-screen t)
+
+;;; Visual aids
+
+;;;; Display line number
+(use-package display-line-numbers       ; built-in package
+  ;; No configuration is needed. This is explicitly added as a reminder of the
+  ;; function names.
+  :defer t
+  :commands display-line-numbers-mode global-display-line-numbers-mode
+  ;; :custom
+  ;; (display-line-numbers-widen t)
+  ;; (display-line-numbers-major-tick 50)
+  ;; (display-line-numbers-minor-tick 10)
+  )
+
+;;;; Highlight current line
+(use-package hl-line             ; built-in package, highlights the current line
+  ;; Note that this package, along with similar ones such as beacon, only
+  ;; updates the *active* window. This means that if an action is performed in
+  ;; the current window that moves the cursor in another window, the visual
+  ;; indicator of the current line of the other window (inactive) will not be
+  ;; updated until you switch to it.
+  :config (global-hl-line-mode 1)
+  )
+
+;;;; Display column number in the mode line
+(use-package emacs
+  :config
+  (column-number-mode t)
+  )
+
+;;;; Show fill column indicator
+(use-package fill-column-indicator
+  :defer t
+  :commands fci-mode
+  ;; to make a global minor mode, use the following
+  ;; (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))  
+  )
+
+;;;; Highlight indentation levels
+(use-package highlight-indentation
+  :ensure t
+  :custom
+  ;; Disable highlight-indentation-blank-lines, as it prevents `C-a' from going
+  ;; to the beginning of blank lines and causes some other issues.
+  (highlight-indentation-blank-lines nil)
+  ;; ;; manually set the face if desired ("gray20" suits dark themes)
+  ;; (set-face-background 'highlight-indentation-face "gray20")
+
+  :hook (((python-mode python-ts-mode) . highlight-indentation-mode)
+         ((yaml-mode yaml-ts-mode)     . highlight-indentation-current-column-mode)
+         )
+  )
+
+;;;; Highlight matching parenthesis
+(use-package highlight-parentheses
+  :commands global-highlight-parentheses-mode
+  :config (global-highlight-parentheses-mode t)
+  ;; :custom (hl-paren-colors    ; `M-x list-colors-display' to see named colors
+  ;;          '("brown" "orange" "yellow" "forest green" "cyan" "blue" "violet"))
+  )
+
+;;;; Treemacs
+(use-package treemacs
+  :defer t                    ; Only load it when I need it, as I rarely use it.
+  )
+
+;;;; Minimap
+(use-package minimap
+  :defer t                         ; Just an eye candy which I almost never use.
+  :custom (minimap-window-location 'right)
+)
 
 ;;; Window layout
 (use-package winner
@@ -298,21 +377,6 @@
   :hook (yaml-mode yaml-ts-mode)
   )
 
-;;; Highlight indentation levels
-(use-package highlight-indentation
-  :ensure t
-  :custom
-  ;; Disable highlight-indentation-blank-lines, as it prevents `C-a' from going
-  ;; to the beginning of blank lines and causes some other issues.
-  (highlight-indentation-blank-lines nil)
-  ;; ;; manually set the face if desired ("gray20" suits dark themes)
-  ;; (set-face-background 'highlight-indentation-face "gray20")
-
-  :hook (((python-mode python-ts-mode) . highlight-indentation-mode)
-         ((yaml-mode yaml-ts-mode)     . highlight-indentation-current-column-mode)
-         )
-  )
-
 ;;; Imenu
 (use-package imenu
   :ensure t
@@ -430,8 +494,8 @@
 (define-key global-map (kbd "C-x c a") 'org-agenda)
 (define-key global-map (kbd "C-x c o") 'org-open-at-point-global)
 (define-key global-map (kbd "M-/") 'hippie-expand)
-(define-key global-map (kbd "M-g c") 'move-to-column)
-(define-key global-map (kbd "M-g ]") 'lgfang-goto-page)
+;; (define-key global-map (kbd "M-g c") 'move-to-column)
+;; (define-key global-map (kbd "M-g ]") 'lgfang-goto-page)
 (define-key global-map (kbd "C-h d") 'sdcv-search-pointer)
 (define-key global-map (kbd "C-h D") 'sdcv-search-pointer+)
 
@@ -626,7 +690,7 @@ tmux's buffer"
   ;; else, fallback to this builtin theme
   (load-theme 'wombat))
 
-(column-number-mode t)
+
 
 (setq comment-style 'extra-line)
 
@@ -768,10 +832,6 @@ tmux's buffer"
 
 ;;; fill column
 (setq-default fill-column 80 comment-fill-column nil)
-(require 'fill-column-indicator nil t) ;; run "(fci-mode)"
-;; (define-globalized-minor-mode
-;;   global-fci-mode fci-mode (lambda () (fci-mode 1)))
-;; (global-fci-mode t)
 
 
 ;; gdb
@@ -878,35 +938,6 @@ lgfang-hif-toggle-block"
   "hide/show the next level"
   (interactive) (hs-show-block) (hs-hide-level 1))
 
-;;; highlight current line: use the built in `hl-line'
-;; Note that this and other similar functions (such as beacon) only works with
-;; *active* cursor. Therefore, none of them highlights the "current" line/point
-;; of another buffer. For example, in a compilation/grep buffer, you press n/p
-;; to move the cursor in another buffer. Because you don't jump to that buffer,
-;; the highlight in that buffer does not change.
-
-;;; highlight cursor of insertion: `highlight-tail'
-;; (when (require 'highlight-tail)
-;;   (setq highlight-tail-colors '(("black" . 0)
-;;                                 ("#bc2525" . 25)
-;;                                 ("black" . 66))
-;;         highlight-tail-steps 14
-;;         highlight-tail-timer 1
-;;         highlight-tail-posterior-type 'const)
-;;   (highlight-tail-mode 1))
-
-;;; highlight parenthesis: `highlight-parentheses'
-;; It's better than `show-paren-mode', which matches parentheseses at point
-;; only.
-(when (require 'highlight-parentheses nil t)
-  ;; M-x list-colors-display to see named colors
-  (setq hl-paren-colors '("brown" "orange" "yellow" "forest green"
-                          "cyan" "blue" "violet"))
-  (global-highlight-parentheses-mode t))
-
-;;; highlight region
-(setq-default transient-mark-mode t)
-
 ;;; hippie expand
 (setq hippie-expand-try-functions-list
       '(try-expand-dabbrev
@@ -956,7 +987,7 @@ files and avoid accidental modifications."
 ;; (setq-default
 ;;  ;; Note that corresponding faces maybe undefined and hence the major/minor
 ;;  ;; ticks are not shown.
-;;  display-line-numbers-major-tick 50 display-line-numbers-minor-tick 10)
+
 
 ;;; log mode
 (autoload 'log-mode "log-mode" "my mode to view log files" t)
