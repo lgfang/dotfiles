@@ -16,8 +16,9 @@
 (use-package emacs
   :config
   (defvar my-emacs-d (file-name-as-directory (expand-file-name "~/.emacs.d")))
-  (defvar my-elisp-path (file-name-as-directory (concat my-emacs-d "my-elisp")))
-  (add-to-list 'load-path my-elisp-path t)
+  (defvar my-elisps (file-name-as-directory (concat my-emacs-d "my-elisps")))
+  (defvar my-downloads (file-name-as-directory (concat my-emacs-d "downloads")))
+  (add-to-list 'load-path my-elisps t)
 )
 
 ;;;; setup package
@@ -209,7 +210,7 @@
   )
 
 (use-package lgf-tiling
-  :load-path (lambda() (concat my-elisp-path "tiling"))
+  :load-path (lambda() (concat my-elisps "tiling"))
   :bind (:map global-map ("C-\\" . tiling-cycle))
   ;; Out of key bindings, just `M-x` the commands directly.
   :commands tiling-tile-up tiling-tile-down tiling-tile-left tiling-tile-right
@@ -342,7 +343,7 @@
   ;; What I'm after is not code completion but "copilot chat". Code completion
   ;; provided by static type checkers (Pyright for instance) are already good
   ;; enough for me.
-  :load-path (lambda() (concat my-emacs-d "copilot.el"))
+  :load-path (lambda() (concat my-downloads "copilot.el"))
   :bind (:map copilot-completion-map
               ("TAB"       . copilot-next-completion)
               ("<backtab>" . copilot-previous-completion)
@@ -1029,7 +1030,7 @@ files and avoid accidental modifications."
 (shorten-mode-line)
 
 ;;; mongolog: MongodDB log file mode
-(add-to-list 'load-path (concat my-elisp-path "mongolog"))
+(add-to-list 'load-path (concat my-elisps "mongolog"))
 (require 'mongolog nil t)
 (add-to-list 'auto-mode-alist '("mongod.*\\.log" . js-mode))
 
