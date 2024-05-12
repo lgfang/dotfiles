@@ -1,5 +1,5 @@
 # shellcheck disable=SC1090,SC1091
-# Modified: Lungang Fang 2024-03-15T14:55:56+1100>
+# Modified: Lungang Fang 2024-05-12T14:50:20+1000>
 
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -95,6 +95,13 @@ if [ -d "$HOME/.bash_completion.d" ]; then
     for each in $HOME/.bash_completion.d/*; do
         source "$each"
     done
+fi
+
+#** fzf
+## for more detail, `fzf --bash > fzf.bash` and then review the file
+if command -v fzf > /dev/null 2>&1; then
+    eval "$(fzf --bash)"
+    _fzf_setup_completion path et
 fi
 
 #* aliases and functions (note: prefer functions than aliases)
@@ -328,6 +335,38 @@ function gerrit {
     [ -n "$branch" ] || echo "ERROR: not in a valid branch!" >&2
     git push origin "HEAD:refs/for/$branch"
 }
+
+## git fzf operation
+
+function gcob() {               # git check out branch
+    local dividing_line="----------------"
+    {                           # local branches first
+        git for-each-ref --sort=committerdate refs/heads --format='%(refname:short)'
+        echo "${dividing_line}"
+        git for-each-ref --sort=committerdate refs/remotes --format='%(refname:short)'
+    } | \
+        fzf --ansi --no-sort --reverse --preview-window=right:60%  \
+            --bind "alt-n:preview-down,alt-p:preview-up,ctrl-v:preview-page-down,alt-v:preview-page-up" \
+            --preview="[ {} == \"${dividing_line}\" ] || git log -6 --format=fuller --stat --color=always {}" | \
+        sed -e 's!^origin/!!' | xargs -I{} git checkout {}
+}
+export -f gcob
+
+function gcommits () {          # git select commits
+    # inspired by https://gist.github.com/junegunn/f4fca918e937e6bf5bad
+    git log --color=always --graph --abbrev-commit \
+        --format='%C(cyan)%h%C(reset) - %C(green)%s %C(dim white)- %cr (%an)%C(reset) %C(yellow)%d' "$@" | \
+        fzf --multi --ansi --no-sort --reverse --tiebreak=index --preview-window=right:60% \
+            --bind "alt-n:preview-down,alt-p:preview-up,ctrl-v:preview-page-down,alt-v:preview-page-up" \
+            --preview 'f() { set -- $(echo -- "$@" | grep -o "[a-f0-9]\{7\}"); [ $# -eq 0 ] || git show --color=always $1 ; }; f {}' | \
+        awk '{print $2}' | tr '\n' ' '
+}
+export -f gcommits
+
+function gpick () {
+    gcommits "$@" | xargs git cherry-pick
+}
+export -f gpick
 
 #** json/jq
 # convert bson dump to valid json for jq
