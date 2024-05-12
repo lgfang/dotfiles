@@ -14,27 +14,21 @@
     # editor = emacsclient -a \"\" -t
 
 [alias]
-    co = checkout
     br = branch
-    rst = reset
+    pk = cherry-pick
+    co = checkout
     ci = commit
     amend = commit --amend
     df = diff
     ds = diff --stat
     dc = diff --cached
     rb = rebase
+    rst = reset
     st = status
 
-    lg1 = log --graph --abbrev-commit --decorate --pretty=oneline
-    lg2 = log --graph --abbrev-commit --pretty=format:'%C(yellow)%h%Creset - %C(green)%s %C(cyan)<%an@%cd> %C(magenta)%d%Creset' --date=iso-local
     lg = log --graph --abbrev-commit --pretty=format:'%C(cyan)%h%C(reset) - %C(green)%s %C(dim white)- %cr (%an)%C(reset) %C(yellow)%d'
-    lg4 = log --graph --abbrev-commit  --format=format:'%C(bold green)%h%C(reset) - %C(bold cyan)%s%n          %C(white)%aD%C(dim white) - %an%C(reset)%C(bold yellow)%d'
-    # lg = ! git lg3    # This does not work well when evoked as 'git lg path/to/file'
-    ll = log --numstat --abbrev-commit --format=format:'%C(bold green)%h%C(reset) - %C(bold cyan)%s%n          %C(white)%aD%C(dim white) - %an%C(reset)%C(bold yellow)%d'
     topo = log --graph --simplify-by-decoration --pretty=format:"%d%h" --all
     last = log -1 HEAD
-
-    fl = log -u
 
     # update local repository and removes remote-tracking branches that no
     # longer exist on remote
