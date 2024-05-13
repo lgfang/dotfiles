@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-11T21:09:20+1000>
+;; Modified: Lungang Fang 2024-05-14T09:12:36+1000>
 
 ;;; Commentary:
 
@@ -44,7 +44,6 @@
                                    (window-height . 16)))
   ;; Avoid `reverse' + `mouse', they are not compatible at the moment.
   (vertico-multiform-categories '(
-                                  (buffer flat)
                                   ;; default, enable buffer & mouse
                                   (t buffer mouse)
                                   ))
@@ -150,10 +149,11 @@
 (use-package fill-column-indicator
   :defer t
   :commands fci-mode
+  :hook ((emacs-lisp-mode . fci-mode))
   ;; to make a global minor mode, use the following
-  ;; (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))  
+  ;; (define-globalized-minor-mode global-fci-mode
+  ;;      fci-mode (lambda() (fci-mode 1)))
   )
-
 ;;;; Highlight indentation levels
 (use-package highlight-indentation
   :ensure t
@@ -188,7 +188,11 @@
   :custom (minimap-window-location 'right)
 )
 
-;;; Window layout
+;;; Windows layout etc.
+(use-package emacs
+  :custom (split-width-threshold 200)
+  )
+
 (use-package winner
   :config
   (winner-mode 1)
@@ -301,6 +305,7 @@
      (cmake-mode . cmake-ts-mode)
      (conf-toml-mode . toml-ts-mode)
      (js-json-mode . json-ts-mode)
+     (go-mode . go-ts-mode)
      (python-mode . python-ts-mode)
      (yaml-mode . yaml-ts-mode)
      ))
@@ -347,6 +352,7 @@
 
   :ensure t
   :after eglot
+  :custom (dape-buffer-window-arrangement 'right)
   :config
   ;; Save files before sessions, useful for interpreted languages, such as
   ;; python; Cannot use `:hook' since this hook name doesn't end with "-hook"
@@ -358,6 +364,8 @@
   ;; What I'm after is not code completion but "copilot chat". Code completion
   ;; provided by static type checkers (Pyright for instance) are already good
   ;; enough for me.
+
+  ;; For first time use, run (copilot-install-server) and (copilot-login) .
   :load-path (lambda() (concat my-downloads "copilot.el"))
   :bind (:map copilot-completion-map
               ("TAB"       . copilot-next-completion)
@@ -1226,7 +1234,6 @@ selective-display"
           (sh5 . sh))))
 
 ;;; split horizontally if screen wide enough
-(setq split-width-threshold 300)
 
 ;;; subword-mode
 (global-subword-mode)
