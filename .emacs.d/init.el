@@ -420,6 +420,18 @@
   :after ansi-color
   )
 
+;;; JSON, JSON Lines
+
+(use-package json-ts-mode
+  :mode "\\.jsonl?\\'" "mongod.*\\.log"
+  )
+
+(use-package structured-log
+  ;; my own package for viewing json format log files.
+  :load-path (lambda() (concat my-elisps "structured-log"))
+  :commands structured-log-mode
+  )
+
 ;;; Python specific
 (use-package python
   :custom
@@ -1012,11 +1024,6 @@ files and avoid accidental modifications."
 ;;  ;; Note that corresponding faces maybe undefined and hence the major/minor
 ;;  ;; ticks are not shown.
 
-
-;;; log mode
-(autoload 'log-mode "log-mode" "my mode to view log files" t)
-(add-to-list 'auto-mode-alist '("\\.log\\(\\.[0-9]+\\)?\\'" . log-mode) t)
-
 ;;; long lines
 (setq
  longlines-wrap-follows-window-size t
@@ -1051,11 +1058,6 @@ files and avoid accidental modifications."
   (when mode-line-format-original
     (setq-default mode-line-format (copy-tree mode-line-format-original))))
 (shorten-mode-line)
-
-;;; mongolog: MongodDB log file mode
-(add-to-list 'load-path (concat my-elisps "mongolog"))
-(require 'mongolog nil t)
-(add-to-list 'auto-mode-alist '("mongod.*\\.log" . js-mode))
 
 ;;; mouse
 (setq mouse-yank-at-point t             ; instead of at mouse cursor
