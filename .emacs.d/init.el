@@ -404,6 +404,21 @@
   )
 
 ;;; Formatter
+
+(use-package emacs                      ; time-stamp related
+  :hook ((before-save . time-stamp))
+  :defines time-stamp-format time-stamp-start time-stamp-end
+
+  :config
+  ;; Caveats:
+  ;; - `:custom' start/end does not work, don't know why.
+  ;; - Customizing these options makes it incompatible with others, i.e.
+  ;;   timestamps in others' file may be not updated due to different format.
+  (setq time-stamp-start "\\(Modified\\|last-edit\\): *\\\\?")
+  (setq time-stamp-end "\\\\?>")
+  (setq time-stamp-format "%U %Y-%02m-%02d %5z")
+)
+
 (use-package reformatter
   ;; depended on by ruff-format etc.
   :ensure t
@@ -1258,14 +1273,6 @@ selective-display"
             (imenu-add-menubar-index)
             (hs-minor-mode 1)))
 (add-to-list 'interpreter-mode-alist '("expect" . tcl-mode))
-
-;;; time stamp
-(add-hook 'write-file-hooks 'time-stamp)
-(setq time-stamp-format "%U %Y-%02m-%02dT%02H:%02M:%02S%5z"
-      time-stamp-start "\\(Modified\\|last-edit\\): *\\\\?"
-      time-stamp-end "\\\\?>"
-      ;; no Chinese chars in time stamps even in Chinese locale.
-      system-time-locale "C")
 
 ;;; Terraform (package install terraform-mode)
 (setq-default terraform-indent-level 4)
