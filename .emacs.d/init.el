@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-14T09:12:36+1000>
+;; Modified: Lungang Fang 2024-05-14>
 
 ;;; Commentary:
 
@@ -73,6 +73,30 @@
 (use-package consult
   :ensure t
   :bind (:map global-map ("<f2>" . consult-imenu))
+  )
+
+;;; History across sessions
+
+(use-package emacs
+  :config
+  ;; Save mini buffer history
+  (savehist-mode t)
+  ;; Save cursor places between sessions
+  (save-place-mode t)
+  ;; Reopen files etc. when Emacs restarts
+  (desktop-save-mode 1)
+  )
+
+(use-package recentf                    ; built-in package
+  ;; recently opened files
+  :bind (:map global-map ("<f1>" . recentf-open))
+  :custom (recentf-max-saved-items 666)
+  :config
+  ;; Insert `file-remote-p' to the `recentf-keep' list so that remote files are
+  ;; kept without connecting to the remote server to check if the file does
+  ;; exist.
+  (add-to-list 'recentf-keep 'file-remote-p)
+  (recentf-mode 1)
   )
 
 ;;; Looks
@@ -165,7 +189,7 @@
   ;; (set-face-background 'highlight-indentation-face "gray20")
 
   :hook (((python-mode python-ts-mode) . highlight-indentation-mode)
-         ((yaml-mode yaml-ts-mode)     . highlight-indentation-current-column-mode)
+         ((yaml-mode yaml-ts-mode) . highlight-indentation-current-column-mode)
          )
   )
 
@@ -387,7 +411,7 @@
 
 (use-package prettier
   ;; Format json, yaml, markdown etc.;
-  ;;
+
   ;; IMPORTANT:
   ;;
   ;; - install the package *globally*(`-g'): npm install -g prettier
@@ -510,8 +534,6 @@
     (define-key global-map [mouse-5] '(lambda () (interactive) (scroll-up 1)))))
 
 ;; F1-F12
-(define-key global-map [f1] 'recentf-open)
-;; (define-key global-map [f2] 'imenu)
 ;; f3/f4: built-in key bindings to define keyboard macros
 (define-key global-map [f5] 'whitespace-cleanup)
 (define-key global-map [f8]  (lambda() "bury in case only one window"
@@ -780,8 +802,6 @@ tmux's buffer"
 ;;; default major mode
 ;; (setq default-major-mode 'text-mode)
 
-;;; desktop save, use savehist etc. instead
-(desktop-save-mode -1)
 
 ;;; dired etc.
 (setq dired-recursive-copies 'top dired-recursive-deletes 'top)
@@ -1142,13 +1162,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 
 ;;; RCIRC - removed, use IRC no more.
 
-;;; recently opened file
-(require 'recentf)
-;; add at the front of list, don't conncect to remote hosts
-(add-to-list 'recentf-keep 'file-remote-p)
-(setq recentf-max-saved-items 666)
-(recentf-mode 1)
-
 ;;; Always end a file with a newline
 (setq require-final-newline t)
 
@@ -1180,10 +1193,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
                     (concat my-extension-path "trang.jar")))
                   (cygpath rnc) (cygpath rng))))
 
-;;; save minibuffer history and place of cursor between sessions
-(savehist-mode t)
-(setq-default save-place-mode t)
-(require 'saveplace)
 
 (setq scroll-margin 0 scroll-conservatively 100) ;  scroll-step ?
 
