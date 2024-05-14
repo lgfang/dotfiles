@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-14>
+;; Modified: Lungang Fang 2024-05-15 +1000>
 
 ;;; Commentary:
 
@@ -169,6 +169,36 @@
   (column-number-mode t)
   )
 
+;;;; Highlight whitespace
+(use-package emacs
+  :custom
+  (whitespace-line-column nil)          ; nil => use the value of `fill-column'
+  (whitespace-style '(face
+                      trailing
+                      tabs
+                      indentation
+                      space-before-tab
+                      space-after-tab
+                      tab-mark
+                      empty
+                      ;; lines-tail - too harsh on eyes: highlights all the
+                      ;; characters beyond the threshold can be harsh on eyes
+                      ;; when the code has a lot of long lines.
+
+                      ;; line-char - cannot highlight space: highlights the
+                      ;; characters on the fill column only. If it happens to a
+                      ;; be space, then no highlight.
+                      ))
+
+  :config
+  ;; Do NOT turn `whitespace-mode' on globally. Because: a) in many situations,
+  ;; like when using ediff or reading existing code, whitespace is expected but
+  ;; may considered problem by `whitespace-mode'. b) Anyways whitespace issues
+  ;; are fixed automatically because we add `whitespace-cleanup' (in a different
+  ;; configuration section) to the before save hook.
+  (global-whitespace-mode -1)
+  )
+
 ;;;; Show fill column indicator
 (use-package fill-column-indicator
   :defer t
@@ -178,6 +208,7 @@
   ;; (define-globalized-minor-mode global-fci-mode
   ;;      fci-mode (lambda() (fci-mode 1)))
   )
+
 ;;;; Highlight indentation levels
 (use-package highlight-indentation
   :ensure t
@@ -419,6 +450,15 @@
   (setq time-stamp-format "%U %Y-%02m-%02d %5z")
 )
 
+(use-package emacs                      ; clean up tab, indent and whitespace
+  :custom
+  (tab-width 4)
+  (tab-stop-list nil)                   ; stops every ‘tab-width’ columns
+  (indent-tabs-mode nil)                ; space instead of <tab> for indentation
+  :hook
+  ((before-save . whitespace-cleanup))
+  )
+
 (use-package reformatter
   ;; depended on by ruff-format etc.
   :ensure t
@@ -550,7 +590,7 @@
 
 ;; F1-F12
 ;; f3/f4: built-in key bindings to define keyboard macros
-(define-key global-map [f5] 'whitespace-cleanup)
+
 (define-key global-map [f8]  (lambda() "bury in case only one window"
                                (interactive) (bury-buffer) (delete-window)))
 ;; f9 to clock in last, `C-u f9' to select from recent tasks.
@@ -1328,24 +1368,6 @@ selective-display"
 (require 'cn-weather nil t)
 
 (which-function-mode t)
-
-;;; whitespace related
-;; (setq-default show-trailing-whitespace t) ; use whitespace mode instead
-(setq-default indent-tabs-mode nil ; inserts space instead of <tab> when indent
-              tab-stop-list nil    ; stops every ‘tab-width’ columns
-              tab-width 4)
-(setq whitespace-line-column nil
-      whitespace-style '(face
-                         trailing
-                         tabs
-                         indentation
-                         space-before-tab
-                         space-after-tab
-                         lines-tail
-                         empty))
-;; Editting others' files with whitespace-mode turned on can be boresome as they
-;; never clean up whitespace. Therefore, M-x whitespace-mode only when needed.
-(global-whitespace-mode 0)
 
 ;;; woman
 (setq woman-use-own-frame nil
