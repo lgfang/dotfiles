@@ -515,6 +515,11 @@
   :commands structured-log-mode
   )
 
+;;; Markdown
+(use-package markdown-mode
+  :custom (markdown-command "pandoc")
+  )
+
 ;;; Python specific
 (use-package python
   :custom
@@ -1108,10 +1113,6 @@ files and avoid accidental modifications."
  longlines-wrap-follows-window-size t
  ;; for visual-line-mode, indicates lines are wrapped
  visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
-
-;;; markdown; remember to package-install RET markdown-mode
-;; The "standard" markdown command line tool is not good enough
-(setq markdown-command "/usr/local/bin/pandoc")
 
 ;;; mermaid mode: package-installed, just remember to install mermaid cli:
 ;; 'npm install -g @mermaid-js/mermaid-cli'
