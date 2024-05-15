@@ -515,9 +515,9 @@
   :mode "\\.jsonl?\\'" "mongod.*\\.log"
   )
 
-(use-package structured-log
+(use-package structured-log-mode
   ;; my own package for viewing json format log files.
-  :load-path (lambda() (concat my-elisps "structured-log"))
+  :load-path (lambda() (concat my-elisps "structured-log-mode"))
   :commands structured-log-mode
   )
 
