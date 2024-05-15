@@ -89,6 +89,8 @@
   (save-place-mode t)
   ;; Reopen files etc. when Emacs restarts
   (desktop-save-mode 1)
+  ;; Automatically close buffers inactive for a long time
+  (midnight-mode t)
   )
 
 (use-package recentf                    ; built-in package
@@ -1118,10 +1120,6 @@ files and avoid accidental modifications."
 ;; 'npm install -g @mermaid-js/mermaid-cli'
 
 (setq messages-buffer-max-lines 500)    ; default value too small
-
-(when (require 'midnight nil t)
-  (midnight-delay-set 'midnight-delay "1:30am")
-  (setq clean-buffer-list-delay-general 1))
 
 ;;; mode line
 (defvar mode-line-format-original nil
