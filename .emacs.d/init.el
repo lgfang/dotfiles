@@ -499,6 +499,27 @@
 (use-package imenu-list
   :ensure t)
 
+;;; Huge Files
+(use-package emacs
+  :config
+  (defun lgf-huge-file-hook ()
+    "Open huge files with minimum features.
+
+Huge files (normally log files) can make Emacs sluggish or even
+freeze. This hook tells Emacs to open such files with the
+`fundamental-mode' and turn off any extra features which cannot
+handle large files. In addition, it makes the buffer read only to
+avoid accidental modifications."
+    (when (> (buffer-size) (* 1024 1024 16)) ; 16 MB
+      (setq buffer-read-only t)
+      (buffer-disable-undo)
+      (fundamental-mode)
+      (which-function-mode -1)
+      (if (fboundp 'highlight-parentheses-mode) (highlight-parentheses-mode -1))
+      ))
+  (add-hook 'find-file-hook 'lgf-huge-file-hook)
+  )
+
 ;;; ANSI color code
 (use-package ansi-color
   :hook (;; render color codes in the compilation buffer.
@@ -1092,19 +1113,6 @@ lgfang-hif-toggle-block"
             (define-key js-mode-map (kbd "M-'") 'lgfang-toggle-level)
             (define-key js-mode-map [mouse-3] 'lgfang-toggle-level)
             (hs-minor-mode 1)))
-
-;;; Large files
-(defun my-find-file-huge-file-hook ()
-  "Turn off features that make Emacs super slow with large log
-files and avoid accidental modifications."
-  (when (> (buffer-size) (* 1024 1024 8)) ; 8 MB
-    (setq buffer-read-only t)
-    (buffer-disable-undo)
-    (fundamental-mode)
-    (which-function-mode -1)
-    (if (fboundp 'highlight-parentheses-mode) (highlight-parentheses-mode -1))
-    ))
-(add-hook 'find-file-hook 'my-find-file-huge-file-hook)
 
 ;;; ldap mode for ldif files
 (autoload 'ldap-mode "ldap-mode" "Edit ldif files" t)
