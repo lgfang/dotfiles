@@ -30,6 +30,10 @@
 )
 
 ;;; Mini-buffer Interaction
+(use-package emacs
+  :config
+  (fset 'yes-or-no-p 'y-or-n-p)         ; Type y/n to answer yes or no prompts.
+  )
 
 (use-package vertico
   :ensure t
