@@ -108,11 +108,15 @@
 ;;; Looks
 
 ;;;; Frame
-(menu-bar-mode (if (display-graphic-p) 1 -1)) ; turn it on for GUI only
-(tool-bar-mode -1)                            ; turn it off
-
-(when (display-graphic-p)
-  (add-to-list 'default-frame-alist '(fullscreen . maximized)))
+(use-package emacs
+  :config
+  (menu-bar-mode (if (display-graphic-p) 1 -1)) ; turn it on for GUI only
+  (tool-bar-mode -1)                            ; turn it off
+  (when (display-graphic-p)
+    (scroll-bar-mode -1)
+    (add-to-list 'default-frame-alist '(fullscreen . maximized))
+    )
+  )
 
 ;;;; Fonts
 (use-package emacs
