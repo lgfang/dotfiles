@@ -1,7 +1,7 @@
 ;;; init.el --- Lungang's init.el
 
 ;; Created:  Lungang Fang 2004
-;; Modified: Lungang Fang 2024-05-15 +1000>
+;; Modified: Lungang Fang 2024-05-16 +1000>
 
 ;;; Commentary:
 
@@ -76,7 +76,9 @@
 
 (use-package consult
   :ensure t
-  :bind (:map global-map ("<f2>" . consult-imenu))
+  :bind (:map global-map
+              ("<f2>" . consult-imenu)
+              ("C-s"  . consult-line))
   )
 
 ;;; History across sessions
