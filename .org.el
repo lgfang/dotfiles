@@ -220,6 +220,7 @@
 (add-to-list 'org-structure-template-alist '("sb" . "src bash"))
 (add-to-list 'org-structure-template-alist '("sj" . "src javascript"))
 (add-to-list 'org-structure-template-alist '("st" . "src text"))
+(add-to-list 'org-structure-template-alist '("se" . "src emacs-lisp"))
 
 (add-hook 'remember-mode-hook 'org-remember-apply-template)
 
