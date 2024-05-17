@@ -1,0 +1,64 @@
+# -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+# Created: Lungang Fang 2024-05-17
+
+#+TITLE: My Emacs Configurations
+#+AUTHOR: Fang Lungang
+#+DATE: 2024-05-17 +1000
+#+DESCRIPTION: My configurations for Emacs, Bash, Tmux, etc.
+#+KEYWORDS: configuration, Emacs, Bash, Tmux
+#+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
+
+* Time stamp for tangling
+
+This block itself is not tangled into any configuration file. But, at the time
+of tangling, it generates a timestamp may be referred to by other blocks.
+
+#+name: time-stamp-of-update
+#+begin_src emacs-lisp :tangle no
+(format-time-string "%Y-%m-%d %5z")
+#+end_src
+
+* Header
+
+#+begin_src emacs-lisp :noweb yes
+  ;;; init.el --- Lungang's init.el
+
+  ;; Created: Fang Lungang 2004
+  ;; Updated: Fang Lungang <<time-stamp-of-update()>>
+
+  ;;; Commentary:
+
+  ;; This Emacs configuration file is generated from my emacs .org (see
+  ;; https://github.com/lgfang/dotfiles)
+
+  ;;; Code:
+#+end_src
+
+* Automatically tangle configurations
+
+To ensure that the corresponding configuration files are updated every time I
+modify this configuration file, add a =after-save-hook= to org-mode: when the
+buffer file is my configuration file, tangle it. Otherwise, do nothing.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :commands org-babel-tangle
+    :config
+    (defvar my-config-org-files (mapcar #'expand-file-name
+                                        '("~/.dotfiles/emacs.org"
+                                          "~/.dotfiles/git.org"
+                                          "~/.dotfiles/shell.org"
+                                          )))
+    (defun lgf-tangle-configs ()
+      (add-hook 'after-save-hook
+                (lambda()
+                  (when (member (buffer-file-name) my-config-org-files)
+                    (let ((org-confirm-babel-evaluate nil))
+                      (org-babel-tangle))))))
+
+    :hook ((org-mode . lgf-tangle-configs))
+    )
+#+end_src
+
+*Note*:
+- Remember to adjust =my-config-org-file= to point to your configuration file.

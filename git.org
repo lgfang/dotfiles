@@ -1,0 +1,29 @@
+# -*-mode:org;coding:utf-8-*-
+# Created:  Lungang Fang 2024-05-17
+
+#+TITLE: My Configurations
+#+AUTHOR: Fang Lungang
+#+DATE: 2024-05-17 +1000
+
+* Block pushing certain branches
+
+To avoid accidentally push a branch with sensitive data, we can add a hook to
+corresponding repository.
+
+For example, to block myself from pushing =mine= to github, I do the following:
+- Tangle (write) the following code snippet into =~/.dotfiles/.git/hooks/pre-push=.
+- *IMPORTANT* Make it executable: =chmod 755 ~/.dotfiles/.git/hooks/pre-push=.
+
+#+begin_src bash :tangle ~/.dotfiles/.git/hooks/pre-push
+  #!/usr/bin/env bash
+
+  branch_blocked=mine
+
+  if grep -q "$branch_blocked"; then
+      echo "Branch '$branch_blocked' is blocked by yourself." >&2
+      exit 1
+  fi
+#+end_src
+
+- Note: this hook script itself is *not* copied over by =git clone=. Hence,
+  remember to manually copy it if you clone the repository to a different place.

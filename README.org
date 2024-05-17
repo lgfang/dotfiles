@@ -1,0 +1,33 @@
+# -*-mode:org;coding:utf-8-*-
+# Created:  Lungang Fang 2024-05-17
+
+#+TITLE: My Configurations
+#+AUTHOR: Fang Lungang
+#+DATE: 2024-05-17 +1000
+
+This repository is a collection of my configurations for Emacs, Bash, Tmux, etc.
+It uses Emacs org mode to organize the configurations and tangle them into the
+actual configuration files.
+
+* Usage
+
+** Generate configuration files manually
+
+Download the designated org file, say =shell.org=, open it in Emacs and then run
+=M-x org-babel-tangle=. Corresponding configuration file(s) will then be
+generated at the specified path(s).
+
+** Update the configuration files automatically
+
+If you'd like to modify this file and tangle it automatically upon saving the
+file, please add =org-babel-tangle= to the =after-save-hook=, for the details,
+see [[file:emacs.org::* Automatically tangle configurations][Automatically tangle configurations]] in my =emacs.org=
+
+** Avoid pushing senstive data
+
+To avoid accidentally pushing senstive data to github, install a pre-push hook
+to block ourselves from pushing the branch =mine=. This allows us to store
+senstive data in the =mine= branch without the concern of that branch being
+accidentally pushed.
+
+For the details, see my git config [[file:./git.org::* Block pushing certain branches][Block pushing certain branches]].

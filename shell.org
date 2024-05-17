@@ -1,0 +1,6 @@
+# -*-mode:org;coding:utf-8-*-
+# Created:  Lungang Fang 2024-05-17
+
+#+TITLE: My Shell Related Configurations
+#+AUTHOR: Fang Lungang
+#+DATE: 2024-05-17 +1000
