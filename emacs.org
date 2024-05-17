@@ -4,8 +4,8 @@
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
 #+DATE: 2024-05-17 +1000
-#+DESCRIPTION: My configurations for Emacs, Bash, Tmux, etc.
-#+KEYWORDS: configuration, Emacs, Bash, Tmux
+#+DESCRIPTION: My Emacs configurations
+#+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
 
 * Time stamp for tangling
@@ -28,10 +28,232 @@ of tangling, it generates a timestamp may be referred to by other blocks.
 
   ;;; Commentary:
 
-  ;; This Emacs configuration file is generated from my emacs .org (see
+  ;; This Emacs configuration file is generated from my "emacs.org" (see
   ;; https://github.com/lgfang/dotfiles)
 
   ;;; Code:
+#+end_src
+
+* Bootstrap
+
+** Paths
+
+Note that the =use-package emacs= thing is unnecessary. I'm using it to group
+related configurations together.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :config
+    (defvar my-emacs-d (file-name-as-directory (expand-file-name "~/.emacs.d")))
+    (defvar my-elisps (file-name-as-directory (concat my-emacs-d "my-elisps")))
+    (defvar my-downloads (file-name-as-directory (concat my-emacs-d "downloads")))
+    (add-to-list 'load-path my-elisps t)
+  )
+#+end_src
+
+** Initialize "package"
+
+#+begin_src emacs-lisp
+  (use-package package
+    :config
+    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+    (package-initialize)
+  )
+#+end_src
+
+** Start up screen
+#+begin_src emacs-lisp
+   (use-package emacs
+     :custom
+     (inhibit-startup-screen t)
+     )
+#+end_src
+
+* Language environment and coding system
+
+Set terminal coding system to utf-8 explictly to display unicode chars
+(including emojis/Chinese chars) correctly.
+
+This block is needed only when utf-8 is supported but Emacs does not detect and
+set it correctly, due to wrong shell locale etc. In such situation, try the
+combinations of these settings until you find one that works.
+
+Therefore, *this block is not
+tangled by default. When necessary, delete =:tangle no= from this block header
+to tangle it.
+
+#+begin_src emacs-lisp :tangle no
+  (set-terminal-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-language-environment 'utf-8)
+#+end_src
+
+* ZWJ (Zero Width Joiner) emoji handling.
+
+Disable =auto-complete-mode= if running in a terminal as most terminal emulators
+cannot handle Emoji ZWJ. See ZWJ examples in [[file:~/mynotes/emacs/emacs-unicode-test.org][my ZWJ test file]].
+
+NOTE: disabling it on the fly does not work very well, must restart Emacs.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :if (not (display-graphic-p))
+    :config
+    (setq-default auto-composition-mode nil)
+    )
+#+end_src
+
+* Mini-buffer interaction
+
+#+begin_src emacs-lisp
+    (use-package emacs
+      :config
+      (fset 'yes-or-no-p 'y-or-n-p)         ; Type y/n to answer yes or no prompts.
+      )
+
+    (use-package vertico
+      :ensure t
+      :defer t
+      :defines vertico-map
+      :functions vertico-mode vertico-multiform-mode
+      :bind (:map vertico-map ("C-o" . vertico-quick-exit))
+      :custom
+      (vertico-resize nil)
+      (vertico-cycle nil)
+      (vertico-buffer-display-action '(display-buffer-at-bottom
+                                       (window-height . 16)))
+      ;; Avoid `reverse' + `mouse', they are not compatible at the moment.
+      (vertico-multiform-categories '(
+                                      ;; default, enable buffer & mouse
+                                      (t buffer mouse)
+                                      ))
+      (vertico-multiform-commands '(("imenu" buffer mouse)
+                                    ("recentf-.*" buffer mouse)
+                                    ))
+
+      :init
+      (vertico-mode 1)
+      (vertico-multiform-mode 1)
+      )
+
+    (use-package orderless
+      :ensure t
+      :defer t
+      :custom (completion-styles '(orderless flex substring basic))
+      )
+
+    (use-package marginalia
+      :ensure t
+      :defer t
+      :functions marginalia-mode
+      :init
+      (marginalia-mode 1)
+      )
+
+    (use-package consult
+      :ensure t
+      :bind (:map global-map
+                  ("<f2>" . consult-imenu)
+                  ;; ("C-s"  . consult-line)
+                  )
+      )
+#+end_src
+
+* Sessions and histories
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :config
+    ;; Save mini buffer history
+    (savehist-mode t)
+    ;; Save cursor places between sessions
+    (save-place-mode t)
+    ;; Reopen files etc. when Emacs restarts
+    (desktop-save-mode 1)
+    ;; Automatically close buffers inactive for a long time
+    (midnight-mode t)
+    )
+
+  (use-package recentf                    ; built-in package
+    ;; recently opened files
+    :bind (:map global-map ("<f1>" . recentf-open))
+    :custom (recentf-max-saved-items 666)
+    :config
+    ;; Insert `file-remote-p' to the `recentf-keep' list so that remote files are
+    ;; kept without connecting to the remote server to check if the file does
+    ;; exist.
+    (add-to-list 'recentf-keep 'file-remote-p)
+    (recentf-mode 1)
+    )
+#+end_src
+
+* Frame and window
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :commands scroll-bar-mode             ; make flymake happy
+    :config
+    (menu-bar-mode (if (display-graphic-p) 1 -1)) ; turn it on for GUI only
+    (tool-bar-mode -1)                            ; turn it off
+    (when (display-graphic-p)
+      (scroll-bar-mode -1)
+      (add-to-list 'default-frame-alist '(fullscreen . maximized))
+      )
+    )
+#+end_src
+
+* Fonts and theme
+
+* Fonts
+
+Select the font for Chinese characters using =set-fontset-font=. This command
+sets the fallback font when the default font doesn't support the current
+character. By default, Emacs iterates all the fonts until it finds one that
+supports the character.
+
+Scale Chinese fonts so that the width of 1 Chinese char equals that of two
+English chars. This list is manually maintained as the scale factors for
+different fonts are determined through trial and error. Note:
+- To check the font of the current character, run ~C-u C-x =~.
+- To get more accurate data, compare longer lines of English/Chinese.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :if (display-graphic-p)
+    :config
+    (set-face-attribute 'default nil :font "monaco-18:weight=normal")
+
+    (let ((zh-font "SimSong"))
+      (if ;; Check the availability first to avoid error
+          (member zh-font (font-family-list))
+          ;; "fall back" to the designated zh font for `han' characters. Guard the
+          ;; following expression with `fboundp' to avoid the warning: "function
+          ;; ... is not known to be defined" .
+          (and (fboundp 'set-fontset-font) (set-fontset-font t 'han zh-font))))
+
+    (setq face-font-rescale-alist '(("SimSong" . 1.25)
+                                    ("PingFang SC" . 1.25)
+                                    ))
+    )
+#+end_src
+
+* Auto-typing & Formatter
+
+** Update timestamps on saving files
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :hook ((before-save . time-stamp))
+  )
+#+end_src
+
+Be aware that customizing =time-stamp-pattern= globally (for example, in
+=init.el=) may conflict with others configuration. I.e. if you update files from
+others who use a different timestamp format, then the timestamps will not be
+updated. It is recommended to set timestamp format as a file local variable. Below is an example:
+#+begin_src org :tangle no
+  # -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
 #+end_src
 
 * Automatically tangle configurations
@@ -66,147 +288,6 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 * To migrate
 
 #+begin_src emacs-lisp
-;;; First things first
-
-;;;; Paths
-(use-package emacs
-  :config
-  (defvar my-emacs-d (file-name-as-directory (expand-file-name "~/.emacs.d")))
-  (defvar my-elisps (file-name-as-directory (concat my-emacs-d "my-elisps")))
-  (defvar my-downloads (file-name-as-directory (concat my-emacs-d "downloads")))
-  (add-to-list 'load-path my-elisps t)
-)
-
-;;;; setup package
-
-(use-package package
-  :config
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-  (package-initialize)
-)
-
-;;; Mini-buffer Interaction
-(use-package emacs
-  :config
-  (fset 'yes-or-no-p 'y-or-n-p)         ; Type y/n to answer yes or no prompts.
-  )
-
-(use-package vertico
-  :ensure t
-  :defer t
-  :defines vertico-map
-  :functions vertico-mode vertico-multiform-mode
-  :bind (:map vertico-map ("C-o" . vertico-quick-exit))
-  :custom
-  (vertico-resize nil)
-  (vertico-cycle nil)
-  (vertico-buffer-display-action '(display-buffer-at-bottom
-                                   (window-height . 16)))
-  ;; Avoid `reverse' + `mouse', they are not compatible at the moment.
-  (vertico-multiform-categories '(
-                                  ;; default, enable buffer & mouse
-                                  (t buffer mouse)
-                                  ))
-  (vertico-multiform-commands '(("imenu" buffer mouse)
-                                ("recentf-.*" buffer mouse)
-                                ))
-
-  :init
-  (vertico-mode 1)
-  (vertico-multiform-mode 1)
-  )
-
-(use-package orderless
-  :ensure t
-  :defer t
-  :custom (completion-styles '(orderless flex substring basic))
-  )
-
-(use-package marginalia
-  :ensure t
-  :defer t
-  :functions marginalia-mode
-  :init
-  (marginalia-mode 1)
-  )
-
-(use-package consult
-  :ensure t
-  :bind (:map global-map
-              ("<f2>" . consult-imenu)
-              ("C-s"  . consult-line))
-  )
-
-;;; History across sessions
-
-(use-package emacs
-  :config
-  ;; Save mini buffer history
-  (savehist-mode t)
-  ;; Save cursor places between sessions
-  (save-place-mode t)
-  ;; Reopen files etc. when Emacs restarts
-  (desktop-save-mode 1)
-  ;; Automatically close buffers inactive for a long time
-  (midnight-mode t)
-  )
-
-(use-package recentf                    ; built-in package
-  ;; recently opened files
-  :bind (:map global-map ("<f1>" . recentf-open))
-  :custom (recentf-max-saved-items 666)
-  :config
-  ;; Insert `file-remote-p' to the `recentf-keep' list so that remote files are
-  ;; kept without connecting to the remote server to check if the file does
-  ;; exist.
-  (add-to-list 'recentf-keep 'file-remote-p)
-  (recentf-mode 1)
-  )
-
-;;; Looks
-
-;;;; Frame
-(use-package emacs
-  :config
-  (menu-bar-mode (if (display-graphic-p) 1 -1)) ; turn it on for GUI only
-  (tool-bar-mode -1)                            ; turn it off
-  (when (display-graphic-p)
-    (scroll-bar-mode -1)
-    (add-to-list 'default-frame-alist '(fullscreen . maximized))
-    )
-  )
-
-;;;; Fonts
-(use-package emacs
-  :if (display-graphic-p)
-  :config
-  (set-face-attribute 'default nil :font "monaco-18:weight=normal")
-
-  ;; Select the font for Chinese characters using `set-fontset-font'. This
-  ;; command sets the fallback font when the default font (set above) doesn't
-  ;; support the current character. By default, Emacs iterates all the fonts
-  ;; until it finds one that supports the character.
-  (let ((zh-font "SimSong"))
-    (if ;; Check the availability first to avoid error
-        (member zh-font (font-family-list))
-        ;; "fall back" to the designated zh font for `han' characters. Guard the
-        ;; following expression with `fboundp' to avoid the warning: "function
-        ;; ... is not known to be defined" .
-        (and (fboundp 'set-fontset-font) (set-fontset-font t 'han zh-font))))
-
-  ;; Scale Chinese fonts so that the width of 1 Chinese char equals that of two
-  ;; English chars. This list is manually maintained as the scale factors for
-  ;; different fonts are determined through trial and error. Note: a) To check
-  ;; the font of the current character, run `C-u C-x ='. b) To get more accurate
-  ;; data, compare longer lines of English/Chinese.
-  (setq face-font-rescale-alist '(("SimSong" . 1.25)
-                                  ("PingFang SC" . 1.25)
-                                  ))
-  )
-
-;;;; Start up screen
-(setq inhibit-startup-screen t)
-
 ;;; Visual aids
 
 ;;;; Display line number
@@ -343,27 +424,6 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
   :commands tiling-tile-up tiling-tile-down tiling-tile-left tiling-tile-right
   )
 
-;;; Language and coding system
-
-;;;; UTF-8: normally no configuration required
-;; Set terminal coding system to utf-8 explictly to display unicode chars
-;; (including emojis/Chinese chars) correctly. This is needed when utf-8 is
-;; supported but emacs does not detect and set set it correctly, due to wrong
-;; shell locale etc.
-;; (set-terminal-coding-system 'utf-8)
-
-;; (prefer-coding-system 'utf-8)
-;; (set-keyboard-coding-system 'utf-8)
-;; (set-language-environment 'utf-8)
-
-;;;; ZWJ (Zero Width Joiner) emoji handling.
-;; See a ZWJ example in ~/mynotes/emacs/emacs-unicode-test.org
-(unless (display-graphic-p)
-  ;; Disable auto-complete-mode if running when in a terminal as most terminal
-  ;; emulators cannot handle Emoji ZWJ. NOTE: disabling it on the fly does not
-  ;; work very well, must restart Emacs.
-  (setq-default auto-composition-mode nil)
-  )
 
 ;;; Completion
 
@@ -391,12 +451,13 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 
 ;;; Spelling check
 (use-package flyspell
-  :config
   :hook ((prog-mode . flyspell-prog-mode)
          (yaml-mode . flyspell-prog-mode)
          (yaml-ts-mode . flyspell-prog-mode)
          (markdown-mode . flyspell-mode)
-         (git-commit-setup . flyspell-mode))
+         (git-commit-setup . flyspell-mode)
+         (org-mode . flyspell-prog-mode)
+         )
   )
 
 ;;; Syntax check (flymake)
@@ -503,20 +564,6 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
   )
 
 ;;; Formatter
-
-(use-package emacs                      ; time-stamp related
-  :hook ((before-save . time-stamp))
-  :defines time-stamp-format time-stamp-start time-stamp-end
-
-  :config
-  ;; Caveats:
-  ;; - `:custom' start/end does not work, don't know why.
-  ;; - Customizing these options makes it incompatible with others, i.e.
-  ;;   timestamps in others' file may be not updated due to different format.
-  (setq time-stamp-start "\\(Modified\\|last-edit\\): *\\\\?")
-  (setq time-stamp-end "\\\\?>")
-  (setq time-stamp-format "%U %Y-%02m-%02d %5z")
-)
 
 (use-package emacs                      ; clean up tab, indent and whitespace
   :custom
@@ -1637,5 +1684,4 @@ string,refer to format-time-string."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
 #+end_src
