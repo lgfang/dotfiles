@@ -31,6 +31,12 @@ of tangling, it generates a timestamp may be referred to by other blocks.
   ;; This Emacs configuration file is generated from my "emacs.org" (see
   ;; https://github.com/lgfang/dotfiles)
 
+  ;; Usage: Run Emacs with this configuration file. After start up, Emacs will
+  ;; report missing packages. Normally you can continue using Emacs without these
+  ;; packages. But, for better experience, please firstly run `M-x
+  ;; package-refresh-contents` and then run `M-x package-install` to install
+  ;; missing packages one after another.
+
   ;;; Code:
 #+end_src
 
@@ -113,7 +119,6 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
       )
 
     (use-package vertico
-      :ensure t
       :defer t
       :defines vertico-map
       :functions vertico-mode vertico-multiform-mode
@@ -138,13 +143,11 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
       )
 
     (use-package orderless
-      :ensure t
       :defer t
       :custom (completion-styles '(orderless flex substring basic))
       )
 
     (use-package marginalia
-      :ensure t
       :defer t
       :functions marginalia-mode
       :init
@@ -152,7 +155,6 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
       )
 
     (use-package consult
-      :ensure t
       :bind (:map global-map
                   ("<f2>" . consult-imenu)
                   ;; ("C-s"  . consult-line)
@@ -176,17 +178,18 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
     )
 
   (use-package recentf                    ; built-in package
-    ;; recently opened files
-    :bind (:map global-map ("<f1>" . recentf-open))
+    :defines recentf-keep
     :custom (recentf-max-saved-items 666)
     :config
-    ;; Insert `file-remote-p' to the `recentf-keep' list so that remote files are
-    ;; kept without connecting to the remote server to check if the file does
-    ;; exist.
     (add-to-list 'recentf-keep 'file-remote-p)
     (recentf-mode 1)
+    :bind (:map global-map ("<f1>" . recentf-open))
     )
 #+end_src
+
+Note that, for =recentf= we add =file-remote-p= to the head of the
+=recentf-keep= list so that remote file names are kept without connecting to the
+remote server to check if these files do exist.
 
 * Frame and window
 
@@ -201,9 +204,38 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
       (add-to-list 'default-frame-alist '(fullscreen . maximized))
       )
     )
-#+end_src
 
-* Fonts and theme
+  (use-package emacs
+    :custom (split-width-threshold 200)
+    )
+
+  (use-package winner
+    :config
+    (winner-mode 1)
+    )
+
+  (use-package windmove
+    :bind (:map global-map
+                ;; move between windows
+                ("S-<up>"        . windmove-up)
+                ("S-<down>"      . windmove-down)
+                ("S-<right>"     . windmove-right)
+                ("S-<left>"      . windmove-left)
+                ;; move windows
+                ("C-x S-<up>"    . windmove-swap-states-up)
+                ("C-x S-<down>"  . windmove-swap-states-down)
+                ("C-x S-<right>" . windmove-swap-states-right)
+                ("C-x S-<left>"  . windmove-swap-states-left)
+                )
+    )
+
+  (use-package lgf-tiling
+    :load-path (lambda() (concat my-elisps "tiling"))
+    :bind (:map global-map ("C-\\" . tiling-cycle))
+    ;; Out of key bindings, just `M-x` the commands directly.
+    :commands tiling-tile-up tiling-tile-down tiling-tile-left tiling-tile-right
+    )
+#+end_src
 
 * Fonts
 
@@ -238,9 +270,51 @@ different fonts are determined through trial and error. Note:
     )
 #+end_src
 
-* Auto-typing & Formatter
+* Color theme
 
-** Update timestamps on saving files
+#+begin_src emacs-lisp
+  (use-package solarized-theme
+    :config
+    (load-theme 'solarized-gruvbox-dark t))
+#+end_src
+
+* Read & write files
+
+** Auto revert-buffer
+
+Auto-revert a buffer when corresponding file is modified by another process.
+#+begin_src emacs-lisp
+  (use-package emacs
+    :config
+    (global-auto-revert-mode t)
+    )
+#+end_src
+
+** Dealing with huge files
+#+begin_src emacs-lisp
+  (use-package emacs
+    :config
+    (defun lgf-huge-file-hook ()
+      "Open huge files with minimum features.
+
+  Huge files (normally log files) can make Emacs sluggish or even
+  freeze. This hook tells Emacs to open such files with the
+  `fundamental-mode' and turn off any extra features which cannot
+  handle large files. In addition, it makes the buffer read only to
+  avoid accidental modifications."
+      (when (> (buffer-size) (* 1024 1024 16)) ; 16 MB
+        (setq buffer-read-only t)
+        (buffer-disable-undo)
+        (fundamental-mode)
+        (which-function-mode -1)
+        (if (fboundp 'highlight-parentheses-mode) (highlight-parentheses-mode -1))
+        ))
+    (add-hook 'find-file-hook 'lgf-huge-file-hook)
+    )
+
+#+end_src
+
+** Update timestamps before save
 
 #+begin_src emacs-lisp
   (use-package emacs
@@ -254,6 +328,392 @@ others who use a different timestamp format, then the timestamps will not be
 updated. It is recommended to set timestamp format as a file local variable. Below is an example:
 #+begin_src org :tangle no
   # -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+#+end_src
+
+* Auto typing
+
+** Yasnippet
+
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    ;; Put personal/customized snippets into the first dir of `yas-snippet-dirs',
+    ;; which is `~/.emacs.d/snippets' by default. NOTE: it is `yas-snippet-dirs'
+    ;; NOT `yasnippet-snippets-dir'. The later is where the package
+    ;; `yasnippet-snippets' stores its snippets).
+    ; TODO: cleanup duplicated/similar snippets in different directories.
+    :functions yas-global-mode
+    :init (yas-global-mode 1)
+    )
+
+  (use-package yasnippet-snippets
+    :after yasnippet-snippets)
+#+end_src
+
+* Spelling check: flyspell
+
+#+begin_src emacs-lisp
+  (use-package flyspell
+    :hook ((prog-mode . flyspell-prog-mode)
+           (yaml-mode . flyspell-prog-mode)
+           (yaml-ts-mode . flyspell-prog-mode)
+           (markdown-mode . flyspell-mode)
+           (git-commit-setup . flyspell-mode)
+           (org-mode . flyspell-prog-mode)
+           )
+    )
+#+end_src
+
+* Visual aids
+
+** Display column number in the mode line
+
+#+begin_src emacs-lisp
+(use-package emacs
+  :config
+  (column-number-mode t)
+  )
+#+end_src
+
+** Display line numbers
+
+No configuration is needed. Add this block just to remind myself the command name.
+
+#+begin_src emacs-lisp
+  (use-package display-line-numbers       ; built-in package
+    :defer t
+    :commands display-line-numbers-mode global-display-line-numbers-mode
+    ;; :custom
+    ;; (display-line-numbers-widen t)
+    ;; (display-line-numbers-major-tick 50)
+    ;; (display-line-numbers-minor-tick 10)
+    )
+#+end_src
+
+** Highlight whitespace
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :custom
+    (whitespace-line-column nil)          ; nil => use the value of `fill-column'
+    (whitespace-style '(face
+                        trailing
+                        tabs
+                        indentation
+                        space-before-tab
+                        space-after-tab
+                        tab-mark
+                        empty
+                        ;; lines-tail - too harsh on eyes: highlights all the
+                        ;; characters beyond the threshold can be harsh on eyes
+                        ;; when the code has a lot of long lines.
+
+                        ;; line-char - cannot highlight space: highlights the
+                        ;; characters on the fill column only. If it happens to a
+                        ;; be space, then no highlight.
+                        ))
+
+    :config
+    ;; Do NOT turn `whitespace-mode' on globally. Because: a) in many situations,
+    ;; like when using ediff or reading existing code, whitespace is expected but
+    ;; may considered problem by `whitespace-mode'. b) Anyways whitespace issues
+    ;; are fixed automatically because we add `whitespace-cleanup' (in a different
+    ;; configuration section) to the before save hook.
+    (global-whitespace-mode -1)
+    )
+#+end_src
+
+** Show fill column indicator
+
+#+begin_src emacs-lisp
+  (use-package fill-column-indicator
+    :defer t
+    :commands fci-mode
+    :hook ((emacs-lisp-mode . fci-mode))
+    ;; to make a global minor mode, use the following
+    ;; (define-globalized-minor-mode global-fci-mode
+    ;;      fci-mode (lambda() (fci-mode 1)))
+    )
+#+end_src
+
+** Highlight indentation levels
+
+#+begin_src emacs-lisp
+
+  (use-package highlight-indentation
+    :custom
+    ;; Disable highlight-indentation-blank-lines, as it prevents `C-a' from going
+    ;; to the beginning of blank lines and causes some other issues.
+    (highlight-indentation-blank-lines nil)
+    ;; ;; manually set the face if desired ("gray20" suits dark themes)
+    ;; (set-face-background 'highlight-indentation-face "gray20")
+
+    :hook (((python-mode python-ts-mode) . highlight-indentation-mode)
+           ((yaml-mode yaml-ts-mode) . highlight-indentation-current-column-mode)
+           )
+    )
+#+end_src
+
+** Highlight matching parenthesis
+
+#+begin_src emacs-lisp
+  (use-package highlight-parentheses
+    :commands global-highlight-parentheses-mode
+    :config (global-highlight-parentheses-mode t)
+    ;; :custom (hl-paren-colors    ; `M-x list-colors-display' to see named colors
+    ;;          '("brown" "orange" "yellow" "forest green" "cyan" "blue" "violet"))
+    )
+#+end_src
+
+** Minimap
+
+#+begin_src emacs-lisp
+  (use-package minimap
+    :defer t                         ; Just an eye candy which I almost never use.
+    :custom (minimap-window-location 'right)
+  )
+#+end_src
+
+* IDE
+
+** Treemacs
+
+#+begin_src emacs-lisp
+  (use-package treemacs
+    :defer t                    ; Only load it when I need it, as I rarely use it.
+    )
+#+end_src
+
+** Completion: company
+
+#+begin_src emacs-lisp
+  (use-package company
+    :functions global-company-mode
+    :init (global-company-mode)
+    )
+#+end_src
+
+** Syntax check: flymake
+
+#+begin_src emacs-lisp
+  (use-package flymake
+    ;; To list all the diagnostics, use `flymake-show-buffer-diagnostics' and
+    ;; `flymake-show-project-diagnostics'. For checkers being used, see the buffer
+    ;; local var `flymake-diagnostic-functions'.
+
+    :bind (:map flymake-mode-map
+                ("C-c p" . flymake-goto-prev-error)
+                ("C-c n" . flymake-goto-next-error))
+
+    :hook (prog-mode yaml-ts-mode)
+  )
+#+end_src
+
+** Syntax parser: tree-sitter
+
+#+begin_src emacs-lisp
+  (use-package treesit
+    ;; Run `treesit-install-language-grammar' to install the grammar
+    ;; for each designated language.
+    :when
+    (and (fboundp 'treesit-available-p) (treesit-available-p))
+
+    :custom
+    (major-mode-remap-alist
+     '(
+       (bash-mode . bash-ts-mode)
+       (c++-mode . c++-ts-mode)
+       (c-mode . c-ts-mode)
+       (cmake-mode . cmake-ts-mode)
+       (conf-toml-mode . toml-ts-mode)
+       (js-json-mode . json-ts-mode)
+       (go-mode . go-ts-mode)
+       (python-mode . python-ts-mode)
+       (yaml-mode . yaml-ts-mode)
+       ))
+    )
+#+end_src
+
+** Code folding:  treesitter context
+
+ My main request is folding code. The focus mode and context mode are bonus,
+ which only work in GUI Emacs. At the moment the functionality of folding
+ appears to be not supper good.
+
+ TODO: check the last progress of `treesit-fold', which was said to be a good
+ one.
+
+#+begin_src emacs-lisp
+  (use-package treesitter-context         ; works for GUI emacs only
+    :after treesit
+    :load-path (lambda() (concat my-downloads "treesitter-context.el"))
+    )
+
+  (use-package treesitter-context-focus   ; works for GUI emacs only
+    :after treesit
+    :load-path (lambda() (concat my-downloads "treesitter-context.el"))
+    )
+
+  (use-package treesitter-context-fold   ; functionality appears to be limited atm
+    :after treesit
+    :load-path (lambda() (concat my-downloads "treesitter-context.el"))
+    )
+#+end_src
+
+** Formatter
+
+Notes on =prettier=:
+- install the package *globally* (=-g=): =npm install -g prettier=.
+- One principle of prettier is to eliminate debates over formatting. Therefore,
+  it's generally recommended to stick with the default settings. But, to stop
+  =yamllint= from complaining "too many spaces inside braces", add
+  =bracketSpacing: false= to your =.prettierrc=.
+
+#+begin_src emacs-lisp
+(use-package emacs                      ; clean up tab, indent and whitespace
+  :custom
+  (tab-width 4)
+  (tab-stop-list nil)                   ; stops every ‘tab-width’ columns
+  (indent-tabs-mode nil)                ; space instead of <tab> for indentation
+  :hook
+  ((before-save . whitespace-cleanup))
+  )
+
+(use-package reformatter
+  ;; depended on by ruff-format etc.
+  )
+
+(use-package prettier
+  ;; Format json, yaml, markdown etc.;
+  :hook (yaml-mode yaml-ts-mode)
+  )
+#+end_src
+
+** LSP: eglot
+
+Works very well out of box without any configuration.
+#+begin_src emacs-lisp
+  (use-package eglot)
+#+end_src
+
+*** Note for MacOS
+
+If you run Eglot + Pyright on MacOS, you may want to increase the "open files"
+limit (=ulimit -n=), say to 65536.
+
+The default value is 256, which Pyright easily hits when the python project is
+non-trivial. In such situations, you can see the error message by setting
+=debug-on-error= to =t= and then try enable Eglot again.
+
+** DAP: dape
+
+#+begin_src emacs-lisp
+  (use-package dape
+    ;; For Python, `pip3 install debugpy'. Run adapter `debugpy' to test a
+    ;; program, adapter `debugpy-module' for testing a module.
+    :after eglot
+    :custom (dape-buffer-window-arrangement 'right)
+    :config
+    ;; Save files before sessions, useful for interpreted languages, such as
+    ;; python; Cannot use `:hook' since this hook name doesn't end with "-hook"
+    (add-hook 'dape-on-start-hooks 'save-some-buffers)
+    )
+#+end_src
+
+** Generative AI (GAI): copilot
+
+For first time use, remember to run =M-x copilot-install-server= and =M-x
+copilot-login=.
+
+#+begin_src emacs-lisp
+  (use-package copilot
+    :load-path (lambda() (concat my-downloads "copilot.el"))
+    :bind (:map copilot-completion-map
+                ("TAB"       . copilot-next-completion)
+                ("<backtab>" . copilot-previous-completion)
+                ("M-f"       . copilot-accept-completion-by-word)
+                ("C-e"       . copilot-accept-completion)
+                )
+    :custom (copilot-log-max 50000)
+
+    ;; try copilot completion with python.
+    :hook (python-ts-mode python)
+    )
+#+end_src
+
+** Imenu
+
+#+begin_src emacs-lisp
+  (use-package imenu
+    :custom (imenu-auto-rescan t)
+    )
+
+  (use-package imenu-list)
+#+end_src
+
+* ANSI color code
+
+#+begin_src emacs-lisp
+  (use-package ansi-color
+    :hook (;; render color codes in the compilation buffer.
+           (compilation-filter . ansi-color-compilation-filter))
+    )
+
+  (use-package lgf-ansi-color-mode
+    :after ansi-color
+    )
+#+end_src
+
+* JSON, JSON Lines
+
+#+begin_src emacs-lisp
+  (use-package json-ts-mode
+    :mode "\\.jsonl?\\'" "mongod.*\\.log"
+    )
+
+  (use-package structured-log-mode
+    ;; my own package for viewing json format log files.
+    :load-path (lambda() (concat my-elisps "structured-log-mode"))
+    :commands structured-log-mode
+    )
+#+end_src
+
+* Markdown
+
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :custom (markdown-command "pandoc")
+    )
+#+end_src
+
+* Python
+
+#+begin_src emacs-lisp
+  (use-package python
+    :custom
+    ;; triple quotes on their own lines
+    (python-fill-docstring-style 'django)
+    ;; for empty python files, as existing files use existing indent offset.
+    (python-indent-offset 4)
+    )
+
+  (use-package flymake-ruff
+    :after flymake
+    :hook ((python-mode python-ts-mode) . flymake-ruff-load)
+    )
+
+  (use-package ruff-format
+    :after reformatter
+    :hook ((python-mode python-ts-mode) . ruff-format-on-save-mode)
+    )
+#+end_src
+
+* YAML
+
+#+begin_src emacs-lisp
+  (use-package flymake-yamllint
+    :after flymake
+    :hook ((yaml-ts-mode . flymake-yamllint-setup))
+    )
 #+end_src
 
 * Automatically tangle configurations
@@ -288,397 +748,6 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 * To migrate
 
 #+begin_src emacs-lisp
-;;; Visual aids
-
-;;;; Display line number
-(use-package display-line-numbers       ; built-in package
-  ;; No configuration is needed. This is explicitly added as a reminder of the
-  ;; function names.
-  :defer t
-  :commands display-line-numbers-mode global-display-line-numbers-mode
-  ;; :custom
-  ;; (display-line-numbers-widen t)
-  ;; (display-line-numbers-major-tick 50)
-  ;; (display-line-numbers-minor-tick 10)
-  )
-
-;;;; Highlight current line
-(use-package hl-line             ; built-in package, highlights the current line
-  ;; Note that this package, along with similar ones such as beacon, only
-  ;; updates the *active* window. This means that if an action is performed in
-  ;; the current window that moves the cursor in another window, the visual
-  ;; indicator of the current line of the other window (inactive) will not be
-  ;; updated until you switch to it.
-  :config (global-hl-line-mode 1)
-  )
-
-;;;; Display column number in the mode line
-(use-package emacs
-  :config
-  (column-number-mode t)
-  )
-
-;;;; Highlight whitespace
-(use-package emacs
-  :custom
-  (whitespace-line-column nil)          ; nil => use the value of `fill-column'
-  (whitespace-style '(face
-                      trailing
-                      tabs
-                      indentation
-                      space-before-tab
-                      space-after-tab
-                      tab-mark
-                      empty
-                      ;; lines-tail - too harsh on eyes: highlights all the
-                      ;; characters beyond the threshold can be harsh on eyes
-                      ;; when the code has a lot of long lines.
-
-                      ;; line-char - cannot highlight space: highlights the
-                      ;; characters on the fill column only. If it happens to a
-                      ;; be space, then no highlight.
-                      ))
-
-  :config
-  ;; Do NOT turn `whitespace-mode' on globally. Because: a) in many situations,
-  ;; like when using ediff or reading existing code, whitespace is expected but
-  ;; may considered problem by `whitespace-mode'. b) Anyways whitespace issues
-  ;; are fixed automatically because we add `whitespace-cleanup' (in a different
-  ;; configuration section) to the before save hook.
-  (global-whitespace-mode -1)
-  )
-
-;;;; Show fill column indicator
-(use-package fill-column-indicator
-  :defer t
-  :commands fci-mode
-  :hook ((emacs-lisp-mode . fci-mode))
-  ;; to make a global minor mode, use the following
-  ;; (define-globalized-minor-mode global-fci-mode
-  ;;      fci-mode (lambda() (fci-mode 1)))
-  )
-
-;;;; Highlight indentation levels
-(use-package highlight-indentation
-  :ensure t
-  :custom
-  ;; Disable highlight-indentation-blank-lines, as it prevents `C-a' from going
-  ;; to the beginning of blank lines and causes some other issues.
-  (highlight-indentation-blank-lines nil)
-  ;; ;; manually set the face if desired ("gray20" suits dark themes)
-  ;; (set-face-background 'highlight-indentation-face "gray20")
-
-  :hook (((python-mode python-ts-mode) . highlight-indentation-mode)
-         ((yaml-mode yaml-ts-mode) . highlight-indentation-current-column-mode)
-         )
-  )
-
-;;;; Highlight matching parenthesis
-(use-package highlight-parentheses
-  :commands global-highlight-parentheses-mode
-  :config (global-highlight-parentheses-mode t)
-  ;; :custom (hl-paren-colors    ; `M-x list-colors-display' to see named colors
-  ;;          '("brown" "orange" "yellow" "forest green" "cyan" "blue" "violet"))
-  )
-
-;;;; Treemacs
-(use-package treemacs
-  :defer t                    ; Only load it when I need it, as I rarely use it.
-  )
-
-;;;; Minimap
-(use-package minimap
-  :defer t                         ; Just an eye candy which I almost never use.
-  :custom (minimap-window-location 'right)
-)
-
-;;; Windows layout etc.
-(use-package emacs
-  :custom (split-width-threshold 200)
-  )
-
-(use-package winner
-  :config
-  (winner-mode 1)
-  )
-
-(use-package windmove
-  :bind (:map global-map
-              ;; move between windows
-              ("S-<up>"        . windmove-up)
-              ("S-<down>"      . windmove-down)
-              ("S-<right>"     . windmove-right)
-              ("S-<left>"      . windmove-left)
-              ;; move windows
-              ("C-x S-<up>"    . windmove-swap-states-up)
-              ("C-x S-<down>"  . windmove-swap-states-down)
-              ("C-x S-<right>" . windmove-swap-states-right)
-              ("C-x S-<left>"  . windmove-swap-states-left)
-              )
-  )
-
-(use-package lgf-tiling
-  :load-path (lambda() (concat my-elisps "tiling"))
-  :bind (:map global-map ("C-\\" . tiling-cycle))
-  ;; Out of key bindings, just `M-x` the commands directly.
-  :commands tiling-tile-up tiling-tile-down tiling-tile-left tiling-tile-right
-  )
-
-
-;;; Completion
-
-;;;; Company
-(use-package company
-  :ensure t
-  :functions global-company-mode
-  :init (global-company-mode)
-  )
-
-;;;; Yasnippet
-(use-package yasnippet
-  ;; Put personal/customized snippets into the first dir of `yas-snippet-dirs',
-  ;; which is `~/.emacs.d/snippets' by default. NOTE: it is `yas-snippet-dirs'
-  ;; NOT `yasnippet-snippets-dir'. The later is where the package
-  ;; `yasnippet-snippets' stores its snippets).
-  ; TODO: cleanup duplicated/similar snippets in different directories.
-  :ensure t
-  :functions yas-global-mode
-  :init (yas-global-mode 1)
-  )
-
-(use-package yasnippet-snippets
-  :after yasnippet-snippets)
-
-;;; Spelling check
-(use-package flyspell
-  :hook ((prog-mode . flyspell-prog-mode)
-         (yaml-mode . flyspell-prog-mode)
-         (yaml-ts-mode . flyspell-prog-mode)
-         (markdown-mode . flyspell-mode)
-         (git-commit-setup . flyspell-mode)
-         (org-mode . flyspell-prog-mode)
-         )
-  )
-
-;;; Syntax check (flymake)
-(use-package flymake
-  ;; To list all the diagnostics, use `flymake-show-buffer-diagnostics' and
-  ;; `flymake-show-project-diagnostics'. For checkers being used, see the buffer
-  ;; local var `flymake-diagnostic-functions'.
-
-  :bind (:map flymake-mode-map
-              ("C-c p" . flymake-goto-prev-error)
-              ("C-c n" . flymake-goto-next-error))
-
-  :hook (prog-mode yaml-ts-mode)
-)
-
-;;; Syntax parser - Tree-sitter
-(use-package treesit
-  ;; Run `treesit-install-language-grammar' to install the grammar
-  ;; for each designated language.
-  :when
-  (and (fboundp 'treesit-available-p) (treesit-available-p))
-
-  :custom
-  (major-mode-remap-alist
-   '(
-     (bash-mode . bash-ts-mode)
-     (c++-mode . c++-ts-mode)
-     (c-mode . c-ts-mode)
-     (cmake-mode . cmake-ts-mode)
-     (conf-toml-mode . toml-ts-mode)
-     (js-json-mode . json-ts-mode)
-     (go-mode . go-ts-mode)
-     (python-mode . python-ts-mode)
-     (yaml-mode . yaml-ts-mode)
-     ))
-  )
-
-;;;; treesitter context
-;; My main request is folding code. The focus mode and context mode are bonus,
-;; which only work in GUI Emacs. At the moment the functionality of folding
-;; appears to be not supper good. TODO: check the last progress of
-;; `treesit-fold', which was said to be a good one.
-
-(use-package treesitter-context         ; works for GUI emacs only
-  :after treesit
-  :load-path (lambda() (concat my-downloads "treesitter-context.el"))
-  )
-
-(use-package treesitter-context-focus   ; works for GUI emacs only
-  :after treesit
-  :load-path (lambda() (concat my-downloads "treesitter-context.el"))
-  )
-
-(use-package treesitter-context-fold   ; functionality appears to be limited atm
-  :after treesit
-  :load-path (lambda() (concat my-downloads "treesitter-context.el"))
-  )
-
-;;; LSP - eglot
-(use-package eglot
-  :ensure t
-  ;; Note for Eglot + Pyright on MacOS: you may want to increase the "open
-  ;; files" limit (`ulimit -n'), say to 65536. The default value is 256, which
-  ;; Pyright easily hits when the python project is non-trivial. (You'll see the
-  ;; error message if you set debug-on-error to t and then enable Eglot.).
-
-  :config
-  ;; (add-to-list 'eglot-stay-out-of 'imenu)
-  ;; ;; so that imenu-list is based on positions in buffer
-  )
-
-;;; DAP - dape
-(use-package dape
-  ;; For Python, `pip3 install debugpy'. Run adapter `debugpy' to test a
-  ;; program, adapter `debugpy-module' for testing a module.
-
-  :ensure t
-  :after eglot
-  :custom (dape-buffer-window-arrangement 'right)
-  :config
-  ;; Save files before sessions, useful for interpreted languages, such as
-  ;; python; Cannot use `:hook' since this hook name doesn't end with "-hook"
-  (add-hook 'dape-on-start-hooks 'save-some-buffers)
-  )
-
-;;; Generative AI (GAI) - copilot
-(use-package copilot
-  ;; What I'm after is not code completion but "copilot chat". Code completion
-  ;; provided by static type checkers (Pyright for instance) are already good
-  ;; enough for me.
-
-  ;; For first time use, run (copilot-install-server) and (copilot-login) .
-  :load-path (lambda() (concat my-downloads "copilot.el"))
-  :bind (:map copilot-completion-map
-              ("TAB"       . copilot-next-completion)
-              ("<backtab>" . copilot-previous-completion)
-              ("M-f"       . copilot-accept-completion-by-word)
-              ("C-e"       . copilot-accept-completion)
-              )
-  :custom (copilot-log-max 50000)
-
-  ;; try copilot completion with python.
-  :hook (python-ts-mode python)
-  )
-
-;;; Formatter
-
-(use-package emacs                      ; clean up tab, indent and whitespace
-  :custom
-  (tab-width 4)
-  (tab-stop-list nil)                   ; stops every ‘tab-width’ columns
-  (indent-tabs-mode nil)                ; space instead of <tab> for indentation
-  :hook
-  ((before-save . whitespace-cleanup))
-  )
-
-(use-package reformatter
-  ;; depended on by ruff-format etc.
-  :ensure t
-  )
-
-(use-package prettier
-  ;; Format json, yaml, markdown etc.;
-
-  ;; IMPORTANT:
-  ;;
-  ;; - install the package *globally*(`-g'): npm install -g prettier
-  ;;
-  ;; - One principle of prettier is to eliminate debates over formatting;
-  ;;   Therefore, it's generally recommended to stick with the default settings.
-  ;;   But, to stop yamllint from complaining "too many spaces inside braces",
-  ;;   add `bracketSpacing: false' to your ".prettierrc"
-
-  :ensure t
-  :hook (yaml-mode yaml-ts-mode)
-  )
-
-;;; Imenu
-(use-package imenu
-  :ensure t
-  :custom (imenu-auto-rescan t)
-  )
-
-(use-package imenu-list
-  :ensure t)
-
-;;; Huge Files
-(use-package emacs
-  :config
-  (defun lgf-huge-file-hook ()
-    "Open huge files with minimum features.
-
-Huge files (normally log files) can make Emacs sluggish or even
-freeze. This hook tells Emacs to open such files with the
-`fundamental-mode' and turn off any extra features which cannot
-handle large files. In addition, it makes the buffer read only to
-avoid accidental modifications."
-    (when (> (buffer-size) (* 1024 1024 16)) ; 16 MB
-      (setq buffer-read-only t)
-      (buffer-disable-undo)
-      (fundamental-mode)
-      (which-function-mode -1)
-      (if (fboundp 'highlight-parentheses-mode) (highlight-parentheses-mode -1))
-      ))
-  (add-hook 'find-file-hook 'lgf-huge-file-hook)
-  )
-
-;;; ANSI color code
-(use-package ansi-color
-  :hook (;; render color codes in the compilation buffer.
-         (compilation-filter . ansi-color-compilation-filter))
-  )
-
-(use-package lgf-ansi-color-mode
-  :after ansi-color
-  )
-
-;;; JSON, JSON Lines
-
-(use-package json-ts-mode
-  :mode "\\.jsonl?\\'" "mongod.*\\.log"
-  )
-
-(use-package structured-log-mode
-  ;; my own package for viewing json format log files.
-  :load-path (lambda() (concat my-elisps "structured-log-mode"))
-  :commands structured-log-mode
-  )
-
-;;; Markdown
-(use-package markdown-mode
-  :custom (markdown-command "pandoc")
-  )
-
-;;; Python specific
-(use-package python
-  :custom
-  ;; triple quotes on their own lines
-  (python-fill-docstring-style 'django)
-  ;; for empty python files, as existing files use existing indent offset.
-  (python-indent-offset 4)
-  )
-
-(use-package flymake-ruff
-  :after flymake
-  :hook ((python-mode python-ts-mode) . flymake-ruff-load)
-  )
-
-(use-package ruff-format
-  :after reformatter
-  :hook ((python-mode python-ts-mode) . ruff-format-on-save-mode)
-  )
-
-;;; YAML
-(use-package flymake-yamllint
-  :ensure t
-  :after flymake
-  :hook ((yaml-ts-mode . flymake-yamllint-setup))
-  )
-
-;;; --- old configurations ---
 ;;; paths
 (defvar my-emacs-base
   (file-name-as-directory (expand-file-name "~/.emacs.d")))
@@ -770,9 +839,6 @@ avoid accidental modifications."
                          ("\\.v\\'" . verilog-mode)
                          ("\\.ldif\\'" . ldap-mode))
                        auto-mode-alist))
-
-;;; auto-revert when file modified by other
-(global-auto-revert-mode t)
 
 ;;; backup files
 (setq make-backup-files t
