@@ -1,0 +1,236 @@
+# -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+# Created: 2024-05-17
+
+#+TITLE: My Window Manager Related Configurations
+#+AUTHOR: Fang Lungang
+#+DATE: 2024-05-18 +1000
+#+DESCRIPTION: My window manager related configurations
+#+KEYWORDS: window manager, hotkey, tiling, yabai, skhd
+
+* Time stamp for tangling
+
+This block itself is not tangled into any configuration file. But, at the time
+of tangling, it generates a timestamp may be referred to by other blocks.
+
+#+name: time-stamp-of-update
+#+begin_src emacs-lisp :tangle no
+(format-time-string "%Y-%m-%d %5z")
+#+end_src
+
+* Yabai
+
+** configuration file
+:PROPERTIES:
+:header-args:bash: :tangle ~/.config/yabai/yabairc :tangle-mode o755 :noweb yes :mkdirp yes
+:END:
+
+#+begin_src bash
+#!/usr/bin/env sh
+
+# Created: Fang Lungang 2024-01-22
+# Updated: Fang Lungang <<time-stamp-of-update()>>
+
+# Install
+# brew install koekeishiya/formulae/yabai
+# brew install koekeishiya/formulae/skhd
+# yabai --start-service
+# skhd --start-service
+
+# MacOS System Settings
+# > Desktop & Dock
+#   - Automatically hide and show the Dock - on
+#   - Automatically rearrange Spaces based on most recent use - off
+#
+
+# Float windows, i.e. windows Yabai shouldn't manage
+yabai -m rule --add app="^System Preferences$" sticky=on layer=above manage=off
+yabai -m rule --add app="^Karabiner-Elements$" sticky=on layer=above manage=off
+yabai -m rule --add app="^Karabiner-EventViewer$" sticky=on layer=above manage=off
+# yabai -m rule --add app="^Finder$" sticky=on layer=above manage=off
+
+# global settings
+yabai -m config mouse_follows_focus          on
+yabai -m config focus_follows_mouse          off
+yabai -m config window_placement             second_child
+yabai -m config mouse_modifier               fn
+yabai -m config mouse_action1                move
+yabai -m config mouse_action2                resize
+yabai -m config mouse_drop_action            swap
+
+# general space settings
+yabai -m config layout                       bsp
+yabai -m config top_padding                  06
+yabai -m config bottom_padding               06
+yabai -m config left_padding                 06
+yabai -m config right_padding                06
+yabai -m config window_gap                   06
+
+echo "yabai configuration loaded.."
+#+end_src
+
+** scripts
+:PROPERTIES:
+:header-args:bash: :tangle-mode o755 :noweb yes :mkdirp yes
+:END:
+
+*** Swap spaces between displays
+
+#+begin_src bash :tangle ~/.config/yabai/swap-spaces
+  #!/usr/bin/env bash
+  # Created: Fang Lungang 2024-05-17
+  # Updated: Fang Lungang <<time-stamp-of-update()>>
+
+  # Move currently visible spaces between displays. Useful when I move from home
+  # to office, or vice versa.
+
+  set -o errexit
+  set -o pipefail
+
+  # the array of visible spaces
+  for i in $(yabai -m query --spaces | jq '.[]|select(."is-visible").index'); do
+      visible_spaces+=($i)
+  done
+
+  # Rotate the array since I don't know the relative positions of the spaces
+  # (displays). The first space will swap with every other space until the end of
+  # this array. That said, since most of the time I have only two displays, this
+  # script should work for me.
+  array_length=${#visible_spaces[@]}
+  for ((i=1; i<array_length; i++)); do
+      yabai -m space "${visible_spaces[$((i-1))]}" --swap "${visible_spaces[$((i))]}"
+  done
+#+end_src
+
+*** Swap window across displays
+
+#+begin_src bash :tangle  ~/.config/yabai/swap-windows
+#!/usr/bin/env bash
+# Created: Fang Lungang 2024-01-25
+# Updated: Fang Lungang <<time-stamp-of-update()>>
+
+set -o errexit
+set -o pipefail
+
+target="$1"
+if [ "$target" == "west" ]; then
+    opposite="east"
+    window_placement="second_child"
+elif [ "$target" == "east" ]; then
+    opposite="west"
+    window_placement="first_child"
+else
+    echo "Unspported direction '$target'" >&2
+    exit 1
+fi
+
+if [ "$(yabai -m query --windows --display "$target" | jq 'length')" == "0" ]; then
+    # The other display has no window to swap, just move the current window to it.
+    yabai -m window --display "$target"
+else
+    # the other display has window(s), swap the one next to the display border
+
+    cur_win=$(yabai -m query --windows --window | jq '.id')
+
+    # move to the next display
+    yabai -m display --focus "$target"
+
+    # find the window on the border
+    while yabai -m window --focus "$opposite" 2>/dev/null; do
+        true
+    done
+
+    to_swap=$(yabai -m query --windows --window | jq '.id')
+    original_window_placement=$(yabai -m config window_placement)
+
+    yabai -m config window_placement "$window_placement"
+    yabai -m window "$to_swap" --swap "$cur_win"
+    yabai -m config window_placement "$original_window_placement"
+    yabai -m window --focus "$cur_win"
+fi
+
+#+end_src
+
+*** COMMENT Rotate windows
+
+#+begin_src bash :tangle  ~/.config/yabai/rotate-windows
+  #!/usr/bin/env bash
+  # Created: Fang Lungang 2024-01-22
+  # Updated: Fang Lungang <<time-stamp-of-update()>>
+
+  set -o errexit
+  set -o pipefail
+
+  # a safeguard, ensure no inifite loop
+  i=8
+
+  win=$(yabai -m query --windows --window first | jq '.id')
+  while yabai -m window $win --swap next &> /dev/null && [ $i -gt 0 ]; do
+      i=$((i-1))
+  done
+#+end_src
+
+* skhd
+:PROPERTIES:
+:header-args:conf: :tangle ~/.config/skhd/skhdrc :tangle-mode o644 :noweb yes :mkdirp yes
+:END:
+
+** Header
+#+begin_src conf
+  # -*-mode:conf-*-
+  # Created: Fang Lungang 2024-01-22
+  # Updated: Fang Lungang <<time-stamp-of-update()>>
+
+  # Mainly uses ctrl + cmd to reserve ctrl + alt for Emacs
+#+end_src
+
+** Yabai related
+#+begin_src conf
+  # Move focus, most of time, just just Cmd + N (where N = 8,9,0 etc.) to jump to target app directly.
+  alt + cmd - l: yabai -m window --focus recent
+  ctrl + cmd - h: yabai -m window --focus west || (yabai -m display --focus west && yabai -m window --focus last)
+  ctrl + cmd - j: yabai -m window --focus south
+  ctrl + cmd - k: yabai -m window --focus north
+  ctrl + cmd - l: yabai -m window --focus east || (yabai -m display --focus east && yabai -m window --focus first)
+
+  # Swap window
+  alt + cmd - p: yabai -m window --swap recent
+  ctrl + cmd - u: yabai -m window --swap west || $HOME/.config/yabai/swap-windows west
+  ctrl + cmd - i: yabai -m window --swap south
+  ctrl + cmd - o: yabai -m window --swap north
+  ctrl + cmd - p: yabai -m window --swap east || $HOME/.config/yabai/swap-windows east
+
+  # Warp window
+  ctrl + cmd + shift - u: yabai -m window --warp west || (yabai -m window --display west && yabai -m display --focus west)
+  ctrl + cmd + shift - i: yabai -m window --warp south
+  ctrl + cmd + shift - o: yabai -m window --warp north
+  ctrl + cmd + shift - p: yabai -m window --warp east || (yabai -m window --display east && yabai -m display --focus east)
+
+  # # Cycle window
+  # ctrl + cmd + shift - up: $HOME/.config/skhd/cycle-window-clockwise
+  # ctrl + cmd + shift - down: $HOME/.config/skhd/cycle-window-counterclockwise
+
+  # Resize window
+  ctrl + cmd - space: yabai -m space --balance
+  ctrl + cmd + shift - space: yabai -m window --toggle split
+
+  # Move the split left/right/up/down.
+  ctrl + cmd - left: yabai -m window --resize right:-20:0 || yabai -m window --resize left:-20:0
+  ctrl + cmd - right: yabai -m window --resize right:20:0 || yabai -m window --resize left:20:0
+  ctrl + cmd - down: yabai -m window --resize bottom:0:20 || yabai -m window --resize top:0:20
+  ctrl + cmd - up: yabai -m window --resize bottom:0:-20 || yabai -m window --resize top:0:-20
+
+  # Toggle full screen
+  ctrl + cmd - return: yabai -m window --toggle zoom-fullscreen
+
+  ctrl + cmd - m: ~/.config/yabai/swap-spaces
+#+end_src
+
+** Open/select applications
+#+begin_src conf
+  # Open/select applications
+  cmd - 6: open -a "Visual Studio Code.app"
+  cmd - 7: open -a safari.app
+  cmd - 8: open -a iterm.app
+  cmd - 9: open -a "google chrome.app"
+  cmd - 0: open -a slack.app
+#+end_src
