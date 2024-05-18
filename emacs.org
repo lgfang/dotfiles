@@ -212,30 +212,30 @@ remote server to check if these files do exist.
   (use-package winner
     :config
     (winner-mode 1)
+    ;; default key bindings: C-c <left>/<right>
     )
 
-  (use-package windmove
-    :bind (:map global-map
-                ;; move between windows
-                ("S-<up>"        . windmove-up)
-                ("S-<down>"      . windmove-down)
-                ("S-<right>"     . windmove-right)
-                ("S-<left>"      . windmove-left)
-                ;; move windows
-                ("C-x S-<up>"    . windmove-swap-states-up)
-                ("C-x S-<down>"  . windmove-swap-states-down)
-                ("C-x S-<right>" . windmove-swap-states-right)
-                ("C-x S-<left>"  . windmove-swap-states-left)
-                )
+  (use-package transpose-frame
+    ;; Do not bind any keys because the only command I use rather frequently is
+    ;; `rotate-frame-clockwise' and I run it via `ace-window' dispatcher (see my
+    ;; `ace-window' configuration)
     )
 
-  (use-package lgf-tiling
-    :load-path (lambda() (concat my-elisps "tiling"))
-    :bind (:map global-map ("C-\\" . tiling-cycle))
-    ;; Out of key bindings, just `M-x` the commands directly.
-    :commands tiling-tile-up tiling-tile-down tiling-tile-left tiling-tile-right
+  (use-package ace-window
+    :custom (aw-dispatch-always t)   ; dispatch even only two windows or less
+    :bind (:map global-map ("M-o" . ace-window))
+    :config
+    (add-to-list 'aw-dispatch-alist '(?t rotate-frame-clockwise))
     )
 #+end_src
+
+With =ace-window= package, I feel no more need of =windmove=, =C-x 4 4= or
+=lgf-tiling=. Below are Some =ace-window= hotkeys I frequently use (run =M-o ?=
+to see more):
+- =M-o n= :: jump back and forth between two windows.
+- =M-o m= :: swap two windows.
+- =M-o u= :: change the buffer of another window.
+- =M-o t= :: run =rotate-frame-clockwise= (from =transpose-frame=).
 
 * Fonts
 
