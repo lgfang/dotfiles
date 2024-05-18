@@ -42,19 +42,13 @@ of tangling, it generates a timestamp may be referred to by other blocks.
 
 * Bootstrap
 
-** Paths
-
-Note that the =use-package emacs= thing is unnecessary. I'm using it to group
-related configurations together.
-
+** Start up screen
 #+begin_src emacs-lisp
   (use-package emacs
-    :config
-    (defvar my-emacs-d (file-name-as-directory (expand-file-name "~/.emacs.d")))
-    (defvar my-elisps (file-name-as-directory (concat my-emacs-d "my-elisps")))
-    (defvar my-downloads (file-name-as-directory (concat my-emacs-d "downloads")))
-    (add-to-list 'load-path my-elisps t)
-  )
+    :custom
+    (inhibit-startup-screen t)
+    (initial-scratch-message "")
+    )
 #+end_src
 
 ** Initialize "package"
@@ -67,11 +61,28 @@ related configurations together.
   )
 #+end_src
 
-** Start up screen
+** Paths
+
+Note that the =use-package emacs= thing is unnecessary. I'm using it to group
+related configurations together.
+
 #+begin_src emacs-lisp
-   (use-package emacs
-     :custom
-     (inhibit-startup-screen t)
+  (use-package emacs
+    :config
+    (defvar my-emacs-d (file-name-as-directory (expand-file-name "~/.emacs.d")))
+    (defvar my-downloads (file-name-as-directory (concat my-emacs-d "downloads")))
+    (defvar my-elisps (file-name-as-directory (concat my-emacs-d "my-elisps")))
+    (add-to-list 'load-path my-elisps t)
+    (defvar my-personal-path (file-name-as-directory
+                              (expand-file-name "~/mynotes/personal")))
+  )
+#+end_src
+
+** Personal information
+
+#+begin_src emacs-lisp
+  (use-package my-confidential
+     :load-path my-personal-path
      )
 #+end_src
 
@@ -113,53 +124,53 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
 * Mini-buffer interaction
 
 #+begin_src emacs-lisp
-    (use-package emacs
-      :config
-      (fset 'yes-or-no-p 'y-or-n-p)         ; Type y/n to answer yes or no prompts.
-      )
+  (use-package emacs
+    :config
+    (fset 'yes-or-no-p 'y-or-n-p)         ; Type y/n to answer yes or no prompts.
+    )
 
-    (use-package vertico
-      :defer t
-      :defines vertico-map
-      :functions vertico-mode vertico-multiform-mode
-      :bind (:map vertico-map ("C-o" . vertico-quick-exit))
-      :custom
-      (vertico-resize nil)
-      (vertico-cycle nil)
-      (vertico-buffer-display-action '(display-buffer-at-bottom
-                                       (window-height . 16)))
-      ;; Avoid `reverse' + `mouse', they are not compatible at the moment.
-      (vertico-multiform-categories '(
-                                      ;; default, enable buffer & mouse
-                                      (t buffer mouse)
-                                      ))
-      (vertico-multiform-commands '(("imenu" buffer mouse)
-                                    ("recentf-.*" buffer mouse)
+  (use-package vertico
+    :defer t
+    :defines vertico-map
+    :functions vertico-mode vertico-multiform-mode
+    :bind (:map vertico-map ("C-o" . vertico-quick-exit))
+    :custom
+    (vertico-resize nil)
+    (vertico-cycle nil)
+    (vertico-buffer-display-action '(display-buffer-at-bottom
+                                     (window-height . 16)))
+    ;; Avoid `reverse' + `mouse', they are not compatible at the moment.
+    (vertico-multiform-categories '(
+                                    ;; default, enable buffer & mouse
+                                    (t buffer mouse)
                                     ))
+    (vertico-multiform-commands '(("imenu" buffer mouse)
+                                  ("recentf-.*" buffer mouse)
+                                  ))
 
-      :init
-      (vertico-mode 1)
-      (vertico-multiform-mode 1)
-      )
+    :init
+    (vertico-mode 1)
+    (vertico-multiform-mode 1)
+    )
 
-    (use-package orderless
-      :defer t
-      :custom (completion-styles '(orderless flex substring basic))
-      )
+  (use-package orderless
+    :defer t
+    :custom (completion-styles '(orderless flex substring basic))
+    )
 
-    (use-package marginalia
-      :defer t
-      :functions marginalia-mode
-      :init
-      (marginalia-mode 1)
-      )
+  (use-package marginalia
+    :defer t
+    :functions marginalia-mode
+    :init
+    (marginalia-mode 1)
+    )
 
-    (use-package consult
-      :bind (:map global-map
-                  ("<f2>" . consult-imenu)
-                  ;; ("C-s"  . consult-line)
-                  )
-      )
+  (use-package consult
+    :bind (:map global-map
+                ("<f2>" . consult-imenu)
+                ("M-s o" . consult-line)  ; replaces `occur'
+                )
+    )
 #+end_src
 
 * Sessions and histories
@@ -754,8 +765,6 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
   (file-name-as-directory (expand-file-name "~/.emacs.d")))
 (defvar my-extension-path
   (file-name-as-directory (expand-file-name "~/.emacs.d/emacs-extensions")))
-(defvar my-personal-path
-  (file-name-as-directory (expand-file-name "~/mynotes/personal")))
 (defvar my-backward-path
   (file-name-as-directory (concat my-extension-path "backward-compatibility")))
 
@@ -766,9 +775,6 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 ;;; Personal Info
 
 ;; Confidential info saved in this file.
-(unless (load (concat my-personal-path "my-confidential") t nil nil)
-  ;; If this file doesn't exist, set dumb values to allow emacs to start.
-  (setq user-full-name "Full Name" user-mail-address "you@email.com"))
 
 (setq
       ;; url-proxy-services '(("http" . "localhost:8888"))
