@@ -167,6 +167,7 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
     :bind (:map global-map
                 ("<f2>" . consult-imenu)
                 ("M-s o" . consult-line)  ; replaces `occur'
+                ("M-y" . consult-yank-pop) ; replaces `browse-kill-ring'
                 )
     )
 #+end_src
@@ -174,7 +175,7 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
 ** Repeat mode
 
 #+begin_src emacs-lisp
-  (use-package repeat                     ; Builtin
+  (use-package repeat                     ; built-in package
     :hook (after-init . repeat-mode)
     :custom
     (repeat-too-dangerous '(kill-this-buffer))
@@ -232,6 +233,9 @@ remote server to check if these files do exist.
       (scroll-bar-mode -1)
       (add-to-list 'default-frame-alist '(fullscreen . maximized))
       )
+    :bind (:map global-map
+                ("<f8>" . (lambda() "hide current buffer and try deleting window."
+                            (interactive) (bury-buffer) (delete-window))))
     )
 
   (use-package emacs
@@ -795,10 +799,47 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
     )
 #+end_src
 
+* None editor utilities
+** Weather
+#+begin_src emacs-lisp
+  (use-package wttrin
+    :defines wttrin-default-locations
+    :custom
+    (wttrin-default-locations '("Sydney, NSW"))
+    (wttrin-font-name 'monaco)            ; for GUI Emacs only
+    )
+
+#+end_src
+
+** World clock
+#+begin_src emacs-lisp
+  (use-package time                       ; built-in package
+    ;; use `M-x world-clock' to display
+    :custom
+    (world-clock-time-format "%R %a %b\t%d %Z\t%z")
+    (world-clock-list '(("UTC" "UTC")
+                        ("Australia/Sydney" "Sydney")
+                        ("America/New_York" "New York")
+                        ("America/Chicago" "Chicago")
+                        ("America/Los_Angeles" "Palo Alto")
+                        ("Asia/Shanghai" "Beijing")
+                        ("Asia/Kolkata" "Delhi")
+                        ("Asia/Tel_Aviv" "Tel Aviv")
+                        ("Europe/London" "Dublin")))
+    )
+#+end_src
+
+
 * To migrate
 
 - TODO: .org.el
+
 #+begin_src emacs-lisp
+;; an intentional assignment to free variable. If the following setq is the
+;; first line in corresponding flymake diagnostics buffer, then all the migrated
+;; configurations are errors/warnings free
+(setq old-config-start "----------------")
+
 ;;; paths
 (defvar my-emacs-base
   (file-name-as-directory (expand-file-name "~/.emacs.d")))
@@ -812,24 +853,6 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 (add-to-list 'load-path my-backward-path t)
 
 ;;; Personal Info
-
-;; Confidential info saved in this file.
-
-(setq
-      ;; url-proxy-services '(("http" . "localhost:8888"))
-
-      ;; world time 'M-x display-time-world', /usr/share/zoneinfo
-      display-time-world-time-format "%Z\t%z\t%a %d %b %R"
-      display-time-world-list '(("Australia/Sydney" "Sydney")
-                                ("UTC" "UTC")
-                                ("America/New_York" "New York")
-                                ("America/Chicago" "Chicago")
-                                ("America/Los_Angeles" "Palo Alto")
-                                ("Asia/Shanghai" "Beijing")
-                                ("Asia/Kolkata" "Delhi")
-                                ("Asia/Tel_Aviv" "Tel Aviv")
-                                ("Europe/London" "Dublin"))
-      )
 
 ;;; global key bindings
 
@@ -847,8 +870,6 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 ;; F1-F12
 ;; f3/f4: built-in key bindings to define keyboard macros
 
-(define-key global-map [f8]  (lambda() "bury in case only one window"
-                               (interactive) (bury-buffer) (delete-window)))
 ;; f9 to clock in last, `C-u f9' to select from recent tasks.
 (define-key global-map [f9] 'org-clock-in-last)
 ;; shift-f9 to clock out
@@ -894,8 +915,6 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 ;;; bbdb & bbdb-vcard-export - removed, use google/apple contacts etc.
 
 
-(when (require 'browse-kill-ring nil t)
-  (browse-kill-ring-default-keybindings))
 
 (unless (eq system-type 'darwin)          ; OSX
   (setq browse-url-browser-function 'browse-url-firefox))
@@ -1596,9 +1615,6 @@ selective-display"
         viper-mode t)
   (require 'viper))
 
-;;; Weather
-(require 'cn-weather nil t)
-
 (which-function-mode t)
 
 ;;; woman
@@ -1781,7 +1797,6 @@ string,refer to format-time-string."
 
 ;;; ------ end MyFunction ------
 
-(load "tmp.el" t nil nil)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
