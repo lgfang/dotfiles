@@ -156,8 +156,8 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
     :hook (after-init . repeat-mode)
     :custom
     (repeat-too-dangerous '(kill-this-buffer))
+    (repeat-exit-timeout 6)
     ;; (repeat-exit-key  "RET")
-    ;; (repeat-exit-timeout 6)
     )
 #+end_src
 
@@ -165,9 +165,10 @@ This section contains general settings for repeat mode. To add repeat mode
 support for modes without build in repeat mode support, see [[*org mode repeat map][org mode repeat map]]
 for an example.
 
-Note that there is normally no need of setting =repeat-eixt-key= or
-=repeat-exit-timeout=. To exit repeat mode, just type any character which is no
-bound in this particular repeat mode or =C-g=
+
+Note that there is normally no need of setting =repeat-eixt-key=, to exit repeat
+mode before =repeat-exit-timeout=, just type any character which is no bound in
+this particular repeat mode or =C-g=.
 
 ** vertico + orderless + marginalia + consult
 #+begin_src emacs-lisp
