@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-05-18 +1000
+#+DATE: 2024-05-19 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -137,8 +137,6 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
     :custom
     (vertico-resize nil)
     (vertico-cycle nil)
-    (vertico-buffer-display-action '(display-buffer-at-bottom
-                                     (window-height . 16)))
     ;; Avoid `reverse' + `mouse', they are not compatible at the moment.
     (vertico-multiform-categories '(
                                     ;; default, enable buffer & mouse
