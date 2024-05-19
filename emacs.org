@@ -800,6 +800,21 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 #+end_src
 
 * None editor utilities
+
+** Spelling alphabet
+
+This is useful when you need to explain how to spell something over phone calls.
+- Type in the word and =nato-region= it, then read it out. Or,
+- =C-h v nato-alphabet= to list the alphabet in the HELP buffer and refer to it.
+
+#+begin_src emacs-lisp
+  (use-package morse                      ; built in
+    ;; Nothing to customize, just list the commands etc. as a reminder
+    :commands nato-region denato-region morse-region unmorse-region
+    :defines nato-alphabet morse-code
+    )
+#+end_src
+
 ** Weather
 #+begin_src emacs-lisp
   (use-package wttrin
