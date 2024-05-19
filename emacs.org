@@ -121,7 +121,7 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
     )
 #+end_src
 
-* Mini-buffer interaction
+* Interaction convenience
 
 #+begin_src emacs-lisp
   (use-package emacs
@@ -170,6 +170,26 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
                 )
     )
 #+end_src
+
+** Repeat mode
+
+#+begin_src emacs-lisp
+  (use-package repeat                     ; Builtin
+    :hook (after-init . repeat-mode)
+    :custom
+    (repeat-too-dangerous '(kill-this-buffer))
+    ;; (repeat-exit-key  "RET")
+    ;; (repeat-exit-timeout 6)
+    )
+#+end_src
+
+This section contains general settings for repeat mode. To add repeat mode
+support for modes without build in repeat mode support, see [[*org mode repeat map][org mode repeat map]]
+for an example.
+
+Note that there is normally no need of setting =repeat-eixt-key= or
+=repeat-exit-timeout=. To exit repeat mode, just type any character which is no
+bound in this particular repeat mode or =C-g=
 
 * Sessions and histories
 
@@ -231,8 +251,9 @@ remote server to check if these files do exist.
     )
 
   (use-package ace-window
-    :custom (aw-dispatch-always t)   ; dispatch even only two windows or less
+    :defines aw-dispatch-alist
     :bind (:map global-map ("M-o" . ace-window))
+    :custom (aw-dispatch-always t)   ; dispatch even only two windows or less
     :config
     (add-to-list 'aw-dispatch-alist '(?t rotate-frame-clockwise))
     )
@@ -339,7 +360,19 @@ updated. It is recommended to set timestamp format as a file local variable. Bel
   # -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
 #+end_src
 
-* Auto typing
+* Basic auto typing
+
+** Whitespace
+#+begin_src emacs-lisp
+(use-package emacs                      ; clean up tab, indent and whitespace
+  :custom
+  (tab-width 4)
+  (tab-stop-list nil)                   ; stops at every ‘tab-width’ columns
+  (indent-tabs-mode nil)                ; space instead of <tab> for indentation
+  :hook
+  ((before-save . whitespace-cleanup))
+  )
+#+end_src
 
 ** Yasnippet
 
@@ -578,15 +611,6 @@ Notes on =prettier=:
   =bracketSpacing: false= to your =.prettierrc=.
 
 #+begin_src emacs-lisp
-(use-package emacs                      ; clean up tab, indent and whitespace
-  :custom
-  (tab-width 4)
-  (tab-stop-list nil)                   ; stops every ‘tab-width’ columns
-  (indent-tabs-mode nil)                ; space instead of <tab> for indentation
-  :hook
-  ((before-save . whitespace-cleanup))
-  )
-
 (use-package reformatter
   ;; depended on by ruff-format etc.
   )
@@ -725,7 +749,9 @@ copilot-login=.
     )
 #+end_src
 
-* Automatically tangle configurations
+* Org mode
+
+** Automatically tangle configurations
 
 To ensure that the corresponding configuration files are updated every time I
 modify this configuration file, add a =after-save-hook= to org-mode: when the
@@ -755,8 +781,23 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 *Note*:
 - Remember to adjust =my-config-org-file= to point to your configuration file.
 
+** org mode repeat map
+
+#+begin_src emacs-lisp
+    (use-package org
+    :bind
+    (:repeat-map my-org-repeat-map
+                 ("C-n" . org-next-visible-heading)
+                 ("C-p" . org-previous-visible-heading)
+                 ("C-b" . org-backward-heading-same-level)
+                 ("C-f" . org-forward-heading-same-level)
+                 )
+    )
+#+end_src
+
 * To migrate
 
+- TODO: .org.el
 #+begin_src emacs-lisp
 ;;; paths
 (defvar my-emacs-base
