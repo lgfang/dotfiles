@@ -123,11 +123,54 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
 
 * Interaction convenience
 
+** y-or-n
 #+begin_src emacs-lisp
   (use-package emacs
     :config
     (fset 'yes-or-no-p 'y-or-n-p)         ; Type y/n to answer yes or no prompts.
     )
+#+end_src
+
+** Ibuffer
+
+#+begin_src emacs-lisp
+  (use-package ibuffer                    ; built-in package
+    :defines ibuffer-saved-filter-groups
+    :commands ibuffer-switch-to-saved-filter-groups
+    :bind (:map global-map ("C-x C-b" . ibuffer))
+    :config
+    (setq ibuffer-saved-filter-groups (quote (("default"
+                                               ("Dired" (mode . dired-mode))
+                                               ("Magit" (name . "^magit"))
+                                               ("Emacs" (name . "^\\*.*\\*$"))
+                                               ))))
+    (add-hook 'ibuffer-mode-hook
+              (lambda() (ibuffer-switch-to-saved-filter-groups "default")))
+    )
+#+end_src
+
+** Repeat mode
+
+#+begin_src emacs-lisp
+  (use-package repeat                     ; built-in package
+    :hook (after-init . repeat-mode)
+    :custom
+    (repeat-too-dangerous '(kill-this-buffer))
+    ;; (repeat-exit-key  "RET")
+    ;; (repeat-exit-timeout 6)
+    )
+#+end_src
+
+This section contains general settings for repeat mode. To add repeat mode
+support for modes without build in repeat mode support, see [[*org mode repeat map][org mode repeat map]]
+for an example.
+
+Note that there is normally no need of setting =repeat-eixt-key= or
+=repeat-exit-timeout=. To exit repeat mode, just type any character which is no
+bound in this particular repeat mode or =C-g=
+
+** vertico + orderless + marginalia + consult
+#+begin_src emacs-lisp
 
   (use-package vertico
     :defer t
@@ -171,26 +214,6 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
                 )
     )
 #+end_src
-
-** Repeat mode
-
-#+begin_src emacs-lisp
-  (use-package repeat                     ; built-in package
-    :hook (after-init . repeat-mode)
-    :custom
-    (repeat-too-dangerous '(kill-this-buffer))
-    ;; (repeat-exit-key  "RET")
-    ;; (repeat-exit-timeout 6)
-    )
-#+end_src
-
-This section contains general settings for repeat mode. To add repeat mode
-support for modes without build in repeat mode support, see [[*org mode repeat map][org mode repeat map]]
-for an example.
-
-Note that there is normally no need of setting =repeat-eixt-key= or
-=repeat-exit-timeout=. To exit repeat mode, just type any character which is no
-bound in this particular repeat mode or =C-g=
 
 * Sessions and histories
 
@@ -368,14 +391,14 @@ updated. It is recommended to set timestamp format as a file local variable. Bel
 
 ** Whitespace
 #+begin_src emacs-lisp
-(use-package emacs                      ; clean up tab, indent and whitespace
-  :custom
-  (tab-width 4)
-  (tab-stop-list nil)                   ; stops at every ‘tab-width’ columns
-  (indent-tabs-mode nil)                ; space instead of <tab> for indentation
-  :hook
-  ((before-save . whitespace-cleanup))
-  )
+  (use-package emacs                      ; clean up tab, indent and whitespace
+    :custom
+    (tab-width 4)
+    (tab-stop-list nil)                   ; stops at every ‘tab-width’ columns
+    (indent-tabs-mode nil)                ; space instead of <tab> for indentation
+    :hook
+    ((before-save . whitespace-cleanup))
+    )
 #+end_src
 
 ** Yasnippet
@@ -847,15 +870,13 @@ This is useful when you need to explain how to spell something over phone calls.
 
 * To migrate
 
-- TODO: .org.el
-
 #+begin_src emacs-lisp
 ;; an intentional assignment to free variable. If the following setq is the
 ;; first line in corresponding flymake diagnostics buffer, then all the migrated
 ;; configurations are errors/warnings free
 (setq old-config-start "----------------")
 
-;;; paths
+;;; paths -- delete after .org.el is migrated as well
 (defvar my-emacs-base
   (file-name-as-directory (expand-file-name "~/.emacs.d")))
 (defvar my-extension-path
@@ -894,7 +915,6 @@ This is useful when you need to explain how to spell something over phone calls.
 ;; f12 : reserved for twm/tmux etc.
 
 ;; C-, M-, C-M- ... :(
-(define-key global-map (kbd "C-x C-b") 'ibuffer)
 (define-key global-map (kbd "C-x c l") 'org-store-link)
 (define-key global-map (kbd "C-x c a") 'org-agenda)
 (define-key global-map (kbd "C-x c o") 'org-open-at-point-global)
@@ -1007,6 +1027,7 @@ This is useful when you need to explain how to spell something over phone calls.
                 ((= d 0)
                  (list (list (list 1 2 y)
                              "NSW: New Year's Day (day in lieu)"))))))))
+
   (defun holiday-christmas-bank-holidays ()
     (let ((m displayed-month) (y displayed-year))
       (calendar-increment-month m y -1)
