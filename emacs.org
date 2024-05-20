@@ -140,17 +140,15 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
 
 #+begin_src emacs-lisp
   (use-package ibuffer                    ; built-in package
-    :defines ibuffer-saved-filter-groups
     :commands ibuffer-switch-to-saved-filter-groups
+    :custom
+    (ibuffer-saved-filter-groups (quote (("default"
+                                          ("Dired" (mode . dired-mode))
+                                          ("Magit" (name . "^magit"))
+                                          ("Emacs" (name . "^\\*.*\\*$"))
+                                          ))))
     :bind (:map global-map ("C-x C-b" . ibuffer))
-    :config
-    (setq ibuffer-saved-filter-groups (quote (("default"
-                                               ("Dired" (mode . dired-mode))
-                                               ("Magit" (name . "^magit"))
-                                               ("Emacs" (name . "^\\*.*\\*$"))
-                                               ))))
-    (add-hook 'ibuffer-mode-hook
-              (lambda() (ibuffer-switch-to-saved-filter-groups "default")))
+    :hook (ibuffer-mode . (lambda() (ibuffer-switch-to-saved-filter-groups "default")))
     )
 #+end_src
 
@@ -158,11 +156,12 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
 
 #+begin_src emacs-lisp
   (use-package repeat                     ; built-in package
-    :hook (after-init . repeat-mode)
     :custom
     (repeat-too-dangerous '(kill-this-buffer))
     (repeat-exit-timeout 6)
     ;; (repeat-exit-key  "RET")
+    :init
+    (repeat-mode)
     )
 #+end_src
 
@@ -234,14 +233,15 @@ this particular repeat mode or =C-g=.
       (setq openwith-associations '(("\\.mp4" "open" (file))
                                     ("\\.pdf" "open" (file))
                                     )))
-    :hook (after-init openwith-mode)
+    :init
+    (openwith-mode)
     )
 #+end_src
 * Sessions and histories
 
 #+begin_src emacs-lisp
   (use-package emacs
-    :config
+    :init
     ;; Save mini buffer history
     (savehist-mode t)
     ;; Save cursor places between sessions
@@ -255,9 +255,9 @@ this particular repeat mode or =C-g=.
   (use-package recentf                    ; built-in package
     :defines recentf-keep
     :custom (recentf-max-saved-items 666)
-    :config
-    (add-to-list 'recentf-keep 'file-remote-p)
+    :init
     (recentf-mode 1)
+    (add-to-list 'recentf-keep 'file-remote-p)
     :bind (:map global-map ("<f1>" . recentf-open))
     )
 #+end_src
@@ -271,7 +271,7 @@ remote server to check if these files do exist.
 #+begin_src emacs-lisp
   (use-package emacs
     :commands scroll-bar-mode             ; make flymake happy
-    :config
+    :init
     (menu-bar-mode (if (display-graphic-p) 1 -1)) ; turn it on for GUI only
     (tool-bar-mode -1)                            ; turn it off
     (when (display-graphic-p)
@@ -288,7 +288,7 @@ remote server to check if these files do exist.
     )
 
   (use-package winner
-    :config
+    :init
     (winner-mode 1)
     ;; default key bindings: C-c <left>/<right>
     )
@@ -353,7 +353,7 @@ different fonts are determined through trial and error. Note:
 
 #+begin_src emacs-lisp
   (use-package solarized-theme
-    :config
+    :init
     (load-theme 'solarized-gruvbox-dark t))
 #+end_src
 
@@ -364,7 +364,7 @@ different fonts are determined through trial and error. Note:
 Auto-revert a buffer when corresponding file is modified by another process.
 #+begin_src emacs-lisp
   (use-package emacs
-    :config
+    :init
     (global-auto-revert-mode t)
     )
 #+end_src
@@ -372,7 +372,7 @@ Auto-revert a buffer when corresponding file is modified by another process.
 ** Dealing with huge files
 #+begin_src emacs-lisp
   (use-package emacs
-    :config
+    :init
     (defun lgf-huge-file-hook ()
       "Open huge files with minimum features.
 
@@ -390,7 +390,6 @@ Auto-revert a buffer when corresponding file is modified by another process.
         ))
     (add-hook 'find-file-hook 'lgf-huge-file-hook)
     )
-
 #+end_src
 
 ** Update timestamps before save
@@ -503,7 +502,7 @@ No configuration is needed. Add this block just to remind myself the command nam
                         ;; be space, then no highlight.
                         ))
 
-    :config
+    :init
     ;; Do NOT turn `whitespace-mode' on globally. Because: a) in many situations,
     ;; like when using ediff or reading existing code, whitespace is expected but
     ;; may considered problem by `whitespace-mode'. b) Anyways whitespace issues
@@ -716,9 +715,7 @@ copilot-login=.
                 ("C-e"       . copilot-accept-completion)
                 )
     :custom (copilot-log-max 50000)
-
-    ;; try copilot completion with python.
-    :hook (python-ts-mode python)
+    :hook (python-ts-mode python)         ; try copilot completion with python.
     )
 #+end_src
 
@@ -729,7 +726,9 @@ copilot-login=.
     :custom (imenu-auto-rescan t)
     )
 
-  (use-package imenu-list)
+  (use-package imenu-list
+    :after imenu
+    )
 #+end_src
 
 * ANSI color code
