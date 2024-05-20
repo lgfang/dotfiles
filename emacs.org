@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-05-19 +1000
+#+DATE: 2024-05-20 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -60,6 +60,11 @@ of tangling, it generates a timestamp may be referred to by other blocks.
     (package-initialize)
   )
 #+end_src
+
+To manually upgrade install packages in batch,
+1. Run =M-x package-refresh-contents=
+2. Run =M-x list-packages=
+3. Then, following the prompt in the mini-buffer, type =U= and =x=
 
 ** Paths
 
@@ -170,7 +175,7 @@ Note that there is normally no need of setting =repeat-eixt-key=, to exit repeat
 mode before =repeat-exit-timeout=, just type any character which is no bound in
 this particular repeat mode or =C-g=.
 
-** vertico + orderless + marginalia + consult
+** Vertico + orderless + marginalia + consult
 #+begin_src emacs-lisp
 
   (use-package vertico
@@ -216,6 +221,22 @@ this particular repeat mode or =C-g=.
     )
 #+end_src
 
+** Openwith mode
+#+begin_src emacs-lisp
+  (use-package openwith
+    :defines openwith-associations
+    :commands openwith-mode
+    :custom (openwith-confirm-invocation t)
+    :config
+    (when (eq system-type 'darwin)
+      ;; On MacOS, the system tool "open" opens the target file with system
+      ;; default applications.
+      (setq openwith-associations '(("\\.mp4" "open" (file))
+                                    ("\\.pdf" "open" (file))
+                                    )))
+    :hook (after-init openwith-mode)
+    )
+#+end_src
 * Sessions and histories
 
 #+begin_src emacs-lisp
