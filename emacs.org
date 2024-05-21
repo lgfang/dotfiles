@@ -333,7 +333,7 @@ different fonts are determined through trial and error. Note:
   (use-package emacs
     :if (display-graphic-p)
     :config
-    (set-face-attribute 'default nil :font "monaco-18:weight=normal")
+    (set-face-attribute 'default nil :font "Andale Mono-20:weight=normal")
 
     (let ((zh-font "SimSong"))
       (if ;; Check the availability first to avoid error
