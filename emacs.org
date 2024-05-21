@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-05-20 +1000
+#+DATE: 2024-05-21 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -731,6 +731,55 @@ copilot-login=.
     )
 #+end_src
 
+* Version Control
+** magit
+#+begin_src emacs-lisp
+  (use-package magit
+    :custom (magit-log-margin-show-committer-date t)
+    )
+#+end_src
+** git-gutter
+#+begin_src emacs-lisp
+  ;; Choose this package over diff-hl because the later does not work in 'emacs
+  ;; -nw'.
+  (use-package git-gutter
+    :commands global-git-gutter-mode
+    :custom
+    (git-gutter:modified-sign " ")
+    (git-gutter:added-sign " ")
+    (git-gutter:deleted-sign " ")
+    :init
+    (global-git-gutter-mode t)
+    :config
+    (set-face-background 'git-gutter:modified "DarkOrange")
+    (set-face-background 'git-gutter:added "green")
+    (set-face-background 'git-gutter:deleted "red")
+    :bind (:map global-map
+                ("C-x v [" . git-gutter:previous-hunk)
+                ("C-x v ]" . git-gutter:next-hunk)
+                ("C-x v =" . git-gutter:popup-hunk)
+                ("C-x v s" . git-gutter:stage-hunk)
+                ("C-x v r" . git-gutter:revert-hunk)
+                )
+    )
+#+end_src
+
+To diff with a revision other than the latest one, in the repo root directory,
+add content similar to the following to the emacs directory local variable file
+(=.dir-locals.el=):
+#+begin_src emacs-lisp :tangle no
+((prog-mode . ((git-gutter:start-revision . "my_branch"))))
+#+end_src
+
+** git-link
+#+begin_src emacs-lisp
+  (use-package git-link
+    :custom
+    (git-link-open-in-browser t)
+    (git-link-use-commit t)
+    )
+#+end_src
+
 * ANSI color code
 
 #+begin_src emacs-lisp
@@ -1299,40 +1348,6 @@ tmux's buffer"
 ;; gdb
 ;; (setq gdb-many-windows t)
 
-;;; git-gutter
-;; Choose this over diff-hl because the later does not work in 'emacs -nw'.
-(when (require 'git-gutter)
-
-  ;; To diff with a revision other than the latest one, in the repo root
-  ;; directory, add to the emacs directory local variable file (.dir-locals.el)
-  ;; add content similar to the following:
-  ;;
-  ;; ((prog-mode . ((git-gutter:start-revision . "my_branch"))))
-
-  (global-git-gutter-mode t)
-
-  ;; Jump to next/previous hunk
-  (global-set-key (kbd "C-x v [") 'git-gutter:previous-hunk)
-  (global-set-key (kbd "C-x v ]") 'git-gutter:next-hunk)
-
-  (global-set-key (kbd "C-x v =") 'git-gutter:popup-hunk)
-
-  ;; Stage current hunk
-  (global-set-key (kbd "C-x v s") 'git-gutter:stage-hunk)
-  ;; Revert current hunk
-  (global-set-key (kbd "C-x v r") 'git-gutter:revert-hunk)
-
-  (set-face-background 'git-gutter:modified "DarkOrange")
-  (set-face-background 'git-gutter:added "green")
-  (set-face-background 'git-gutter:deleted "red")
-  (setq git-gutter:modified-sign " "
-        git-gutter:added-sign " "
-        git-gutter:deleted-sign " ")
-  )
-
-;;; git-link
-(setq git-link-open-in-browser t)
-
 ;;; golang
 (add-hook 'go-mode-hook
           (lambda() (add-hook 'before-save-hook 'gofmt-before-save)))
@@ -1671,17 +1686,6 @@ selective-display"
 
 ;;; verilog mode
 (autoload 'verilog-mode "verilog-mode" "Verilog mode" t )
-
-;;; version control: git, vc, clearcase etc.
-(load "lgfang.vc" t nil nil)
-(add-to-list 'load-path (concat my-extension-path "vc-clearcase"))
-(load "vc-clearcase-auto" t nil nil)
-(setq clearcase-use-external-diff t             ; the internal one sucks
-      ;; vc-clearcase-diff-switches "-diff_format" ; if diff unavailable
-      ;; vc-git-diff-switches "-w"         ; ignore diff of whitespace
-      )
-;; magit show CommitDate instead of AuthorDate in log mode
-(setq magit-log-margin-show-committer-date t)
 
 ;;; vimrc mode
 (autoload 'vimrc-mode "vimrc-mode")
