@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-05-21 +1000
+#+DATE: 2024-05-22 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -838,7 +838,17 @@ add content similar to the following to the emacs directory local variable file
 #+end_src
 
 * YAML
-
+** Tree sitter major mode
+#+begin_src emacs-lisp
+  (use-package yaml-ts-mode)
+#+end_src
+** YAML pro
+#+begin_src emacs-lisp
+  (use-package yaml-pro
+    :hook (yaml-ts-mode . yaml-pro-ts-mode)
+  )
+#+end_src
+** Flymake
 #+begin_src emacs-lisp
   (use-package flymake-yamllint
     :after flymake
@@ -1735,11 +1745,6 @@ selective-display"
 
 ;;; xref
 (setq xref-prompt-for-identifier t) ; always prompt for identifier to search
-
-;;; yaml
-(when (require 'yaml-mode nil t)
-  (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
-  (require 'yaml-path))
 
 ;;; ------ end General ------
 
