@@ -13,7 +13,7 @@
 This block itself is not tangled into any configuration file. But, at the time
 of tangling, it generates a timestamp may be referred to by other blocks.
 
-#+name: time-stamp-of-update
+#+name: tangle-time-stamp
 #+begin_src emacs-lisp :tangle no
 (format-time-string "%Y-%m-%d %5z")
 #+end_src
@@ -24,7 +24,7 @@ of tangling, it generates a timestamp may be referred to by other blocks.
   ;;; init.el --- Lungang's init.el
 
   ;; Created: Fang Lungang 2004
-  ;; Updated: Fang Lungang <<time-stamp-of-update()>>
+  ;; Updated: Fang Lungang <<tangle-time-stamp()>>
 
   ;;; Commentary:
 
@@ -649,6 +649,12 @@ No configuration is needed. Add this block just to remind myself the command nam
     )
 #+end_src
 
+** Which function
+#+begin_src emacs-lisp
+  (use-package which-func
+    :init (which-function-mode t)
+    )
+#+end_src
 ** Formatter
 
 Notes on =prettier=:
@@ -795,15 +801,65 @@ add content similar to the following to the emacs directory local variable file
 
 * JSON, JSON Lines
 
+** JSON ts mode
 #+begin_src emacs-lisp
   (use-package json-ts-mode
-    :mode "\\.jsonl?\\'" "mongod.*\\.log"
+    :mode "\\.jsonl?\\'" "mongod.*\\.log" ; mongod logs are json lines
     )
+#+end_src
 
+** Structured log mode
+This is a minor I wrote to display log files formatted as JSON lines in a more
+human friendly way.
+#+begin_src emacs-lisp
   (use-package structured-log-mode
     ;; my own package for viewing json format log files.
     :load-path (lambda() (concat my-elisps "structured-log-mode"))
     :commands structured-log-mode
+    )
+#+end_src
+
+** JSON path to the node at point
+
+This function works is based on treesit (=json-ts-mode=)
+#+begin_src emacs-lisp
+  (use-package json-ts-mode
+    :commands
+    (treesit-node-at treesit-parent-until treesit-node-text treesit-node-index
+                     lgf-json-path)
+    :config
+    (defun lgf-json-path (&rest _ignored)
+      (let* ((pos (point))
+             (node (treesit-node-at pos)) ; can be a punctuation node
+             (filter (lambda(n)
+                       (member (treesit-node-type n) '("pair" "array"))))
+             (parent (treesit-parent-until node filter))
+             (path nil))
+        (while parent
+          (setq path
+                (cons
+                 (pcase (treesit-node-type parent)
+                   ("pair"
+                    (treesit-node-text
+                     (treesit-node-child (treesit-node-child parent 0) 1)
+                     t))
+                   ("array"
+                    ;; NOTE: Cannot handle comments, but it is fine because the
+                    ;; JSON standard says no comments.
+                    (let* ((one-level-up (treesit-node-parent node))
+                           (not-in-object (treesit-node-eq one-level-up parent))
+                           (array-elem (if not-in-object node one-level-up))
+                           )
+                      (/ (1- (treesit-node-index array-elem)) 2))))
+                 path))
+          (setq node parent)
+          (setq parent (treesit-parent-until parent filter)))
+        (mapconcat (lambda(p) (format "%s" p)) path ".")))
+    (defun lgf-json-path-set-up-eldoc ()
+      (if (boundp 'eldoc-documentation-functions)
+          (add-hook 'eldoc-documentation-functions #'lgf-json-path nil t)
+        (setq-local eldoc-documentation-function #'lgf-json-path)))
+    :hook ((json-ts-mode . lgf-json-path-set-up-eldoc))
     )
 #+end_src
 
@@ -842,12 +898,16 @@ add content similar to the following to the emacs directory local variable file
 #+begin_src emacs-lisp
   (use-package yaml-ts-mode)
 #+end_src
-** YAML pro
+** COMMENT YAML pro
 #+begin_src emacs-lisp
   (use-package yaml-pro
     :hook (yaml-ts-mode . yaml-pro-ts-mode)
   )
 #+end_src
+Among the features, it provides the two most useful features when reading large YAML files
+- Show the YAML path of the current node in the mini buffer via eldoc mode
+- Support of imenu
+
 ** Flymake
 #+begin_src emacs-lisp
   (use-package flymake-yamllint
@@ -1037,7 +1097,6 @@ This is useful when you need to explain how to spell something over phone calls.
                         ("Europe/London" "Dublin")))
     )
 #+end_src
-
 
 * To migrate
 
@@ -1700,8 +1759,6 @@ selective-display"
         viper-expert-level '5
         viper-mode t)
   (require 'viper))
-
-(which-function-mode t)
 
 ;;; woman
 (setq woman-use-own-frame nil
