@@ -370,6 +370,16 @@ Auto-revert a buffer when corresponding file is modified by another process.
     )
 #+end_src
 
+** Backup files
+#+begin_src emacs-lisp
+  (use-package emacs
+    :custom
+    (make-backup-files t)
+    (version-control 'never)
+    (backup-by-copying-when-linked t)
+    )
+#+end_src
+
 ** Dealing with huge files
 #+begin_src emacs-lisp
   (use-package emacs
@@ -1136,9 +1146,6 @@ This is useful when you need to explain how to spell something over phone calls.
 
 ;;; Personal Info
 
-;; f11 : reserved for twm/tmux etc.
-;; f12 : reserved for twm/tmux etc.
-
 ;; C-, M-, C-M- ... :(
 (define-key global-map (kbd "C-x c l") 'org-store-link)
 (define-key global-map (kbd "C-x c a") 'org-agenda)
@@ -1167,10 +1174,6 @@ This is useful when you need to explain how to spell something over phone calls.
                          ("\\.ldif\\'" . ldap-mode))
                        auto-mode-alist))
 
-;;; backup files
-(setq make-backup-files t
-      version-control 'never
-      backup-by-copying-when-linked t)
 
 ;;; bbdb & bbdb-vcard-export - removed, use google/apple contacts etc.
 
