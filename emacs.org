@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-05-22 +1000
+#+DATE: 2024-05-24 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -237,6 +237,7 @@ this particular repeat mode or =C-g=.
     (openwith-mode)
     )
 #+end_src
+
 * Sessions and histories
 
 #+begin_src emacs-lisp
@@ -357,7 +358,7 @@ different fonts are determined through trial and error. Note:
     (load-theme 'solarized-gruvbox-dark t))
 #+end_src
 
-* Read & write files
+* Files and directories
 
 ** Auto revert-buffer
 
@@ -406,6 +407,21 @@ others who use a different timestamp format, then the timestamps will not be
 updated. It is recommended to set timestamp format as a file local variable. Below is an example:
 #+begin_src org :tangle no
   # -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+#+end_src
+
+** Directories
+#+begin_src emacs-lisp
+  (use-package dired-x                    ; built-in package
+    :custom
+    (dired-recursive-copies 'top)
+    (dired-recursive-deletes 'top)
+    ;; On macOS, most of time, just let `open' determine the correct application.
+    (dired-guess-shell-alist-user '(("\\.\\(\\m4a\\|mp4\\)\\'" "open")
+                                    ))
+    ;; `dired-omit-mode' hides all dot files, like `ls'
+    (dired-omit-files "\\`[.#].*")
+    (dired-kill-when-opening-new-dired-buffer nil)
+    )
 #+end_src
 
 * Basic auto typing
@@ -1319,17 +1335,6 @@ tmux's buffer"
 ;;; default major mode
 ;; (setq default-major-mode 'text-mode)
 
-
-;;; dired etc.
-(setq dired-recursive-copies 'top dired-recursive-deletes 'top)
-(require 'dired-x)
-(setq-default dired-omit-files-p t)
-(setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
-;; guess of '!' action
-(add-to-list 'dired-guess-shell-alist-user
-             (list "\\.\\(avi\\|mkv\\|mpg\\|rmvb\\|rm\\)\\'" "mplayer"))
-(add-to-list 'dired-guess-shell-alist-user (list "\\.\\(rar\\)\\'" "7z x"))
-(when (require 'dired-details nil t) (dired-details-install))
 
 ;;; ediff
 (setq
