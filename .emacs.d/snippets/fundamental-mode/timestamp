@@ -2,15 +2,16 @@
 # key: ts
 # name: file mode and timestamp
 
-# Note: Insert the string and comment it in a tmp buffer and the copy it into
+# Insert the string and comment it in a tmp buffer and the copy it into
 # the current buffer. This is to avoid the warning 'modified buffer in a
 # backquote expression'.
 
 # --
 `(let* ((mode major-mode))
    (with-temp-buffer
-     (insert (format "Created: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d"))
-             (format "Modified: >\n"))
+     (insert "-*- time-stamp-pattern:\"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$\" -*-\n"
+             (format "Created: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d"))
+             (format "Updated: \n"))
      (funcall mode)
      (comment-region (point-min) (point-max))
      (buffer-string)))`

@@ -2,9 +2,8 @@
 # key: copyleft
 # name: Copy-left
 
-# Note: manipulate the content in a tmp buffer first and the copy it to the
-# designated buffer. This is avoid the warning 'modified buffer in a backquote
-# expression'.
+# Manipulate the content in a tmp buffer first and the copy it to the designated
+# buffer. This is to avoid the warning 'modified buffer in a backquote expression'.
 
 # --
 `(let ((mode major-mode))
