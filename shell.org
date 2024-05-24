@@ -11,6 +11,7 @@
 :END:
 
 ** Environment variables
+*** OSX specific
 #+begin_src bash
 # For OS X homebrew commands
 PATH="/opt/homebrew/bin:$PATH"
@@ -19,16 +20,21 @@ MANPATH=/opt/homebrew/share/man:$MANPATH
 
 # For OS X homebrew openssl
 PATH=/usr/local/opt/openssl@1.1/bin:$PATH
+#+end_src
 
+*** For ubuntu
+#+begin_src bash
+PATH="/snap/bin:$PATH"
+#+end_src
+
+*** Common
+#+begin_src bash
 export PATH=$HOME/.local/bin:$PATH
 export MANPATH=$HOME/.local/share/man:$MANPATH
 export INFOPATH=$HOME/.local/share/info:$INFOPATH
 export HISTCONTROL="ignoredups"
 export HISTFILESIZE=1000
 export HISTSIZE=500
-
-# For OS X java
-# remove JAVA_HOME etc., brew install openjdk and "ln -s" properly.
 
 # For golang
 export GOPATH=$HOME/golang
