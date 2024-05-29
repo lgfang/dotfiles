@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-05-25 +1000
+#+DATE: 2024-05-29 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -882,7 +882,7 @@ This is useful when you need to explain how to spell something over phone calls.
 ** Formatter
 
 Notes on =prettier=:
-- install the package *globally* (=-g=): =npm install -g prettier=.
+- Install the package *globally* (=-g=): =npm install -g prettier=.
 - One principle of prettier is to eliminate debates over formatting. Therefore,
   it's generally recommended to stick with the default settings. But, to stop
   =yamllint= from complaining "too many spaces inside braces", add
@@ -1122,10 +1122,10 @@ This function works is based on treesit (=json-ts-mode=)
 #+begin_src emacs-lisp
   (use-package yaml-ts-mode)
 #+end_src
-** COMMENT YAML pro
+** YAML pro
 #+begin_src emacs-lisp
   (use-package yaml-pro
-    :hook (yaml-ts-mode . yaml-pro-ts-mode)
+    :hook ((yaml-ts-mode . yaml-pro-ts-mode))
   )
 #+end_src
 Among the features, it provides the two most useful features when reading large YAML files
