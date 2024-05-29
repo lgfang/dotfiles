@@ -57,7 +57,7 @@ export GOPATH=$HOME/golang
 :header-args:bash: :tangle ~/.bashrc
 :END:
 
-** To migrate
+** Source global settings
 #+begin_src bash
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -66,20 +66,39 @@ export GOPATH=$HOME/golang
 if [ -f /etc/bashrc ]; then
     source /etc/bashrc
 fi
+#+end_src
 
-#* tty
+** TTY
 
-#TERM=dtterm
-stty -ixon        # Disable flow control, i.e. ^s "freeze screen" and ^q resume
-stty erase ^?     # kill ^u intr ^c eof ^d stop ^s
-set -o ignoreeof  # do not logout when "ctrl + D pressed"
-set -o emacs
-# For some old machines
-# set -o vi                   # emacs style does not work well
-# set -o viraw                # for auto-completion of dirs
+*** keys
 
-export EDITOR=vi
+#+begin_src bash
+  stty -ixon        # Disable flow control, i.e. ^s "freeze screen" and ^q resume
+  stty erase ^?     # Kill ^u intr ^c eof ^d stop ^s
+  set -o ignoreeof  # Do not logout when "ctrl + D pressed"
+  set -o emacs      # Emacs style hotkeys
+  export EDITOR=vi
+#+end_src
 
+*** colors
+
+#+begin_src bash
+  TERM=xterm-256color
+  export TERM
+  COLORTERM=truecolor             # for remote hosts
+  export COLORTERM
+#+end_src
+
+Nowadays, =xterm-256= has become a "fall-back" solution. Many color themes
+demand "true color" support.
+
+Explicit setting =COLORTERM= to =truecolor= on the remote hosts otherwise SSH
+sessions to them won't use true color, which will causing Emacs color themes to
+appear different (ugly) than they do in local sessions. See [[https://www.gnu.org/software/emacs/manual/html_node/efaq/Colors-on-a-TTY.html][Colors on a TTY]] for
+more information.
+
+** To migrate
+#+begin_src bash
 #* Shell options
 # command history related
 shopt -s histappend
