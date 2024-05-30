@@ -787,6 +787,33 @@ This is useful when you need to explain how to spell something over phone calls.
 
 #+end_src
 
+** Webjump
+
+This provides the functionality similar to [[file:~/mynotes/utils/apple.org::*Define Chrome site search shortcuts][Chrome site search shortcuts]].
+#+begin_src emacs-lisp
+  (use-package webjump                    ; built-in package
+    :bind (:map global-map ("C-c j" . webjump))
+    :custom
+    (webjump-sites '(
+                     ("google"
+                      . [simple-query "www.google.com"
+                                      "https://www.google.com/search?q="
+                                      ""])
+                     ))
+    )
+#+end_src
+
+While Webjump is not necessarily more convenient than Chrome site search
+shortcuts, it provides more flexibility.
+- My webjump work flow
+  1. C-c j :: run webjump
+  2. Type in or select "jira ticket" + press enter
+  3. Type in ticket number + enter
+- My chrome site search shortcut work flow
+  1. Cmd-9 :: go to Chrome
+  2. Type in "jira" + space :: trigger the site search shortcut
+  3. Type in ticket number + enter
+
 ** World clock
 #+begin_src emacs-lisp
   (use-package time                       ; built-in package
