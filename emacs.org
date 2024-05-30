@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-05-29 +1000
+#+DATE: 2024-05-31 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -41,6 +41,22 @@ of tangling, it generates a timestamp may be referred to by other blocks.
 #+end_src
 
 * Bootstrap
+
+** Profile Emacs start time
+
+It is fun to see how long each package takes to load and optimize if possible.
+Hence, I use the following configuration.
+#+begin_src emacs-lisp
+  (use-package use-package-core
+    :custom
+    (use-package-compute-statistics t)
+    )
+#+end_src
+
+Run =emacs --no-desktop= to ensure not opening any previous files. Then run the
+following commands to see the statistics:
+- =M-x use-package-report=
+- =M-x emacs-init-time=
 
 ** Start up screen
 #+begin_src emacs-lisp
@@ -93,7 +109,7 @@ related configurations together.
 
 * Language environment and coding system
 
-Set terminal coding system to utf-8 explictly to display unicode chars
+Set terminal coding system to utf-8 explicitly to display unicode chars
 (including emojis/Chinese chars) correctly.
 
 This block is needed only when utf-8 is supported but Emacs does not detect and
@@ -659,7 +675,9 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 
 * Kubernetes
 #+begin_src emacs-lisp
-(use-package kubel)
+  (use-package kubel
+    :defer t
+    )
 #+end_src
 
 The packages works with limited privileges. Frequently used hotkeys
@@ -903,7 +921,9 @@ Notes on =prettier=:
 
 Works very well out of box without any configuration.
 #+begin_src emacs-lisp
-  (use-package eglot)
+  (use-package eglot
+    :defer t
+    )
 #+end_src
 
 *** Note for MacOS
@@ -965,6 +985,7 @@ copilot-login=.
 ** magit
 #+begin_src emacs-lisp
   (use-package magit
+    :defer t
     :custom (magit-log-margin-show-committer-date t)
     )
 #+end_src
