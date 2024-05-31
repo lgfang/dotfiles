@@ -633,7 +633,7 @@ No configuration is needed. Add this block just to remind myself the command nam
     ;; ;; manually set the face if desired ("gray20" suits dark themes)
     ;; (set-face-background 'highlight-indentation-face "gray20")
 
-    :hook (((python-mode python-ts-mode) . highlight-indentation-mode)
+    :hook (((python-mode python-ts-mode) . highlight-indentation-current-column-mode)
            ((yaml-mode yaml-ts-mode) . highlight-indentation-current-column-mode)
            )
     )
