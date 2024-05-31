@@ -236,6 +236,15 @@ this particular repeat mode or =C-g=.
     )
 #+end_src
 
+** Embark
+
+#+begin_src emacs-lisp
+  (use-package embark
+    :defer t
+    :bind (:map global-map ("C-x ." . embark-act))
+    )
+  (use-package embark-consult)
+#+end_src
 
 * Shortcuts to files and links
 
