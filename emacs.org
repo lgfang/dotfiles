@@ -1183,6 +1183,26 @@ This function works is based on treesit (=json-ts-mode=)
     )
 #+end_src
 
+* RFC
+#+begin_src emacs-lisp
+  (use-package rfc-mode
+    :defer t
+    :custom
+    ;; ffap tries to find RFCs in these directories before giving a URL
+    (ffap-rfc-directories '("~/projects/rfc"))
+    ;; ffap no longer downloads RFCs, `rfc-mode-read` downloads RFC to this
+    ;; directory.
+    (rfc-mode-directory "~/projects/rfc")
+    )
+#+end_src
+- g :: go to section
+  - Note: it is *not* a =rfc-mode= issue that this (and imenu) does not work for
+    some RFCs, such as RFC-3262. The issue lies with the RFCs themselves: they
+    lack periods (.) after section numbers.
+- n/p :: next/previous section
+- PageDown/PageUp :: previous/next page
+- TODO: u/d :: one level up/one level down
+
 * YAML
 ** Tree sitter major mode
 #+begin_src emacs-lisp
@@ -1690,17 +1710,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 ;;; Always end a file with a newline
 (setq require-final-newline t)
 
-;;; rfc
-(add-to-list 'auto-mode-alist
-             '("/\\(rfc[0-9]+\\|draft-.+\\)\\.txt\\(\\.gz\\)?\\'"
-               . rfcview-mode))
-;; so far this one renders RFCs best. But no longer available online(?)
-(autoload 'rfcview-mode "rfcview")
-;; ffap tries to find RFCs in these directories before giving a URL
-(setq ffap-rfc-directories '("~/projects/rfc"))
-;; ffap no longer downloads RFCs, `rfc-mode-read` downloads the RFC at point to
-;; this directory.
-(setq rfc-mode-directory "~/projects/rfc")
 
 ;;; rnc mode - nxml mode uses rnc files
 (add-to-list 'auto-mode-alist '("\\.rnc\\'" . rnc-mode))
