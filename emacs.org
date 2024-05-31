@@ -279,10 +279,13 @@ This provides the functionality similar to [[file:~/mynotes/utils/apple.org::*De
   (use-package webjump                    ; built-in package
     :bind (:map global-map ("C-c j" . webjump))
     :custom
-    (webjump-sites '(
-                     ("google"
+    (webjump-sites '(("google"
                       . [simple-query "www.google.com"
                                       "https://www.google.com/search?q="
+                                      ""])
+                     ("dict.cn"
+                      . [simple-query "https://dict.cn/"
+                                      "https://dict.cn/search?q="
                                       ""])
                      ))
     )
@@ -806,6 +809,26 @@ The packages works with limited privileges. Frequently used hotkeys
                                     ))
     )
 #+end_src
+
+** COMMENT Dictionary
+#+begin_src emacs-lisp
+  (use-package sdcv
+    :defer t
+    :custom
+    (sdcv-dictionary-simple-list '("牛津现代英汉双解词典"
+                                   "朗道英汉字典5.0"
+                                   "朗道汉英字典5.0"
+                                   ))
+    (sdcv-dictionary-complete-list nil)   ; use all available dicts
+    )
+#+end_src
+
+In addition to package install scdv, we need to
+- Install the sdcv command.
+- Download dictionaries to =~/.stardict/=.
+
+Maybe not worth the effort. Just configure webjump to an online dictionary. For
+Chinese-English, try dict.cn.
 
 ** Spelling alphabet
 
@@ -1729,16 +1752,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 
 
 (setq scroll-margin 0 scroll-conservatively 100) ;  scroll-step ?
-
-(when (require 'sdcv nil t)
-  (setq sdcv-dictionary-simple-list
-        '(
-          "牛津现代英汉双解词典"
-          "朗道英汉字典5.0"
-          "朗道汉英字典5.0"
-          )
-        sdcv-dictionary-complete-list nil ; use all available dicts
-        ))
 
 ;;; selective display
 (defun lgfang-toggle-selective-display()
