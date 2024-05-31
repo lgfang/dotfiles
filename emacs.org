@@ -650,6 +650,22 @@ No configuration is needed. Add this block just to remind myself the command nam
     )
 #+end_src
 
+** Highlight current line
+
+Normally unnecessary, add this section just to remind myself the command names
+in case they are needed.
+#+begin_src emacs-lisp
+  (use-package hl-line                    ; built-in
+    :defer t
+    :commands global-hl-line-mode hl-line-mode
+    )
+#+end_src
+
+NOTE: this package, along with similar ones such as beacon, only updates the
+*active* window. This means that if an action is performed in the current window
+that moves the cursor in another window, the visual indicator of the current
+line of the other window (inactive) will not be updated until you switch to it.
+
 ** Minimap
 
 #+begin_src emacs-lisp
