@@ -236,6 +236,24 @@ this particular repeat mode or =C-g=.
     )
 #+end_src
 
+
+* Shortcuts to files and links
+
+** ffap
+#+begin_src emacs-lisp
+  (use-package ffap                       ; built-in
+    :defer t
+    :bind (:map global-map ("C-x C-f" . ffap))
+    :config
+    ;; My extensions to ffap jira/sfsc tickets. Remember to define my-employer in
+    ;; my-confidential.el
+    (defun ffap-jira (name) ; ffap HELP-12345 etc. opens corresponding jira ticket
+      (let ((company (if (boundp 'my-employer) my-employer "example")))
+        (format "https://jira.%s.org/browse/%s" company name)))
+    (add-to-list 'ffap-alist '("\\`\\(HELP\\|SERVER\\)-[0-9]+\\'" . ffap-jira))
+    )
+#+end_src
+
 ** Openwith mode
 #+begin_src emacs-lisp
   (use-package openwith
@@ -254,20 +272,32 @@ this particular repeat mode or =C-g=.
     )
 #+end_src
 
-** ffap
+** Webjump
+
+This provides the functionality similar to [[file:~/mynotes/utils/apple.org::*Define Chrome site search shortcuts][Chrome site search shortcuts]].
 #+begin_src emacs-lisp
-  (use-package ffap                       ; built-in
-    :defer t
-    :bind (:map global-map ("C-x C-f" . ffap))
-    :config
-    ;; My extensions to ffap jira/sfsc tickets. Remember to define my-employer in
-    ;; my-confidential.el
-    (defun ffap-jira (name) ; ffap HELP-12345 etc. opens corresponding jira ticket
-      (let ((company (if (boundp 'my-employer) my-employer "example")))
-        (format "https://jira.%s.org/browse/%s" company name)))
-    (add-to-list 'ffap-alist '("\\`\\(HELP\\|SERVER\\)-[0-9]+\\'" . ffap-jira))
+  (use-package webjump                    ; built-in package
+    :bind (:map global-map ("C-c j" . webjump))
+    :custom
+    (webjump-sites '(
+                     ("google"
+                      . [simple-query "www.google.com"
+                                      "https://www.google.com/search?q="
+                                      ""])
+                     ))
     )
 #+end_src
+
+While Webjump is not necessarily more convenient than Chrome site search
+shortcuts, it provides more flexibility.
+- My webjump work flow
+  1. C-c j :: run webjump
+  2. Type in or select "jira ticket" + press enter
+  3. Type in ticket number + enter
+- My chrome site search shortcut work flow
+  1. Cmd-9 Cmd-l :: go to Chrome URL address bar
+  2. Type in "jira" + space :: trigger the site search shortcut
+  3. Type in ticket number + enter
 
 * Sessions and histories
 
@@ -801,33 +831,6 @@ This is useful when you need to explain how to spell something over phone calls.
     )
 
 #+end_src
-
-** Webjump
-
-This provides the functionality similar to [[file:~/mynotes/utils/apple.org::*Define Chrome site search shortcuts][Chrome site search shortcuts]].
-#+begin_src emacs-lisp
-  (use-package webjump                    ; built-in package
-    :bind (:map global-map ("C-c j" . webjump))
-    :custom
-    (webjump-sites '(
-                     ("google"
-                      . [simple-query "www.google.com"
-                                      "https://www.google.com/search?q="
-                                      ""])
-                     ))
-    )
-#+end_src
-
-While Webjump is not necessarily more convenient than Chrome site search
-shortcuts, it provides more flexibility.
-- My webjump work flow
-  1. C-c j :: run webjump
-  2. Type in or select "jira ticket" + press enter
-  3. Type in ticket number + enter
-- My chrome site search shortcut work flow
-  1. Cmd-9 :: go to Chrome
-  2. Type in "jira" + space :: trigger the site search shortcut
-  3. Type in ticket number + enter
 
 ** World clock
 #+begin_src emacs-lisp
