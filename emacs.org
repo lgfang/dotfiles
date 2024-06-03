@@ -746,6 +746,22 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
     )
 #+end_src
 
+* Terminal/shell
+** Vterm
+#+begin_src emacs-lisp
+  (use-package vterm
+    :defer t
+    )
+#+end_src
+Emacs as a terminal multiplexer:
+1. Start Emacs daemon.
+2. Run vterm (=M-x vterm=) in emacs clients.
+
+Why: consistency in
+- approaches to switch context (i.e. windows/panes)
+- approaches to manage windows/panes.
+- color themes
+
 * Kubernetes
 #+begin_src emacs-lisp
   (use-package kubel
