@@ -31,3 +31,5 @@ senstive data in the =mine= branch without the concern of that branch being
 accidentally pushed.
 
 For the details, see my git config [[file:./git.org::* Block pushing certain branches][Block pushing certain branches]].
+
+* TODO: Why Configuration in Org Mode

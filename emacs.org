@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-05-31 +1000
+#+DATE: 2024-06-03 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -432,7 +432,7 @@ different fonts are determined through trial and error. Note:
   ;;   )
 
   (use-package solarized-theme
-    :init
+    :config
     (load-theme 'solarized-gruvbox-dark t)
     )
 #+end_src
