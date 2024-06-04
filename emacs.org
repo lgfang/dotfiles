@@ -144,6 +144,18 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
 
 * Interaction convenience
 
+** mouse
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :custom
+    (mouse-yank-at-point t)
+    (mouse-drag-copy-region t)
+    :config
+    (when (not window-system) (xterm-mouse-mode 1)) ;use mouse in xterm
+    )
+#+end_src
+
 ** y-or-n
 #+begin_src emacs-lisp
   (use-package emacs
@@ -888,6 +900,7 @@ This is useful when you need to explain how to spell something over phone calls.
 ** Weather
 #+begin_src emacs-lisp
   (use-package wttrin
+    :defer t
     :defines wttrin-default-locations
     :custom
     (wttrin-default-locations '("Sydney, NSW"))
@@ -1221,6 +1234,7 @@ This function works is based on treesit (=json-ts-mode=)
 
 #+begin_src emacs-lisp
   (use-package markdown-mode
+    :defer t
     :custom (markdown-command "pandoc")
     )
 #+end_src
@@ -1688,11 +1702,6 @@ lgfang-hif-toggle-block"
     (setq-default mode-line-format (copy-tree mode-line-format-original))))
 (shorten-mode-line)
 
-;;; mouse
-(setq mouse-yank-at-point t             ; instead of at mouse cursor
-      mouse-drag-copy-region t)
-
-(when (not window-system) (xterm-mouse-mode 1)) ;use mouse in xterm
 
 ;;; nXML mode
 (add-to-list 'auto-mode-alist
