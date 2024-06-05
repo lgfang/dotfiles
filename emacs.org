@@ -228,7 +228,7 @@ this particular repeat mode or =C-g=.
 
   (use-package orderless
     :defer t
-    :custom (completion-styles '(orderless flex substring basic))
+    :custom (completion-styles '(basic substring flex orderless))
     )
 
   (use-package marginalia
@@ -246,6 +246,10 @@ this particular repeat mode or =C-g=.
                 )
     )
 #+end_src
+
+Other useful consult commands:
+- =M-x consult-find= :: when you are certain that a file is within the current
+  directory or project, but unsure about its specific sub-directly.
 
 ** Embark
 
@@ -1143,6 +1147,7 @@ add content similar to the following to the emacs directory local variable file
 #+end_src
 
 ** git-link
+
 #+begin_src emacs-lisp
   (use-package git-link
     :custom
@@ -1150,6 +1155,7 @@ add content similar to the following to the emacs directory local variable file
     (git-link-use-commit t)
     )
 #+end_src
+- "Use commit" equals "Copy permalink" in corresponding github page (?)
 
 * ANSI color code
 
