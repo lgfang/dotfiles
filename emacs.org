@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-06-03 +1000
+#+DATE: 2024-06-05 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -116,9 +116,8 @@ This block is needed only when utf-8 is supported but Emacs does not detect and
 set it correctly, due to wrong shell locale etc. In such situation, try the
 combinations of these settings until you find one that works.
 
-Therefore, *this block is not
-tangled by default. When necessary, delete =:tangle no= from this block header
-to tangle it.
+Therefore, this block is *not* tangled by default. When necessary, delete
+=:tangle no= from this block header to tangle it.
 
 #+begin_src emacs-lisp :tangle no
   (set-terminal-coding-system 'utf-8)
@@ -696,6 +695,18 @@ line of the other window (inactive) will not be updated until you switch to it.
   )
 #+end_src
 
+* Kubernetes
+#+begin_src emacs-lisp
+  (use-package kubel
+    :defer t
+    )
+#+end_src
+
+The packages works with limited privileges. Frequently used hotkeys
+- R :: choose resource
+- s :: set label selector
+- ? :: help (dispatch list)
+
 * Org mode
 
 ** Automatically tangle configurations
@@ -773,18 +784,6 @@ Why: consistency in
 - approaches to switch context (i.e. windows/panes)
 - approaches to manage windows/panes.
 - color themes
-
-* Kubernetes
-#+begin_src emacs-lisp
-  (use-package kubel
-    :defer t
-    )
-#+end_src
-
-The packages works with limited privileges. Frequently used hotkeys
-- R :: choose resource
-- s :: set label selector
-- ? :: help (dispatch list)
 
 * Utilities
 
@@ -980,7 +979,6 @@ This is useful when you need to explain how to spell something over phone calls.
        (cmake-mode . cmake-ts-mode)
        (conf-toml-mode . toml-ts-mode)
        (js-json-mode . json-ts-mode)
-       (go-mode . go-ts-mode)
        (python-mode . python-ts-mode)
        (yaml-mode . yaml-ts-mode)
        ))
@@ -1166,6 +1164,13 @@ add content similar to the following to the emacs directory local variable file
     )
 #+end_src
 
+* Golang
+
+No extra set up needed except for installing [[https://github.com/golang/tools/blob/master/gopls/README.md][gopls]] (the official language server for golang).
+- LSP: eglot + gopls
+- Formatter: =eglot-format=
+- Flymake: eglot as the backend
+
 * JSON, JSON Lines
 
 ** JSON ts mode
@@ -1251,6 +1256,7 @@ This function works is based on treesit (=json-ts-mode=)
     )
 
   (use-package flymake-ruff
+    ;; in addition to LSP
     :after flymake
     :hook ((python-mode python-ts-mode) . flymake-ruff-load)
     )
@@ -1260,6 +1266,8 @@ This function works is based on treesit (=json-ts-mode=)
     :hook ((python-mode python-ts-mode) . ruff-format-on-save-mode)
     )
 #+end_src
+
+- LSP: pyright
 
 * RFC
 #+begin_src emacs-lisp
@@ -1570,10 +1578,6 @@ tmux's buffer"
 
 ;; gdb
 ;; (setq gdb-many-windows t)
-
-;;; golang
-(add-hook 'go-mode-hook
-          (lambda() (add-hook 'before-save-hook 'gofmt-before-save)))
 
 ;;; hide-ifdef-mode settings
 (require 'hideif)
