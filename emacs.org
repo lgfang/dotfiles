@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-06-06 +1000
+#+DATE: 2024-06-07 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -528,180 +528,6 @@ updated. It is recommended to set timestamp format as a file local variable. Bel
     )
 #+end_src
 
-* Encryption
-
-** Encrypt files with passwords: ccrypt
-
-Automatically encrypt/decrypt =.cpt= files using =ccrypt=.
-
-#+begin_src emacs-lisp
-  (use-package ps-ccrypt
-    :load-path my-downloads
-    ;; remember to "brew install ccrypt".
-    )
-#+end_src
-
-Note: while this one is simple and straightforward, I'd recommend using GPG
-instead.
-
-** Encrypt files using keys: gnugpg
-
-Automatically encrypt/decrypt =.gpg= files using gnupg. Need to
-- Install gnupg (=brew install gpg= on MacOS)
-- Create/import gpg keys.
-*IMPORTANT:* remember to export and backup keys.
-
-Apart from the above I need no explicit Emacs configuration in this regard yet.
-
-*** Why
-
-I prefer keys (this) than passwords (i.e. ccrypt) for the use case of protecting
-a number of local files on my laptop.
-
-- Pros:
-
-  + Easier to change the password: instead of re-encrypt all the files using the
-    new password, you only need to re-encrypt the key file.
-
-  + Enables network backup: it is rather safe to backup your data to network so
-    long as you *do not upload the key file as well*.
-
-  + Easier to dispose data: similarly, dispose your device is safer as
-    deleting/overwriting the key file ensure the data is not accessible even if
-    the disk isn't properly formatted.
-
-  + Encrypting new files/data does not require password: encrypt is done using
-    the public key.
-
-  + Enables others to encrypt and send data to you online.
-
-  + Can attach comments and notations to keys as reminders of the theirs
-    usages/passphrases.
-
-- Cons:
-  - One extra thing (the keys) to maintain. Must remember to backup and update
-    when a key is edited (say changed passphrase).
-  - =gpg= does not support in place file encryption as =ccrypt= does.
-
-*** Manage gpg keys (outside Emacs)
-
-- Show existing: =gpg --list-keys=
-- Generate: =gpg --full-gen-key=, then follow the screen prompts.
-  #+begin_src text
-    $ gpg --full-generate-key
-    gpg (GnuPG) 2.4.5; Copyright (C) 2024 g10 Code GmbH
-    This is free software: you are free to change and redistribute it.
-    There is NO WARRANTY, to the extent permitted by law.
-
-    Please select what kind of key you want:
-       (1) RSA and RSA
-       (2) DSA and Elgamal
-       (3) DSA (sign only)
-       (4) RSA (sign only)
-       (9) ECC (sign and encrypt) *default*
-      (10) ECC (sign only)
-      (14) Existing key from card
-    Your selection? 1
-    RSA keys may be between 1024 and 4096 bits long.
-    What keysize do you want? (3072) 4096
-    Requested keysize is 4096 bits
-    Please specify how long the key should be valid.
-             0 = key does not expire
-          <n>  = key expires in n days
-          <n>w = key expires in n weeks
-          <n>m = key expires in n months
-          <n>y = key expires in n years
-    Key is valid for? (0) 0
-    Key does not expire at all
-    Is this correct? (y/N) y
-
-    GnuPG needs to construct a user ID to identify your key.
-
-    Real name: Fang lu***
-    Email address: fang.lu***@gmail
-    Comment: easy
-    You selected this USER-ID:
-        "Fang lu*** (easy) <fang.lu**@gmail>"
-
-    Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? o
-    ...
-    public and secret key created and signed.
-
-    pub   rsa4096 2024-06-05 [SC]
-          1EAE54292D6D1495679106947AF7AA621A22738C
-    uid                      Fang lu*** (easy) <fang.lu***@gmail>
-    sub   rsa4096 2024-06-05 [E]
-  #+end_src
-- Change passphrase: =gpg --edit-key "easy" passwd=
-- Export: =gpg --armor --export-secret-keys > my-keys.asc=
-- Import: =gpg --import my-keys.asc=, then edit trust
-
-*** Create, read, write gpg files
-
-To create a such file:
-1. Switch to a *non-existent* buffer "test.txt.gpg".
-2. Type something or insert a file/buffer into this buffer.
-3. Try save, you'll be prompted to select a key.
-   1. Move cursor to the designated key.
-   2. Press "m" to mark
-   3. Move cursor to "OK" and enter.
-
-Later on, when Emacs opens this file, it will automatically encrypt/decrypt the
-file. You only need to provide the passphrase when prompted.
-
-*** Encrypt region
-
-- =M-x epa-encrypt-region=
-- =M-x epa-decrypt-region=
-
-*** Cache passphrase
-
-By default, a gpg agent is started. Hence you needn't type in password every
-time a password is needed.
-
-** Store credentials: auth source
-
-#+begin_src emacs-lisp
-  (use-package auth-source                ; built-in
-    :defer t
-    :custom
-    (auth-sources '("~/.authinfo.gpg"))
-    )
-#+end_src
-
-This allows you to store multiple credentials in a few files and query them
-easily.
-
-*** Example auth info file (gpg encrypted)
-#+begin_src authinfo
-  machine atlas login api_pub_key password api-private-key-xxx
-  machine some_host login username password pa$$w0rd
-#+end_src
-
-*** Retrieve and use credentials
-Below is an example of how to do that in an org file (with org-babel).
-
-NOTE: We must =(funcall secret)= to get the actual secret string.
-
-#+begin_src org
-  ,#+name: my-token
-  ,#+begin_src emacs-lisp
-    (let* ((credential (car (auth-source-search :host "atlas")))
-           (user (plist-get credential :user))
-           (secret (plist-get credential :secret))
-           )
-    (format "%s:%s" user (funcall secret)))
-  ,#+end_src
-
-  ,#+begin_src bash :results raw :var token=my-token()
-    echo "$token"
-  ,#+end_src
-#+end_src
-
-** References
-- blog: [[https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources][Keeping Secrets in Emacs with GnuPG and Auth Sources]]
-- youtube: [[https://www.youtube.com/watch?v=nZ_T7Q49B8Y][How to Encrypt Your Passwords with Emacs]]
-
 * Basic auto typing
 
 ** Whitespace
@@ -872,6 +698,181 @@ line of the other window (inactive) will not be updated until you switch to it.
     :custom (minimap-window-location 'right)
   )
 #+end_src
+
+* Encryption and credential management
+
+** Encrypt files with passwords: ccrypt
+
+Automatically encrypt/decrypt =.cpt= files using =ccrypt=.
+
+#+begin_src emacs-lisp
+  (use-package ps-ccrypt
+    :load-path my-downloads
+    ;; remember to "brew install ccrypt".
+    )
+#+end_src
+
+Note: while this one is simple and straightforward, I'd recommend using GPG
+instead.
+
+** Encrypt files using keys: gnugpg
+
+Automatically encrypt/decrypt =.gpg= files using gnupg. Need to
+- Install gnupg (=brew install gpg= on MacOS)
+- Create/import gpg keys.
+*IMPORTANT:* remember to export and backup keys.
+
+Apart from the above I need no explicit Emacs configuration in this regard
+*yet*.
+
+*** Why
+
+I prefer keys (this) than passwords (i.e. ccrypt) for the use case of protecting
+a number of local files on my laptop.
+
+- Pros:
+
+  + Easier to change the password: instead of re-encrypt all the files using the
+    new password, you only need to re-encrypt the key file.
+
+  + Enables network backup: it is rather safe to backup your data to network so
+    long as you *do not upload the key file as well*.
+
+  + Easier to dispose data: similarly, dispose your device is safer as
+    deleting/overwriting the key file ensure the data is not accessible even if
+    the disk isn't properly formatted.
+
+  + Encrypting new files/data does not require password: encrypt is done using
+    the public key.
+
+  + Enables others to encrypt and send data to you online.
+
+  + Can attach comments and notations to keys as reminders of the theirs
+    usages/passphrases.
+
+- Cons:
+  - One extra thing (the keys) to maintain. Must remember to backup and update
+    when a key is edited (say changed passphrase).
+  - =gpg= does not support in place file encryption as =ccrypt= does.
+
+*** Manage gpg keys (outside Emacs)
+
+- Show existing: =gpg --list-keys=
+- Generate: =gpg --full-gen-key=, then follow the screen prompts.
+  #+begin_src text
+    $ gpg --full-generate-key
+    gpg (GnuPG) 2.4.5; Copyright (C) 2024 g10 Code GmbH
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.
+
+    Please select what kind of key you want:
+       (1) RSA and RSA
+       (2) DSA and Elgamal
+       (3) DSA (sign only)
+       (4) RSA (sign only)
+       (9) ECC (sign and encrypt) *default*
+      (10) ECC (sign only)
+      (14) Existing key from card
+    Your selection? 1
+    RSA keys may be between 1024 and 4096 bits long.
+    What keysize do you want? (3072) 4096
+    Requested keysize is 4096 bits
+    Please specify how long the key should be valid.
+             0 = key does not expire
+          <n>  = key expires in n days
+          <n>w = key expires in n weeks
+          <n>m = key expires in n months
+          <n>y = key expires in n years
+    Key is valid for? (0) 0
+    Key does not expire at all
+    Is this correct? (y/N) y
+
+    GnuPG needs to construct a user ID to identify your key.
+
+    Real name: Fang lu***
+    Email address: fang.lu***@gmail
+    Comment: easy
+    You selected this USER-ID:
+        "Fang lu*** (easy) <fang.lu**@gmail>"
+
+    Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? o
+    ...
+    public and secret key created and signed.
+
+    pub   rsa4096 2024-06-05 [SC]
+          1EAE54292D6D1495679106947AF7AA621A22738C
+    uid                      Fang lu*** (easy) <fang.lu***@gmail>
+    sub   rsa4096 2024-06-05 [E]
+  #+end_src
+- Change passphrase: =gpg --edit-key "easy" passwd=
+- Export: =gpg --armor --export-secret-keys > my-keys.asc=
+- Import: =gpg --import my-keys.asc=, then edit trust
+
+*** Create, read, write gpg files
+
+To create a such file:
+1. Switch to a *non-existent* buffer "test.txt.gpg".
+2. Type something or insert a file/buffer into this buffer.
+3. Try save, you'll be prompted to select a key.
+   1. Move cursor to the designated key.
+   2. Press "m" to mark
+   3. Move cursor to "OK" and enter.
+
+Later on, when Emacs opens this file, it will automatically encrypt/decrypt the
+file. You only need to provide the passphrase when prompted.
+
+*** Encrypt region
+
+- =M-x epa-encrypt-region=
+- =M-x epa-decrypt-region=
+
+*** Cache passphrase
+
+By default, a gpg agent is started. Hence you needn't type in password every
+time a password is needed.
+
+** Store credentials: auth source
+
+#+begin_src emacs-lisp
+  (use-package auth-source                ; built-in
+    :defer t
+    :custom
+    (auth-sources '("~/.authinfo.gpg"))
+    )
+#+end_src
+
+This allows you to store multiple credentials in a few files and query them
+easily.
+
+*** Example auth info file (gpg encrypted)
+#+begin_src authinfo
+  machine atlas login api_pub_key password api-private-key-xxx
+  machine some_host login username password pa$$w0rd
+#+end_src
+
+*** Retrieve and use credentials
+Below is an example of how to do that in an org file (with org-babel).
+
+NOTE: We must =(funcall secret)= to get the actual secret string.
+
+#+begin_src org
+  ,#+name: my-token
+  ,#+begin_src emacs-lisp
+    (let* ((credential (car (auth-source-search :host "atlas")))
+           (user (plist-get credential :user))
+           (secret (plist-get credential :secret))
+           )
+    (format "%s:%s" user (funcall secret)))
+  ,#+end_src
+
+  ,#+begin_src bash :results raw :var token=my-token()
+    echo "$token"
+  ,#+end_src
+#+end_src
+
+** References
+- blog: [[https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources][Keeping Secrets in Emacs with GnuPG and Auth Sources]]
+- youtube: [[https://www.youtube.com/watch?v=nZ_T7Q49B8Y][How to Encrypt Your Passwords with Emacs]]
 
 * Kubernetes
 #+begin_src emacs-lisp
