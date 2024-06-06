@@ -300,22 +300,6 @@ according to modification time is good enough."
   (if (file-exists-p file) (nth 5 (file-attributes file))
     (error "No such file: \"%s\"" file)))
 
-;; enable ditaa and plantuml etc.
-(org-babel-do-load-languages 'org-babel-load-languages
-                             '((ditaa . t)
-                               (plantuml . t)
-                               (dot . t)
-                               (shell . t)
-                               ))
-;; don't ask before evaluating
-(defun my-org-confirm-babel-evaluate (lang body)
-  (not (or (string= lang "ditaa")
-           (string= lang "plantuml")
-           (string= lang "dot"))))
-
-(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate
-      org-ditaa-jar-path (concat my-extension-path "ditaa.jar")
-      org-plantuml-jar-path (concat my-extension-path "plantuml.jar"))
 
 (defun my-mark-comment ()
   "Mark the whole top level header as the active region.

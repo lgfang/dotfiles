@@ -917,7 +917,7 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 *Note*:
 - Remember to adjust =my-config-org-file= to point to your configuration file.
 
-** Org mode repeat map
+** Repeat map
 
 #+begin_src emacs-lisp
   (use-package org
@@ -930,7 +930,7 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
     )
 #+end_src
 
-** Org clock
+** Clock
 #+begin_src emacs-lisp
   (use-package org-clock
     :bind (:map global-map
@@ -939,11 +939,33 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
     )
 #+end_src
 
-** Org (GTD) Getting Things Done
+** Getting Things Done (GTD)
 #+begin_src emacs-lisp
   (use-package org-capture
     :bind (:map global-map
                 ("<f10>" . org-capture))
+    )
+#+end_src
+
+** Babel
+#+begin_src emacs-lisp
+  (use-package org
+    :custom
+    (org-ditaa-jar-path (concat my-downloads "ditaa.jar"))
+    (org-plantuml-jar-path (concat my-downloads "plantuml.jar"))
+    (org-babel-load-languages '((emacs-lisp . t)
+                                (shell . t)
+                                (ditaa . t)
+                                (plantuml . t)
+                                (dot . t)
+                                ))
+    :config
+    (defun my-org-confirm-babel-evaluate (lang body)
+      ;; Do not request confirmation for the following languages
+      (not (or (string= lang "ditaa")
+               (string= lang "plantuml")
+               (string= lang "dot"))))
+    (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
     )
 #+end_src
 
