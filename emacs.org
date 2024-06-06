@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-06-05 +1000
+#+DATE: 2024-06-06 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -659,7 +659,46 @@ file. You only need to provide the passphrase when prompted.
 By default, a gpg agent is started. Hence you needn't type in password every
 time a password is needed.
 
-*** References
+** Store credentials: auth source
+
+#+begin_src emacs-lisp
+  (use-package auth-source                ; built-in
+    :defer t
+    :custom
+    (auth-sources '("~/.authinfo.gpg"))
+    )
+#+end_src
+
+This allows you to store multiple credentials in a few files and query them
+easily.
+
+*** Example auth info file (gpg encrypted)
+#+begin_src authinfo
+  machine atlas login api_pub_key password api-private-key-xxx
+  machine some_host login username password pa$$w0rd
+#+end_src
+
+*** Retrieve and use credentials
+Below is an example of how to do that in an org file (with org-babel).
+
+NOTE: We must =(funcall secret)= to get the actual secret string.
+
+#+begin_src org
+  ,#+name: my-token
+  ,#+begin_src emacs-lisp
+    (let* ((credential (car (auth-source-search :host "atlas")))
+           (user (plist-get credential :user))
+           (secret (plist-get credential :secret))
+           )
+    (format "%s:%s" user (funcall secret)))
+  ,#+end_src
+
+  ,#+begin_src bash :results raw :var token=my-token()
+    echo "$token"
+  ,#+end_src
+#+end_src
+
+** References
 - blog: [[https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources][Keeping Secrets in Emacs with GnuPG and Auth Sources]]
 - youtube: [[https://www.youtube.com/watch?v=nZ_T7Q49B8Y][How to Encrypt Your Passwords with Emacs]]
 

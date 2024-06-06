@@ -305,6 +305,7 @@ according to modification time is good enough."
                              '((ditaa . t)
                                (plantuml . t)
                                (dot . t)
+                               (shell . t)
                                ))
 ;; don't ask before evaluating
 (defun my-org-confirm-babel-evaluate (lang body)
