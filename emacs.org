@@ -535,7 +535,7 @@ updated. It is recommended to set timestamp format as a file local variable. Bel
   (use-package emacs                      ; clean up tab, indent and whitespace
     :custom
     (tab-width 4)
-    (tab-stop-list nil)                   ; stops at every ‘tab-width’ columns
+    (tab-stop-list nil)                   ; stops at every `tab-width' columns
     (indent-tabs-mode nil)                ; space instead of <tab> for indentation
     :hook
     ((before-save . whitespace-cleanup))
@@ -699,6 +699,15 @@ line of the other window (inactive) will not be updated until you switch to it.
   )
 #+end_src
 
+* Accounting
+#+begin_src emacs-lisp
+  (use-package ledger-mode
+    :defer t
+    :custom
+    (ledger-report-use-strict t)
+    (ledger-reconcile-default-commodity "AUD")
+    )
+#+end_src
 * Encryption and credential management
 
 ** Encrypt files with passwords: ccrypt
