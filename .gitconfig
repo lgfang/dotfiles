@@ -51,3 +51,5 @@
 
 [apply]
     whitespace = warn
+[diff "gpg"]
+	textconv = gpg --no-tty --decrypt
