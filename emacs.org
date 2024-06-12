@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-06-07 +1000
+#+DATE: 2024-06-12 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1295,7 +1295,12 @@ copilot-login=.
                 ("C-e"       . copilot-accept-completion)
                 )
     :custom (copilot-log-max 50000)
-    :hook (python-ts-mode python)         ; try copilot completion with python.
+
+    ;; :hook (python-ts-mode python)
+
+    ;; Do *not* add it to hook, otherwise we may see the following error during
+    ;; Emacs start up: File mode specification error: (invalid-read-syntax \N{QUOTATION
+    ;; MARK} 54 32)
     )
 #+end_src
 
