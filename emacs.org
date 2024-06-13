@@ -815,9 +815,11 @@ a number of local files on my laptop.
   #+end_src
 - Change passphrase: =gpg --edit-key "easy" passwd=
 - Export: =gpg --armor --export-secret-keys > my-keys.asc=
-- Import: =gpg --import my-keys.asc=, then edit trust
+- Import: =gpg --import my-keys.asc=, *then edit trust*
 
-*** Create, read, write gpg files
+To encrypt multiple files: =gpg -r easy --encrypt-files file1 file2=
+
+*** Create, read, write gpg files in Emacs
 
 To create a such file:
 1. Switch to a *non-existent* buffer "test.txt.gpg".
@@ -990,10 +992,9 @@ Emacs as a terminal multiplexer:
 1. Start Emacs daemon.
 2. Run vterm (=M-x vterm=) in emacs clients.
 
-Why: consistency in
-- approaches to switch context (i.e. windows/panes)
-- approaches to manage windows/panes.
-- color themes
+Why:
+- Integrated window/pane management & navigation
+- Consistent color themes
 
 * Utilities
 
