@@ -1,9 +1,9 @@
-# -*-mode:org;coding:utf-8-*-
+# -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
 # Created:  Lungang Fang 2024-05-17
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-05-22 +1000
+#+DATE: 2024-06-14 +1000
 
 * bash_profile
 :PROPERTIES:
