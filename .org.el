@@ -215,13 +215,6 @@
 (add-to-list 'auto-mode-alist
              '("\\.\\(blog\\|org\\|lgf\\|tkt\\|gtd\\)$" . org-mode))
 
-;; Enable structure templates, i.e. type `< s TAB' to insert #+begin_src etc.
-(require 'org-tempo)
-(add-to-list 'org-structure-template-alist '("sb" . "src bash"))
-(add-to-list 'org-structure-template-alist '("sj" . "src javascript"))
-(add-to-list 'org-structure-template-alist '("st" . "src text"))
-(add-to-list 'org-structure-template-alist '("se" . "src emacs-lisp"))
-
 (add-hook 'remember-mode-hook 'org-remember-apply-template)
 
 (add-hook 'org-mode-hook

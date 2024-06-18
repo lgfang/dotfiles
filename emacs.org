@@ -942,6 +942,20 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
     )
 #+end_src
 
+** Structure templates
+I.e. type =<s= + =TAB= to insert =#+begin_src= etc.
+#+begin_src emacs-lisp
+  (use-package org-tempo
+    :config
+    (add-to-list 'org-structure-template-alist '("sb" . "src bash"))
+    (add-to-list 'org-structure-template-alist '("sj" . "src javascript"))
+    ;; yasnippet-snippets/snippets/org-mode/style uses "<st" as well, which
+    ;; overrides the one below. Modify that to "<sty" and then 'yas-reload-all"
+    (add-to-list 'org-structure-template-alist '("st" . "src text"))
+    (add-to-list 'org-structure-template-alist '("se" . "src emacs-lisp"))
+    )
+#+end_src
+
 ** Clock
 #+begin_src emacs-lisp
   (use-package org-clock
