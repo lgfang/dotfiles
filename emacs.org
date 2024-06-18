@@ -699,10 +699,13 @@ line of the other window (inactive) will not be updated until you switch to it.
   )
 #+end_src
 
-* Accounting
+* Finance bookkeeping
 #+begin_src emacs-lisp
   (use-package ledger-mode
-    :defer t
+    :bind
+    (:map ledger-mode-map
+          ("C-c ." . (lambda() (interactive)
+                       (insert (format-time-string "%Y-%m-%d")))))
     :custom
     (ledger-report-use-strict t)
     (ledger-reconcile-default-commodity "AUD")
