@@ -1410,9 +1410,14 @@ add content similar to the following to the emacs directory local variable file
     )
 #+end_src
 
+* Bash
+
+Language server: [[https://github.com/bash-lsp/bash-language-server][bash-language-server]]
+
 * Golang
 
-No extra set up needed except for installing [[https://github.com/golang/tools/blob/master/gopls/README.md][gopls]] (the official language server for golang).
+No extra set up needed except for installing [[https://github.com/golang/tools/blob/master/gopls/README.md][gopls]] (the official language server
+for golang).
 - LSP: eglot + gopls
 - Formatter: =eglot-format=
 - Flymake: eglot as the backend
@@ -2068,28 +2073,6 @@ selective-display"
 (require 'server)
 (when (not (server-running-p))
   (server-start))
-
-;;; sh-mode-hook. Note that mode for shell script is sh-mode, NOT shell-mode
-(setq my-sh-imenu-generic-expression
-      '((nil "^\\s-*\\(function\\s-+\\)?\\([A-Za-z_][A-Za-z_0-9]+\\)\\s-*()" 2)
-        (nil "^\\s-*function\\s-+\\([A-Za-z_][A-Za-z_0-9]+\\)" 1)))
-(add-hook 'sh-mode-hook
-          (lambda ()
-            (hs-minor-mode 1)
-            (setq imenu-generic-expression
-                  my-sh-imenu-generic-expression
-                  outline-regexp "# [*\\f]+")
-            (imenu-add-menubar-index)))
-
-;;; sh-mode, the mode for shell scripts
-(when (eq system-type 'gnu/linux)
-  (setq sh-alias-alist
-        '((csh . tcsh)
-          (ksh . ksh88)                 ; flycheck doesn't handle pdksh
-          (bash2 . bash)
-          (sh5 . sh))))
-
-;;; split horizontally if screen wide enough
 
 ;;; subword-mode
 (global-subword-mode)
