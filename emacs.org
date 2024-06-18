@@ -163,6 +163,18 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
     )
 #+end_src
 
+** comment dwim
+#+begin_src emacs-lisp
+  (defadvice comment-dwim (before lgfang-comment-wim activate compile)
+    "if neiter mark-active nor at end of line, comment current
+  line (by making the whole line an active region). This gets you a
+  really cool behavior :)."
+    (unless (or mark-active (looking-at "[ \t]*$"))
+      (goto-char (line-beginning-position))
+      (set-mark-command nil)
+      (goto-char (line-end-position))))
+#+end_src
+
 ** Ibuffer
 
 #+begin_src emacs-lisp
@@ -2181,131 +2193,6 @@ selective-display"
 
 ;;; ------ begin MyFunction ------
 
-(defadvice comment-dwim (before lgfang-comment-wim activate compile)
-  "if neiter mark-active nor at end of line, comment current
-line (by making the whole line an active region). This gets you a
-really cool behavior :)."
-  (unless (or mark-active (looking-at "[ \t]*$"))
-    (goto-char (line-beginning-position))
-    (set-mark-command nil)
-    (goto-char (line-end-position))))
-
-(defun lgfang-goto-page (pageNumber)
-  "RFCs in ascii format use traditional page
-delimiter (Ctrl-L). While Emacs Provides functions like
-forward-page,backward-page etc., it doesn't provide goto-page or
-sth alike. To go to certain page, I used to either go to the
-beginning of the buffer at first or calculate how many pages to
-be moved from current page at first. For me, that is a little
-boring. I think this function may help. P.S. You may want to give
-rfcview.el a try."
-
-  (interactive
-   (if (and current-prefix-arg (not (consp current-prefix-arg)))
-       (list (prefix-numeric-value current-prefix-arg))
-     ;; Look for a default, a number in the buffer at point.
-     (let* ((default
-              (save-excursion
-                (skip-chars-backward "0-9")
-                (if (looking-at "[0-9]")
-                    (buffer-substring-no-properties
-                     (point)
-                     (progn (skip-chars-forward "0-9") (point)))))))
-
-       (list (read-from-minibuffer
-              (format
-               (if default "Goto Page (%s): " "Goto Page: ") default)
-              nil nil t
-              'minibuffer-history
-              default)))))
-  (save-restriction
-    (widen)
-    (goto-char (point-min))
-    (forward-page (1- pageNumber))))
-
-(defun lgfang-insert-date ()
-  "Insert current date at point.  From Tijs van Bakel at
-newsgroup: gnu.emacs.help.  To customize format of date
-string,refer to format-time-string."
-  (interactive)
-  (insert (format-time-string "%Y-%m-%d")))
-
-;;; replace strings in parallel
-(defun lgfang-paralle-repl (replacement-alist)
-  "Replace pairs of strings to search/replace in parallel."
-  (interactive (list (batch-replace-strings-prompt)))
-  (if (region-active-p)
-      (let ((beg (region-beginning))
-            (end (region-end))
-            (case-fold-search nil))
-        (save-excursion
-          (dolist (pair replacement-alist)
-            (goto-char (min beg end))
-            (while (search-forward (car pair) (max beg end) t)
-              (replace-match (cdr pair) t t)))))
-    (message "No text selected")))
-
-(defun batch-replace-strings-prompt ()  ; from Trey Jackson
-  "prompt for string pairs and return as an association list"
-  (let (from-string ret-alist)
-    (while (not (string-equal "" (setq from-string
-                                       (read-string
-                                        "String to search (RET to stop): "))))
-      (setq ret-alist
-            (cons (cons from-string (read-string
-                                     (format "Replace %s with: " from-string)))
-                  ret-alist)))
-    ret-alist))
-
-(when (require 'ange-ftp nil t)
-  (defvar lgfang-to-protocols (list "ssh" "ftp") "")
-  (defvar lgfang-to-users (list "root" ange-ftp-default-user) "")
-  (defvar lgfang-to-history nil "")
-  (defun lgfang-to()
-    "Inspired by 'remote-access' from tonyaw"
-    (interactive)
-    (let* ((protocol
-            (read-from-minibuffer "Protocol (ftp): "
-                                  "ftp" nil nil 'lgfang-to-protocols nil))
-           (prompt "host name: ")
-           (hosts "~/.hosts") host-names host-list)
-
-      (when (file-readable-p hosts)
-        (with-temp-buffer
-          (insert-file-contents hosts)
-          (goto-char (point-min))
-          (while (not (eobp))
-            (let* ((line (buffer-substring-no-properties
-                          (line-beginning-position) (line-end-position)))
-                   (fields (split-string line)))
-              (unless (or (string-match "^#.*$" line)
-                          (string-match "^[ \t]*$" line))
-                (add-to-list 'host-names (or (nth 1 fields) (car fields)))
-                (add-to-list 'host-list
-                             (list (or (nth 1 fields) (car fields)) fields)))
-              (forward-line))))
-
-        (let* ((dest (if (require 'ido nil t)
-                         (ido-completing-read prompt host-names nil nil nil
-                                              'lgfang-to-history)
-                       (completing-read prompt host-list nil nil nil
-                                        'lgfang-to-history)))
-               (ip (nth 0 (car (cdr (assoc dest host-list)))))
-               (user (or (nth 2 (car (cdr (assoc dest host-list))))
-                         (read-from-minibuffer "username (root): " "root"
-                                               nil nil 'lgfang-to-users)))
-               (file-name (format "/%s:%s@%s:/" protocol user ip)))
-
-          (ffap file-name))))))
-
-;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
-(defun unfill-paragraph (&optional region)
-  "Takes a multi-line paragraph and makes it into a single line of text."
-  (interactive (progn (barf-if-buffer-read-only) '(t)))
-  (let ((fill-column (point-max))
-        ;; This would override `fill-column' if it's an integer.
-        (emacs-lisp-docstring-fill-column t))
-    (fill-paragraph nil region)))
 
 ;;; ------ end MyFunction ------
 
