@@ -817,8 +817,6 @@ a number of local files on my laptop.
 - Export: =gpg --armor --export-secret-keys > my-keys.asc=
 - Import: =gpg --import my-keys.asc=, *then edit trust*
 
-To encrypt multiple files: =gpg -r easy --encrypt-files file1 file2=
-
 *** Create, read, write gpg files in Emacs
 
 To create a such file:
@@ -831,6 +829,11 @@ To create a such file:
 
 Later on, when Emacs opens this file, it will automatically encrypt/decrypt the
 file. You only need to provide the passphrase when prompted.
+
+P.S. To encrypt multiple files in command line:
+#+begin_src bash
+gpg -r easy --encrypt-files file1 file2
+#+end_src
 
 *** Encrypt region
 
@@ -849,6 +852,9 @@ time a password is needed.
     :defer t
     :custom
     (auth-sources '("~/.authinfo.gpg"))
+    ;; I manually run `auth-source-search' for certain passwords. Do not
+    ;; attemp to retrieve passwords automatically
+    (auth-source-protocols '())
     )
 #+end_src
 
@@ -1135,7 +1141,6 @@ This is useful when you need to explain how to spell something over phone calls.
     (wttrin-default-locations '("Sydney, NSW"))
     (wttrin-font-name 'monaco)            ; for GUI Emacs only
     )
-
 #+end_src
 
 ** World clock
