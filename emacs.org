@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-06-12 +1000
+#+DATE: 2024-06-18 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -982,19 +982,24 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 #+end_src
 
 * Terminal/shell
-** Vterm
+** vterm
 #+begin_src emacs-lisp
   (use-package vterm
     :defer t
     )
 #+end_src
-Emacs as a terminal multiplexer:
-1. Start Emacs daemon.
-2. Run vterm (=M-x vterm=) in emacs clients.
 
 Why:
 - Integrated window/pane management & navigation
 - Consistent color themes
+
+Frequently used key bindings
+- =C-c C-t= : toggle =copy-mode= (move around and copy in the vterm buffer).
+- =C-c C-c= : send =C-c= to the term
+
+Emacs as a terminal multiplexer:
+1. Start Emacs daemon.
+2. Run vterm (=M-x vterm=) in emacs clients.
 
 * Utilities
 
@@ -1145,6 +1150,15 @@ This is useful when you need to explain how to spell something over phone calls.
   (use-package treemacs
     :defer t                    ; Only load it when I need it, as I rarely use it.
     )
+#+end_src
+Instead of using projectile etc., we can manually edit =treemacs-persist-file=
+to add projects we need. Below is an example:
+#+begin_src org
+  ,* Default
+  ,** My .dotfiles
+   - path :: ~/.dotfiles
+  ,** structure log mode
+   - path :: ~/projects/emacs/structured-log-mode
 #+end_src
 
 ** Completion: company
@@ -1411,7 +1425,7 @@ human friendly way.
 
 ** JSON path to the node at point
 
-This function works is based on treesit (=json-ts-mode=)
+This function is based on treesit (=json-ts-mode=)
 #+begin_src emacs-lisp
   (use-package json-ts-mode
     :commands
