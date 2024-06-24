@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-06-14 +1000
+#+DATE: 2024-06-24 +1000
 
 * bash_profile
 :PROPERTIES:
@@ -48,8 +48,11 @@ export GOPATH=$HOME/golang
 
 ** Attach to a tmux session
 #+begin_src bash
-#* Attach to (or start) a tmux session when opening a new terminal
-[ -n "$TMUX" ] || tg
+  if [[ $- == *i* && "$TERM" == "xterm-256color" ]]; then
+      # Attach to (or start) a tmux session on when in an inteactive and expected
+      # (xterm-*) environment.
+      [ -n "$TMUX" ] || tg
+  fi
 #+end_src
 
 * bashrc
@@ -80,13 +83,15 @@ fi
   export EDITOR=vi
 #+end_src
 
-*** colors
+*** Term & color
 
 #+begin_src bash
-  TERM=xterm-256color
-  export TERM
-  COLORTERM=truecolor             # for remote hosts
-  export COLORTERM
+  if [[ $- == *i* && "$TERM" != "dumb" ]]; then
+      TERM=xterm-256color
+      export TERM
+      COLORTERM=truecolor
+      export COLORTERM
+  fi
 #+end_src
 
 Nowadays, =xterm-256= has become a "fall-back" solution. Many color themes
