@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-06-18 +1000
+#+DATE: 2024-06-26 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -253,7 +253,7 @@ this particular repeat mode or =C-g=.
   (use-package consult
     :bind (:map global-map
                 ("<f2>" . consult-imenu)
-                ("M-s o" . consult-line)  ; replaces `occur'
+                ;; ("M-s o" . consult-line)  ; I prefer `occur'
                 ("M-y" . consult-yank-pop) ; replaces `browse-kill-ring'
                 )
     )
