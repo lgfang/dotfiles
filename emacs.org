@@ -723,6 +723,19 @@ line of the other window (inactive) will not be updated until you switch to it.
     (ledger-reconcile-default-commodity "AUD")
     )
 #+end_src
+
+** Snippets for ledger mode
+
+#+begin_src snippet :tangle ~/.emacs.d/snippets/ledger-mode/council-rate :mkdirp yes
+  # -*- mode: snippet -*-
+  # key: council
+  # name: Council rate
+  # --
+  `(format-time-string "%Y-%m-%d"))` * Council
+      Expenses:House${1:A}:Fee         ${2:888}.${3:00} AUD
+      Assets:Cash:${4:BankX}
+#+end_src
+
 * Encryption and credential management
 
 ** Encrypt files with passwords: ccrypt
