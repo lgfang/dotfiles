@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-06-26 +1000
+#+DATE: 2024-06-27 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -555,14 +555,14 @@ updated. It is recommended to set timestamp format as a file local variable. Bel
 #+end_src
 
 ** Yasnippet
-
 #+begin_src emacs-lisp
   (use-package yasnippet
+    :delight yas-minor-mode
     ;; Put personal/customized snippets into the first dir of `yas-snippet-dirs',
     ;; which is `~/.emacs.d/snippets' by default. NOTE: it is `yas-snippet-dirs'
     ;; NOT `yasnippet-snippets-dir'. The later is where the package
-    ;; `yasnippet-snippets' stores its snippets).
-    ; TODO: cleanup duplicated/similar snippets in different directories.
+    ;; `yasnippet-snippets' stores its snippets.
+    ;; TODO: cleanup duplicated/similar snippets in different directories.
     :functions yas-global-mode
     :init (yas-global-mode 1)
     )
@@ -575,6 +575,7 @@ updated. It is recommended to set timestamp format as a file local variable. Bel
 
 #+begin_src emacs-lisp
   (use-package flyspell
+    :delight
     :hook ((prog-mode . flyspell-prog-mode)
            (yaml-mode . flyspell-prog-mode)
            (yaml-ts-mode . flyspell-prog-mode)
@@ -609,6 +610,36 @@ No configuration is needed. Add this block just to remind myself the command nam
     ;; (display-line-numbers-major-tick 50)
     ;; (display-line-numbers-minor-tick 10)
     )
+#+end_src
+
+** Clean up mode line
+
+*** Tool to remove minor mode lighter texts
+
+#+begin_src emacs-lisp
+  (use-package delight
+    :ensure t
+    :config
+    ;; delight built-in modes here.
+    (delight '((subword-mode nil "subword") (global-subword-mode nil "subword")
+               (superword-mode nil "subword") (global-superword-mode nil "subword")
+               (eldoc-mode nil "eldoc")
+               (hi-lock-mode nil "hi-lock")
+               (hs-minor-mode nil "hideshow")
+               ))
+    )
+#+end_src
+
+*** Remove control (vc) info from the mode line
+
+This info can take a lot of space (when the branch is long) and outdated (when
+the file version change but the file is not re-opened).
+
+Delete it from the mode line to make room for more useful information, say
+"which-function-mode".
+
+#+begin_src emacs-lisp
+  (setq-default mode-line-format (delete '(vc-mode vc-mode) mode-line-format))
 #+end_src
 
 ** Highlight whitespace
@@ -660,8 +691,10 @@ No configuration is needed. Add this block just to remind myself the command nam
 ** Highlight indentation levels
 
 #+begin_src emacs-lisp
-
   (use-package highlight-indentation
+    :delight
+    (highlight-indentation-current-column-mode)
+    (highlight-indentation-mode)
     :custom
     ;; Disable highlight-indentation-blank-lines, as it prevents `C-a' from going
     ;; to the beginning of blank lines and causes some other issues.
@@ -679,6 +712,7 @@ No configuration is needed. Add this block just to remind myself the command nam
 
 #+begin_src emacs-lisp
   (use-package highlight-parentheses
+    :delight
     :commands global-highlight-parentheses-mode
     :config (global-highlight-parentheses-mode t)
     ;; :custom (hl-paren-colors    ; `M-x list-colors-display' to see named colors
@@ -1212,6 +1246,7 @@ to add projects we need. Below is an example:
 
 #+begin_src emacs-lisp
   (use-package company
+    :delight
     :functions global-company-mode
     :init (global-company-mode)
     )
@@ -1299,14 +1334,16 @@ Notes on =prettier=:
   =bracketSpacing: false= to your =.prettierrc=.
 
 #+begin_src emacs-lisp
-(use-package reformatter
-  ;; depended on by ruff-format etc.
-  )
+  (use-package reformatter
+    :delight
+    ;; depended on by ruff-format etc.
+    )
 
-(use-package prettier
-  ;; Format json, yaml, markdown etc.;
-  :hook (yaml-mode yaml-ts-mode)
-  )
+  (use-package prettier
+    :delight
+    ;; Format json, yaml, markdown etc.;
+    :hook (yaml-mode yaml-ts-mode)
+    )
 #+end_src
 
 ** LSP: eglot
@@ -1392,6 +1429,7 @@ copilot-login=.
   ;; Choose this package over diff-hl because the later does not work in 'emacs
   ;; -nw'.
   (use-package git-gutter
+    :delight
     :commands global-git-gutter-mode
     :custom
     (git-gutter:modified-sign " ")
@@ -1547,6 +1585,7 @@ This function is based on treesit (=json-ts-mode=)
     )
 
   (use-package ruff-format
+    :delight ruff-format-on-save-mode
     :after reformatter
     :hook ((python-mode python-ts-mode) . ruff-format-on-save-mode)
     )
@@ -1973,23 +2012,6 @@ lgfang-hif-toggle-block"
 
 (setq messages-buffer-max-lines 500)    ; default value too small
 
-;;; mode line
-(defvar mode-line-format-original nil
-  "Stores the mode line format before shorten-mode-line is ever run.")
-(defun shorten-mode-line ()
-  "Hide unnecessary information to make room for more important information."
-  (interactive)
-  (unless mode-line-format-original
-    (setq mode-line-format-original (copy-tree mode-line-format)))
-  (setq-default mode-line-format (delq 'mode-line-modes mode-line-format)))
-(defun restore-mode-line ()
-  "Show the original/default full mode line."
-  (interactive)
-  (when mode-line-format-original
-    (setq-default mode-line-format (copy-tree mode-line-format-original))))
-(shorten-mode-line)
-
-
 ;;; nXML mode
 (add-to-list 'auto-mode-alist
              '("\\.\\((xml\\|xsd\\|sch\\|rng\\|xslt\\|svg\\|rss\\)\\'"
@@ -2108,11 +2130,7 @@ selective-display"
 (when (not (server-running-p))
   (server-start))
 
-;;; subword-mode
 (global-subword-mode)
-
-;;; Tabbar
-;; (when (and window-system (require 'tabbar nil t)) (tabbar-mode 1))
 
 ;;; Tcl & expect
 (add-hook 'tcl-mode-hook
