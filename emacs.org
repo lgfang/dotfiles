@@ -1350,6 +1350,7 @@ copilot-login=.
 #+begin_src emacs-lisp
   (use-package copilot
     :load-path (lambda() (concat my-downloads "copilot.el"))
+    :commands copilot-mode
     :bind (:map copilot-completion-map
                 ("TAB"       . copilot-next-completion)
                 ("<backtab>" . copilot-previous-completion)
