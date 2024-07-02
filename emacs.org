@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-06-27 +1000
+#+DATE: 2024-07-02 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1469,6 +1469,12 @@ add content similar to the following to the emacs directory local variable file
 #+end_src
 - "Use commit" equals "Copy permalink" in corresponding github page (?)
 
+** blamer
+#+begin_src emacs-lisp
+  (use-package blamer)
+#+end_src
+- I do not turn on =global-blamer-mode= but instead run =M-x blamer-mode= in a
+  specific buffer when designated.
 * ANSI color code
 
 #+begin_src emacs-lisp
