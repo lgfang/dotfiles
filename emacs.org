@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-07-02 +1000
+#+DATE: 2024-07-04 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1256,15 +1256,23 @@ to add projects we need. Below is an example:
 
 #+begin_src emacs-lisp
   (use-package flymake
-    ;; To list all the diagnostics, use `flymake-show-buffer-diagnostics' and
-    ;; `flymake-show-project-diagnostics'. For checkers being used, see the buffer
-    ;; local var `flymake-diagnostic-functions'.
+    ;; To jump to flymake diagnostics, use `consult-flymake'. To see the checkers
+    ;; being used, check the buffer local var `flymake-diagnostic-functions'.
+    ;; Sometimes it may be handy to list all the diagnostics in a buffer, this can
+    ;; be done using `flymake-show-buffer-diagnostics' or
+    ;; `flymake-show-project-diagnostics'.
 
     :bind (:map flymake-mode-map
                 ("C-c p" . flymake-goto-prev-error)
                 ("C-c n" . flymake-goto-next-error))
 
     :hook (prog-mode yaml-ts-mode)
+
+    :config
+    ;; Do not highlight flymake warnings due to the current high frequency of
+    ;; warnings in our codebase. Instead, monitor the numbers of flymake
+    ;; errors/warning/info in the mode line.
+    (set-face-attribute 'flymake-warning nil :inherit nil)
   )
 #+end_src
 
