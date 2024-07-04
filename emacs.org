@@ -748,6 +748,7 @@ line of the other window (inactive) will not be updated until you switch to it.
 * Finance bookkeeping
 #+begin_src emacs-lisp
   (use-package ledger-mode
+    :defer t
     :bind
     (:map ledger-mode-map
           ("C-c ." . (lambda() (interactive)
@@ -1475,14 +1476,19 @@ add content similar to the following to the emacs directory local variable file
     (git-link-use-commit t)
     )
 #+end_src
+
 - "Use commit" equals "Copy permalink" in corresponding github page (?)
 
 ** blamer
 #+begin_src emacs-lisp
-  (use-package blamer)
+  (use-package blamer
+    :defer t
+    )
 #+end_src
+
 - I do not turn on =global-blamer-mode= but instead run =M-x blamer-mode= in a
   specific buffer when designated.
+
 * ANSI color code
 
 #+begin_src emacs-lisp
