@@ -298,10 +298,10 @@ Other useful consult commands:
     :custom (openwith-confirm-invocation t)
     :config
     (when (eq system-type 'darwin)
-      ;; On MacOS, the system tool "open" opens the target file with system
-      ;; default applications.
+      ;; On MacOS, the system tool `open' opens the target file with system
+      ;; default applications. So, for most types, passing the file to `open' is
+      ;; enough.x
       (setq openwith-associations '(("\\.mp4" "open" (file))
-                                    ("\\.pdf" "open" (file))
                                     )))
     :init
     (openwith-mode)
@@ -1071,6 +1071,17 @@ I.e. type =<s= + =TAB= to insert =#+begin_src= etc.
                (string= lang "plantuml")
                (string= lang "dot"))))
     (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+    )
+#+end_src
+
+* PDF
+
+#+begin_src emacs-lisp
+  (use-package pdf-tools
+    :defer t
+    :magic ("%PDF" . pdf-view-mode)
+    :config
+    (pdf-tools-install)
     )
 #+end_src
 
