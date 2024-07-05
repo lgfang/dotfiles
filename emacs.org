@@ -791,12 +791,20 @@ instead.
 
 ** Encrypt files using keys: gnugpg
 
-Automatically encrypt/decrypt =.gpg= files using gnupg. Need to
-- Install gnupg (=brew install gpg= on MacOS)
-- Create/import gpg keys.
-*IMPORTANT:* remember to export and backup keys.
+Automatically encrypt/decrypt =.gpg= files using gnupg. On MacOS, set it up as
+below:
+1. =brew install gpg=
+2. =brew install pinentry-mac=
+   * By default, =gpg= comes with =pinentry= which does not work well with GUI
+     Emacs.
+3. =echo "pinentry-program /opt/homebrew/bin/pinentry-mac" > ~/.gnupg/gpg-agent.conf=
+   * Update =gpg-agent= configuration to use =pinentry-mac= instead of =pinentry=.
+4. =killall gpg-agent=
+   * Ensure the new gpg agent configuration takes effect.
+5. Create/import gpg keys.
+   * IMPORTANT: remember to export and backup keys.
 
-Apart from the above I need no explicit Emacs configuration in this regard
+Apart from the above I need NO explicit Emacs configuration in this regard
 *yet*.
 
 *** Why
