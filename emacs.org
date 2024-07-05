@@ -3,15 +3,15 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-07-04 +1000
+#+DATE: 2024-07-05 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
 
 * Time stamp for tangling
 
-This block itself is not tangled into any configuration file. But, at the time
-of tangling, it generates a timestamp may be referred to by other blocks.
+This block itself is not tangled into any configuration file. However, during
+the tangling process, it produces a timestamp that other blocks may reference.
 
 #+name: tangle-time-stamp
 #+begin_src emacs-lisp :tangle no
@@ -619,6 +619,7 @@ No configuration is needed. Add this block just to remind myself the command nam
 #+begin_src emacs-lisp
   (use-package delight
     :ensure t
+    :commands delight
     :config
     ;; delight built-in modes here.
     (delight '((subword-mode nil "subword") (global-subword-mode nil "subword")
@@ -749,6 +750,7 @@ line of the other window (inactive) will not be updated until you switch to it.
 #+begin_src emacs-lisp
   (use-package ledger-mode
     :defer t
+    :defines ledger-mode-map
     :bind
     (:map ledger-mode-map
           ("C-c ." . (lambda() (interactive)
