@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-07-05 +1000
+#+DATE: 2024-07-08 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -533,6 +533,8 @@ updated. It is recommended to set timestamp format as a file local variable. Bel
     (dired-recursive-deletes 'top)
     ;; On macOS, most of time, just let `open' determine the correct application.
     (dired-guess-shell-alist-user '(("\\.\\(\\m4a\\|mp4\\)\\'" "open")
+                                    ("\\.png\\'" "open")
+                                    ("\\.gpg\\'" "gpg --decrypt-files")
                                     ))
     ;; `dired-omit-mode' hides all dot files, like `ls'
     (dired-omit-files "\\`[.#].*")
