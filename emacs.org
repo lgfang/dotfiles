@@ -717,7 +717,7 @@ Delete it from the mode line to make room for more useful information, say
   (use-package highlight-parentheses
     :delight
     :commands global-highlight-parentheses-mode
-    :config (global-highlight-parentheses-mode t)
+    :init (global-highlight-parentheses-mode t)
     ;; :custom (hl-paren-colors    ; `M-x list-colors-display' to see named colors
     ;;          '("brown" "orange" "yellow" "forest green" "cyan" "blue" "violet"))
     )
