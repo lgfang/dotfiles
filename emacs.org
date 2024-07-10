@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-07-08 +1000
+#+DATE: 2024-07-10 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -739,6 +739,14 @@ NOTE: this package, along with similar ones such as beacon, only updates the
 that moves the cursor in another window, the visual indicator of the current
 line of the other window (inactive) will not be updated until you switch to it.
 
+** Focus mode
+#+begin_src emacs-lisp
+  (use-package focus
+    :config
+    (add-to-list 'focus-mode-to-thing '(python-ts-mode . py-thing))
+    )
+#+end_src
+
 ** Minimap
 
 #+begin_src emacs-lisp
@@ -1304,7 +1312,7 @@ to add projects we need. Below is an example:
 
 #+begin_src emacs-lisp
   (use-package treesit
-    ;; Run `treesit-install-language-grammar' to install the grammar
+    ;; Remember to run `treesit-install-language-grammar' to install the grammar
     ;; for each designated language.
     :when
     (and (fboundp 'treesit-available-p) (treesit-available-p))
@@ -1321,6 +1329,43 @@ to add projects we need. Below is an example:
        (python-mode . python-ts-mode)
        (yaml-mode . yaml-ts-mode)
        ))
+
+    :config
+    ;; define `py-thing' for `thing-at-point' so that the `focus-mode' can focus
+    ;; on such python things.
+    (defvar py-thing--thing nil
+      "Store the thing at point. `thing-at-point' moves to the end of
+  the thing first. We should not re-run `py-thing' after that."
+      )
+
+    (defvar py-things-to-focus
+      '("class_definition"
+        "function_definition"
+        "try_statement"
+        "except_clause"
+        "if_statement"
+        "else_clause"
+        "for_statement"
+        "while_statement"
+        "module")
+      "Node types considered as python thing.")
+
+    (defun py-thing-begin ()
+      (when-let ((thing (or py-thing--thing (py-thing))))
+        (goto-char (treesit-node-start thing))))
+
+    (defun py-thing-end ()
+      (when-let ((thing (py-thing)))
+        (setq py-thing--thing thing)
+        (goto-char (treesit-node-end thing))))
+
+    (defun py-thing ()
+      (treesit-parent-until
+       (treesit-node-at (point))
+       (lambda (parent) (member (treesit-node-type parent) py-things-to-focus))))
+
+    (put 'py-thing 'beginning-op 'py-thing-begin)
+    (put 'py-thing 'end-op 'py-thing-end)
     )
 #+end_src
 
