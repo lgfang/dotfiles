@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-07-10 +1000
+#+DATE: 2024-07-11 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -520,10 +520,24 @@ Auto-revert a buffer when corresponding file is modified by another process.
 Be aware that customizing =time-stamp-pattern= globally (for example, in
 =init.el=) may conflict with others configuration. I.e. if you update files from
 others who use a different timestamp format, then the timestamps will not be
-updated. It is recommended to set timestamp format as a file local variable. Below is an example:
-#+begin_src org :tangle no
-  # -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
-#+end_src
+updated. Hence, it is recommended to set timestamp format as a file local
+variable.
+
+Below are two examples:
+- =#+DATE: 2024-07-11 +1000=
+
+  #+begin_src org :tangle no
+    # -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+  #+end_src
+
+- =Modified: Fang Lungang 2024-07-11T16:41:47+1000=
+
+  #+begin_src org :tangle no
+    # -*-mode:org;coding:utf-8;time-stamp-pattern:"8/Modified[:][ \t]*%U %Y-%02m-%02dT%02H:%02M:%02S%5z$"-*-
+  #+end_src
+
+  Note: =Modified[:]= matches =Modified:=. The reason using the former is to
+  avoid the pattern itself being replaced
 
 ** Directories
 #+begin_src emacs-lisp
