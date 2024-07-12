@@ -166,9 +166,7 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
 ** comment dwim
 #+begin_src emacs-lisp
   (defadvice comment-dwim (before lgfang-comment-wim activate compile)
-    "if neiter mark-active nor at end of line, comment current
-  line (by making the whole line an active region). This gets you a
-  really cool behavior :)."
+    "Acts on comment smartly base on the current cursor position in the line."
     (unless (or mark-active (looking-at "[ \t]*$"))
       (goto-char (line-beginning-position))
       (set-mark-command nil)
@@ -756,6 +754,7 @@ line of the other window (inactive) will not be updated until you switch to it.
 ** Focus mode
 #+begin_src emacs-lisp
   (use-package focus
+    :defines focus-mode-to-thing
     :config
     (add-to-list 'focus-mode-to-thing '(python-ts-mode . py-thing))
     )
@@ -1104,6 +1103,7 @@ I.e. type =<s= + =TAB= to insert =#+begin_src= etc.
   (use-package pdf-tools
     :defer t
     :magic ("%PDF" . pdf-view-mode)
+    :commands pdf-tools-install
     :config
     (pdf-tools-install)
     )
@@ -1364,6 +1364,11 @@ to add projects we need. Below is an example:
         "module")
       "Node types considered as python thing.")
 
+    (defun py-thing ()
+      (treesit-parent-until
+       (treesit-node-at (point))
+       (lambda (parent) (member (treesit-node-type parent) py-things-to-focus))))
+
     (defun py-thing-begin ()
       (when-let ((thing (or py-thing--thing (py-thing))))
         (goto-char (treesit-node-start thing))))
@@ -1372,11 +1377,6 @@ to add projects we need. Below is an example:
       (when-let ((thing (py-thing)))
         (setq py-thing--thing thing)
         (goto-char (treesit-node-end thing))))
-
-    (defun py-thing ()
-      (treesit-parent-until
-       (treesit-node-at (point))
-       (lambda (parent) (member (treesit-node-type parent) py-things-to-focus))))
 
     (put 'py-thing 'beginning-op 'py-thing-begin)
     (put 'py-thing 'end-op 'py-thing-end)
