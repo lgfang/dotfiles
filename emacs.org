@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-07-11 +1000
+#+DATE: 2024-07-12 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -213,7 +213,6 @@ this particular repeat mode or =C-g=.
 
 ** Vertico + orderless + marginalia + consult
 #+begin_src emacs-lisp
-
   (use-package vertico
     :defer t
     :defines vertico-map
@@ -250,9 +249,11 @@ this particular repeat mode or =C-g=.
 
   (use-package consult
     :bind (:map global-map
-                ("<f2>" . consult-imenu)
-                ;; ("M-s o" . consult-line)  ; I prefer `occur'
-                ("M-y" . consult-yank-pop) ; replaces `browse-kill-ring'
+                ("<f2>"  . consult-imenu)
+                ;; ("M-s o" . occur             ; Built-in
+                ("M-s l" . consult-line)     ; mnemonic: line,
+                ("M-s d" . consult-flymake)  ; mnemonic: diagnostics
+                ("M-y"   . consult-yank-pop) ; replaces `browse-kill-ring'
                 )
     )
 #+end_src
