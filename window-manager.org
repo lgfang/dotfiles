@@ -169,7 +169,7 @@ echo "yabai configuration loaded.."
   done
 #+end_src
 
-* skhd
+* COMMENT skhd
 :PROPERTIES:
 :header-args:conf: :tangle ~/.config/skhd/skhdrc :tangle-mode o644 :noweb yes :mkdirp yes
 :END:
