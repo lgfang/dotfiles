@@ -1155,7 +1155,8 @@ eliminate the duplication?
     ]
   },
 #+end_src
-** Mouse button
+
+** Additional mouse buttons
 #+begin_src json-ts
   {
     "description": "Mouse button 4/5 to copy/paste",
@@ -1189,7 +1190,310 @@ eliminate the duplication?
         "type": "basic"
       }
     ]
+  },
+#+end_src
+
+** Emacs key bindings everywhere
+NOTE:
+- A variety of key bindings are already either fully or partially supported by
+  certain applications. Hence, only need to define those that missing or not
+  fully implemented.
+- There is a limitation in what we can reasonable achieve. For example, we can
+  bind =Option-d= to copy and delete one word forward. However, since there is
+  no kill ring, it cannot "accumulate" all the killed text like the Emacs
+  =kill-word= does when run multiple times consecutively.
+#+begin_src json-ts
+  {
+    "description": "Emacs key bindings everywhere",
+    "manipulators": [
+      {
+        "description": "search: C-s",
+        "from": {
+          "key_code": "s",
+          "modifiers": {
+            "mandatory": [ "control" ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "f",
+            "modifiers": [ "command" ]
+          }
+        ],
+        "conditions": [
+          {
+            "type": "frontmost_application_unless",
+            "bundle_identifiers": [
+              "^org\\.gnu\\.Emacs$",
+              "^com\\.googlecode\\.iterm2$"
+            ]
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "backward word: M-b",
+        "from": {
+          "key_code": "b",
+          "modifiers": {
+            "mandatory": [ "option" ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "left_arrow",
+            "modifiers": [ "option" ]
+          }
+        ],
+        "conditions": [
+          {
+            "type": "frontmost_application_unless",
+            "bundle_identifiers": [
+              "^org\\.gnu\\.Emacs$",
+              "^com\\.googlecode\\.iterm2$"
+            ]
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "forward word: M-f",
+        "from": {
+          "key_code": "f",
+          "modifiers": {
+            "mandatory": [ "option" ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "right_arrow",
+            "modifiers": [ "option" ]
+          }
+        ],
+        "conditions": [
+          {
+            "type": "frontmost_application_unless",
+            "bundle_identifiers": [
+              "^org\\.gnu\\.Emacs$",
+              "^com\\.googlecode\\.iterm2$"
+            ]
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "kill word: M-d",
+        "from": {
+          "key_code": "d",
+          "modifiers": {
+            "mandatory": [ "option" ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "right_arrow",
+            "modifiers": [
+              "shift", "option"
+            ]
+          },
+          {
+            "key_code": "x",
+            "modifiers" : [ "command" ]
+          }
+        ],
+        "conditions": [
+          {
+            "type": "frontmost_application_unless",
+            "bundle_identifiers": [
+              "^org\\.gnu\\.Emacs$",
+              "^com\\.googlecode\\.iterm2$"
+            ]
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "kill word back: M-<backspace>",
+        "from": {
+          "key_code": "delete_or_backspace",
+          "modifiers": {
+            "mandatory": [ "option" ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "left_arrow",
+            "modifiers": [
+              "shift", "option"
+            ]
+          },
+          {
+            "key_code": "x",
+            "modifiers" : [ "command" ]
+          }
+        ],
+        "conditions": [
+          {
+            "type": "frontmost_application_unless",
+            "bundle_identifiers": [
+              "^org\\.gnu\\.Emacs$",
+              "^com\\.googlecode\\.iterm2$"
+            ]
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "newline: C-m",
+        "from": {
+          "key_code": "m",
+          "modifiers": {
+            "mandatory": [ "control" ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "return_or_enter",
+            "modifiers": [ "shift" ]
+          }
+        ],
+        "conditions": [
+          {
+            "type": "frontmost_application_unless",
+            "bundle_identifiers": [
+              "^org\\.gnu\\.Emacs$",
+              "^com\\.googlecode\\.iterm2$"
+            ]
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "copy: M-w",
+        "from": {
+          "key_code": "w",
+          "modifiers": {
+            "mandatory": [ "option" ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "c",
+            "modifiers": [ "command" ]
+          }
+        ],
+        "conditions": [
+          {
+            "type": "frontmost_application_unless",
+            "bundle_identifiers": [
+              "^org\\.gnu\\.Emacs$",
+              "^com\\.googlecode\\.iterm2$"
+            ]
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "paste: C-y",
+        "from": {
+          "key_code": "y",
+          "modifiers": {
+            "mandatory": [ "control" ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "v",
+            "modifiers": [ "command" ]
+          }
+        ],
+        "conditions": [
+          {
+            "type": "frontmost_application_unless",
+            "bundle_identifiers": [
+              "^org\\.gnu\\.Emacs$",
+              "^com\\.googlecode\\.iterm2$"
+            ]
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "undo: C-_",
+        "from": {
+          "key_code": "hyphen",
+          "modifiers": {
+            "mandatory": [ "control", "shift" ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "z",
+            "modifiers": [ "command" ]
+          }
+        ],
+        "conditions": [
+          {
+            "type": "frontmost_application_unless",
+            "bundle_identifiers": [
+              "^org\\.gnu\\.Emacs$",
+              "^com\\.googlecode\\.iterm2$"
+            ]
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "page down: C-v",
+        "from": {
+          "key_code": "v",
+          "modifiers": {
+            "mandatory": [ "control" ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "page_down"
+          }
+        ],
+        "conditions": [
+          {
+            "type": "frontmost_application_unless",
+            "bundle_identifiers": [
+              "^org\\.gnu\\.Emacs$",
+              "^com\\.googlecode\\.iterm2$"
+            ]
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "page up: M-v",
+        "from": {
+          "key_code": "v",
+          "modifiers": {
+            "mandatory": [ "option" ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "page_up"
+          }
+        ],
+        "conditions": [
+          {
+            "type": "frontmost_application_unless",
+            "bundle_identifiers": [
+              "^org\\.gnu\\.Emacs$",
+              "^com\\.googlecode\\.iterm2$"
+            ]
+          }
+        ],
+        "type": "basic"
+      }
+    ]
   }
+
 #+end_src
 ** Complex modification rules end
 #+begin_src json-ts
