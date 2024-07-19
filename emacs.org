@@ -1017,6 +1017,7 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
                                           "~/.dotfiles/git.org"
                                           "~/.dotfiles/shell.org"
                                           "~/.dotfiles/window-manager.org"
+                                          "~/.dotfiles/karabiner.org"
                                           )))
     (defun lgf-tangle-configs ()
       (add-hook 'after-save-hook

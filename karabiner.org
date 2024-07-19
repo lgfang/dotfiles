@@ -1,0 +1,1205 @@
+# -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+# Created: Fang Lungang 2024-07-19
+
+#+TITLE: My Karabiner Elements configuration
+#+AUTHOR: Fang Lungang
+#+DATE: 2024-07-19
+#+DESCRIPTION: Layered hotkeys using Karabiner Elements
+#+KEYWORDS: Karabiner
+#+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
+
+* Hotkey sequence instead of hotkey combination
+
+Conventionally, a hotkey binding involves pressing several keys at the same
+time. The problem with this approach is that we rapidly exhaust the available
+key bindings.
+
+Defining hotkeys in layers allows us to define sequences of key strikes instead.
+This way, the available key bindings increase exponentially. For example, if we
+define "Hyper + w" as the prefix for "window movement" layer and "Hyper + f" for
+the "Focus movement", then we can use the same set of keys (say h,j,k,l for the
+directions of the movement) without conflicts.
+
+* Variables
+
+#+NAME: yabai
+#+begin_src emacs-lisp
+(executable-find "yabai")
+#+end_src
+
+#+NAME: config
+#+begin_src emacs-lisp
+(expand-file-name "~/.config/yabai")
+#+end_src
+
+* Configuration file start
+#+begin_src json-ts
+  {
+#+end_src
+* Global settings
+#+begin_src json-ts
+  "global": {
+    "ask_for_confirmation_before_quitting": true,
+    "check_for_updates_on_startup": true,
+    "show_in_menu_bar": true,
+    "show_profile_name_in_menu_bar": false,
+    "unsafe_ui": false
+  },
+#+end_src
+* Profiles
+** Profiles start
+#+begin_src json-ts
+  "profiles": [{
+      "name": "default",
+      "selected": true,
+#+end_src
+** Devices
+IMPORTANT: remember to iterate each and every keyboard/mouse and explicitly set
+=ignore= to false.
+*** Start
+#+begin_src json-ts
+  "devices": [
+#+end_src
+*** Built-in keyboard
+Needs to remap modifiers:
+| From          | to            |
+|---------------+---------------|
+| Left Command  | Left Option   |
+| Left Option   | Left Command  |
+| Right Command | Right Option  |
+| Right Option  | Right Control |
+
+#+begin_src json-ts
+  {
+    "identifiers": {
+      "is_game_pad": false,
+      "is_keyboard": true,
+      "is_pointing_device": false,
+      "product_id": 835,
+      "vendor_id": 1452
+    },
+    "ignore": false,
+    "manipulate_caps_lock_led": true,
+    "simple_modifications": [
+      {
+        "from": {
+          "key_code": "left_command"
+        },
+        "to": [
+          {
+            "key_code": "left_option"
+          }
+        ]
+      },
+      {
+        "from": {
+          "key_code": "left_option"
+        },
+        "to": [
+          {
+            "key_code": "left_command"
+          }
+        ]
+      },
+      {
+        "from": {
+          "key_code": "right_command"
+        },
+        "to": [
+          {
+            "key_code": "right_option"
+          }
+        ]
+      },
+      {
+        "from": {
+          "key_code": "right_option"
+        },
+        "to": [
+          {
+            "key_code": "right_control"
+          }
+        ]
+      }
+    ]
+  },
+#+end_src
+
+*** Keychron Q1
+#+begin_src json-ts
+  {
+      "identifiers": {
+          "is_keyboard": true,
+          "is_pointing_device": true,
+          "product_id": 1552,
+          "vendor_id": 13364
+      },
+      "ignore": false
+  },
+#+end_src
+
+*** Niz
+#+begin_src json-ts
+  {
+      "identifiers": {
+          "is_keyboard": true,
+          "is_pointing_device": true,
+          "product_id": 272,
+          "vendor_id": 1452
+      },
+      "ignore": false
+  },
+#+end_src
+
+*** Lift Mouse
+#+begin_src json-ts
+  {
+      "identifiers": {
+          "is_pointing_device": true,
+          "product_id": 45105,
+          "vendor_id": 1133
+      },
+      "ignore": false
+  }
+#+end_src
+
+*** End
+#+begin_src json-ts
+],
+#+end_src
+** Complex modification rules start
+#+begin_src json-ts
+  "complex_modifications": {
+      "rules": [
+#+end_src
+** Define hyper key
+#+begin_src json-ts
+  {
+    "description": "Caps Lock -> Hyper Key (⌃⌥⇧⌘)",
+    "manipulators": [
+      {
+        "description": "Caps Lock -> Hyper Key",
+        "from": {
+          "key_code": "caps_lock",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "to": [
+          {
+            "set_variable": {
+              "name": "hyper",
+              "value": 1
+            }
+          }
+        ],
+        "to_if_alone": [
+          {
+            "key_code": "caps_lock"
+          }
+        ],
+        "to_after_key_up": [
+          {
+            "set_variable": {
+              "name": "hyper",
+              "value": 0
+            }
+          },
+          {
+            "set_variable": {
+              "name": "move_focus",
+              "value": 0
+            }
+          },
+          {
+            "set_variable": {
+              "name": "move_window",
+              "value": 0
+            }
+          },
+          {
+            "set_variable": {
+              "name": "warp_window",
+              "value": 0
+            }
+          },
+          {
+            "set_variable": {
+              "name": "resize_window",
+              "value": 0
+            }
+          },
+          {
+            "set_variable": {
+              "name": "select_app",
+              "value": 0
+            }
+          }
+        ],
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+** Move focus: Hyper-f
+#+begin_src json-ts
+  {
+    "description": "Move focus: Hyper-f",
+    "manipulators": [
+      {
+        "description": "Prefix: f",
+        "type": "basic",
+        "from": {
+          "key_code": "f",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "to": [
+          {
+            "set_variable": {
+              "name": "move_focus",
+              "value": 1
+            }
+          }
+        ],
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "hyper",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "description": "Move focus to the previous: p",
+        "to": [
+          {
+            "shell_command": "<<yabai()>> -m window --focus recent"
+          }
+        ],
+        "type": "basic",
+        "from": {
+          "key_code": "p",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "move_focus",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "description": "Move focus to the left: h",
+        "to": [
+          {
+            "shell_command": "<<yabai()>> -m window --focus west || (<<yabai()>> -m display --focus west && <<yabai()>> -m window --focus last)"
+          }
+        ],
+        "type": "basic",
+        "from": {
+          "key_code": "h",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "move_focus",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "description": "Move focus downward: j",
+        "to": [
+          {
+            "shell_command": "<<yabai()>> -m window --focus south"
+          }
+        ],
+        "type": "basic",
+        "from": {
+          "key_code": "j",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "move_focus",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "description": "Move focus upward: k",
+        "to": [
+          {
+            "shell_command": "<<yabai()>> -m window --focus north"
+          }
+        ],
+        "type": "basic",
+        "from": {
+          "key_code": "k",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "move_focus",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "description": "Move focus to the right: l",
+        "to": [
+          {
+            "shell_command": "<<yabai()>> -m window --focus east || (<<yabai()>> -m display --focus east && <<yabai()>> -m window --focus first)"
+          }
+        ],
+        "type": "basic",
+        "from": {
+          "key_code": "l",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "move_focus",
+            "value": 1
+          }
+        ]
+      }
+    ]
+  },
+#+end_src
+** Move window: Hyper-w
+*** Start
+#+begin_src json-ts
+  {
+    "description": "Move window",
+    "manipulators": [
+#+end_src
+
+*** Define the prefix
+#+begin_src json-ts
+  {
+    "description": "Prefix: w",
+    "type": "basic",
+    "from": {
+      "key_code": "w",
+      "modifiers": {
+        "optional": [
+          "any"
+        ]
+      }
+    },
+    "to": [
+      {
+        "set_variable": {
+          "name": "move_window",
+          "value": 1
+        }
+      }
+    ],
+    "conditions": [
+      {
+        "type": "variable_if",
+        "name": "hyper",
+        "value": 1
+      },
+      {
+        "type": "variable_if",
+        "name": "move_window",
+        "value": 0
+      }
+    ]
+  },
+#+end_src
+
+*** Toggle split
+#+begin_src json-ts
+  {
+    "description": "Toggle window split: spacebar",
+    "to": [
+      {
+        "shell_command": "<<yabai()>> -m window --toggle split"
+      }
+    ],
+    "type": "basic",
+    "from": {
+      "key_code": "spacebar",
+      "modifiers": {
+        "optional": [
+          "any"
+        ]
+      }
+    },
+    "conditions": [
+      {
+        "type": "variable_if",
+        "name": "move_window",
+        "value": 1
+      }
+    ]
+  },
+#+end_src
+*** Swap monitors
+#+begin_src json-ts
+{
+  "description": "Swap monitors: m",
+  "to": [
+    {
+      "shell_command": "<<config()>>/swap-spaces"
+    }
+  ],
+  "type": "basic",
+  "from": {
+    "key_code": "m",
+    "modifiers": {
+      "optional": [
+        "any"
+      ]
+    }
+  },
+  "conditions": [
+    {
+      "type": "variable_if",
+      "name": "move_window",
+      "value": 1
+    }
+  ]
+},
+#+end_src
+*** Swap windows: h, j, k, l
+#+begin_src json-ts
+  {
+    "description": "Move window to the left",
+    "to": [
+      {
+        "shell_command": "<<yabai()>> -m window --swap west || <<config()>>/swap-windows west"
+      }
+    ],
+    "type": "basic",
+    "from": {
+      "key_code": "h",
+      "modifiers": {
+        "optional": [
+          "any"
+        ]
+      }
+    },
+    "conditions": [
+      {
+        "type": "variable_if",
+        "name": "move_window",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "description": "Move window downward",
+    "to": [
+      {
+        "shell_command": "<<yabai()>> -m window --swap south"
+      }
+    ],
+    "type": "basic",
+    "from": {
+      "key_code": "j",
+      "modifiers": {
+        "optional": [
+          "any"
+        ]
+      }
+    },
+    "conditions": [
+      {
+        "type": "variable_if",
+        "name": "move_window",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "description": "Move window upward",
+    "to": [
+      {
+        "shell_command": "<<yabai()>> -m window --swap north"
+      }
+    ],
+    "type": "basic",
+    "from": {
+      "key_code": "k",
+      "modifiers": {
+        "optional": [
+          "any"
+        ]
+      }
+    },
+    "conditions": [
+      {
+        "type": "variable_if",
+        "name": "move_window",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "description": "Move window to the right",
+    "to": [
+      {
+        "shell_command": "<<yabai()>> -m window --swap east || <<config()>>/swap-windows east"
+      }
+    ],
+    "type": "basic",
+    "from": {
+      "key_code": "l",
+      "modifiers": {
+        "optional": [
+          "any"
+        ]
+      }
+    },
+    "conditions": [
+      {
+        "type": "variable_if",
+        "name": "move_window",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "description": "Swap window with the recent",
+    "to": [
+      {
+        "shell_command": "<<yabai()>> -m window --swap recent"
+      }
+    ],
+    "type": "basic",
+    "from": {
+      "key_code": "p",
+      "modifiers": {
+        "optional": [
+          "any"
+        ]
+      }
+    },
+    "conditions": [
+      {
+        "type": "variable_if",
+        "name": "move_window",
+        "value": 1
+      }
+    ]
+  },
+#+end_src
+*** Extra "w" for warp instead of swap
+#+begin_src json-ts
+  {
+    "description": "extra 'w' for warp",
+    "type": "basic",
+    "from": {
+      "key_code": "w",
+      "modifiers": {
+        "optional": [
+          "any"
+        ]
+      }
+    },
+    "to": [
+      {
+        "set_variable": {
+          "name": "warp_window",
+          "value": 1
+        }
+      },
+      {
+        "set_variable": {
+          "name": "move_window",
+          "value": 0
+        }
+      }
+
+    ],
+    "conditions": [
+      {
+        "type": "variable_if",
+        "name": "hyper",
+        "value": 1
+      },
+      {
+        "type": "variable_if",
+        "name": "move_window",
+        "value": 1
+      }
+    ]
+  },
+#+end_src
+
+*** Warp into: h, j, k, l
+
+This is a copy of the swap section with the =variable-if= replaced. Anyway to
+eliminate the duplication?
+
+#+begin_src json-ts
+  {
+    "description": "Warp window to the left",
+    "to": [
+      {
+        "shell_command": "<<yabai()>> -m window --warp west || <<yabai()>> -m window --display west"
+      }
+    ],
+    "type": "basic",
+    "from": {
+      "key_code": "h",
+      "modifiers": {
+        "optional": [
+          "any"
+        ]
+      }
+    },
+    "conditions": [
+      {
+        "type": "variable_if",
+        "name": "warp_window",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "description": "Warp window downward",
+    "to": [
+      {
+        "shell_command": "<<yabai()>> -m window --warp south"
+      }
+    ],
+    "type": "basic",
+    "from": {
+      "key_code": "j",
+      "modifiers": {
+        "optional": [
+          "any"
+        ]
+      }
+    },
+    "conditions": [
+      {
+        "type": "variable_if",
+        "name": "warp_window",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "description": "Warp window upward",
+    "to": [
+      {
+        "shell_command": "<<yabai()>> -m window --warp north"
+      }
+    ],
+    "type": "basic",
+    "from": {
+      "key_code": "k",
+      "modifiers": {
+        "optional": [
+          "any"
+        ]
+      }
+    },
+    "conditions": [
+      {
+        "type": "variable_if",
+        "name": "warp_window",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "description": "Warp window to the right",
+    "to": [
+      {
+        "shell_command": "<<yabai()>> -m window --warp east || <<yabai()>> -m window --display east"
+      }
+    ],
+    "type": "basic",
+    "from": {
+      "key_code": "l",
+      "modifiers": {
+        "optional": [
+          "any"
+        ]
+      }
+    },
+    "conditions": [
+      {
+        "type": "variable_if",
+        "name": "warp_window",
+        "value": 1
+      }
+    ]
+  }
+#+end_src
+*** End
+#+begin_src json-ts
+    ]
+  },
+#+end_src
+** Resize window: Hyper-s
+#+begin_src json-ts
+  {
+    "description": "Resize windows: Hyper-s",
+    "manipulators": [
+      {
+        "description": "Prefix: s",
+        "type": "basic",
+        "from": {
+          "key_code": "s",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "to": [
+          {
+            "set_variable": {
+              "name": "resize_window",
+              "value": 1
+            }
+          }
+        ],
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "hyper",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "description": "Balance split: spacebar",
+        "to": [
+          {
+            "shell_command": "<<yabai()>> -m space --balance"
+          }
+        ],
+        "type": "basic",
+        "from": {
+          "key_code": "spacebar",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "resize_window",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "description": "Move split to the left: h",
+        "to": [
+          {
+            "shell_command": "<<yabai()>> -m window --resize right:-25:0 || <<yabai()>> -m window --resize left:-25:0",
+            "repeat": true
+          }
+        ],
+        "type": "basic",
+        "from": {
+          "key_code": "h",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "resize_window",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "description": "Move split downward: j",
+        "to": [
+          {
+            "shell_command": "<<yabai()>> -m window --resize bottom:0:25 || <<yabai()>> -m window --resize top:0:25"
+          }
+        ],        "type": "basic",
+        "from": {
+          "key_code": "j",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "resize_window",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "description": "Move split upward: k",
+        "to": [
+          {
+            "shell_command": "<<yabai()>> -m window --resize bottom:0:-25 || <<yabai()>> -m window --resize top:0:-25"
+          }
+        ],
+        "type": "basic",
+        "from": {
+          "key_code": "k",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "resize_window",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "description": "Move split to the right: l",
+        "to": [
+          {
+            "shell_command": "<<yabai()>> -m window --resize right:25:0 || <<yabai()>> -m window --resize left:25:0"
+          }
+        ],
+        "type": "basic",
+        "from": {
+          "key_code": "l",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "resize_window",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "description": "Toggle full screen: enter",
+        "to": [
+          {
+            "shell_command": "<<yabai()>> -m window --toggle zoom-fullscreen"
+          }
+        ],
+        "type": "basic",
+        "from": {
+          "key_code": "return_or_enter",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "resize_window",
+            "value": 1
+          }
+        ]
+      }
+    ]
+  },
+#+end_src
+
+** Open/select applications
+#+begin_src json-ts
+  {
+    "description": "Select application: Hyper-a",
+    "manipulators": [
+      {
+        "description": "Prefix: a",
+        "to": [
+          {
+            "set_variable": {
+              "name": "select_app",
+              "value": 1
+            }
+          }
+        ],
+        "from": {
+          "key_code": "a",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "hyper",
+            "value": 1
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "terminal",
+        "to": [
+          {
+            "shell_command": "open -a iterm.app"
+          }
+        ],
+        "from": {
+          "key_code": "spacebar",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "select_app",
+            "value": 1
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "web browser",
+        "to": [
+          {
+            "shell_command": "open -a 'google chrome.app'"
+          }
+        ],
+        "from": {
+          "key_code": "h",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "select_app",
+            "value": 1
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "instant message",
+        "to": [
+          {
+            "shell_command": "open -a slack.app"
+          }
+        ],
+        "from": {
+          "key_code": "j",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "select_app",
+            "value": 1
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "VS Code",
+        "to": [
+          {
+            "shell_command": "open -a 'Visual Studio Code.app'"
+          }
+        ],
+        "from": {
+          "key_code": "k",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "select_app",
+            "value": 1
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "Alternative web browser",
+        "to": [
+          {
+            "shell_command": "open -a safari.app"
+          }
+        ],
+        "from": {
+          "key_code": "l",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "select_app",
+            "value": 1
+          }
+        ],
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+
+** Lock and sleep
+#+begin_src json-ts
+  {
+    "description": "Lock screen or sleep",
+    "manipulators": [
+      {
+        "description": "Lock screen",
+        "to": [
+          {
+            "key_code": "q",
+            "modifiers": ["control", "command"]
+          }
+        ],
+        "from": {
+          "key_code": "home",
+          "modifiers": {
+            "mandatory": [
+              "control"
+            ]
+          }
+        },
+        "type": "basic"
+      },
+      {
+        "description": "Lock screen and then Sleep",
+        "to": [
+          {
+            "key_code": "q",
+            "modifiers": ["control", "command"]
+          },
+          {
+            "software_function": {
+              "iokit_power_management_sleep_system": {}
+            }
+          }
+        ],
+        "from": {
+          "key_code": "home",
+          "modifiers": {
+            "mandatory": [
+              "option"
+            ]
+          }
+        },
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+** Mouse button
+#+begin_src json-ts
+  {
+    "description": "Mouse button 4/5 to copy/paste",
+    "manipulators": [
+      {
+        "from": {
+          "pointing_button": "button4"
+        },
+        "to": [
+          {
+            "key_code": "c",
+            "modifiers": [
+              "command"
+            ]
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "from": {
+          "pointing_button": "button5"
+        },
+        "to": [
+          {
+            "key_code": "v",
+            "modifiers": [
+              "command"
+            ]
+          }
+        ],
+        "type": "basic"
+      }
+    ]
+  }
+#+end_src
+** Complex modification rules end
+#+begin_src json-ts
+  ]}
+#+end_src
+** Profiles end
+#+begin_src json-ts
+  }]
+#+end_src
+* Configuration file end
+#+begin_src json-ts
+  }
+#+end_src
