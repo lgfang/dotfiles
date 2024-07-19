@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-07-12 +1000
+#+DATE: 2024-07-19 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1016,7 +1016,7 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
                                         '("~/.dotfiles/emacs.org"
                                           "~/.dotfiles/git.org"
                                           "~/.dotfiles/shell.org"
-                                          "~/.dotfiles/window-mangger.org"
+                                          "~/.dotfiles/window-manager.org"
                                           )))
     (defun lgf-tangle-configs ()
       (add-hook 'after-save-hook
