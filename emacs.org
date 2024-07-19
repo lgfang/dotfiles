@@ -1576,7 +1576,7 @@ for golang).
 ** JSON ts mode
 #+begin_src emacs-lisp
   (use-package json-ts-mode
-    :mode "\\.jsonl?\\'" "mongod.*\\.log" ; mongod logs are json lines
+    :mode "\\.json\\(l?\\)\\'" "mongod.*\\.log" ; mongod logs are json lines
     )
 #+end_src
 
