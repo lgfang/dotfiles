@@ -1390,6 +1390,17 @@ to add projects we need. Below is an example:
     :init (which-function-mode t)
     )
 #+end_src
+
+** Breadcrumb
+#+begin_src emacs-lisp
+  (use-package breadcrumb
+    :defer t
+    :custom
+    (breadcrumb-project-max-length 0.3)
+    (breadcrumb-imenu-max-length 0.9)
+    )
+#+end_src
+- Note: consider replacing =which-function= with this.
 ** Formatter
 
 Notes on =prettier=:
