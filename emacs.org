@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-07-19 +1000
+#+DATE: 2024-07-20 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -544,11 +544,10 @@ Below are two examples:
     :custom
     (dired-recursive-copies 'top)
     (dired-recursive-deletes 'top)
-    ;; On macOS, most of time, just let `open' determine the correct application.
-    (dired-guess-shell-alist-user '(("\\.\\(\\m4a\\|mp4\\)\\'" "open")
-                                    ("\\.png\\'" "open")
-                                    ("\\.gpg\\'" "gpg --decrypt-files")
-                                    ))
+    (dired-guess-shell-alist-user
+     '(("\\.gpg\\'" "gpg --decrypt-files")
+       ;; By default use `open', which chooses the correct application On MacOS.
+       ("\\.*\\'" "open")))
     ;; `dired-omit-mode' hides all dot files, like `ls'
     (dired-omit-files "\\`[.#].*")
     (dired-kill-when-opening-new-dired-buffer nil)
