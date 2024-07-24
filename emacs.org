@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-07-20 +1000
+#+DATE: 2024-07-30 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -555,6 +555,17 @@ Below are two examples:
 #+end_src
 
 * Basic auto typing
+
+** Fill
+
+In the past, the suggestion was to limit code lines to 80 characters for optimal
+printing on A4 paper or for neat screen display. However, with the advent of
+larger monitors, it's now possible to comfortably display two buffers, each with
+100 characters.
+
+#+begin_src emacs-lisp
+(setq-default fill-column 100 comment-fill-column nil)
+#+end_src
 
 ** Whitespace
 #+begin_src emacs-lisp
@@ -1345,6 +1356,8 @@ to add projects we need. Below is an example:
        (yaml-mode . yaml-ts-mode)
        ))
 
+    :functions py-thing
+
     :config
     ;; define `py-thing' for `thing-at-point' so that the `focus-mode' can focus
     ;; on such python things.
@@ -1982,11 +1995,7 @@ tmux's buffer"
                         '(("\\<\\(TRUE\\|FALSE\\)\\>"
                            . font-lock-constant-face)))
 
-;;; fill column
-(setq-default fill-column 80 comment-fill-column nil)
-
-
-;; gdb
+;;; gdb
 ;; (setq gdb-many-windows t)
 
 ;;; hide-ifdef-mode settings
