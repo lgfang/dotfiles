@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-07-30 +1000
+#+DATE: 2024-08-02 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1474,6 +1474,7 @@ non-trivial. In such situations, you can see the error message by setting
 For first time use, remember to run =M-x copilot-install-server= and =M-x
 copilot-login=.
 
+*** Copilot
 #+begin_src emacs-lisp
   (use-package copilot
     :load-path (lambda() (concat my-downloads "copilot.el"))
@@ -1493,6 +1494,62 @@ copilot-login=.
     ;; MARK} 54 32)
     )
 #+end_src
+
+*** Copilot chat
+
+TODO: when this package is stable and available in melpa, remove the load-path.
+
+#+begin_src emacs-lisp
+  (use-package copilot-chat
+    :load-path (lambda() (concat my-downloads "copilot-chat.el"))
+
+    :commands copilot-chat-display copilot-chat-how
+
+    :bind (:map global-map
+           ("<f7>" . copilot-chat-display)
+           :map copilot-chat-prompt-mode-map
+           ("C-c C-c" . copilot-chat-prompt-send))
+
+    :hook ((copilot-chat-prompt-mode copilot-chat-mode) . visual-line-mode)
+
+    :custom
+    (copilot-chat-frontend 'org)
+
+    :config
+    ;; Define my own shortcut(s). For one-off usage, run `copilot-chat-custom-prompt-selection`
+    ;; instead.
+    (push '(how . "How to ") copilot-chat-prompts)
+    (defun copilot-chat-how()
+      "Ask Copilot how to {the text of the selected region}."
+      (interactive)
+      (copilot-chat-ask-region 'how))
+  )
+#+end_src
+
+- How to ask questions:
+  1. Run =M-x copilot-chat-display= if the =*copilot-chat-prompt*= buffer hasn't
+     been created yet.
+  2. Enter your query in the =*copilot-chat-prompt*= buffer, then press =C-c
+     RET= (default) or =C-c C-c= (my key binding) to send the query to copilot.
+     - If you're using this for the first time, you'll be asked to authenticate
+       the application. Please note: even though you can authenticate via a web
+       browser on a different host, it's mandatory to have a functional web
+       browser on the Emacs host. If not, the authentication process will not be
+       successful.
+- An alternative configuration that use a shell CLI style front-end
+  #+begin_src emacs-lisp :tangle no
+    (use-package copilot-chat
+       :load-path (lambda() (concat my-downloads "copilot-chat.el"))
+       :custom
+       (copilot-chat-frontend 'shell-maker)
+       )
+
+     (use-package copilot-chat-shell-maker
+       :load-path (lambda() (concat my-downloads "copilot-chat.el"))
+       :config
+       (push '(shell-maker . copilot-chat-shell-maker-init) copilot-chat-frontend-list)
+       )
+  #+end_src
 
 ** Imenu
 
