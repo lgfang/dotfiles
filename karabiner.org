@@ -664,15 +664,12 @@ Needs to remap modifiers:
 
 *** Warp into: h, j, k, l
 
-This is a copy of the swap section with the =variable-if= replaced. Anyway to
-eliminate the duplication?
-
 #+begin_src json-ts
   {
     "description": "Warp window to the left",
     "to": [
       {
-        "shell_command": "<<yabai()>> -m window --warp west || <<yabai()>> -m window --display west"
+        "shell_command": "<<yabai()>> -m window --warp west || (<<yabai()>> -m window --display west && <<yabai()>> -m display --focus west)"
       }
     ],
     "type": "basic",
@@ -696,7 +693,7 @@ eliminate the duplication?
     "description": "Warp window downward",
     "to": [
       {
-        "shell_command": "<<yabai()>> -m window --warp south"
+        "shell_command": "<<yabai()>> -m window --warp south || (<<yabai()>> -m window --display south && <<yabai()>> -m display --focus south)"
       }
     ],
     "type": "basic",
@@ -720,7 +717,7 @@ eliminate the duplication?
     "description": "Warp window upward",
     "to": [
       {
-        "shell_command": "<<yabai()>> -m window --warp north"
+        "shell_command": "<<yabai()>> -m window --warp north || (<<yabai()>> -m window --display north && <<yabai()>> -m display --focus north)"
       }
     ],
     "type": "basic",
@@ -744,7 +741,7 @@ eliminate the duplication?
     "description": "Warp window to the right",
     "to": [
       {
-        "shell_command": "<<yabai()>> -m window --warp east || <<yabai()>> -m window --display east"
+        "shell_command": "<<yabai()>> -m window --warp east || (<<yabai()>> -m window --display east && <<yabai()>> -m display --focus east)"
       }
     ],
     "type": "basic",

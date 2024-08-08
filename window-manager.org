@@ -3,7 +3,7 @@
 
 #+TITLE: My Window Manager Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-07-19 +1000
+#+DATE: 2024-08-09 +1000
 #+DESCRIPTION: My window manager related configurations
 #+KEYWORDS: window manager, hotkey, tiling, yabai, skhd
 
@@ -173,6 +173,8 @@ echo "yabai configuration loaded.."
 :PROPERTIES:
 :header-args:conf: :tangle ~/.config/skhd/skhdrc :tangle-mode o644 :noweb yes :mkdirp yes
 :END:
+
+I switched from skhd to Karabiner primarily because Karabiner supports defining prefix keys, enabling the creation of layered hot keys.
 
 ** Header
 #+begin_src conf
