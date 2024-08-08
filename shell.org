@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-06-24 +1000
+#+DATE: 2024-08-08 +1000
 
 * bash_profile
 :PROPERTIES:
@@ -103,8 +103,23 @@ appear different (ugly) than they do in local sessions. See [[https://www.gnu.or
 more information.
 
 ** LS_COLORS
+Note: as the name indicates, it affects the command =ls= only.
 #+begin_src bash
   [ -f ~/.dir_colors ] && eval $(dircolors ~/.dir_colors)
+#+end_src
+
+** fzf
+
+To get more details, run =fzf --bash > fzf.bash= and then review the generated file.
+
+I added =grep -v 'bind -m emacs-standard'= mainly to prevent =C-t= and =M-c= from being bound to fzf
+functions, as I frequently use these key bindings and prefer them unchanged.
+
+#+begin_src bash
+if command -v fzf > /dev/null 2>&1; then
+    eval "$(fzf --bash | grep -v 'bind -m emacs-standard')"
+    _fzf_setup_completion path et
+fi
 #+end_src
 
 ** To migrate
@@ -184,13 +199,6 @@ if [ -d "$HOME/.bash_completion.d" ]; then
     for each in $HOME/.bash_completion.d/*; do
         source "$each"
     done
-fi
-
-#** fzf
-## for more detail, `fzf --bash > fzf.bash` and then review the file
-if command -v fzf > /dev/null 2>&1; then
-    eval "$(fzf --bash)"
-    _fzf_setup_completion path et
 fi
 
 #* aliases and functions (note: prefer functions than aliases)
