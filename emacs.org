@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-02 +1000
+#+DATE: 2024-08-10 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -997,6 +997,68 @@ NOTE: We must =(funcall secret)= to get the actual secret string.
 ** References
 - blog: [[https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources][Keeping Secrets in Emacs with GnuPG and Auth Sources]]
 - youtube: [[https://www.youtube.com/watch?v=nZ_T7Q49B8Y][How to Encrypt Your Passwords with Emacs]]
+
+* IRC
+
+This section is for record only, no configuration is tangled into the actual configuration file.
+
+I started with ERC, then switched to RCIRC, which appeared to be easier to set up.
+
+I attempted to use them as Slack clients, but the experience was suboptimal, so I stopped using
+them.
+
+** ERC                                                             :obsolete:
+
+#+begin_src emacs-lisp :tangle no
+(require 'erc)
+(add-to-list 'erc-modules 'notifications)
+(setq erc-auto-query 'buffer
+      erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
+                                "324" "329" "332" "333" "353" "477"))
+
+(defun my-slack ()
+  "Join join slack team of company."
+  (interactive)
+  ;; All confidential information defined in another file
+  (erc-tls :server slack-server
+           :port slack-port
+           :nick slack-nick
+           :password slack-pass
+           ))
+#+end_src
+
+** RCIRC                                                           :obsolete:
+
+#+begin_src emacs-lisp :tangle no
+  ;; All confidential information defined in another file
+  (setq rcirc-server-alist `((,slack-server
+                              :port ,slack-port
+                              :encryption tls
+                              :nick ,slack-nick
+                              :password ,(concat slack-pass "-no_mpdm_greet")
+                              :channels ("#tse-notifications"))
+                             ("irc.freenode.net"
+                              :channels ("#emacs" "#rcirc" "#mongodb"))
+                             )
+        ;; register nick name: https://freenode.net/kb/answer/registration
+        rcirc-authinfo `(("freenode" nickserv ,my-net-id ,my-pub-passwd))
+        rcirc-omit-responses '("JOIN" "PART" "QUIT" "NICK" "AWAY")
+        ;; rcirc-nick-completion-format "@%s"
+        rcirc-fill-flag nil
+        rcirc-default-nick my-net-id)
+
+  (add-hook 'rcirc-mode-hook
+            (lambda ()
+              (rcirc-track-minor-mode 1)
+              (flyspell-mode 1)))
+#+end_src
+
+* News groups and emails - gnus                                    :obsolete:
+
+In my previous job, I used Gnus to read newsgroups (mainly internal) and occasionally emails. When
+the company decommissioned the NNTP servers, I stopped using Gnus.
+
+Corresponding configuration files are in my Emacs notes directory for record only.
 
 * Kubernetes
 #+begin_src emacs-lisp
@@ -2015,8 +2077,6 @@ tmux's buffer"
 ;;; emms configure in another file
 (load "lgfang.emms" t nil nil)
 
-;;; ERC - use RCIRC instead for cleaner code base
-
 ;;; eshell: restore arrows(up/down) to their orginal functions
 (add-hook 'eshell-mode-hook
           (lambda ()
@@ -2240,8 +2300,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 ;; Installed using M-x package-install
 (autoload 'php-mode "php-mode" "Major mode for editing PHP code." t)
-
-;;; RCIRC - removed, use IRC no more.
 
 ;;; Always end a file with a newline
 (setq require-final-newline t)
