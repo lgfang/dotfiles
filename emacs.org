@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-10 +1000
+#+DATE: 2024-08-14 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -15,7 +15,7 @@ the tangling process, it produces a timestamp that other blocks may reference.
 
 #+name: tangle-time-stamp
 #+begin_src emacs-lisp :tangle no
-(format-time-string "%Y-%m-%d %5z")
+(concat user-full-name " " (format-time-string "%Y-%m-%d %5z"))
 #+end_src
 
 * Header
@@ -24,7 +24,7 @@ the tangling process, it produces a timestamp that other blocks may reference.
   ;;; init.el --- Lungang's init.el
 
   ;; Created: Fang Lungang 2004
-  ;; Updated: Fang Lungang <<tangle-time-stamp()>>
+  ;; Updated: <<tangle-time-stamp()>>
 
   ;;; Commentary:
 
@@ -1086,6 +1086,7 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
     :config
     (defvar my-config-org-files (mapcar #'expand-file-name
                                         '("~/.dotfiles/emacs.org"
+                                          "~/.dotfiles/tmux.org"
                                           "~/.dotfiles/git.org"
                                           "~/.dotfiles/shell.org"
                                           "~/.dotfiles/window-manager.org"
