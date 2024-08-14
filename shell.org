@@ -208,6 +208,11 @@ if command -v fzf > /dev/null 2>&1; then
 fi
 #+end_src
 
+** Python venv
+#+begin_src bash
+  # Don't modify my PS1, which PS1 already contains this info.
+  VIRTUAL_ENV_DISABLE_PROMPT=true
+#+end_src
 ** To migrate
 #+begin_src bash
 #* Shell options
