@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-08 +1000
+#+DATE: 2024-08-18 +1000
 
 * bash_profile
 :PROPERTIES:
@@ -73,7 +73,7 @@ fi
 
 ** TTY
 
-*** keys
+*** Keys
 
 #+begin_src bash
   stty -ixon        # Disable flow control, i.e. ^s "freeze screen" and ^q resume
@@ -101,6 +101,92 @@ Explicit setting =COLORTERM= to =truecolor= on the remote hosts otherwise SSH
 sessions to them won't use true color, which will causing Emacs color themes to
 appear different (ugly) than they do in local sessions. See [[https://www.gnu.org/software/emacs/manual/html_node/efaq/Colors-on-a-TTY.html][Colors on a TTY]] for
 more information.
+
+** PS1
+As per [[https://stackoverflow.com/a/77033447][this stack overflow post]], Bash parses the PS1 string in two passes:
+#+begin_quote
+1. During the first pass, Bash handles all of PS1's special characters, including =\a= for a bell,
+   =\t= for the time, and =\[= to introduce non-printing characters like color codes.
+2. During the second pass, Bash performs the usual parameter expansion, command substitution, etc...
+   The second pass is optional based on the promptvars shell option.
+This means that any special characters that appear directly in PS1 are recognized. Even special
+characters within command substitutions are recognized and replaced.
+#+end_quote
+
+Hence, for the sake of flexibility, I use =printf= instead of putting the color codes in PS1
+directly. As a result, we must use =\x01= and =\x02= instead of =\[= and =\]= to enclose
+none-printing chars.
+
+NOTE:
+- Must use single quotes NOT double quotes so that escape backslashes are not escaped.
+- Color codes: https://misc.flogisoft.com/bash/tip_colors_and_formatting
+
+There is no third pass.
+#+begin_src bash
+  MY_RESET='\x01\e[0m\x02'
+  MY_REVERSE='\x01\e[7m\x02'
+
+  MY_GREEN='\x01\e[32m\x02'
+  MY_BLUE='\x01\e[38;5;33m\x02'
+  MY_PURPLE='\x01\e[35m\x02'
+  MY_CYAN='\x01\e[36m\x02'
+  MY_GRAY='\x01\e[37m\x02'
+
+  MY_DGRAY='\x01\e[90m\x02'
+  MY_LGREEN='\x01\e[92m\x02'
+  MY_LBLUE='\x01\e[94m\x02'
+
+  MY_KAHKI='\x01\e[38;5;101m\x02'
+  MY_YEGRE='\x01\e[38;5;106m\x02'
+
+  PS1='\n'                        # An extra line to separte previous output and PS1
+
+  PS1=$PS1'$(printf "${MY_GREEN}╭")'                    # 1st line
+  PS1=$PS1'$(ps1_pyvenv)'                               # py venv
+  PS1=$PS1'$(ps1_git)'                                  # git branch
+  PS1=$PS1'$(ps1_kube)'                                 # kube context
+  PS1=$PS1'$(printf " ${MY_GRAY}󰞷 ${MY_DGRAY}\!")'      # command number
+  PS1=$PS1'$(printf " ${MY_GRAY} ${MY_DGRAY}\D{%T%z}")' # time
+  PS1=$PS1'\n'                                          # end of first line
+  PS1=$PS1'$(printf "${MY_GREEN}│")'                    # 2nd line
+  PS1=$PS1'$(ps1_warn_msg)'                             # warn message (if there is any)
+  PS1=$PS1'$(printf " ${MY_YEGRE}\u@\h")'               # user@host
+  PS1=$PS1'$(printf ":${MY_BLUE}\w")'                   # working directory
+  PS1=$PS1'\n'                                          # end of second line
+  PS1=$PS1'$(printf "${MY_GREEN}╰ \$") '                # 3rd line, "$"/"#" sign on a new line
+  PS1=$PS1'$(printf "${MY_RESET}")'                     # restore to the default color
+
+  function ps1_pyvenv {
+      if [ -z "${VIRTUAL_ENV+x}" ]; then
+          return
+      fi
+
+      printf " ${MY_GRAY}%s${MY_DGRAY}%s" " " "${VIRTUAL_ENV/#$HOME/\~}"
+  }
+
+  function ps1_git {
+      command -v git >/dev/null || return
+      # get git branch of pwd
+      local branch
+      branch="$(git symbolic-ref --short -q HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)"
+      if [ -n "$branch" ]; then
+          printf " ${MY_GRAY}%s${MY_DGRAY}%s" " " "$branch"
+      fi
+  }
+
+  function ps1_kube {
+      command -v kubectl >/dev/null || return
+      local kube_context="$(kubectl config current-context 2>/dev/null)"
+      local kube_namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
+      if [ -n "$kube_context" -o -n "$kube_namespace" ]; then
+          printf " ${MY_GRAY}%s${MY_DGRAY}%s" "󰠳 " "$kube_context/$kube_namespace"
+      fi
+  }
+
+  function ps1_warn_msg {
+      [ -z "$MY_WARN" ] || printf " ${MY_REVERSE}${MY_PURPLE}%s${MY_RESET}" "$MY_WARN"
+  }
+#+end_src
 
 ** LS_COLORS
 Note: as the name indicates, it affects the command =ls= only.
@@ -136,55 +222,6 @@ shopt -s checkwinsize
 # shopt -q progcomp
 
 ulimit -n 65536
-
-#* PS1
-## *NOTE* must use single quotes NOT double quotes so that escape backslashes
-## are not escaped.
-#- color codes: https://misc.flogisoft.com/bash/tip_colors_and_formatting
-MY_RESET='\[\e[0m\]'            # '\[...\]' -enclosed are non-printing chars
-MY_REVERSE='\[\e[7m\]'
-MY_GREEN='\[\e[32m\]'
-MY_BLUE='\[\e[38;5;33m\]'
-MY_PURPLE='\[\e[35m\]'
-MY_CYAN='\[\e[36m\]'
-MY_KAHKI='\[\e[38;5;101m\]'
-MY_YEGRE='\[\e[38;5;106m\]'
-PS1='\n'                      # An extra line to separte previous output and PS1
-PS1=$PS1$MY_GREEN'╭'          # 1st line, additional info
-PS1=$PS1$MY_KAHKI' \! \t'     # time and command history number
-PS1=$PS1$MY_CYAN'$(ps1_git)'
-PS1=$PS1'$(ps1_kube)'
-PS1=$PS1'\n'
-PS1=$PS1$MY_GREEN'│'                       # 2nd line, common info in PS1
-PS1=$PS1$MY_REVERSE$MY_PURPLE'$(ps1_warn_msg)'$MY_RESET # my warning message if there is any
-PS1=$PS1$MY_YEGRE' \u@\h:'        # user@host
-PS1=$PS1$MY_BLUE'\w'            # working directory
-PS1=$PS1'\n'
-PS1=$PS1$MY_GREEN'╰ \$ '        # 3rd line, "$"/"#" sign on a new line
-PS1=$PS1$MY_RESET               # restore to the default color
-
-function ps1_warn_msg {
-    [ -z "$MY_WARN" ] || echo " $MY_WARN"
-}
-
-function ps1_git {
-    command -v git >/dev/null || return
-    # get git branch of pwd
-    local branch
-    branch="$(git symbolic-ref --short -q HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)"
-    if [ -n "$branch" ]; then
-        echo " git:$branch"
-    fi
-}
-
-function ps1_kube {
-    command -v kubectl >/dev/null || return
-    local kube_context="$(kubectl config current-context 2>/dev/null)"
-    local kube_namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
-    if [ -n "$kube_context" -o -n "$kube_namespace" ]; then
-        echo " k8s:$kube_context/$kube_namespace"
-    fi
-}
 
 #* auto-completion
 if [ -r "/usr/local/etc/profile.d/bash_completion.sh" ]; then
