@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-14 +1000
+#+DATE: 2024-08-15 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1792,6 +1792,7 @@ This function is based on treesit (=json-ts-mode=)
 
 #+begin_src emacs-lisp
   (use-package python
+    :hook ((python-mode python-ts-mode) . hs-minor-mode)
     :custom
     ;; triple quotes on their own lines
     (python-fill-docstring-style 'django)
