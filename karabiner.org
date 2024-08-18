@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-07-19
+#+DATE: 2024-08-18 +1000
 #+DESCRIPTION: Layered hotkeys using Karabiner Elements
 #+KEYWORDS: Karabiner
 #+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
@@ -1199,6 +1199,8 @@ NOTE:
   bind =Option-d= to copy and delete one word forward. However, since there is
   no kill ring, it cannot "accumulate" all the killed text like the Emacs
   =kill-word= does when run multiple times consecutively.
+- To get the bundle ID of an application, run =osascript -e 'id of app "wezterm"'=.
+
 #+begin_src json-ts
   {
     "description": "Emacs key bindings everywhere",
@@ -1222,6 +1224,7 @@ NOTE:
             "type": "frontmost_application_unless",
             "bundle_identifiers": [
               "^org\\.gnu\\.Emacs$",
+              "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
             ]
           }
@@ -1247,6 +1250,7 @@ NOTE:
             "type": "frontmost_application_unless",
             "bundle_identifiers": [
               "^org\\.gnu\\.Emacs$",
+              "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
             ]
           }
@@ -1272,6 +1276,7 @@ NOTE:
             "type": "frontmost_application_unless",
             "bundle_identifiers": [
               "^org\\.gnu\\.Emacs$",
+              "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
             ]
           }
@@ -1303,6 +1308,7 @@ NOTE:
             "type": "frontmost_application_unless",
             "bundle_identifiers": [
               "^org\\.gnu\\.Emacs$",
+              "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
             ]
           }
@@ -1334,6 +1340,7 @@ NOTE:
             "type": "frontmost_application_unless",
             "bundle_identifiers": [
               "^org\\.gnu\\.Emacs$",
+              "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
             ]
           }
@@ -1359,6 +1366,7 @@ NOTE:
             "type": "frontmost_application_unless",
             "bundle_identifiers": [
               "^org\\.gnu\\.Emacs$",
+              "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
             ]
           }
@@ -1384,6 +1392,7 @@ NOTE:
             "type": "frontmost_application_unless",
             "bundle_identifiers": [
               "^org\\.gnu\\.Emacs$",
+              "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
             ]
           }
@@ -1409,6 +1418,7 @@ NOTE:
             "type": "frontmost_application_unless",
             "bundle_identifiers": [
               "^org\\.gnu\\.Emacs$",
+              "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
             ]
           }
@@ -1434,6 +1444,7 @@ NOTE:
             "type": "frontmost_application_unless",
             "bundle_identifiers": [
               "^org\\.gnu\\.Emacs$",
+              "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
             ]
           }
@@ -1458,6 +1469,7 @@ NOTE:
             "type": "frontmost_application_unless",
             "bundle_identifiers": [
               "^org\\.gnu\\.Emacs$",
+              "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
             ]
           }
@@ -1482,6 +1494,7 @@ NOTE:
             "type": "frontmost_application_unless",
             "bundle_identifiers": [
               "^org\\.gnu\\.Emacs$",
+              "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
             ]
           }
@@ -1506,6 +1519,7 @@ NOTE:
             "type": "frontmost_application_unless",
             "bundle_identifiers": [
               "^org\\.gnu\\.Emacs$",
+              "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
             ]
           }
@@ -1530,6 +1544,7 @@ NOTE:
             "type": "frontmost_application_unless",
             "bundle_identifiers": [
               "^org\\.gnu\\.Emacs$",
+              "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
             ]
           }
