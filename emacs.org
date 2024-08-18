@@ -558,12 +558,14 @@ Below are two examples:
 ** Fill
 
 In the past, the suggestion was to limit code lines to 80 characters for optimal
-printing on A4 paper or for neat screen display. However, with the advent of
-larger monitors, it's now possible to comfortably display two buffers, each with
-100 characters.
+printing on A4 paper or for neat screen display.
+
+Nowadays, although larger monitors can comfortably display two buffers side by
+side, each with 100 characters, there are still times we work on the build-in
+smaller screens. Hence, we keep the fill column to 80.
 
 #+begin_src emacs-lisp
-(setq-default fill-column 100 comment-fill-column nil)
+(setq-default fill-column 80 comment-fill-column nil)
 #+end_src
 
 ** Whitespace
