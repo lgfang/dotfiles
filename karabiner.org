@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-18 +1000
+#+DATE: 2024-08-19 +1000
 #+DESCRIPTION: Layered hotkeys using Karabiner Elements
 #+KEYWORDS: Karabiner
 #+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
@@ -983,7 +983,7 @@ Needs to remap modifiers:
         "description": "terminal",
         "to": [
           {
-            "shell_command": "open -a iterm.app"
+            "shell_command": "open -a wezterm.app"
           }
         ],
         "from": {
@@ -1036,30 +1036,6 @@ Needs to remap modifiers:
         ],
         "from": {
           "key_code": "j",
-          "modifiers": {
-            "optional": [
-              "any"
-            ]
-          }
-        },
-        "conditions": [
-          {
-            "type": "variable_if",
-            "name": "select_app",
-            "value": 1
-          }
-        ],
-        "type": "basic"
-      },
-      {
-        "description": "VS Code",
-        "to": [
-          {
-            "shell_command": "open -a 'Visual Studio Code.app'"
-          }
-        ],
-        "from": {
-          "key_code": "k",
           "modifiers": {
             "optional": [
               "any"
