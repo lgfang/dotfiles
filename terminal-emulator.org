@@ -1,0 +1,103 @@
+# -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+# Created: Fang Lungang 2024-08-17
+
+#+TITLE: My Terminal Emulator Configurations
+#+AUTHOR: Fang Lungang
+#+DATE: 2024-08-18 +1000
+
+* Timestamps
+
+#+name: tangle-time-stamp
+#+begin_src emacs-lisp :tangle no
+(concat user-full-name " " (format-time-string "%Y-%m-%d %5z"))
+#+end_src
+
+#+begin_src lua :tangle ~/.wezterm.lua :noweb yes
+  -- Created: Fanga lungang 2024-08-17
+  -- Updated: <<tangle-time-stamp()>>
+#+end_src
+
+* wezterm
+
+** wezterm vs iTerm2
+
+As a Tmux + Emacs user on MacOS, I don't need multiplexer etc.. Hence, for me the main considerations are:
+- Pros
+  - Configuration file vs GUI only configuration.
+  - Custom hyperlinks
+- Cons
+  - Unable to copy a wrapped long line as one line.
+  - Out of box is not as usable as iTerm2
+
+** Start
+#+begin_src lua :tangle ~/.wezterm.lua
+local wezterm = require 'wezterm'
+local config = wezterm.config_builder()
+#+end_src
+
+** Appearance
+
+- See [[https://github.com/ryanoasis/nerd-fonts/discussions/1103][this post]] for the differences of the 3 variations of nerd fonts, i.e. (
+  nerd font, nerd font mono, and nerd font propo).
+
+#+begin_src lua :tangle ~/.wezterm.lua
+  config.window_decorations = 'RESIZE'
+  config.window_padding = { left = 0, right = 0, top = 0, bottom = 0}
+  config.enable_tab_bar = false
+
+  config.font =  wezterm.font_with_fallback {
+     {
+        family = 'JetBrainsMono Nerd Font Propo',
+        weight = 'Regular',
+        harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' },
+     },
+  }
+
+  config.font_rules = {
+    {
+      intensity = "Bold",
+      font = wezterm.font({ family = "JetBrainsMono Nerd Font Propo", weight = "ExtraBold" }),
+    },
+  }
+
+  config.font_size = 19
+#+end_src
+
+** Keyboard
+#+begin_src lua :tangle ~/.wezterm.lua
+-- Do not set left/right "Alt as "AltGr"
+config.send_composed_key_when_left_alt_is_pressed = false
+config.send_composed_key_when_right_alt_is_pressed = false
+
+config.disable_default_key_bindings = true
+config.keys = {
+   { action = wezterm.action.CloseCurrentTab {confirm = true}, key = 'w', mods = 'CMD'},
+   { action = wezterm.action.QuitApplication, key = 'q', mods = 'CMD'},
+   { action = wezterm.action.Hide, key = 'h', mods = 'CMD'},
+   { action = wezterm.action.SpawnWindow, key = 'n', mods = 'CMD'},
+
+   { action = wezterm.action.DecreaseFontSize, key = '-', mods = 'CMD'},
+   { action = wezterm.action.IncreaseFontSize, key = '=', mods = 'CMD'},
+
+   { action = wezterm.action.PasteFrom 'Clipboard' , key = 'v', mods = 'CMD', },
+   { action = wezterm.action.PasteFrom 'PrimarySelection', key = 'v', mods = 'CMD', },
+}
+
+-- Use the defaults as a base
+config.hyperlink_rules = wezterm.default_hyperlink_rules()
+#+end_src
+
+** MongoDB specific links
+#+begin_src lua :tangle ~/.wezterm.lua
+
+table.insert(
+   config.hyperlink_rules,
+   {
+      regex = [[\b((BF|DEVPROD|HELP|PERF|SERVER)-[0-9]+)\b]],
+      format = 'https://jira.mongodb.org/browse/$1'
+   }
+)
+
+return config
+
+#+end_src
