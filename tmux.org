@@ -3,7 +3,7 @@
 
 #+TITLE: My Tmux Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-15 +1000
+#+DATE: 2024-08-18 +1000
 
 * Timestamps
 
@@ -28,13 +28,16 @@ In case tmux is not available, below are some basic usage of *Screen*:
 | kill window            | C-a k         |
 
 * Terminal type
+
+Force tmux to use "true color":
 #+begin_src conf :tangle ~/.tmux.conf
-# NOTE: Comment out this if you don't know what it is
 set-option -g default-terminal "xterm-256color"
-# set-option -g default-terminal "screen-256color"
-# or start tmux with "tmux -2" to force 256
-# "if-shell" runs asynchronously, so it does not help
+set-option -ag terminal-overrides ",xterm-256color:RGB"
 #+end_src
+
+Ideally, tmux should detect the terminal emulator's color capability automatically, but this does
+not always work. Hence, sometimes we need to explicitly tell tmux that the terminal emulator is
+capable of that.
 
 * Prefix key
 #+begin_src conf :tangle ~/.tmux.conf
