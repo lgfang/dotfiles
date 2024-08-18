@@ -531,11 +531,11 @@ Below are two examples:
 - =Modified: Fang Lungang 2024-07-11T16:41:47+1000=
 
   #+begin_src org :tangle no
-    # -*-mode:org;coding:utf-8;time-stamp-pattern:"8/Modified[:][ \t]*%U %Y-%02m-%02dT%02H:%02M:%02S%5z$"-*-
+    # -*-mode:org;coding:utf-8;time-stamp-pattern:"8/Updated[:][ \t]*%U %Y-%02m-%02dT%02H:%02M:%02S%5z$"-*-
   #+end_src
 
-  Note: =Modified[:]= matches =Modified:=. The reason using the former is to
-  avoid the pattern itself being replaced
+  Note: =Updated[:]= matches =Updated:=. The reason using the former is to avoid
+  the pattern itself being replaced.
 
 ** Directories
 #+begin_src emacs-lisp
@@ -595,6 +595,31 @@ smaller screens. Hence, we keep the fill column to 80.
 
   (use-package yasnippet-snippets
     :after yasnippet-snippets)
+#+end_src
+
+Below are some common snippets. For mode specific snippets, see the
+corresponding sections.
+
+*** timestamp
+#+begin_src snippet :tangle ~/.emacs.d/snippets/fundamental-mode/timestamp :mkdirp yes
+
+# -*- mode: snippet -*-
+# key: ts
+# name: file mode and timestamp
+
+# Insert the string and comment it in a tmp buffer and the copy it into
+# the current buffer. This is to avoid the warning 'modified buffer in a
+# backquote expression'.
+
+# --
+`(let* ((mode major-mode))
+   (with-temp-buffer
+     (insert "-*- time-stamp-pattern:\"8/Updated:[ \\t]+%U %Y-%02m-%02d %5z$\" -*-\n"
+             (format "Created: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d"))
+             (format "Updated: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d %5z"))
+     (funcall mode)
+     (comment-region (point-min) (point-max))
+     (buffer-string)))`
 #+end_src
 
 * Spelling check: flyspell
