@@ -208,11 +208,22 @@ if command -v fzf > /dev/null 2>&1; then
 fi
 #+end_src
 
-** Python venv
+** Python
+
+*** venv
 #+begin_src bash
-  # Don't modify my PS1, which PS1 already contains this info.
+  # Don't modify my PS1, which already contains corresponding info.
   VIRTUAL_ENV_DISABLE_PROMPT=true
 #+end_src
+
+*** pyenv
+
+#+begin_src bash
+  if command -v pyenv > /dev/null; then
+      eval "$(pyenv init -)"
+  fi
+#+end_src
+
 ** To migrate
 #+begin_src bash
 #* Shell options
