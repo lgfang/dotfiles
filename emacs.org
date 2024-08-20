@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-18 +1000
+#+DATE: 2024-08-20 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1608,11 +1608,11 @@ TODO: when this package is stable and available in melpa, remove the load-path.
     :config
     ;; Define my own shortcut(s). For one-off usage, run `copilot-chat-custom-prompt-selection`
     ;; instead.
-    (push '(how . "How to ") copilot-chat-prompts)
+    (push '(how . "How to ") copilot-chat--prompts)
     (defun copilot-chat-how()
       "Ask Copilot how to {the text of the selected region}."
       (interactive)
-      (copilot-chat-ask-region 'how))
+      (copilot-chat--ask-region 'how))
   )
 #+end_src
 
