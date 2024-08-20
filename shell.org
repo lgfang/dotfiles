@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-18 +1000
+#+DATE: 2024-08-20 +1000
 
 * bash_profile
 :PROPERTIES:
@@ -161,7 +161,7 @@ There is no third pass.
           return
       fi
 
-      printf " ${MY_GRAY}%s${MY_DGRAY}%s" " " "${VIRTUAL_ENV/#$HOME/\~}"
+      printf " ${MY_PURPLE}%s${MY_DGRAY}%s" " " "${VIRTUAL_ENV/#$HOME/\~}"
   }
 
   function ps1_git {
