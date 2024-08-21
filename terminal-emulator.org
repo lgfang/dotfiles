@@ -3,7 +3,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-18 +1000
+#+DATE: 2024-08-21 +1000
 
 * Timestamps
 
@@ -24,10 +24,13 @@
 As a Tmux + Emacs user on MacOS, I don't need multiplexer etc.. Hence, for me the main considerations are:
 - Pros
   - Configuration file vs GUI only configuration.
+    - Version controllable
+    - Editing configuration files is faster than navigating through the GUI.
   - Custom hyperlinks
 - Cons
   - Unable to copy a wrapped long line as one line.
-  - Out of box is not as usable as iTerm2
+  - The out of box setting is not as usable as iTerm2 to me.
+  - Does not render all fonts nicely. For example, "Andale Mono" is much nicer in iTerm2.
 
 ** Start
 #+begin_src lua :tangle ~/.wezterm.lua
