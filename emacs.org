@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-20 +1000
+#+DATE: 2024-08-23 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -405,6 +405,15 @@ remote server to check if these files do exist.
     :config
     (add-to-list 'aw-dispatch-alist '(?t rotate-frame-clockwise))
     )
+
+  (defun flg-toggle-window-dedicated ()
+    "Toggle `set-window-dedicated-p' for the current window."
+    (interactive)
+    (let ((window (selected-window)))
+      (set-window-dedicated-p window (not (window-dedicated-p window)))
+      (message "Window %sdedicated to %s"
+               (if (window-dedicated-p window) "" "no longer ")
+               (buffer-name))))
 #+end_src
 
 With =ace-window= package, I feel no more need of =windmove=, =C-x 4 4= or
