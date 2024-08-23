@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-20 +1000
+#+DATE: 2024-08-23 +1000
 #+DESCRIPTION: Layered hotkeys using Karabiner Elements
 #+KEYWORDS: Karabiner
 #+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
@@ -199,6 +199,8 @@ Needs to remap modifiers:
           {
             "key_code": "caps_lock"
           }
+        ],
+        "to_if_held_down": [
         ],
         "to_after_key_up": [
           {
