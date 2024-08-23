@@ -8,7 +8,7 @@
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
 
-* Time stamp for tangling
+* Timestamp for tangling
 
 This block itself is not tangled into any configuration file. However, during
 the tangling process, it produces a timestamp that other blocks may reference.
@@ -1734,8 +1734,9 @@ add content similar to the following to the emacs directory local variable file
            (compilation-filter . ansi-color-compilation-filter))
     )
 
-  (use-package lgf-ansi-color-mode
+  (use-package flg-ansi-color-mode
     :after ansi-color
+    :commands flg-ansi-color-mode
     )
 #+end_src
 

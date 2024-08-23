@@ -1,9 +1,8 @@
-;;; lgf-ansi-color-mode.el --- applies ansi-color on the visible area -*- lexical-binding: t; -*-
-
-;; Modified: Lungang Fang 2024-05-04T20:58:02+1000>
+;;; flg-ansi-color-mode.el --- applies ansi-color on the visible area -*- lexical-binding: t -*-
 
 ;; Author: Fang Lungang <lungang.fang@gmail.org>
 ;; Created: Fang Lungang 2024-05-04
+;; Updated: Fang Lungang 2024-08-23 +1000
 ;; Version: 0.0.1
 ;; Package-Requires: (ansi-color)
 ;; Keywords: comm processes terminals services
@@ -70,5 +69,9 @@ on."
         (add-hook 'window-scroll-functions 'ansi-color-after-scroll 80 t))
     (remove-hook 'window-scroll-functions 'ansi-color-after-scroll t)))
 
-(provide 'lgf-ansi-color-mode)
+(provide 'flg-ansi-color-mode)
 ;;; lgf-ansi-color-mode.el ends here
+
+;; Local Variables:
+;; time-stamp-pattern:"8/Updated[:][ \t]+%U %Y-%02m-%02d %5z$"
+;; End:
