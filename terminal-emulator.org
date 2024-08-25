@@ -3,7 +3,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-21 +1000
+#+DATE: 2024-08-25 +1000
 
 * Timestamps
 
@@ -48,18 +48,19 @@ local config = wezterm.config_builder()
   config.window_padding = { left = 0, right = 0, top = 0, bottom = 0}
   config.enable_tab_bar = false
 
+  local font_family = 'JetBrainsMono Nerd Font Propo'
+
   config.font =  wezterm.font_with_fallback {
      {
-        family = 'JetBrainsMono Nerd Font Propo',
-        weight = 'Regular',
+        family = font_family,
+        weight = 'Bold',
         harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' },
      },
   }
-
   config.font_rules = {
     {
       intensity = "Bold",
-      font = wezterm.font({ family = "JetBrainsMono Nerd Font Propo", weight = "ExtraBold" }),
+      font = wezterm.font({ family = font_family, weight = "ExtraBold" }),
     },
   }
 
