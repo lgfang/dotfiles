@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-23 +1000
+#+DATE: 2024-08-28 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -855,8 +855,9 @@ Automatically encrypt/decrypt =.cpt= files using =ccrypt=.
     )
 #+end_src
 
-Note: while this one is simple and straightforward, I'd recommend using GPG
-instead.
+Note: while this one is simple and straightforward, I've switched to GPG, which
+might appear to be complicated at the first glance but is actually more
+convenient (due to gpg agent) and more secure.
 
 ** Encrypt files using keys: gnugpg
 
@@ -981,6 +982,10 @@ gpg -r easy --encrypt-files file1 file2
 
 - =M-x epa-encrypt-region=
 - =M-x epa-decrypt-region=
+
+IMPORTANT: Avoid embedding encrypt regions in files without version control, as
+accidental changes are hard to detect and changing a single character can render
+the entire region unreadable.
 
 *** Cache passphrase
 
