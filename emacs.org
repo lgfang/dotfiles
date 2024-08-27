@@ -1174,6 +1174,23 @@ I.e. type =<s= + =TAB= to insert =#+begin_src= etc.
     )
 #+end_src
 
+** Agenda
+#+begin_src emacs-lisp
+  (use-package org-agenda
+    :custom (org-agenda-use-time-grid nil)
+  )
+#+end_src
+
+Turn off time grid as the grid lines between clocked items are annoying. An
+alternative is to set =remove-match= as shown below. However, this can be
+misleading as people typically expect equal intervals between grid lines.
+Therefore, I chose to disable the time grid.
+#+begin_src emacs-lisp :tangle no
+  (setq org-agenda-time-grid
+        '(((daily today remove-match)
+           (800 1000 1200 1400 1600 1800 2000)
+           "......" "----------------"))))
+#+end_src
 ** Clock
 #+begin_src emacs-lisp
   (use-package org-clock
