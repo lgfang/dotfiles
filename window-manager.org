@@ -3,7 +3,7 @@
 
 #+TITLE: My Window Manager Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-09 +1000
+#+DATE: 2024-08-28 +1000
 #+DESCRIPTION: My window manager related configurations
 #+KEYWORDS: window manager, hotkey, tiling, yabai, skhd
 
@@ -48,6 +48,10 @@ yabai -m rule --add app="^Karabiner-Elements$" sticky=on layer=above manage=off
 yabai -m rule --add app="^Karabiner-EventViewer$" sticky=on layer=above manage=off
 # yabai -m rule --add app="^Finder$" sticky=on layer=above manage=off
 
+# Layout strategy, I actually prefer "stack" as the default strategy, to be keep
+# the ability to tile windows when needed, we have to set it to "bsp"
+yabai -m config layout                       bsp
+
 # global settings
 yabai -m config mouse_follows_focus          on
 yabai -m config focus_follows_mouse          off
@@ -58,12 +62,11 @@ yabai -m config mouse_action2                resize
 yabai -m config mouse_drop_action            swap
 
 # general space settings
-yabai -m config layout                       bsp
-yabai -m config top_padding                  06
-yabai -m config bottom_padding               06
-yabai -m config left_padding                 06
-yabai -m config right_padding                06
-yabai -m config window_gap                   06
+yabai -m config top_padding                  2
+yabai -m config bottom_padding               2
+yabai -m config left_padding                 2
+yabai -m config right_padding                2
+yabai -m config window_gap                   2
 
 echo "yabai configuration loaded.."
 #+end_src
