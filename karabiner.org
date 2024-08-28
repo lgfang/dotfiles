@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-23 +1000
+#+DATE: 2024-08-28 +1000
 #+DESCRIPTION: Layered hotkeys using Karabiner Elements
 #+KEYWORDS: Karabiner
 #+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
@@ -1085,16 +1085,16 @@ Needs to remap modifiers:
         ]
       },
       {
-        "description": "flip onto the right: p",
+        "description": "unstack: u",
         "to": [
           {
-            "shell_command": "<<yabai()>> -m window --focus stack.prev",
+            "shell_command": "<<yabai()>> -m window --toggle float && <<yabai()>> -m window --toggle float",
             "repeat": true
           }
         ],
         "type": "basic",
         "from": {
-          "key_code": "p",
+          "key_code": "u",
           "modifiers": {
             "optional": [
               "any"
@@ -1110,10 +1110,36 @@ Needs to remap modifiers:
         ]
       },
       {
-        "description": "flip onto the : n",
+        "description": "flip previous: p",
         "to": [
           {
-            "shell_command": "<<yabai()>> -m window --focus stack.next",
+            "shell_command": "<<yabai()>> -m window --focus stack.prev || <<yabai()>> -m window --focus stack.last",
+            "repeat": true
+          }
+        ],
+        "type": "basic",
+        "from": {
+          "key_code": "p",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+
+ }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "stack_window",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "description": "flip next: n",
+        "to": [
+          {
+            "shell_command": "<<yabai()>> -m window --focus stack.next || <<yabai()>> -m window --focus stack.first",
             "repeat": true
           }
         ],
