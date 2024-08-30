@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-28 +1000
+#+DATE: 2024-08-30 +1000
 #+DESCRIPTION: Layered hotkeys using Karabiner Elements
 #+KEYWORDS: Karabiner
 #+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
@@ -61,14 +61,6 @@ IMPORTANT: remember to iterate each and every keyboard/mouse and explicitly set
   "devices": [
 #+end_src
 *** Built-in keyboard
-Needs to remap modifiers:
-| From          | to            |
-|---------------+---------------|
-| Left Command  | Left Option   |
-| Left Option   | Left Command  |
-| Right Command | Right Option  |
-| Right Option  | Right Control |
-
 #+begin_src json-ts
   {
     "identifiers": {
@@ -79,62 +71,20 @@ Needs to remap modifiers:
       "vendor_id": 1452
     },
     "ignore": false,
-    "manipulate_caps_lock_led": true,
-    "simple_modifications": [
-      {
-        "from": {
-          "key_code": "left_command"
-        },
-        "to": [
-          {
-            "key_code": "left_option"
-          }
-        ]
-      },
-      {
-        "from": {
-          "key_code": "left_option"
-        },
-        "to": [
-          {
-            "key_code": "left_command"
-          }
-        ]
-      },
-      {
-        "from": {
-          "key_code": "right_command"
-        },
-        "to": [
-          {
-            "key_code": "right_option"
-          }
-        ]
-      },
-      {
-        "from": {
-          "key_code": "right_option"
-        },
-        "to": [
-          {
-            "key_code": "right_control"
-          }
-        ]
-      }
-    ]
+    "manipulate_caps_lock_led": true
   },
 #+end_src
 
 *** Keychron Q1
 #+begin_src json-ts
   {
-      "identifiers": {
-          "is_keyboard": true,
-          "is_pointing_device": true,
-          "product_id": 1552,
-          "vendor_id": 13364
-      },
-      "ignore": false
+    "identifiers": {
+      "is_keyboard": true,
+      "is_pointing_device": true,
+      "product_id": 1552,
+      "vendor_id": 13364
+    },
+    "ignore": false
   },
 #+end_src
 
@@ -171,6 +121,39 @@ Needs to remap modifiers:
 #+begin_src json-ts
   "complex_modifications": {
       "rules": [
+#+end_src
+** Enter held down as control
+#+begin_src json-ts
+  {
+    "description": "Hold Enter for Control",
+    "manipulators": [
+      {
+        "parameters": {
+          "basic.to_if_held_down_threshold_milliseconds": 0,
+          "basic.to_if_alone_timeout_milliseconds": 300
+        },
+        "to_if_held_down": [
+          {
+            "key_code": "right_control"
+          }
+        ],
+        "to_if_alone": [
+          {
+            "key_code": "return_or_enter"
+          }
+        ],
+        "from": {
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          },
+          "key_code": "return_or_enter"
+        },
+        "type": "basic"
+      }
+    ]
+  },
 #+end_src
 ** Define hyper key
 #+begin_src json-ts
