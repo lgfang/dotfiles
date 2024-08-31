@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-30 +1000
+#+DATE: 2024-08-31 +1000
 #+DESCRIPTION: Layered hotkeys using Karabiner Elements
 #+KEYWORDS: Karabiner
 #+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
@@ -121,6 +121,167 @@ IMPORTANT: remember to iterate each and every keyboard/mouse and explicitly set
 #+begin_src json-ts
   "complex_modifications": {
       "rules": [
+#+end_src
+** COMMENT Home row modifier
+TODO:
+- adjust timeout
+- adjust the virtual hyper key to work with it.
+#+begin_src json-ts
+  {
+    "description": "Home row modifer",
+    "manipulators": [
+      {
+        "parameters": {
+          "basic.to_if_held_down_threshold_milliseconds": 0,
+          "basic.to_if_alone_timeout_milliseconds": 300
+        },
+        "to_if_held_down": [
+          {
+            "key_code": "left_control"
+          }
+        ],
+        "to_if_alone": [
+          {
+            "key_code": "a"
+          }
+        ],
+        "from": {
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          },
+          "key_code": "a"
+        },
+        "type": "basic"
+      },
+      {
+          "parameters": {
+            "basic.to_if_held_down_threshold_milliseconds": 0,
+          "basic.to_if_alone_timeout_milliseconds": 300
+          },
+          "to_if_held_down": [
+            {
+              "key_code": "left_option"
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "s"
+            }
+          ],
+          "from": {
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            },
+            "key_code": "s"
+          },
+          "type": "basic"
+      },
+      {
+          "parameters": {
+            "basic.to_if_held_down_threshold_milliseconds": 0,
+          "basic.to_if_alone_timeout_milliseconds": 300
+          },
+          "to_if_held_down": [
+            {
+              "key_code": "left_command"
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "d"
+            }
+          ],
+          "from": {
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            },
+            "key_code": "d"
+          },
+          "type": "basic"
+      },
+      {
+          "parameters": {
+            "basic.to_if_held_down_threshold_milliseconds": 0,
+          "basic.to_if_alone_timeout_milliseconds": 300
+          },
+          "to_if_held_down": [
+            {
+              "key_code": "right_command"
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "k"
+            }
+          ],
+          "from": {
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            },
+            "key_code": "k"
+          },
+          "type": "basic"
+      },
+      {
+          "parameters": {
+            "basic.to_if_held_down_threshold_milliseconds": 0,
+          "basic.to_if_alone_timeout_milliseconds": 300
+          },
+          "to_if_held_down": [
+            {
+              "key_code": "right_option"
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "l"
+            }
+          ],
+          "from": {
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            },
+            "key_code": "l"
+          },
+          "type": "basic"
+      },
+      {
+          "parameters": {
+            "basic.to_if_held_down_threshold_milliseconds": 0,
+          "basic.to_if_alone_timeout_milliseconds": 300
+          },
+          "to_if_held_down": [
+            {
+              "key_code": "right_control"
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "semicolon"
+            }
+          ],
+          "from": {
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            },
+            "key_code": "semicolon"
+          },
+          "type": "basic"
+      }
+    ]
+  },
 #+end_src
 ** Enter held down as control
 #+begin_src json-ts
