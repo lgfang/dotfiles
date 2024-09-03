@@ -291,7 +291,7 @@ TODO:
       {
         "parameters": {
           "basic.to_if_held_down_threshold_milliseconds": 0,
-          "basic.to_if_alone_timeout_milliseconds": 300
+          "basic.to_if_alone_timeout_milliseconds": 120
         },
         "to_if_held_down": [
           {
@@ -1074,7 +1074,7 @@ TODO:
         ]
       },
       {
-        "description": "Toggle full screen: enter",
+        "description": "Toggle full screen: ;",
         "to": [
           {
             "shell_command": "<<yabai()>> -m window --toggle zoom-fullscreen"
@@ -1082,7 +1082,7 @@ TODO:
         ],
         "type": "basic",
         "from": {
-          "key_code": "return_or_enter",
+          "key_code": "semicolon",
           "modifiers": {
             "optional": [
               "any"
