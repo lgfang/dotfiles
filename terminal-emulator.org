@@ -3,7 +3,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-25 +1000
+#+DATE: 2024-09-05 +1000
 
 * Timestamps
 
@@ -34,22 +34,27 @@ As a Tmux + Emacs user on MacOS, I don't need multiplexer etc.. Hence, for me th
 
 ** Start
 #+begin_src lua :tangle ~/.wezterm.lua
-local wezterm = require 'wezterm'
-local config = wezterm.config_builder()
+  local wezterm = require 'wezterm'
+  local config = wezterm.config_builder()
 #+end_src
 
 ** Appearance
 
-- See [[https://github.com/ryanoasis/nerd-fonts/discussions/1103][this post]] for the differences of the 3 variations of nerd fonts, i.e. (
-  nerd font, nerd font mono, and nerd font propo).
+*** Window and frame
+See [[https://github.com/ryanoasis/nerd-fonts/discussions/1103][this post]] for the differences of the 3 variations of nerd fonts, i.e. (nerd
+font, nerd font mono, and nerd font propo).
 
 #+begin_src lua :tangle ~/.wezterm.lua
   config.window_decorations = 'RESIZE'
   config.window_padding = { left = 0, right = 0, top = 0, bottom = 0}
   config.enable_tab_bar = false
+#+end_src
 
+*** Fonts
+
+#+begin_src lua :tangle ~/.wezterm.lua
   local font_family = 'JetBrainsMono Nerd Font Propo'
-
+  config.font_size = 19
   config.font =  wezterm.font_with_fallback {
      {
         family = font_family,
@@ -63,45 +68,58 @@ local config = wezterm.config_builder()
       font = wezterm.font({ family = font_family, weight = "ExtraBold" }),
     },
   }
+#+end_src
 
-  config.font_size = 19
+*** COMMENT Opacity
+
+#+begin_src lua :tangle ~/.wezterm.lua
+  config.window_background_opacity = 0.8
+#+end_src
+This is interesting, but I often prefer to disable it as the background can be
+distracting.
+
+Additionally, for Emacs running in the terminal to support opacity, set its
+background to "unspecified-bg" as shown below:
+#+begin_src emacs-lisp
+  (set-face-background 'default "unspecified-bg")
 #+end_src
 
 ** Keyboard
 #+begin_src lua :tangle ~/.wezterm.lua
--- Do not set left/right "Alt as "AltGr"
-config.send_composed_key_when_left_alt_is_pressed = false
-config.send_composed_key_when_right_alt_is_pressed = false
+  -- Do not set left/right "Alt as "AltGr"
+  config.send_composed_key_when_left_alt_is_pressed = false
+  config.send_composed_key_when_right_alt_is_pressed = false
 
-config.disable_default_key_bindings = true
-config.keys = {
-   { action = wezterm.action.CloseCurrentTab {confirm = true}, key = 'w', mods = 'CMD'},
-   { action = wezterm.action.QuitApplication, key = 'q', mods = 'CMD'},
-   { action = wezterm.action.Hide, key = 'h', mods = 'CMD'},
-   { action = wezterm.action.SpawnWindow, key = 'n', mods = 'CMD'},
+  config.disable_default_key_bindings = true
+  config.keys = {
+     { action = wezterm.action.CloseCurrentTab {confirm = true}, key = 'w', mods = 'CMD'},
+     { action = wezterm.action.QuitApplication, key = 'q', mods = 'CMD'},
+     { action = wezterm.action.Hide, key = 'h', mods = 'CMD'},
+     { action = wezterm.action.SpawnWindow, key = 'n', mods = 'CMD'},
 
-   { action = wezterm.action.DecreaseFontSize, key = '-', mods = 'CMD'},
-   { action = wezterm.action.IncreaseFontSize, key = '=', mods = 'CMD'},
+     { action = wezterm.action.DecreaseFontSize, key = '-', mods = 'CMD'},
+     { action = wezterm.action.IncreaseFontSize, key = '=', mods = 'CMD'},
 
-   { action = wezterm.action.PasteFrom 'Clipboard' , key = 'v', mods = 'CMD', },
-   { action = wezterm.action.PasteFrom 'PrimarySelection', key = 'v', mods = 'CMD', },
-}
-
--- Use the defaults as a base
-config.hyperlink_rules = wezterm.default_hyperlink_rules()
+     { action = wezterm.action.PasteFrom 'Clipboard' , key = 'v', mods = 'CMD', },
+     { action = wezterm.action.PasteFrom 'PrimarySelection', key = 'v', mods = 'CMD', },
+  }
 #+end_src
 
-** MongoDB specific links
+** Custom hyperlinks
 #+begin_src lua :tangle ~/.wezterm.lua
+  -- Use the defaults as a base
+  config.hyperlink_rules = wezterm.default_hyperlink_rules()
+  table.insert(
+     config.hyperlink_rules,
+     {
+        -- example: clicking on SERVER-1234 opens this mongodb sever ticket
+        regex = [[\b((SERVER|server)-[0-9]+)\b]],
+        format = 'https://jira.mongodb.org/browse/$1'
+     }
+  )
+#+end_src
 
-table.insert(
-   config.hyperlink_rules,
-   {
-      regex = [[\b((BF|DEVPROD|HELP|PERF|SERVER)-[0-9]+)\b]],
-      format = 'https://jira.mongodb.org/browse/$1'
-   }
-)
-
-return config
-
+** Return the config object (end of the config)
+#+begin_src lua :tangle ~/.wezterm.lua
+  return config
 #+end_src
