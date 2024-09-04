@@ -2,7 +2,7 @@
 
 ;; Author: Fang Lungang <lungang.fang@gmail.org>
 ;; Created: Fang Lungang 2024-05-04
-;; Updated: Fang Lungang 2024-08-23 +1000
+;; Updated: Fang Lungang 2024-09-05 +1000
 ;; Version: 0.0.1
 ;; Package-Requires: (ansi-color)
 ;; Keywords: comm processes terminals services
@@ -59,18 +59,18 @@ on."
   (let ((ansi-color-context-region nil))
     (ansi-color-apply-on-region start (window-end window t) t)))
 
-(define-minor-mode lgf-ansi-color-mode
+(define-minor-mode flg-ansi-color-mode
   "A simple minor mode that translates and render ANSI color codes."
   :global nil
   :lighter ""
-  (if lgf-ansi-color-mode
+  (if flg-ansi-color-mode
       (progn
         (ansi-color-apply-on-region (window-start) (window-end) t)
         (add-hook 'window-scroll-functions 'ansi-color-after-scroll 80 t))
     (remove-hook 'window-scroll-functions 'ansi-color-after-scroll t)))
 
 (provide 'flg-ansi-color-mode)
-;;; lgf-ansi-color-mode.el ends here
+;;; flg-ansi-color-mode.el ends here
 
 ;; Local Variables:
 ;; time-stamp-pattern:"8/Updated[:][ \t]+%U %Y-%02m-%02d %5z$"
