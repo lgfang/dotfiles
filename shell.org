@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-20 +1000
+#+DATE: 2024-09-04 +1000
 
 * bash_profile
 :PROPERTIES:
@@ -768,8 +768,23 @@ function tmux_clean_buffers {
 function wake {
     wakeonlan -i lgfang78.oicp.net 00:23:ae:98:83:91
 }
-
 #+end_src
+
+** Use a different "tmp" directory
+By default, many applications use =/tmp= as the temporary directory. The
+contents in this directory are considered temporary and are deleted upon host
+restart. However, there are scenarios where writing temporary files to a
+different location is necessary. Below are two examples:
+- The =/tmp= directory is insufficient in size and cannot be expanded.
+- Temporary files for a specific process need to be isolated and/or persisted.
+
+For the former, we may set the environment variable =TMPDIR= in our BASH profile:
+#+begin_src bash :tangle no
+  TMPDIR="${HOME}/tmp"
+  export TMPDIR
+#+end_src
+
+For the later scenario, simply ~TMPDIR=path/to/tmp run_my_command~.
 
 ** inputrc (for bash)
 
