@@ -101,6 +101,43 @@ IMPORTANT: remember to iterate each and every keyboard/mouse and explicitly set
   },
 #+end_src
 
+*** Ducky 87
+Swap Option keys and Command keys, converting it to a "Mac compatible keyboard".
+#+begin_src json-ts
+  {
+    "identifiers": {
+      "is_keyboard": true,
+      "product_id": 12309,
+      "vendor_id": 1241
+    },
+    "ignore": false,
+    "simple_modifications": [
+      {"from": {"key_code": "left_option"}, "to": [{"key_code": "left_command"}]},
+      {"from": {"key_code": "left_command"}, "to": [{"key_code": "left_option"}]},
+      {"from": {"key_code": "right_option"}, "to": [{"key_code": "right_command"}]},
+      {"from": {"key_code": "right_command"}, "to": [{"key_code": "right_option"}]}
+    ]
+  },
+#+end_src
+*** Filco 87
+Swap Option keys and Command keys, converting it to a "Mac compatible keyboard".
+#+begin_src json-ts
+  {
+    "identifiers": {
+      "is_keyboard": true,
+      "product_id": 8209,
+      "vendor_id": 1241
+    },
+    "ignore": false,
+    "simple_modifications": [
+      {"from": {"key_code": "left_option"}, "to": [{"key_code": "left_command"}]},
+      {"from": {"key_code": "left_command"}, "to": [{"key_code": "left_option"}]},
+      {"from": {"key_code": "right_option"}, "to": [{"key_code": "right_command"}]},
+      {"from": {"key_code": "right_command"}, "to": [{"key_code": "right_option"}]}
+    ]
+  },
+#+end_src
+
 *** Lift Mouse
 #+begin_src json-ts
   {
