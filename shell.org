@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-09-04 +1000
+#+DATE: 2024-09-06 +1000
 
 * bash_profile
 :PROPERTIES:
@@ -191,7 +191,9 @@ There is no third pass.
 ** LS_COLORS
 Note: as the name indicates, it affects the command =ls= only.
 #+begin_src bash
-  [ -f ~/.dir_colors ] && eval $(dircolors ~/.dir_colors)
+  if [ -f ~/.dir_colors ] && command -v dircolors >/dev/null 2>&2; then
+      eval $(dircolors ~/.dir_colors)
+  fi
 #+end_src
 
 ** fzf
