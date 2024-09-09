@@ -1638,7 +1638,8 @@ TODO: when this package is stable and available in melpa, remove the load-path.
   (use-package copilot-chat
     :load-path (lambda() (concat my-downloads "copilot-chat.el"))
 
-    :commands copilot-chat-display copilot-chat-how
+    :commands (copilot-chat-display copilot-chat-optimize copilot-chat-explain
+                                    copilot-chat-how copilot-chat-reword)
 
     :bind (:map global-map
            ("<f7>" . copilot-chat-display)
@@ -1651,8 +1652,8 @@ TODO: when this package is stable and available in melpa, remove the load-path.
     (copilot-chat-frontend 'org)
 
     :config
-    ;; Define my own shortcut(s). For one-off usage, run `copilot-chat-custom-prompt-selection`
-    ;; instead.
+    ;; Define my own shortcut(s). For one-off usage, run
+    ;; `copilot-chat-custom-prompt-selection` instead.
     (push '(how . "How to ") copilot-chat--prompts)
     (defun copilot-chat-how()
       "Ask Copilot how to {the text of the selected region}."
