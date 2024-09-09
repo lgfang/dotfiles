@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-28 +1000
+#+DATE: 2024-09-10 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1358,6 +1358,20 @@ In addition to package install scdv, we need to
 
 Maybe not worth the effort. Just configure webjump to an online dictionary. For
 Chinese-English, try dict.cn.
+
+** Speed type
+#+begin_src emacs-lisp
+  (use-package speed-type
+    :commands speed-type-region speed-type-text
+    )
+#+end_src
+
+To improve typing speed, install =speed-type= and then use =speed-type-text= to
+practice with random text snippets from the Gutenburg Project or
+=speed-type-region= for the active region.
+
+To avoid get boredom, I sometimes use =eww= to open a news page and then
+=speed-type-region= it.
 
 ** Spelling alphabet
 
