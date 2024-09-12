@@ -1,9 +1,9 @@
-# -*-mode:org;coding:utf-8-*-
-# Created:  Lungang Fang 2024-05-17
+# -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+# Created:  Fang Lungang 2024-05-17
 
 #+TITLE: My Git Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-05-17 +1000
+#+DATE: 2024-09-12 +1000
 
 * Global git ignore
 :PROPERTIES:
@@ -33,6 +33,70 @@ Refer to https://github.com/github/gitignore for more to ignore.
 #+begin_src conf
 .Trashes
 Thumbs.db
+#+end_src
+
+* Global git config
+:PROPERTIES:
+:header-args:conf: :tangle ~/.gitconfig
+:END:
+
+#+begin_src conf
+  # -*-mode:conf-*-
+  [user]
+      name = Your Name
+      email = you@email.com
+
+  [checkout]
+      defaultRemote=origin
+
+  [core]
+      excludesfile = ~/.gitignore # A global ignore file
+      # autocrlf = false
+      # filemode = false
+      # pager = less -r   # uncomment this line to have "less" wrap long lines when 'git diff'
+      # editor = emacsclient -a \"\" -t
+
+  [alias]
+      br = branch
+      pk = cherry-pick
+      co = checkout
+      ci = commit
+      amend = commit --amend
+      df = diff
+      ds = diff --stat
+      dc = diff --cached
+      rb = rebase
+      rst = reset
+      st = status
+
+      lg = log --graph --abbrev-commit --pretty=format:'%C(cyan)%h%C(reset) - %C(green)%s %C(dim white)- %cr (%an)%C(reset) %C(yellow)%d'
+      topo = log --graph --simplify-by-decoration --pretty=format:"%d%h" --all
+      last = log -1 HEAD
+
+      # update local repository and removes remote-tracking branches that no
+      # longer exist on remote
+      up = pull --rebase --prune
+
+      # http proxy
+      hp = config --global http.proxy localhost:8888
+      nohp = config --global http.proxy ""
+
+      recent-branches = for-each-ref refs/heads --sort='-committerdate' --format='%(committerdate:iso) %(refname:short)%09 %(authorname)%09 - %(contents:subject)'
+
+  [credential]
+      helper = cache --timeout=3600
+
+  [color]
+      ui = auto
+
+  [diff]
+      wsErrorHighlight = all
+
+  [apply]
+      whitespace = warn
+
+  [diff "gpg"]
+      textconv = gpg --no-tty --decrypt
 #+end_src
 
 * Block pushing certain branches
