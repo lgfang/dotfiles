@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-09-10 +1000
+#+DATE: 2024-09-13 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1242,6 +1242,69 @@ Therefore, I chose to disable the time grid.
     )
 #+end_src
 
+* EPUB
+#+begin_src emacs-lisp
+  (use-package nov
+    :mode ("\\.epub\\'" . nov-mode)
+  )
+#+end_src
+
+** Garbled text in Chinese books
+According to [[https://emacs-china.org/t/emacs-epub/4713][this post in emacs-china]], the root cause is that these files do not
+follow the standard, causing =nov= to handle UTF characters incorrectly.
+
+The following workaround worked for me (at least for some books):
+#+begin_src emacs-lisp
+(with-no-warnings
+    (defun my-nov-content-unique-identifier (content)
+      "Return the the unique identifier for CONTENT."
+      (when-let* ((name (nov-content-unique-identifier-name content))
+                  (selector (format "package>metadata>identifier[id='%s']"
+                                    (regexp-quote name)))
+                  (id (car (esxml-node-children (esxml-query selector content)))))
+        (intern id)))
+    (advice-add #'nov-content-unique-identifier :override #'my-nov-content-unique-identifier))
+#+end_src
+
+** COMMENT EPUB 3 ID not found
+Also from [[https://emacs-china.org/t/emacs-epub/4713][this post in emacs-china]], this is caused by epub2 books mistaken
+identify them as epub3 ones.
+
+Below is the workaround. Do not tangle this because I haven't hit issues and
+hence haven't verified it yet.
+#+begin_src emacs-lisp
+(defun nov--content-epub2-files (content manifest files)
+    (let* ((node (esxml-query "package>spine[toc]" content))
+           (id (esxml-node-attribute 'toc node)))
+      (when (not id)
+        (throw 'error "EPUB 2 NCX ID not found"))
+      (setq nov-toc-id (intern id))
+      (let ((toc-file (assq nov-toc-id manifest)))
+        (when (not toc-file)
+          (throw 'error "EPUB 2 NCX file not found"))
+        (cons toc-file files))))
+
+  (defun nov--content-epub3-files (content manifest files)
+    (let* ((node (esxml-query "package>manifest>item[properties~=nav]" content))
+           (id (esxml-node-attribute 'id node)))
+      (when (not id)
+        (throw 'error "EPUB 3 <nav> ID not found"))
+      (setq nov-toc-id (intern id))
+      (let ((toc-file (assq nov-toc-id manifest)))
+        (when (not toc-file)
+          (throw 'error "EPUB 3 <nav> file not found"))
+        (setq files (--remove (eq (car it) nov-toc-id) files))
+        (cons toc-file files))))
+
+  (defun nov-content-files (directory content)
+    "Create correctly ordered file alist for CONTENT in DIRECTORY.
+Each alist item consists of the identifier and full path."
+    (let* ((manifest (nov-content-manifest directory content))
+           (spine (nov-content-spine content))
+           (files (mapcar (lambda (item) (assq item manifest)) spine)))
+      (catch 'error (nov--content-epub3-files content manifest files))
+      (catch 'error (nov--content-epub2-files content manifest files))))
+#+end_src
 * Terminal/shell
 ** vterm
 #+begin_src emacs-lisp
