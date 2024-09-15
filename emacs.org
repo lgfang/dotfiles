@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-09-13 +1000
+#+DATE: 2024-09-15 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -378,8 +378,9 @@ remote server to check if these files do exist.
       (add-to-list 'default-frame-alist '(fullscreen . maximized))
       )
     :bind (:map global-map
-                ("<f8>" . (lambda() "hide current buffer and try deleting window."
-                            (interactive) (bury-buffer) (delete-window))))
+                ("<f8>" .
+                 (lambda() "hide current buffer and try deleting window."
+                   (interactive) (ignore-errors (bury-buffer) (delete-window)))))
     )
 
   (use-package emacs
