@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-09-24 +1000
+#+DATE: 2024-10-12 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -318,9 +318,8 @@ This provides the functionality similar to [[file:~/mynotes/utils/apple.org::*De
                                       "https://www.google.com/search?q="
                                       ""])
                      ("dict.cn"
-                      . [simple-query "https://dict.cn/"
-                                      "https://dict.cn/search?q="
-                                      ""])
+                      . (concat "https://dict.cn/search?q="
+                                (thing-at-point 'word t)))
                      ))
     )
 #+end_src
