@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-10-12 +1100
+#+DATE: 2024-10-17 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -314,12 +314,19 @@ This provides the functionality similar to [[file:~/mynotes/utils/apple.org::*De
     :bind (:map global-map ("C-c j" . webjump))
     :custom
     (webjump-sites '(("google"
-                      . [simple-query "www.google.com"
-                                      "https://www.google.com/search?q="
-                                      ""])
+                      . (concat "https://www.google.com/search?q="
+                                (url-hexify-string
+                                 (if (use-region-p)
+                                     (buffer-substring-no-properties
+                                      (region-beginning) (region-end))
+                                   (thing-at-point 'word t)))))
                      ("dict.cn"
                       . (concat "https://dict.cn/search?q="
-                                (thing-at-point 'word t)))
+                                (url-hexify-string
+                                 (if (use-region-p)
+                                     (buffer-substring-no-properties
+                                      (region-beginning) (region-end))
+                                   (thing-at-point 'word t)))))
                      ))
     )
 #+end_src
