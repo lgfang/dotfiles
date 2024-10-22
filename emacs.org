@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-10-17 +1100
+#+DATE: 2024-10-22 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1408,25 +1408,30 @@ Emacs as a terminal multiplexer:
     )
 #+end_src
 
-** COMMENT Dictionary
+** Dictionary and translation
+
+Firstly, clone the package into the =my-downloads= directory:
+#+begin_src bash
+git clone https://github.com/honmaple/emacs-maple-translate ~/.emacs.d/downloads/emacs-maple-translate
+#+end_src
+
 #+begin_src emacs-lisp
-  (use-package sdcv
-    :defer t
-    :custom
-    (sdcv-dictionary-simple-list '("牛津现代英汉双解词典"
-                                   "朗道英汉字典5.0"
-                                   "朗道汉英字典5.0"
-                                   ))
-    (sdcv-dictionary-complete-list nil)   ; use all available dicts
+  (use-package maple-translate
+    :load-path (lambda() (concat my-downloads "emacs-maple-translate"))
+    :commands (maple-translate maple-translate+)
+    :custom (maple-translate-engine 'youdao)
+    :bind (:map global-map
+                ("C-h D" . maple-translate)
+                ("C-h d" . maple-translate+))
     )
 #+end_src
 
-In addition to package install scdv, we need to
-- Install the sdcv command.
-- Download dictionaries to =~/.stardict/=.
+I no longer use =scdv= despite its offline capability due the difficulty in
+finding and downloading dictionaries.
 
-Maybe not worth the effort. Just configure webjump to an online dictionary. For
-Chinese-English, try dict.cn.
+Using =webjump= to navigate to =dict.cn= etc. with the selected text or word at
+point is another alternative. However, it is less inconvenient as it requires
+closing the web browser tab and refocusing on Emacs.
 
 ** Speed type
 #+begin_src emacs-lisp
@@ -2030,8 +2035,6 @@ Among the features, it provides the two most useful features when reading large 
 (define-key global-map (kbd "M-/") 'hippie-expand)
 ;; (define-key global-map (kbd "M-g c") 'move-to-column)
 ;; (define-key global-map (kbd "M-g ]") 'lgfang-goto-page)
-(define-key global-map (kbd "C-h d") 'sdcv-search-pointer)
-(define-key global-map (kbd "C-h D") 'sdcv-search-pointer+)
 
 ;;; ascii mode
 (autoload 'ascii-display "ascii" "Toggle ASCII code display." t)
