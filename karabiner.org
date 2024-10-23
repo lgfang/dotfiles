@@ -52,6 +52,7 @@ directions of the movement) without conflicts.
   "profiles": [{
       "name": "default",
       "selected": true,
+      "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" },
 #+end_src
 ** Devices
 IMPORTANT: remember to iterate each and every keyboard/mouse and explicitly set
@@ -94,7 +95,7 @@ IMPORTANT: remember to iterate each and every keyboard/mouse and explicitly set
       "identifiers": {
           "is_keyboard": true,
           "is_pointing_device": true,
-          "product_id": 272,
+          "product_id": 544,
           "vendor_id": 1452
       },
       "ignore": false
