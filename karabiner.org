@@ -1,9 +1,9 @@
-# -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+# -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
 # Created: Fang Lungang 2024-07-19
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-09-12 +1000
+#+DATE: 2024-10-24 +1100
 #+DESCRIPTION: Layered hotkeys using Karabiner Elements
 #+KEYWORDS: Karabiner
 #+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
