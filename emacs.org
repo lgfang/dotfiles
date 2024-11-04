@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-10-22 +1100
+#+DATE: 2024-11-05 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1813,6 +1813,10 @@ add content similar to the following to the emacs directory local variable file
 (=.dir-locals.el=):
 #+begin_src emacs-lisp :tangle no
 ((prog-mode . ((git-gutter:start-revision . "my_branch"))))
+#+end_src
+Or
+#+begin_src text
+((nil . ((git-gutter:start-revision . "my_branch"))))
 #+end_src
 
 ** git-link
