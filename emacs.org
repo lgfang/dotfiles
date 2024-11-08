@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-11-05 +1100
+#+DATE: 2024-11-08 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1623,9 +1623,28 @@ to add projects we need. Below is an example:
     )
 #+end_src
 - Note: consider replacing =which-function= with this.
-** Formatter
 
-Notes on =prettier=:
+** Code Formatter
+
+Below are two general code formatter packages. For language-specific formatter
+settings, refer to the corresponding programming language section.
+
+*** reformatter
+
+This package itself does not format code itself but provides functions necessary
+to implement an formatter. It is required by tools =ruff-format= etc.
+
+#+begin_src emacs-lisp
+  (use-package reformatter
+    :delight
+    )
+#+end_src
+
+*** Prettier
+
+This package formats JSON, YAML etc.
+
+Note:
 - Install the package *globally* (=-g=): =npm install -g prettier=.
 - One principle of prettier is to eliminate debates over formatting. Therefore,
   it's generally recommended to stick with the default settings. But, to stop
@@ -1633,11 +1652,6 @@ Notes on =prettier=:
   =bracketSpacing: false= to your =.prettierrc=.
 
 #+begin_src emacs-lisp
-  (use-package reformatter
-    :delight
-    ;; depended on by ruff-format etc.
-    )
-
   (use-package prettier
     :delight
     ;; Format json, yaml, markdown etc.;
@@ -1858,6 +1872,26 @@ Or
 * Bash
 
 Language server: [[https://github.com/bash-lsp/bash-language-server][bash-language-server]]
+
+* CPP (C++)
+
+** Language server
+
+=clangd=
+
+** Formatter
+
+Install the =clang-format= tool first, for instance =brew install clang-format=
+or =sudo apt install clang-format=.
+
+#+begin_src emacs-lisp
+  (use-package clang-format
+    ;; Do enable `clang-format-on-save-mode` due to legacy source code.
+    ;; source code
+    :delight clang-format-on-save-mode
+    :commands clang-format-buffer clang-format-region clang-format-on-save-mode
+    )
+#+end_src
 
 * Golang
 
