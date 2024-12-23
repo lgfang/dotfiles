@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-11-08 +1100
+#+DATE: 2024-12-23 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1871,13 +1871,14 @@ Or
 
 * Bash
 
-Language server: [[https://github.com/bash-lsp/bash-language-server][bash-language-server]]
+** Language server
+Eglot + [[https://github.com/bash-lsp/bash-language-server][bash-language-server]]
 
 * CPP (C++)
 
 ** Language server
 
-=clangd=
+Eglot + =clangd= (on MacOS, =clangd= comes with Developer Command Line Tools)
 
 ** Formatter
 
@@ -1900,6 +1901,19 @@ for golang).
 - LSP: eglot + gopls
 - Formatter: =eglot-format=
 - Flymake: eglot as the backend
+
+* Java
+
+** Language server
+Eglot + [[https://github.com/eclipse-jdtls/eclipse.jdt.ls][Eclipse JDT Language Server (JDTLS)]]
+
+1. Download a milestone build of JDTLS and extract it to =~/.local=.
+2. Add the path to =jdtls= to Emacs exec path:
+   #+begin_src emacs-lisp
+   (add-to-list 'exec-path (expand-file-name "~/.local/jdt-language-server/bin"))
+   #+end_src
+   Alternatively, add the path to the OS environment variable =PATH= and restart
+   Emacs.
 
 * JSON, JSON Lines
 
