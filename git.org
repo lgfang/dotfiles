@@ -3,7 +3,7 @@
 
 #+TITLE: My Git Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-09-12 +1000
+#+DATE: 2024-12-23 +1100
 
 * Global git ignore
 :PROPERTIES:
@@ -41,7 +41,9 @@ Thumbs.db
 :END:
 
 #+begin_src conf
-  # -*-mode:conf-*-
+  [github]
+      user = GITHUB_USERNAME
+
   [user]
       name = Your Name
       email = you@email.com
