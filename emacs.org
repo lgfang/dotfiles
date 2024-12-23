@@ -1855,6 +1855,17 @@ Or
 - I do not turn on =global-blamer-mode= but instead run =M-x blamer-mode= in a
   specific buffer when designated.
 
+** forge
+#+begin_src emacs-lisp
+  (use-package forge
+    :defer t
+    :after magit)
+#+end_src
+
+Apart from the above Emacs configuration, also remember to (see forge manual):
+- Add github username into git config.
+- Add the corresponding github token to auth source.
+
 * ANSI color code
 
 #+begin_src emacs-lisp
