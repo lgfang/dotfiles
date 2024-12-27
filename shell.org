@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-09-06 +1000
+#+DATE: 2024-12-27 +1100
 
 * bash_profile
 :PROPERTIES:
@@ -36,8 +36,8 @@ export HISTCONTROL="ignoredups"
 export HISTFILESIZE=1000
 export HISTSIZE=500
 
-# For golang
-export GOPATH=$HOME/golang
+export GOPATH=$HOME/go          # Explicitly specify GOPATH default value
+PATH=${GOPATH}/bin:$PATH
 #+end_src
 
 ** Source in bashrc
