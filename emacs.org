@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-12-23 +1100
+#+DATE: 2024-12-27 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1884,6 +1884,19 @@ Apart from the above Emacs configuration, also remember to (see forge manual):
 
 ** Language server
 Eglot + [[https://github.com/bash-lsp/bash-language-server][bash-language-server]]
+
+** Formatter
+See also [[* Prettier]]
+
+1. Install [[https://github.com/mvdan/sh][shfmt]] in command line.
+2. Package install =shfmt=.
+
+#+begin_src emacs-lisp
+  (use-package shfmt
+    :delight shfmt-on-save-mode
+    :hook (sh-mode . shfmt-on-save-mode)
+    )
+#+end_src
 
 * CPP (C++)
 
