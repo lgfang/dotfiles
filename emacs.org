@@ -1642,22 +1642,49 @@ to implement an formatter. It is required by tools =ruff-format= etc.
 
 *** Prettier
 
-This package formats JSON, YAML etc.
+This package formats JSON, YAML, and other file types.
 
-Note:
-- Install the package *globally* (=-g=): =npm install -g prettier=.
-- One principle of prettier is to eliminate debates over formatting. Therefore,
-  it's generally recommended to stick with the default settings. But, to stop
-  =yamllint= from complaining "too many spaces inside braces", add
-  =bracketSpacing: false= to your =.prettierrc=.
+NOTE:
+- It is advisable to adhere to the default format settings as Prettier aims to
+  standardize formatting and minimize disputes over style.
+- To stop =yamllint= from complaining "too many spaces inside braces" for legacy
+  code, add =bracketSpacing: false= to your =.prettierrc= temporarily.
 
-#+begin_src emacs-lisp
-  (use-package prettier
-    :delight
-    ;; Format json, yaml, markdown etc.;
-    :hook (yaml-mode yaml-ts-mode)
-    )
-#+end_src
+1. *Globally* install the package (=-g=): =npm install -g prettier=.
+
+2. Verify that =prettier= works, for example:
+   #+begin_src bash
+     npx prettier test.yml
+   #+end_src
+
+3. Hook prettier in Emacs
+   #+begin_src emacs-lisp
+     (use-package prettier
+       :delight
+       ;; Format json, yaml, markdown etc.;
+       :hook (yaml-mode yaml-ts-mode)
+       )
+   #+end_src
+
+**** COMMENT For shell scripts
+
+Note: I'm using shfmt instead of this at the moment.
+
+This does not work as Prettier is unable to find globally installed
+plugins. Installing Prettier and the plugin locally and launching Emacs from the
+same directory works; however, this approach is not ideal due to the
+restriction of having to start Emacs from that specific directory.
+
+- *Globally* install [[https://github.com/un-ts/prettier/tree/master/packages/sh][the shell script plugin]]
+  #+begin_src bash
+    npm install -g prettier-plugin-sh
+  #+end_src
+- Enable the plugin in =~/.prettierrc=:
+  #+begin_src json
+    {
+      "plugins": ["prettier-plugin-sh"]
+    }
+  #+end_src
 
 ** LSP: eglot
 
@@ -2060,6 +2087,9 @@ This function is based on treesit (=json-ts-mode=)
 - TODO: u/d :: one level up/one level down
 
 * YAML
+** Formatter
+See [[* Prettier]]
+
 ** Tree sitter major mode
 #+begin_src emacs-lisp
   (use-package yaml-ts-mode)
