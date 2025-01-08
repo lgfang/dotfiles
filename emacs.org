@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-12-27 +1100
+#+DATE: 2025-01-08 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -236,7 +236,11 @@ this particular repeat mode or =C-g=.
 
   (use-package orderless
     :defer t
-    :custom (completion-styles '(basic substring flex orderless))
+    :custom (completion-styles '(basic
+                                 partial-completion
+                                 substring
+                                 orderless
+                                 flex))
     )
 
   (use-package marginalia
