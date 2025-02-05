@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-01-08 +1100
+#+DATE: 2025-02-06 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1335,6 +1335,53 @@ Emacs as a terminal multiplexer:
 1. Start Emacs daemon.
 2. Run vterm (=M-x vterm=) in emacs clients.
 
+** eshell
+
+*** Customize prompt
+
+Currently, there are no elaborate decorations. The primary changes are adding
+the time and placing the path and dollar sign on separate lines.
+
+#+begin_src emacs-lisp
+  (use-package eshell
+    :custom (eshell-prompt-function
+             (lambda ()
+               (concat
+                (propertize "╭ " 'face `(:foreground "green"))
+                (propertize (format-time-string "%H:%M " (current-time)) 'face `(:foreground "yellow"))
+                (propertize (user-login-name) 'face `(:foreground "green"))
+                (propertize "@" 'face `(:foreground "green"))
+                (propertize (system-name) 'face `(:foreground "green"))
+                (propertize "\n│ " 'face `(:foreground "green"))
+                (propertize (concat (eshell/pwd)) 'face `(:foreground "green"))
+                (propertize "\n╰ " 'face `(:foreground "green"))
+                (propertize (if (= (user-uid) 0) "# " "$ ") 'face `(:foreground "green"))
+                )))
+    )
+#+end_src
+
+*** Customize aliases and commands
+#+begin_src emacs-lisp
+  (defun eshell/ep ()
+    "In eshell, `ep' to go to the path of the previous buffer."
+    (cd (with-current-buffer (other-buffer) default-directory)))
+
+  (defun eshell/vi (&rest args)
+    "Invoke `find-file' according to ARGS.
+  `vi +66 foo` opens the file `foo` and goes to line 66 in the buffer."
+    (while args
+      (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
+          (let* ((target-line (string-to-number (match-string 1 (pop args))))
+                 (file (pop args)))
+            (find-file file)
+            (forward-line (- target-line (line-number-at-pos))))
+        (find-file (pop args)))))
+#+end_src
+
+*** multiple eshell
+
+To create an additional eshell buffer, run =C-u M-x eshell=.
+
 * Utilities
 
 ** Calendar
@@ -2334,31 +2381,6 @@ tmux's buffer"
 
 ;;; emms configure in another file
 (load "lgfang.emms" t nil nil)
-
-;;; eshell: restore arrows(up/down) to their orginal functions
-(add-hook 'eshell-mode-hook
-          (lambda ()
-            (define-key eshell-mode-map [up] 'previous-line)
-            (define-key eshell-mode-map [down] 'next-line)))
-;; multi-eshell
-(when (require 'multi-eshell nil t)
-  (setq multi-eshell-name "*eshell*")
-  (setq multi-eshell-shell-function (quote (eshell))))
-;; commands for eshell
-(defun eshell/ep ()
-  "In eshell, `ep' to go to the path of the previous buffer"
-  (cd (with-current-buffer (other-buffer) default-directory)))
-(defun eshell/vi (&rest args)
-  ;; from http://www.emacswiki.org/emacs/EshellFunctions
-  "Invoke `find-file' on the file.
-    \"vi +42 foo\" also goes to line 42 in the buffer."
-  (while args
-    (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
-        (let* ((line (string-to-number (match-string 1 (pop args))))
-               (file (pop args)))
-          (find-file file)
-          (goto-line line))
-      (find-file (pop args)))))
 
 ;;; face, add our own keywords. ctypes.el is too heavy-weight
 (add-hook 'find-file-hooks
