@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-02-06 +1100
+#+DATE: 2025-02-09 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -854,7 +854,7 @@ line of the other window (inactive) will not be updated until you switch to it.
 
 * Encryption and credential management
 
-** Encrypt files with passwords: ccrypt
+** COMMENT Encrypt files with passwords: ccrypt
 
 Automatically encrypt/decrypt =.cpt= files using =ccrypt=.
 
