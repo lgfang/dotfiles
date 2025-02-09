@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-12-27 +1100
+#+DATE: 2025-02-10 +1100
 
 * bash_profile
 :PROPERTIES:
@@ -13,13 +13,18 @@
 ** Environment variables
 *** OSX specific
 #+begin_src bash
-# For OS X homebrew commands
-PATH="/opt/homebrew/bin:$PATH"
-PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
-MANPATH=/opt/homebrew/share/man:$MANPATH
+  # Use well-known locations as the PATH is not yet ready for `brew --prefix`.
+  if [ "$(uname -m)" == "arm64" ]; then
+      BREW_PREFIX="/opt/homebrew"
+  else
+      BREW_PREFIX="/usr/local"
+  fi
 
-# For OS X homebrew openssl
-PATH=/usr/local/opt/openssl@1.1/bin:$PATH
+  if command -v "${BREW_PREFIX}/bin/brew" >/dev/null; then
+      PATH="${BREW_PREFIX}/bin:$PATH"
+      PATH="${BREW_PREFIX}/opt/coreutils/libexec/gnubin:$PATH"
+      PATH="${BREW_PREFIX}/opt/openssl/bin:$PATH"
+  fi
 #+end_src
 
 *** For ubuntu
@@ -29,15 +34,15 @@ PATH="/snap/bin:$PATH"
 
 *** Common
 #+begin_src bash
+export GOPATH=$HOME/go          # Explicitly specify GOPATH default value
+PATH=${GOPATH}/bin:$PATH
+
 export PATH=$HOME/.local/bin:$PATH
 export MANPATH=$HOME/.local/share/man:$MANPATH
 export INFOPATH=$HOME/.local/share/info:$INFOPATH
 export HISTCONTROL="ignoredups"
 export HISTFILESIZE=1000
 export HISTSIZE=500
-
-export GOPATH=$HOME/go          # Explicitly specify GOPATH default value
-PATH=${GOPATH}/bin:$PATH
 #+end_src
 
 ** Source in bashrc
