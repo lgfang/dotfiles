@@ -3,7 +3,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-12-10 +1100
+#+DATE: 2025-02-09 +1100
 
 * Timestamps
 
@@ -53,13 +53,13 @@ font, nerd font mono, and nerd font propo).
 *** Fonts
 
 #+begin_src lua :tangle ~/.wezterm.lua
-  local font_family = 'JetBrainsMono Nerd Font Propo'
+  local font_family = 'JetBrains Mono'
   config.font_size = 19
+  config.harfbuzz_features = {'calt=0', 'clig=0', 'liga=0'} -- turn off ligature
   config.font =  wezterm.font_with_fallback {
      {
         family = font_family,
         weight = 'Bold',
-        harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' },
      },
   }
   config.font_rules = {
@@ -82,6 +82,12 @@ Additionally, for Emacs running in the terminal to support opacity, set its
 background to "unspecified-bg" as shown below:
 #+begin_src emacs-lisp
   (set-face-background 'default "unspecified-bg")
+#+end_src
+
+** Audible Bell
+This is needed because audible bell is *not* affected by the system audio volume.
+#+begin_src lua :tangle ~/.wezterm.lua
+  config.audible_bell = "Disabled"
 #+end_src
 
 ** Keyboard
