@@ -752,11 +752,18 @@ Delete it from the mode line to make room for more useful information, say
   (use-package fill-column-indicator
     :defer t
     :commands fci-mode
-    :hook ((emacs-lisp-mode . fci-mode))
-    ;; to make a global minor mode, use the following
-    ;; (define-globalized-minor-mode global-fci-mode
-    ;;      fci-mode (lambda() (fci-mode 1)))
+    ;; :hook ((emacs-lisp-mode . fci-mode))
     )
+#+end_src
+
+NOTE: Do NOT add =fci-mode= to =emacs-lisp-mode-hook= to avoid the
+=chicken-and-egg= problem: attempts to package-install any package, including
+=fci-mode= itself, it will try to enable =fci-mode=, which isn't installed yet.
+
+To to make a global minor mode, use the following code:
+#+begin_src emacs-lisp :tangle no
+  (define-globalized-minor-mode global-fci-mode
+       fci-mode (lambda() (fci-mode 1)))
 #+end_src
 
 ** Highlight indentation levels
