@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-02-09 +1100
+#+DATE: 2025-02-11 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -387,10 +387,6 @@ remote server to check if these files do exist.
       (scroll-bar-mode -1)
       (add-to-list 'default-frame-alist '(fullscreen . maximized))
       )
-    :bind (:map global-map
-                ("<f8>" .
-                 (lambda() "hide current buffer and try deleting window."
-                   (interactive) (ignore-errors (bury-buffer) (delete-window)))))
     )
 
   (use-package emacs
@@ -434,6 +430,34 @@ to see more):
 - =M-o m= :: swap two windows.
 - =M-o u= :: change the buffer of another window.
 - =M-o t= :: run =rotate-frame-clockwise= (from =transpose-frame=).
+
+** Popper
+
+Summon and dismiss "pop-up" buffers with a single key-chord, minimize the impact
+to the current window layout.
+
+#+begin_src emacs-lisp
+  (use-package popper
+    :commands popper-mode popper-echo-mode
+    :bind (:map global-map
+                ;; C-` unavailable in some terms as it is interpreted as C-@
+                ("<f8>" . popper-cycle)
+                ("M-`" . popper-toggle))
+    :custom
+    (popper-reference-buffers
+     '("personal.gtd"
+       "work.gtd"
+       "\\*Copilot.*\\*"
+       "\\*maple-translate\\*"
+       "\\*Python\\*"
+       "\\*Org Agenda\\*"
+       "\\*Flymake diagnostics for .*\\*"
+       help-mode
+       compilation-mode))
+    :config
+    (popper-mode +1)
+    (popper-echo-mode +1))
+#+end_src
 
 * Fonts
 
