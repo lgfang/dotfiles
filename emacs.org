@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-02-11 +1100
+#+DATE: 2025-02-14 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1839,9 +1839,11 @@ TODO: when this package is stable and available in melpa, remove the load-path.
                                     copilot-chat-how copilot-chat-reword)
 
     :bind (:map global-map
-           ("<f7>" . copilot-chat-display)
-           :map copilot-chat-prompt-mode-map
-           ("C-c C-c" . copilot-chat-prompt-send))
+                ;; pop up the prompt window
+                ("<f7>" . (lambda() (interactive)
+                            (pop-to-buffer (cadr (copilot-chat--prepare-buffers)))))
+                :map copilot-chat-prompt-mode-map
+                ("C-c C-c" . copilot-chat-prompt-send))
 
     :hook ((copilot-chat-prompt-mode copilot-chat-mode) . visual-line-mode)
 
@@ -1856,7 +1858,7 @@ TODO: when this package is stable and available in melpa, remove the load-path.
       "Ask Copilot how to {the text of the selected region}."
       (interactive)
       (copilot-chat--ask-region 'how))
-  )
+    )
 #+end_src
 
 - How to ask questions:
