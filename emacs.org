@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-02-14 +1100
+#+DATE: 2025-02-17 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -445,11 +445,12 @@ to the current window layout.
                 ("M-`" . popper-toggle))
     :custom
     (popper-reference-buffers
-     '("\\*Org Agenda\\*"
-       "personal.gtd"
+     '("personal.gtd"
        "work.gtd"
        "\\*Copilot.*\\*"
        "\\*maple-translate\\*"
+       "\\*Python\\*"
+       "\\*Org Agenda\\*"
        "\\*Flymake diagnostics for .*\\*"
        help-mode
        compilation-mode))
