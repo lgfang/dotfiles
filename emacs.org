@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-02-14 +1100
+#+DATE: 2025-02-20 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -900,10 +900,13 @@ Note: while this one is simple and straightforward, I've switched to GPG, which
 might appear to be complicated at the first glance but is actually more
 convenient (due to gpg agent) and more secure.
 
-** Encrypt files using keys: gnugpg
+** Encrypt files using keys: GnuPG
 
-Automatically encrypt/decrypt =.gpg= files using gnupg. On MacOS, set it up as
-below:
+Emacs automatically encrypts/decrypts =.gpg= files using GnuPG out of box,
+needing NO additional configuration.
+
+However, GnuPG must be install and configured properly. For MacOS, follow these
+steps:
 1. =brew install gpg=
 2. =brew install pinentry-mac=
    * By default, =gpg= comes with =pinentry= which does not work well with GUI
@@ -914,9 +917,6 @@ below:
    * Ensure the new gpg agent configuration takes effect.
 5. Create/import gpg keys.
    * IMPORTANT: remember to export and backup keys.
-
-Apart from the above I need NO explicit Emacs configuration in this regard
-*yet*.
 
 *** Why
 
@@ -1039,7 +1039,7 @@ time a password is needed.
   (use-package auth-source                ; built-in
     :defer t
     :custom
-    (auth-sources '("~/.authinfo.gpg"))
+    (auth-sources '("~/.authinfo.gpg" "~/my-another-authinfo.gpg"))
     ;; I manually run `auth-source-search' for certain passwords. Do not
     ;; attemp to retrieve passwords automatically
     (auth-source-protocols '())
@@ -1067,7 +1067,7 @@ NOTE: We must =(funcall secret)= to get the actual secret string.
            (user (plist-get credential :user))
            (secret (plist-get credential :secret))
            )
-    (format "%s:%s" user (funcall secret)))
+      (format "%s:%s" user (funcall secret)))
   ,#+end_src
 
   ,#+begin_src bash :results raw :var token=my-token()
