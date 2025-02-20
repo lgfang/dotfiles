@@ -1801,7 +1801,7 @@ non-trivial. In such situations, you can see the error message by setting
     )
 #+end_src
 
-** Generative AI (GAI): copilot
+** Generative AI (GAI)
 
 For first time use, remember to run =M-x copilot-install-server= and =M-x
 copilot-login=.
@@ -1885,6 +1885,40 @@ TODO: when this package is stable and available in melpa, remove the load-path.
        (push '(shell-maker . copilot-chat-shell-maker-init) copilot-chat-frontend-list)
        )
   #+end_src
+
+*** Minuet
+
+First, add your DeepSeek API key to one of your =auth-source= files in the
+following format:
+#+begin_src text
+  machine deepseek login apikey password your_deepseek_api_key
+#+end_src
+Replace =your_deepseek_api_key= with your actual API key (e.g., =sk-xxxxx=).
+
+Then, add the following to your Emacs configuration file.
+#+begin_src emacs-lisp
+  (use-package minuet
+    :after auth-source
+    :defer t
+    :defines minuet-openai-fim-compatible-options
+    :functions auth-source-search minuet-set-optional-options
+
+    :bind
+    (:map global-map
+          ("<f6>" . minuet-next-suggestion))
+
+    :init                  ; use `:init` to set env *before* this module is loaded
+    (let ((auth (auth-source-search :host "deepseek" :require '(:secret))))
+      (if auth (setenv "DEEPSEEK_API_KEY" (funcall (plist-get (car auth) :secret)))
+        (warn "DeepSeek unavailable: API key not in auth source")))
+
+    :custom
+    (minuet-provider 'openai-fim-compatible)
+
+    :config
+    (minuet-set-optional-options minuet-openai-fim-compatible-options :max_tokens 256)
+  )
+#+end_src
 
 ** Imenu
 
