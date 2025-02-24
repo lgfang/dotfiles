@@ -675,6 +675,18 @@ corresponding sections.
          (buffer-string)))`
 #+end_src
 
+** Find and replace in multiple files
+
+#+begin_src emacs-lisp
+  (use-package wgrep)
+#+end_src
+
+1. Run =grep-find= as usual. IMPORTANT: Ensure that the command outputs both
+   filenames and line numbers (normally via =-nH=).
+2. In the output buffer, run =C-c C-p= to enter =wgrep= mode.
+3. Edit the buffer as if it is a normal buffer.
+4. Press =C-x C-s= to apply the changes.
+
 * Spelling check: flyspell
 
 #+begin_src emacs-lisp
