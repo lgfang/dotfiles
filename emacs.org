@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-02-20 +1100
+#+DATE: 2025-02-24 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -597,8 +597,18 @@ Below are two examples:
     )
 #+end_src
 
-* Basic auto typing
+** Uniquify buffer names
+#+begin_src emacs-lisp
+  (use-package uniquify
+    :custom
+    (uniquify-buffer-name-style 'post-forward)
+    (uniquify-strip-common-suffix t)
+    (uniquify-separator "@"))
+#+end_src
+If two buffers are both named "buffer_name", they will be renamed to
+=buffer_name@path1= and =buffer_name@path2= respectively.
 
+* Basic editing
 ** Fill
 
 In the past, the suggestion was to limit code lines to 80 characters for optimal
@@ -681,6 +691,14 @@ corresponding sections.
 #+end_src
 
 * Visual aids
+
+** Block cursor as wide as the glyph under it
+#+begin_src emacs-lisp
+  (use-package emacs
+    :custom
+    (x-stretch-cursor t))
+#+end_src
+Note, this works for GUI Emacs only.
 
 ** Display column number in the mode line
 
@@ -1515,6 +1533,15 @@ Using =webjump= to navigate to =dict.cn= etc. with the selected text or word at
 point is another alternative. However, it is less inconvenient as it requires
 closing the web browser tab and refocusing on Emacs.
 
+** COMMENT Man pages
+Nowadays the default "man" is already very convenient, no need of woman any
+more.
+#+begin_src emacs-lisp
+  (use-package woman
+    :custom
+    (woman-use-own-frame nil)
+    (woman-fill-frame t))
+#+end_src
 ** Speed type
 #+begin_src emacs-lisp
   (use-package speed-type
@@ -2717,35 +2744,12 @@ selective-display"
 
 (setq-default truncate-lines nil)
 
-;;; Uniquify buffer name with more meaningful names
-(when (require 'uniquify nil t)
-  (setq uniquify-buffer-name-style 'post-forward
-        uniquify-strip-common-suffix t
-        uniquify-separator "@"))
-
 ;;; verilog mode
 (autoload 'verilog-mode "verilog-mode" "Verilog mode" t )
 
 ;;; vimrc mode
 (autoload 'vimrc-mode "vimrc-mode")
 (add-to-list 'auto-mode-alist '(".vim\\(rc\\)?$" . vimrc-mode))
-
-;;; viper, those who miss vi so bad please change "nil" to "t"
-(when nil
-  (setq viper-inhibit-startup-message t
-        viper-expert-level '5
-        viper-mode t)
-  (require 'viper))
-
-;;; woman
-(setq woman-use-own-frame nil
-      woman-fill-frame t)
-
-;;; word
-(setq-default word-wrap t)
-
-;;; to make the cursor as wide as the character it is over
-(setq x-stretch-cursor t)
 
 ;;; xcscope,
 ;; NOTE: cscope is now just a backup. Normally eglot + clangd is more convient.
@@ -2776,9 +2780,6 @@ selective-display"
   ;;     )))
 
   )
-
-;;; xref
-(setq xref-prompt-for-identifier t) ; always prompt for identifier to search
 
 ;;; ------ end General ------
 
