@@ -1873,8 +1873,11 @@ TODO: when this package is stable and available in melpa, remove the load-path.
   (use-package copilot-chat
     :load-path (lambda() (concat my-downloads "copilot-chat.el"))
 
-    :commands (copilot-chat-display copilot-chat-optimize copilot-chat-explain
-                                    copilot-chat-how copilot-chat-reword)
+    :commands (copilot-chat--prepare-buffers
+               copilot-chat-how
+               copilot-chat-optimize
+               copilot-chat-explain
+               )
 
     :bind (:map global-map
                 ;; pop up the prompt window
