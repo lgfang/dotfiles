@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-02-24 +1100
+#+DATE: 2025-02-25 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2198,6 +2198,7 @@ This function is based on treesit (=json-ts-mode=)
 
 * Python
 
+** Tree-sitter enhanced major mode
 #+begin_src emacs-lisp
   (use-package python
     :hook ((python-mode python-ts-mode) . hs-minor-mode)
@@ -2207,13 +2208,10 @@ This function is based on treesit (=json-ts-mode=)
     ;; for empty python files, as existing files use existing indent offset.
     (python-indent-offset 4)
     )
+#+end_src
 
-  (use-package flymake-ruff
-    ;; in addition to LSP
-    :after flymake
-    :hook ((python-mode python-ts-mode) . flymake-ruff-load)
-    )
-
+** Formatter
+#+begin_src emacs-lisp
   (use-package ruff-format
     :delight ruff-format-on-save-mode
     :after reformatter
@@ -2221,7 +2219,45 @@ This function is based on treesit (=json-ts-mode=)
     )
 #+end_src
 
-- LSP: pyright
+** Basic syntax check
+#+begin_src emacs-lisp
+  (use-package flymake-ruff
+    ;; in addition to LSP
+    :after flymake
+    :hook ((python-mode python-ts-mode) . flymake-ruff-load)
+    )
+#+end_src
+
+** Poetry virtual environment
+
+If the Python project uses Poetry for dependency management, this
+package can activate the project's virtual environment in Emacs.
+
+#+begin_src emacs-lisp
+  (use-package poetry
+    :defer
+    :commands (poetry-tracking-mode poetry-venv-workon poetry-venv-deactivate)
+    )
+#+end_src
+
+IMPORTANT:
+- Run =poetry install= first to ensure packages are installed into the virtual
+  environment.
+- Run =M-x poetry-venv-workon= to manually activate a virtual environment.
+- Run =M-x vterm= (or =M-x poetry-shell=), then execute =poetry env info= to
+  verify the correct virtual environment is active.
+  + If the wrong environment is activated (e.g., due to nested =pyproject.toml=
+    files), re-run =poetry-venv-workon= with the desired =pyproject.toml= as the
+    current buffer.
+- Restart processes that depend on the virtual environment after activation. For
+  example:
+  - Run =M-x eglot-shutdown= followed by =M-x eglot= to restart the =pyright=
+    used by =eglot=.
+  - Kill the *Python* buffer and re-create it (=C-c C-p= or =M-x run-python=).
+
+** LSP
+
+pyright
 
 * RFC
 #+begin_src emacs-lisp
@@ -2244,13 +2280,15 @@ This function is based on treesit (=json-ts-mode=)
 - TODO: u/d :: one level up/one level down
 
 * YAML
+
 ** Formatter
 See [[* Prettier]]
 
-** Tree sitter major mode
+** Tree-sitter enhanced major mode
 #+begin_src emacs-lisp
   (use-package yaml-ts-mode)
 #+end_src
+
 ** YAML pro
 #+begin_src emacs-lisp
   (use-package yaml-pro
