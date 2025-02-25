@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-03-08 +1100
+#+DATE: 2025-03-10 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1937,12 +1937,10 @@ simplified interactions.
 For first time use, remember to run =M-x copilot-install-server= and =M-x
 copilot-login=.
 
-TODO: when this package is stable and available in melpa, remove the load-path.
-
 #+begin_src emacs-lisp
   (use-package copilot
-    :load-path (lambda() (concat my-downloads "copilot.el"))
     :commands copilot-mode
+    :defines copilot-completion-map
     :bind (:map copilot-completion-map
                 ("TAB"       . copilot-next-completion)
                 ("<backtab>" . copilot-previous-completion)
@@ -1950,12 +1948,7 @@ TODO: when this package is stable and available in melpa, remove the load-path.
                 ("C-e"       . copilot-accept-completion)
                 )
     :custom (copilot-log-max 50000)
-
     ;; :hook (python-ts-mode python)
-
-    ;; Do *not* add it to hook, otherwise we may see the following error during
-    ;; Emacs start up: File mode specification error: (invalid-read-syntax \N{QUOTATION
-    ;; MARK} 54 32)
     )
 #+end_src
 
@@ -1965,15 +1958,17 @@ TODO: when this package is stable and available in melpa, remove the load-path.
 
 #+begin_src emacs-lisp
   (use-package copilot-chat
-    :load-path (lambda() (concat my-downloads "copilot-chat.el"))
+    :commands (copilot-chat-display
+               copilot-chat-custom-prompt-selection
+               copilot-chat-optimize
+               copilot-chat-explain
+               copilot-chat-how
+               )
 
-    :commands (copilot-chat-display copilot-chat-optimize copilot-chat-explain
-                                    copilot-chat-how copilot-chat-reword)
+    :defines (copilot-chat-prompt-mode-map copilot-chat-mode-map)
 
     :bind (:map global-map
-                ;; pop up the prompt window
-                ("<f7>" . (lambda() (interactive)
-                            (pop-to-buffer (cadr (copilot-chat--prepare-buffers)))))
+                ("<f7>" . copilot-chat-display)
                 :map copilot-chat-prompt-mode-map
                 ("C-c C-c" . copilot-chat-prompt-send))
 
@@ -1983,13 +1978,9 @@ TODO: when this package is stable and available in melpa, remove the load-path.
     (copilot-chat-frontend 'org)
 
     :config
-    ;; Define my own shortcut(s). For one-off usage, run
-    ;; `copilot-chat-custom-prompt-selection` instead.
-    (push '(how . "How to ") copilot-chat--prompts)
-    (defun copilot-chat-how()
-      "Ask Copilot how to {the text of the selected region}."
+    (defun copilot-chat-how ()
       (interactive)
-      (copilot-chat--ask-region 'how))
+      (copilot-chat-custom-prompt-selection "how to "))
     )
 #+end_src
 
@@ -2460,7 +2451,7 @@ Among the features, it provides the two most useful features when reading large 
 ;; an intentional assignment to free variable. If the following setq is the
 ;; first line in corresponding flymake diagnostics buffer, then all the migrated
 ;; configurations are errors/warnings free
-(setq old-config-start "----------------")
+(setq ------OLD-CONFIG-START------ "")
 
 ;;; paths -- delete after .org.el is migrated as well
 (defvar my-emacs-base
