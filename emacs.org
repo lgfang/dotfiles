@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-02-25 +1100
+#+DATE: 2025-03-02 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1688,6 +1688,8 @@ to add projects we need. Below is an example:
 
     :functions py-thing
 
+    :defines flg-up-level-thing-alist
+
     :config
     ;; define `py-thing' for `thing-at-point' so that the `focus-mode' can focus
     ;; on such python things.
@@ -1724,6 +1726,23 @@ to add projects we need. Below is an example:
 
     (put 'py-thing 'beginning-op 'py-thing-begin)
     (put 'py-thing 'end-op 'py-thing-end)
+
+    (defcustom flg-up-level-thing-alist '((python-ts-mode . py-thing)
+                                          (prog-mode . defun)
+                                          (org-mode . org-element))
+      "Used by `one-level-up` to determine thing at point."
+      :type 'alist
+      :group 'fanglungang
+      )
+
+    (defun up-level ()
+      "Move point to the beginning of the parent of the thing at point."
+      (interactive)
+      (let* ((thing (or (cdr (assoc major-mode flg-up-level-thing-alist)) 'defun)))
+        (goto-char (car (bounds-of-thing-at-point thing)))
+        (forward-line -1)
+        (goto-char (car (bounds-of-thing-at-point thing)))))
+
     )
 #+end_src
 
