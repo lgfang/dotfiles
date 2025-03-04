@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-03-02 +1100
+#+DATE: 2025-03-06 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2058,16 +2058,78 @@ Or
 - I do not turn on =global-blamer-mode= but instead run =M-x blamer-mode= in a
   specific buffer when designated.
 
-** forge
+** code review
+
+Our development process is centered around GitHub, with code review requests
+being managed through GitHub Pull Requests (PRs). However, using the GitHub web
+UI for reviewing PRs presents some challenges:
+- Navigating to related code can be cumbersome.
+- An active internet connection is required at all times.
+
+*** Navigation made easy by checking out code locally
+
+To mitigate the first issue, I review code locally using Emacs. Here's how I
+streamline the process:
+1. Preparation
+   1) Fetch and Checkout: Begin by fetching and checking out the PR branch on your local machine.
+   2) Generate a Diff: In the Magit status or Magit log buffer, select all the commits you need to review. Press d r to generate the diff.
+2. Review
+   - Press =e= to use ediff if needed.
+   - Press =C-j= at a line to navigate to the corresponding source file,
+     allowing you to move around the codebase as usual to examine related code.
+
+*** Read and write feedback offline with forge and code-review
+
+Normally I do not require this. However, when needed, I use a combination of
+forge and code-review, though this setup is not entirely perfect. Forge can
+fetch the PR list but could not display inline comments, whereas Code Review
+displays inline comments but does not fetch PR lists. Here’s how I use both
+tools together:
+1. Use =N f f= to fetch the PR list.
+2. Move cursor to the desired PR and copy its link by pressing =C-c C-w=.
+3. Execute =M-x code-review-start= and paste the copied link from the previous
+   step.
+
 #+begin_src emacs-lisp
   (use-package forge
     :defer t
-    :after magit)
+    :after magit
+    :config
+    (custom-set-faces
+     ;; Do not share "MediumPurple" with merged pull requests.
+     '(forge-pullreq-rejected ((t (:foreground "DarkRed" :strike-through t)))))
+    )
 #+end_src
 
-Apart from the above Emacs configuration, also remember to (see forge manual):
+#+begin_src emacs-lisp
+  (use-package code-review
+    :defer t
+    :load-path (lambda() (concat my-downloads "code-review"))
+    )
+#+end_src
+
+Apart from the above Emacs configuration, also remember to:
 - Add github username into git config.
-- Add the corresponding github token to auth source.
+- Add the corresponding github token to auth source. For me, it is adding the
+  following two lines to =~/.authinfo.gpg=
+  #+begin_src text
+        machine api.github.com login lgfang^forge password ******
+        machine api.github.com login lgfang^code-review password ******
+  #+end_src
+
+NOTE:
+- Display all PRs in the magit status buffer can slow down normal magit
+  operations quit a bit. Use =M-x forge-toggle-display-in-status-buffer= to hide
+  PR information when it is unnecessary.
+- The official code-review is broken, use the following one
+  #+begin_src text
+    $ git remote -v
+    origin  git@github.com:phelrine/code-review.git (fetch)
+    origin  git@github.com:phelrine/code-review.git (push)
+
+    $ git branch
+    ,* fix/closql-update
+  #+end_src
 
 * ANSI color code
 
