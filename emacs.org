@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-03-07 +1100
+#+DATE: 2025-03-08 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -448,6 +448,8 @@ to the current window layout.
      '("personal.gtd"
        "work.gtd"
        "\\*Copilot.*\\*"
+       "\\**LLM response\\*"              ; gptel fallback buffer
+       "\\**Deepseek\\*"                  ; gptel custom buffer
        "\\*maple-translate\\*"
        "\\*Python\\*"
        "\\*Org Agenda\\*"
@@ -1859,12 +1861,84 @@ non-trivial. In such situations, you can see the error message by setting
     )
 #+end_src
 
-** Generative AI (GAI)
+** Imenu
+
+#+begin_src emacs-lisp
+  (use-package imenu
+    :custom (imenu-auto-rescan t)
+    )
+
+  (use-package imenu-list
+    :after imenu
+    )
+#+end_src
+
+* AI/LLM
+
+** gptel
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :defer
+    :custom
+    (gptel-model 'deepseek-chat)
+    (gptel-default-mode 'org-mode)
+    (gptel-backend (gptel-make-openai
+                       "DeepSeek"
+                     :host "api.deepseek.com"
+                     :endpoint "/chat/completions"
+                     :stream t
+                     :key (funcall
+                           (plist-get
+                            (car
+                             (auth-source-search :host "deepseek" :require '(:secret)))
+                            :secret))
+                     :models '(deepseek-chat deepseek-coder)))
+    :hook
+    ((gptel-post-stream . gptel-auto-scroll))
+    )
+#+end_src
+
+*** Conversation in a Dedicated Buffer
+1. Run =M-x gptel= to create a dedicated buffer.
+2. Type your questions or input in the buffer.
+3. Run =M-x gptel-send= to send the text to the LLM backend.
+4. Repeat steps 2 and 3 as needed.
+
+NOTE: Unless a region is active, =gptel-send= sends all text from the
+beginning of the buffer to the cursor position to maintain context. To save
+costs, avoid unnecessarily long sessions.
+
+*** Request for selected Text
+1. Select a snippet of text.
+2. Run =C-u M-x gptel-send=
+3. Optional: press =s= to set system message. (Ask AI for what is "system
+   message").
+4. Optional: press =d= and enter a custom instruction, say "explain this code
+   snippet".
+5. Optional: tweak other settings via the transient menu.
+6. Press =RET= and wait for the response to complete.
+
+*** Rewrite selected text
+
+Rewriting selected text is a more specific type of request for selected text and
+has a dedicated function: =gptel-rewrite=. This function offers slightly
+simplified interactions.
+
+1. Run =M-x gptel-rewrite= (no prefix =C-u= needed).
+2. Optional: Press =s/d= to adjust settings if necessary.
+3. Press =r= to send the request.
+4. Wait for the server to respond.
+5. Ensure the cursor is in the rewritten region, press =RET= and then choose an
+   action following the screen output.
+
+** Copilot
 
 For first time use, remember to run =M-x copilot-install-server= and =M-x
 copilot-login=.
 
-*** Copilot
+TODO: when this package is stable and available in melpa, remove the load-path.
+
 #+begin_src emacs-lisp
   (use-package copilot
     :load-path (lambda() (concat my-downloads "copilot.el"))
@@ -1885,7 +1959,7 @@ copilot-login=.
     )
 #+end_src
 
-*** Copilot chat
+** Copilot chat
 
 TODO: when this package is stable and available in melpa, remove the load-path.
 
@@ -1944,7 +2018,7 @@ TODO: when this package is stable and available in melpa, remove the load-path.
        )
   #+end_src
 
-*** Minuet
+** Minuet
 
 First, add your DeepSeek API key to one of your =auth-source= files in the
 following format:
@@ -1976,18 +2050,6 @@ Then, add the following to your Emacs configuration file.
     :config
     (minuet-set-optional-options minuet-openai-fim-compatible-options :max_tokens 256)
   )
-#+end_src
-
-** Imenu
-
-#+begin_src emacs-lisp
-  (use-package imenu
-    :custom (imenu-auto-rescan t)
-    )
-
-  (use-package imenu-list
-    :after imenu
-    )
 #+end_src
 
 * Version Control
