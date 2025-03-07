@@ -2046,6 +2046,7 @@ Then, add the following to your Emacs configuration file.
 
     :custom
     (minuet-provider 'openai-fim-compatible)
+    (minuet-request-timeout 20)
 
     :config
     (minuet-set-optional-options minuet-openai-fim-compatible-options :max_tokens 256)
