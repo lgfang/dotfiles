@@ -1892,17 +1892,14 @@ TODO: when this package is stable and available in melpa, remove the load-path.
 #+begin_src emacs-lisp
   (use-package copilot-chat
     :load-path (lambda() (concat my-downloads "copilot-chat.el"))
-
-    :commands (copilot-chat--prepare-buffers
-               copilot-chat-how
+    :commands (copilot-chat-display
                copilot-chat-optimize
                copilot-chat-explain
+               copilot-chat-how
                )
 
     :bind (:map global-map
-                ;; pop up the prompt window
-                ("<f7>" . (lambda() (interactive)
-                            (pop-to-buffer (cadr (copilot-chat--prepare-buffers)))))
+                ("<f7>" . copilot-chat-display)
                 :map copilot-chat-prompt-mode-map
                 ("C-c C-c" . copilot-chat-prompt-send))
 
@@ -1912,13 +1909,9 @@ TODO: when this package is stable and available in melpa, remove the load-path.
     (copilot-chat-frontend 'org)
 
     :config
-    ;; Define my own shortcut(s). For one-off usage, run
-    ;; `copilot-chat-custom-prompt-selection` instead.
-    (push '(how . "How to ") copilot-chat--prompts)
-    (defun copilot-chat-how()
-      "Ask Copilot how to {the text of the selected region}."
+    (defun copilot-chat-how ()
       (interactive)
-      (copilot-chat--ask-region 'how))
+      (copilot-chat-custom-prompt-selection "how to "))
     )
 #+end_src
 
