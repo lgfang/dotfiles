@@ -1930,11 +1930,8 @@ simplified interactions.
 For first time use, remember to run =M-x copilot-install-server= and =M-x
 copilot-login=.
 
-TODO: when this package is stable and available in melpa, remove the load-path.
-
 #+begin_src emacs-lisp
   (use-package copilot
-    :load-path (lambda() (concat my-downloads "copilot.el"))
     :commands copilot-mode
     :bind (:map copilot-completion-map
                 ("TAB"       . copilot-next-completion)
@@ -1943,12 +1940,7 @@ TODO: when this package is stable and available in melpa, remove the load-path.
                 ("C-e"       . copilot-accept-completion)
                 )
     :custom (copilot-log-max 50000)
-
     ;; :hook (python-ts-mode python)
-
-    ;; Do *not* add it to hook, otherwise we may see the following error during
-    ;; Emacs start up: File mode specification error: (invalid-read-syntax \N{QUOTATION
-    ;; MARK} 54 32)
     )
 #+end_src
 
@@ -1958,7 +1950,6 @@ TODO: when this package is stable and available in melpa, remove the load-path.
 
 #+begin_src emacs-lisp
   (use-package copilot-chat
-    :load-path (lambda() (concat my-downloads "copilot-chat.el"))
     :commands (copilot-chat-display
                copilot-chat-optimize
                copilot-chat-explain
