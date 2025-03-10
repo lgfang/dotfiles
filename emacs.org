@@ -1933,6 +1933,7 @@ copilot-login=.
 #+begin_src emacs-lisp
   (use-package copilot
     :commands copilot-mode
+    :defines copilot-completion-map
     :bind (:map copilot-completion-map
                 ("TAB"       . copilot-next-completion)
                 ("<backtab>" . copilot-previous-completion)
@@ -1951,10 +1952,13 @@ TODO: when this package is stable and available in melpa, remove the load-path.
 #+begin_src emacs-lisp
   (use-package copilot-chat
     :commands (copilot-chat-display
+               copilot-chat-custom-prompt-selection
                copilot-chat-optimize
                copilot-chat-explain
                copilot-chat-how
                )
+
+    :defines (copilot-chat-prompt-mode-map, copilot-chat-mode-map)
 
     :bind (:map global-map
                 ("<f7>" . copilot-chat-display)
@@ -2440,7 +2444,7 @@ Among the features, it provides the two most useful features when reading large 
 ;; an intentional assignment to free variable. If the following setq is the
 ;; first line in corresponding flymake diagnostics buffer, then all the migrated
 ;; configurations are errors/warnings free
-(setq old-config-start "----------------")
+(setq ------OLD-CONFIG-START------ "")
 
 ;;; paths -- delete after .org.el is migrated as well
 (defvar my-emacs-base
