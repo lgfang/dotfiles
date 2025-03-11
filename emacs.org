@@ -1874,6 +1874,7 @@ non-trivial. In such situations, you can see the error message by setting
 #+begin_src emacs-lisp
   (use-package gptel
     :defer
+    :defines gptel-mode-map
     :custom
     (gptel-model 'deepseek-chat)
     (gptel-default-mode 'org-mode)
@@ -1888,8 +1889,9 @@ non-trivial. In such situations, you can see the error message by setting
                              (auth-source-search :host "deepseek" :require '(:secret)))
                             :secret))
                      :models '(deepseek-chat deepseek-coder)))
-    :hook
-    ((gptel-post-stream . gptel-auto-scroll))
+
+    :hook ((gptel-post-stream . gptel-auto-scroll))
+    :bind (:map gptel-mode-map ("C-c C-c" . gptel-send))
     )
 #+end_src
 
