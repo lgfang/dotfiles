@@ -2153,6 +2153,7 @@ tools together:
   (use-package code-review
     :defer t
     :load-path (lambda() (concat my-downloads "code-review"))
+    :commands (code-review-start)
     )
 #+end_src
 
