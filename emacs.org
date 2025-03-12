@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-03-10 +1100
+#+DATE: 2025-03-12 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2350,6 +2350,18 @@ This function is based on treesit (=json-ts-mode=)
     :hook ((python-mode python-ts-mode) . ruff-format-on-save-mode)
     )
 #+end_src
+
+#+begin_src emacs-lisp
+  (use-package ruff-fix
+    :load-path (lambda() (concat my-elisps "emacs-ruff-fix"))
+    :after reformatter
+    :delight ruff-fix-on-save-mode
+    :commands ruff-fix-buffer
+    ;; :hook ((python-mode python-ts-mode) . ruff-fix-on-save-mode)
+    )
+#+end_src
+NOTE: I prefer not to turn on the on =ruff-fix-on-save-mode= because it
+sometimes can be a little bit obtrusive.
 
 ** Basic syntax check
 #+begin_src emacs-lisp
