@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-03-12 +1100
+#+DATE: 2025-03-14 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -478,15 +478,16 @@ different fonts are determined through trial and error. Note:
   (use-package emacs
     :if (display-graphic-p)
     :config
-    (set-face-attribute 'default nil :font "Andale Mono-20:weight=normal")
-
+    (let ((preferred-font "JetBrainsMono Nerd Font Propo")
+          (fallback-font "Andale Mono"))
+      (set-face-attribute 'default nil :font
+                          (concat (if (member preferred-font (font-family-list))
+                                      preferred-font fallback-font)
+                                  "-20:weight=normal")))
     (let ((zh-font "SimSong"))
       (if ;; Check the availability first to avoid error
           (member zh-font (font-family-list))
-          ;; "fall back" to the designated zh font for `han' characters. Guard the
-          ;; following expression with `fboundp' to avoid the warning: "function
-          ;; ... is not known to be defined" .
-          (and (fboundp 'set-fontset-font) (set-fontset-font t 'han zh-font))))
+           (set-fontset-font t 'han zh-font)))
 
     (setq face-font-rescale-alist '(("SimSong" . 1.25)
                                     ("PingFang SC" . 1.25)
