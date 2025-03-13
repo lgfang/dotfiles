@@ -3,7 +3,7 @@
 
 #+TITLE: My Tmux Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-18 +1000
+#+DATE: 2025-03-14 +1100
 
 * Timestamps
 
@@ -52,13 +52,21 @@ the underlying window. This is makes working with nested tmux sessions much easi
 
 * Nested tmux sessions
 
-- Press F11 once :: Enter nested mode. The outer session's status bar is hidden, and subsequent keys
-  (except F11) are sent to the inner session, allowing interaction as if it is not nested.
-- Press F11 again :: Exit nested mode.
+- Press Shift+F12 once :: Enter nested mode. The outer session's status bar is
+  hidden, and subsequent keys (except Shift+F12) are sent to the inner session,
+  allowing interaction as if it is not nested.
+
+- Press Shift-F12 again :: Exit nested mode.
 
 #+begin_src conf :tangle ~/.tmux.conf
-  bind -T root F11 set prefix None \; set key-table off \; set-option status off \; refresh-client -S
-  bind -T off F11 set -u prefix \; set -u key-table \; set-option status on \; refresh-client -S
+  bind -T root S-F12 set prefix None \; set key-table off \; set-option status off \; refresh-client -S
+  bind -T off S-F12 set -u prefix \; set -u key-table \; set-option status on \; refresh-client -S
+#+end_src
+
+* Copy mode
+
+#+begin_src conf :tangle ~/.tmux.conf
+  bind -n F11 copy-mode
 #+end_src
 
 * Status bar
