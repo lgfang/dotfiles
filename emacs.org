@@ -890,7 +890,9 @@ line of the other window (inactive) will not be updated until you switch to it.
     :bind
     (:map ledger-mode-map
           ("C-c ." . (lambda() (interactive)
-                       (insert (format-time-string "%Y-%m-%d")))))
+                       (insert (format-time-string "%Y-%m-%d"))))
+          ("S-<right>" . ledger-date-up)
+          ("S-<left>" . ledger-date-down))
     :custom
     (ledger-report-use-strict t)
     (ledger-reconcile-default-commodity "AUD")
