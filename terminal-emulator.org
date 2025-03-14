@@ -3,7 +3,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-02-09 +1100
+#+DATE: 2025-03-15 +1100
 
 * Timestamps
 
@@ -13,7 +13,7 @@
 #+end_src
 
 #+begin_src lua :tangle ~/.wezterm.lua :noweb yes
-  -- Created: Fanga lungang 2024-08-17
+  -- Created: Fang Lungang 2024-08-17
   -- Updated: <<tangle-time-stamp()>>
 #+end_src
 
