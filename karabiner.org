@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-10-24 +1100
+#+DATE: 2025-03-14 +1100
 #+DESCRIPTION: Layered hotkeys using Karabiner Elements
 #+KEYWORDS: Karabiner
 #+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
@@ -1432,6 +1432,30 @@ TODO:
         "type": "basic"
       },
       {
+        "description": "Emacs",
+        "to": [
+          {
+            "shell_command": "open -a 'Emacs.app'"
+          }
+        ],
+        "from": {
+          "key_code": "h",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "select_app",
+            "value": 1
+          }
+        ],
+        "type": "basic"
+      },
+      {
         "description": "terminal",
         "to": [
           {
@@ -1439,7 +1463,7 @@ TODO:
           }
         ],
         "from": {
-          "key_code": "spacebar",
+          "key_code": "j",
           "modifiers": {
             "optional": [
               "any"
@@ -1463,7 +1487,7 @@ TODO:
           }
         ],
         "from": {
-          "key_code": "h",
+          "key_code": "k",
           "modifiers": {
             "optional": [
               "any"
@@ -1487,7 +1511,7 @@ TODO:
           }
         ],
         "from": {
-          "key_code": "j",
+          "key_code": "l",
           "modifiers": {
             "optional": [
               "any"
@@ -1511,7 +1535,7 @@ TODO:
           }
         ],
         "from": {
-          "key_code": "l",
+          "key_code": "o",
           "modifiers": {
             "optional": [
               "any"
