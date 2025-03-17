@@ -1941,10 +1941,10 @@ copilot-login=.
     :commands copilot-mode
     :defines copilot-completion-map
     :bind (:map copilot-completion-map
-                ("TAB"       . copilot-next-completion)
-                ("<backtab>" . copilot-previous-completion)
-                ("M-f"       . copilot-accept-completion-by-word)
-                ("C-e"       . copilot-accept-completion)
+                ("TAB" . copilot-accept-completion)
+                ("M-f" . copilot-accept-completion-by-word)
+                ("M-n" . copilot-next-completion)
+                ("M-p" . copilot-previous-completion)
                 )
     :custom (copilot-log-max 50000)
     ;; :hook (python-ts-mode python)
