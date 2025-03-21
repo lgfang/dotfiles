@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-03-14 +1100
+#+DATE: 2025-03-21 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1867,6 +1867,19 @@ non-trivial. In such situations, you can see the error message by setting
 
   (use-package imenu-list
     :after imenu
+    )
+#+end_src
+
+** Project
+
+This now built-in package detects the current project and provides some utility
+functions used by many other packages.
+
+#+begin_src emacs-lisp
+  (use-package project
+    :custom
+    ;; Help `project' to correctly identify project root directories
+    (project-vc-extra-root-markers '("pyproject.toml"))
     )
 #+end_src
 
