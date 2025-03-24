@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-03-21 +1100
+#+DATE: 2025-03-25 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2247,6 +2247,29 @@ or =sudo apt install clang-format=.
     ;; source code
     :delight clang-format-on-save-mode
     :commands clang-format-buffer clang-format-region clang-format-on-save-mode
+    )
+#+end_src
+
+* CSV
+
+Aligning columns in CSV files (=csv-align-mode=) is usually the most intuitive
+presentation method. However, the added whitespace can sometimes extend lines
+far beyond the screen width. In such cases, consider highlighting the columns
+with different colors instead (=rainbow-csv-mode=).
+
+#+begin_src emacs-lisp
+  (use-package csv-mode
+    :defer t
+    :commands csv-align-mode
+    )
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package rainbow-csv
+    :load-path (lambda() (concat my-downloads "rainbow-csv"))
+    :defer t
+    :delight
+    :commands rainbow-csv-mode
     )
 #+end_src
 
