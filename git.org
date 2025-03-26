@@ -3,7 +3,7 @@
 
 #+TITLE: My Git Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-12-23 +1100
+#+DATE: 2025-03-26 +1100
 
 * Global git ignore
 :PROPERTIES:
@@ -59,25 +59,22 @@ Thumbs.db
       # editor = emacsclient -a \"\" -t
 
   [alias]
-      br = branch
-      pk = cherry-pick
-      co = checkout
-      ci = commit
-      amend = commit --amend
+      st = status
       df = diff
       ds = diff --stat
       dc = diff --cached
+
+      co = checkout
+      ci = commit
+      amend = commit --amend
+
+      pk = cherry-pick
       rb = rebase
       rst = reset
-      st = status
+      last = log -1 HEAD
 
       lg = log --graph --abbrev-commit --pretty=format:'%C(cyan)%h%C(reset) - %C(green)%s %C(dim white)- %cr (%an)%C(reset) %C(yellow)%d'
       topo = log --graph --simplify-by-decoration --pretty=format:"%d%h" --all
-      last = log -1 HEAD
-
-      # update local repository and removes remote-tracking branches that no
-      # longer exist on remote
-      up = pull --rebase --prune
 
       # http proxy
       hp = config --global http.proxy localhost:8888
