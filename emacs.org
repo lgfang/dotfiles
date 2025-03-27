@@ -1900,6 +1900,7 @@ non-trivial. In such situations, you can see the error message by setting
 
   (use-package imenu-list
     :after imenu
+    :bind (:map global-map ("M-s i" . imenu-list ))
     )
 #+end_src
 
