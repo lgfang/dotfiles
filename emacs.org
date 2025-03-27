@@ -495,18 +495,41 @@ different fonts are determined through trial and error. Note:
     )
 #+end_src
 
-* Color theme
+* Color themes
+
+To fully utilize color themes in text-based Emacs, make sure your terminal is
+set up to support "true color". See the [[file:shell.org::*Term & color][Term & color]] section in my shell
+configuration file for the details
+
+** COMMENT Wombat
+
+My favorite Emacs built-in dark color theme. The contrast is a little bit too
+high though.
 
 #+begin_src emacs-lisp
-  ;; (use-package emacs
-  ;;   :init
-  ;;   (load-theme 'wombat)
-  ;;   )
+  (use-package emacs
+    :config
+    (load-theme 'wombat))
+#+end_src
 
+** Solarized gruvbox
+
+My favorite low-contrast color theme, though I dislike the background colors in
+the Magit diff buffers.
+#+begin_src emacs-lisp
   (use-package solarized-theme
     :config
-    (load-theme 'solarized-gruvbox-dark t)
-    )
+    (load-theme 'solarized-gruvbox-dark t))
+#+end_src
+
+** COMMENT Sanityinc tomorrow
+
+The contrast is not very low, but I prefer its Magit diff buffers over the ones
+in Solarized Gruvbox.
+#+begin_src emacs-lisp
+  (use-package color-theme-sanityinc-tomorrow
+    :config
+    (load-theme 'sanityinc-tomorrow-night t))
 #+end_src
 
 * Files and directories
