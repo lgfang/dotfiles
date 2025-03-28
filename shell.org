@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-02-10 +1100
+#+DATE: 2025-03-28 +1100
 
 * bash_profile
 :PROPERTIES:
@@ -159,7 +159,7 @@ There is no third pass.
   PS1=$PS1'$(printf ":${MY_BLUE}\w")'                   # working directory
   PS1=$PS1'\n'                                          # end of second line
   PS1=$PS1'$(printf "${MY_GREEN}╰ \$") '                # 3rd line, "$"/"#" sign on a new line
-  PS1=$PS1'$(printf "${MY_RESET}")'                     # restore to the default color
+  # PS1=$PS1'$(printf "${MY_RESET}")'                     # restore to the default color
 
   function ps1_pyvenv {
       if [ -z "${VIRTUAL_ENV+x}" ]; then
