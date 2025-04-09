@@ -337,6 +337,30 @@ Sometimes it can be more convenient than the later.
                      )))
 #+end_src
 
+** Custom URLs
+
+#+begin_src emacs-lisp
+  (defun custom-urls ()
+    "Attach a URL to text matching the pattern `{JIRA_PROJECT}-{NUMBER}`.
+  The URL format is `https://jira.mongodb.org/browse/{JIRA_PROJECT}-{NUMBER}`."
+    (interactive)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "\\b\\(SERVER\\|CXX\\)-[0-9]+\\b" nil t)
+        (let* ((ticket (match-string 0))
+               (url (concat "https://jira.mongodb.org/browse/" ticket))
+               (overlay (make-overlay (match-beginning 0) (match-end 0))))
+          (overlay-put overlay 'mouse-face 'highlight)
+          (overlay-put overlay 'help-echo url)
+          (overlay-put overlay 'keymap
+                       (let ((map (make-sparse-keymap)))
+                         (define-key map [mouse-1]
+                           `(lambda ()
+                              (interactive)
+                              (browse-url ,url)))
+                         map))))))
+#+end_src
+
 * Sessions and histories
 
 #+begin_src emacs-lisp
@@ -2087,6 +2111,8 @@ Then, add the following to your Emacs configuration file.
   (use-package magit
     :defer t
     :custom (magit-log-margin-show-committer-date t)
+    :hook
+    (magit-refresh-buffer . (lambda() (when (fboundp 'custom-urls) (custom-urls))))
     )
 #+end_src
 ** git-gutter
