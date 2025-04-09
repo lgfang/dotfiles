@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-03-27 +1100
+#+DATE: 2025-04-09 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1988,7 +1988,7 @@ copilot-login=.
     :commands copilot-mode
     :defines copilot-completion-map
     :bind (:map copilot-completion-map
-                ("TAB" . copilot-accept-completion)
+                ("C-e" . copilot-accept-completion)
                 ("M-f" . copilot-accept-completion-by-word)
                 ("M-n" . copilot-next-completion)
                 ("M-p" . copilot-previous-completion)
