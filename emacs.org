@@ -313,9 +313,11 @@ Other useful consult commands:
 ** Webjump
 
 This provides the functionality similar to [[file:~/mynotes/utils/apple.org::*Define Chrome site search shortcuts][Chrome site search shortcuts]].
+Sometimes it can be more convenient than the later.
+
 #+begin_src emacs-lisp
   (use-package webjump                    ; built-in package
-    :bind (:map global-map ("C-c j" . webjump))
+    :bind (:map global-map ("M-g w" . webjump))
     :custom
     (webjump-sites '(("google"
                       . (concat "https://www.google.com/search?q="
@@ -324,27 +326,16 @@ This provides the functionality similar to [[file:~/mynotes/utils/apple.org::*De
                                      (buffer-substring-no-properties
                                       (region-beginning) (region-end))
                                    (thing-at-point 'word t)))))
-                     ("dict.cn"
-                      . (concat "https://dict.cn/search?q="
-                                (url-hexify-string
-                                 (if (use-region-p)
-                                     (buffer-substring-no-properties
-                                      (region-beginning) (region-end))
-                                   (thing-at-point 'word t)))))
-                     ))
-    )
+                     ("github"
+                      . (concat "https://github.com/"
+                                (let ((str (completing-read
+                                            "Choose GitHub option: "
+                                            '("mongodb/mongo" "pulls/review-requested" "pulls/" "custom"))))
+                                  (cond ((string= str "custom")
+                                         (webjump-read-string "Enter custom GitHub path: "))
+                                        (t str)))))
+                     )))
 #+end_src
-
-While Webjump is not necessarily more convenient than Chrome site search
-shortcuts, it provides more flexibility.
-- My webjump work flow
-  1. C-c j :: run webjump
-  2. Type in or select "jira ticket" + press enter
-  3. Type in ticket number + enter
-- My chrome site search shortcut work flow
-  1. Cmd-9 Cmd-l :: go to Chrome URL address bar
-  2. Type in "jira" + space :: trigger the site search shortcut
-  3. Type in ticket number + enter
 
 * Sessions and histories
 
