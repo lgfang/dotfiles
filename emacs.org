@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-04-09 +1000
+#+DATE: 2025-04-10 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -330,10 +330,15 @@ Sometimes it can be more convenient than the later.
                       . (concat "https://github.com/"
                                 (let ((str (completing-read
                                             "Choose GitHub option: "
-                                            '("mongodb/mongo" "pulls/review-requested" "pulls/" "custom"))))
+                                            '("pulls/review-requested"
+                                              "pulls/"
+                                              "mongodb/mongo"
+                                              "custom"))))
                                   (cond ((string= str "custom")
                                          (webjump-read-string "Enter custom GitHub path: "))
                                         (t str)))))
+                     ("jira ticket"
+                      . (concat "https://jira.mongodb.org/browse/"  (thing-at-point 'symbol t)))
                      )))
 #+end_src
 
