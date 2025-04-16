@@ -3,7 +3,7 @@
 
 #+TITLE: My Git Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-03-26 +1100
+#+DATE: 2025-04-16 +1000
 
 * Global git ignore
 :PROPERTIES:
@@ -100,22 +100,35 @@ Thumbs.db
 
 * Block pushing certain branches
 
-To avoid accidentally push a branch with sensitive data, we can add a hook to
-corresponding repository.
+To avoid accidentally push branches containing sensitive data, we can add a
+pre-push to the corresponding repositories.
 
-For example, to block myself from pushing =mine= to github, I tangle (write) the
-following code snippet into =~/.dotfiles/.git/hooks/pre-push= in with file
-permission =o755=.
+For example, to block myself from pushing my private configuration branches
+=mine/company= to GitHub, I tangle (write) the following code snippet into
+=~/.dotfiles/.git/hooks/pre-push= in with file permission =o755=.
 
 #+begin_src bash :tangle ~/.dotfiles/.git/hooks/pre-push :tangle-mode o755
   #!/usr/bin/env bash
 
-  branch_blocked=mine
+  protected_branches=("mine" "company")
 
-  if grep -q "$branch_blocked"; then
-      echo "Branch '$branch_blocked' is blocked by yourself." >&2
-      exit 1
-  fi
+  # Read pushed refs from stdin (format: <local_ref> <local_sha> <remote_ref> <remote_sha>)
+  while read -r local_ref local_sha remote_ref remote_sha; do
+
+      # Extract branch name from local_ref (e.g., refs/heads/company → company)
+      branch_name=$(basename "$local_ref" 2>/dev/null)
+
+      # Check if the pushed branch is protected
+      for protected in "${protected_branches[@]}"; do
+          if [[ "$branch_name" == "$protected" ]]; then
+              echo "Pushes to '$protected' are blocked by your pre-push hook." >&1
+              exit 1
+          fi
+      done
+
+  done
+
+  exit 0
 #+end_src
 
 IMPORTANT:
