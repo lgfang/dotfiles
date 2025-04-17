@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-04-10 +1000
+#+DATE: 2025-04-18 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -468,8 +468,7 @@ to the current window layout.
      '("personal.gtd"
        "work.gtd"
        "\\*Copilot.*\\*"
-       "\\**LLM response\\*"              ; gptel fallback buffer
-       "\\**Deepseek\\*"                  ; gptel custom buffer
+       "\\*\\(DeepSeek\\|.*GPT.*\\|LLM response\\)\\*" ; gptel
        "\\*maple-translate\\*"
        "\\*Python\\*"
        "\\*Org Agenda\\*"
@@ -1946,8 +1945,8 @@ functions used by many other packages.
     :defer
     :defines gptel-mode-map
     :custom
-    (gptel-model 'deepseek-chat)
     (gptel-default-mode 'org-mode)
+    (gptel-model 'deepseek-chat)
     (gptel-backend (gptel-make-openai
                        "DeepSeek"
                      :host "api.deepseek.com"
@@ -1959,7 +1958,6 @@ functions used by many other packages.
                              (auth-source-search :host "deepseek" :require '(:secret)))
                             :secret))
                      :models '(deepseek-chat deepseek-coder)))
-
     :hook ((gptel-post-stream . gptel-auto-scroll))
     :bind (:map gptel-mode-map ("C-c C-c" . gptel-send))
     )
