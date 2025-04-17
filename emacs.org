@@ -1996,29 +1996,11 @@ simplified interactions.
 5. Ensure the cursor is in the rewritten region, press =RET= and then choose an
    action following the screen output.
 
-** Copilot
-
-For first time use, remember to run =M-x copilot-install-server= and =M-x
-copilot-login=.
-
-#+begin_src emacs-lisp
-  (use-package copilot
-    :commands copilot-mode
-    :defines copilot-completion-map
-    :bind (:map copilot-completion-map
-                ("C-e" . copilot-accept-completion)
-                ("M-f" . copilot-accept-completion-by-word)
-                ("M-n" . copilot-next-completion)
-                ("M-p" . copilot-previous-completion)
-                )
-    :custom (copilot-log-max 50000)
-    ;; :hook (python-ts-mode python)
-    )
-#+end_src
-
 ** Copilot chat
 
-TODO: when this package is stable and available in melpa, remove the load-path.
+While gptel is already powerful and supports Copilot Chat, this package provides
+additional convenience. For example, =M-x copilot-chat-explain= is much simpler
+than manually crafting prompts with =C-u M-x gptel-send=.
 
 #+begin_src emacs-lisp
   (use-package copilot-chat
@@ -2048,16 +2030,32 @@ TODO: when this package is stable and available in melpa, remove the load-path.
     )
 #+end_src
 
-- How to ask questions:
-  1. Run =M-x copilot-chat-display= if the =*copilot-chat-prompt*= buffer hasn't
-     been created yet.
-  2. Enter your query in the =*copilot-chat-prompt*= buffer, then press =C-c
-     RET= (default) or =C-c C-c= (my key binding) to send the query to copilot.
-     - If you're using this for the first time, you'll be asked to authenticate
-       the application. Please note: even though you can authenticate via a web
-       browser on a different host, it's mandatory to have a functional web
-       browser on the Emacs host. If not, the authentication process will not be
-       successful.
+*Authentication Note:* On first use, you must authenticate via a web browser.
+- Local GUI Host: The browser will open automatically.
+- Remote Headless Host:
+  1. Ensure Emacs can open a browser successfully although we do not use that
+     browser for the login flow. Typically this is done by setting the browser
+     function to the built-in ~eww~.
+     #+begin_src emacs-lisp :tangle no
+       (setq browse-url-browser-function 'eww-browse-url)
+     #+end_src
+  2. Copy the authentication URL provided by Emacs.
+  3. Open it in a browser on a windowing device (e.g., your local machine).
+  4. Complete the login flow.
+
+IMPORTANT: When using this for the first time, you'll be asked to authenticate
+the application via a web page. On a remote host without GUI, you can
+authenticate via a web browser on a different host, but the Emacs must be
+configured to be able to open a web browser successfully, which can be achieved
+via ~(setq browse-url-browser-function 'eww-browse-url)~
+
+- How to ask questions (send prompts to the LLM):
+  - In the dedicated buffer: press ~<f7>~ (bound to ~copilot-chat-display~) to
+    go to the Copilot Chat buffer, type in your query in it and then press ~C-c
+    C-c~ (~copilot-chat-prompt-send~) to send the query to the LLM server.
+  - In any buffer: select the text of concern, then run =M-x
+    copilot-chat-custom-prompt-selection= and type in your custom prompt and
+    enter.
 - An alternative configuration that use a shell CLI style front-end
   #+begin_src emacs-lisp :tangle no
     (use-package copilot-chat
@@ -2073,9 +2071,35 @@ TODO: when this package is stable and available in melpa, remove the load-path.
        )
   #+end_src
 
+** Copilot
+
+This is a plugin for copilot code completion.
+
+For first time use, remember to run =M-x copilot-install-server= and =M-x
+copilot-login=.
+
+#+begin_src emacs-lisp
+  (use-package copilot
+    :commands copilot-mode
+    :defines copilot-completion-map
+    :bind (:map copilot-completion-map
+                ("C-e" . copilot-accept-completion)
+                ("M-f" . copilot-accept-completion-by-word)
+                ("M-n" . copilot-next-completion)
+                ("M-p" . copilot-previous-completion)
+                )
+    :custom (copilot-log-max 50000)
+    ;; :hook (python-ts-mode python)
+    )
+#+end_src
+
 ** Minuet
 
-First, add your DeepSeek API key to one of your =auth-source= files in the
+This is another code completion plugin. The following configuration uses
+DeepSeek as its backend. The performance is quite slow - I'm unsure whether this
+is due to my configuration or if it's inherently slow.
+
+Firstly, add your DeepSeek API key to one of your =auth-source= files in the
 following format:
 #+begin_src text
   machine deepseek login apikey password your_deepseek_api_key
