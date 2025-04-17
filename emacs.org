@@ -1944,26 +1944,49 @@ functions used by many other packages.
   (use-package gptel
     :defer
     :defines gptel-mode-map
-    :custom
-    (gptel-default-mode 'org-mode)
-    (gptel-model 'deepseek-chat)
-    (gptel-backend (gptel-make-openai
-                       "DeepSeek"
-                     :host "api.deepseek.com"
-                     :endpoint "/chat/completions"
-                     :stream t
-                     :key (funcall
-                           (plist-get
-                            (car
-                             (auth-source-search :host "deepseek" :require '(:secret)))
-                            :secret))
-                     :models '(deepseek-chat deepseek-coder)))
+    :commands (gptel-make-gh-copilot gptel-make-deepseek gptel-make-openai)
     :hook ((gptel-post-stream . gptel-auto-scroll))
     :bind (:map gptel-mode-map ("C-c C-c" . gptel-send))
+
+    :custom
+    (gptel-default-mode 'org-mode)
+
+    :config
+    (gptel-make-gh-copilot "CopilotChat")
+
+    (gptel-make-deepseek "DeepSeek"
+      :stream t
+      :key (funcall
+            (plist-get
+             (car
+              (auth-source-search :host "deepseek" :require '(:secret)))
+             :secret)))
     )
 #+end_src
 
-*** Conversation in a Dedicated Buffer
+*** DeepSeek authentication note
+
+To authenticate with the DeepSeek API, ensure your auth source includes an entry
+like this:
+#+begin_src text
+machine deepseek login apikey password sk-*******
+#+end_src
+
+See [[*Store credentials: auth source][Store credentials: auth source]] for more information with regards to auth
+source.
+
+*** Choose backend
+
+I didn't find an elegant approach to register multiple backends and switch
+~gptel-backend~ (the default backend) among them with one-line configuration
+change. Therefore, I decided to not set ~gptel-backend~ in the configuration
+file but choose the model when start to use gptel.
+1. Call ~C-u M-x gptel-send~
+2. In transient menu: type in ~-m~ then select the designated backend (for
+   instance, "DeepSeek:deepseek-reasoner")
+3. Press ~<Enter>~ to actually send prompt or ~C-g~ to cancel.
+
+*** Chat in a dedicated buffer
 1. Run =M-x gptel= to create a dedicated buffer.
 2. Type your questions or input in the buffer.
 3. Run =M-x gptel-send= to send the text to the LLM backend.
@@ -1973,7 +1996,8 @@ NOTE: Unless a region is active, =gptel-send= sends all text from the
 beginning of the buffer to the cursor position to maintain context. To save
 costs, avoid unnecessarily long sessions.
 
-*** Request for selected Text
+*** Custom prompt on selected text
+
 1. Select a snippet of text.
 2. Run =C-u M-x gptel-send=
 3. Optional: press =s= to set system message. (Ask AI for what is "system
