@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-03-14 +1100
+#+DATE: 2025-04-22 +1000
 #+DESCRIPTION: Layered hotkeys using Karabiner Elements
 #+KEYWORDS: Karabiner
 #+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
@@ -1426,30 +1426,6 @@ TODO:
           {
             "type": "variable_if",
             "name": "hyper",
-            "value": 1
-          }
-        ],
-        "type": "basic"
-      },
-      {
-        "description": "Emacs",
-        "to": [
-          {
-            "shell_command": "open -a 'Emacs.app'"
-          }
-        ],
-        "from": {
-          "key_code": "h",
-          "modifiers": {
-            "optional": [
-              "any"
-            ]
-          }
-        },
-        "conditions": [
-          {
-            "type": "variable_if",
-            "name": "select_app",
             "value": 1
           }
         ],
