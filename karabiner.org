@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-04-22 +1000
+#+DATE: 2025-04-24 +1000
 #+DESCRIPTION: Layered hotkeys using Karabiner Elements
 #+KEYWORDS: Karabiner
 #+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
@@ -406,6 +406,7 @@ TODO:
   },
 #+end_src
 ** Caps Lock held down as hyper
+IMPORTANT: ~to_if_alone.hold_down_milliseconds~ is required due to [[https://github.com/pqrs-org/Karabiner-Elements/issues/3949][this issue]].
 #+begin_src json-ts
   {
     "description": "Caps Lock -> Hyper Key (⌃⌥⇧⌘)",
@@ -434,7 +435,8 @@ TODO:
         ],
         "to_if_alone": [
           {
-            "key_code": "caps_lock"
+            "key_code": "caps_lock",
+            "hold_down_milliseconds": 100
           }
         ],
         "to_after_key_up": [
