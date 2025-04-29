@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-04-29 +1000
+#+DATE: 2025-04-30 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -458,11 +458,12 @@ to the current window layout.
 
 #+begin_src emacs-lisp
   (use-package popper
-    :commands popper-mode popper-echo-mode
+    :commands popper-mode popper-echo-mode popper-toggle-type
     :bind (:map global-map
                 ;; C-` unavailable in some terms as it is interpreted as C-@
-                ("<f8>" . popper-cycle)
-                ("M-`" . popper-toggle))
+                ("M-`" . popper-toggle)
+                ("<f8>" . popper-toggle-type)
+                )
     :custom
     (popper-reference-buffers
      '("personal.gtd"
