@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-04-18 +1000
+#+DATE: 2025-04-29 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2316,6 +2316,13 @@ NOTE:
 
 * Bash
 
+#+begin_src emacs-lisp
+  (use-package sh-script                  ; built-in
+    :defer
+    :custom ((sh-basic-offset 2) (sh-indentation 2))
+    )
+#+end_src
+
 ** Language server
 Eglot + [[https://github.com/bash-lsp/bash-language-server][bash-language-server]]
 
@@ -2329,6 +2336,7 @@ See also [[* Prettier]]
   (use-package shfmt
     :delight shfmt-on-save-mode
     :hook (sh-mode . shfmt-on-save-mode)
+    :custom (shfmt-arguments '("-i" "2"))
     )
 #+end_src
 
