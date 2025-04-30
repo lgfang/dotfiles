@@ -2127,7 +2127,7 @@ copilot-login=.
     )
 #+end_src
 
-** Minuet
+** COMMENT Minuet
 
 This is another code completion plugin. The following configuration uses
 DeepSeek as its backend. The performance is quite slow - I'm unsure whether this
