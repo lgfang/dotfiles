@@ -1320,6 +1320,14 @@ Therefore, I chose to disable the time grid.
     :bind (:map global-map
                 ("<f9>"   . org-clock-in-last)
                 ("S-<f9>" . org-clock-out))
+    :custom
+    (org-clock-heading-function
+     (lambda ()
+       (let* ((limit 2)                  ; show at most "limit" words in mode line
+              (heading (org-get-heading t t t t))
+              (words (split-string heading "[ \t]+" t)))
+         (concat (string-join (seq-take words limit) " ")
+                 (when (> (length words) limit) "...")))))
     )
 #+end_src
 
