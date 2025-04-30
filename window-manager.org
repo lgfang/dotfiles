@@ -3,7 +3,7 @@
 
 #+TITLE: My Window Manager Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2024-08-28 +1000
+#+DATE: 2025-04-30 +1000
 #+DESCRIPTION: My window manager related configurations
 #+KEYWORDS: window manager, hotkey, tiling, yabai, skhd
 
@@ -88,7 +88,7 @@ echo "yabai configuration loaded.."
 
   set -o errexit
   set -o pipefail
-  PATH=/opt/homebrew/bin:$PATH
+  PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH
   # the array of visible spaces
   for i in $(yabai -m query --spaces | jq '.[]|select(."is-visible").index'); do
       visible_spaces+=($i)
@@ -113,7 +113,7 @@ echo "yabai configuration loaded.."
 
   set -o errexit
   set -o pipefail
-  PATH=/opt/homebrew/bin:$PATH
+  PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH
   target="$1"
   if [ "$target" == "west" ]; then
       opposite="east"
