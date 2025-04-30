@@ -886,6 +886,7 @@ it does not provide the equivalent of
 
     :hook (((python-mode python-ts-mode) . highlight-indentation-current-column-mode)
            ((yaml-mode yaml-ts-mode) . highlight-indentation-current-column-mode)
+           ((sh-mode bash-ts-mode) . highlight-indentation-current-column-mode)
            )
     )
 #+end_src
