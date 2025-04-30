@@ -21,7 +21,7 @@ the tangling process, it produces a timestamp that other blocks may reference.
 * Header
 
 #+begin_src emacs-lisp :noweb yes
-  ;;; init.el --- Lungang's init.el
+  ;;; init.el --- Lungang's init.el -*- lexical-binding: t; -*-
 
   ;; Created: Fang Lungang 2004
   ;; Updated: <<tangle-time-stamp()>>
@@ -165,11 +165,11 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
 
 ** comment dwim
 #+begin_src emacs-lisp
-  (defadvice comment-dwim (before lgfang-comment-wim activate compile)
-    "Acts on comment smartly base on the current cursor position in the line."
-    (unless (or mark-active (looking-at "[ \t]*$"))
-      (goto-char (line-beginning-position))
-      (set-mark-command nil)
+  (define-advice comment-dwim (:before (&rest _))
+    "Smartly comment/un-comment current line when no region is active."
+    (unless (or (use-region-p)
+                (looking-at-p "[ \t]*$"))
+      (push-mark (line-beginning-position) t t)
       (goto-char (line-end-position))))
 #+end_src
 
@@ -1261,8 +1261,9 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
       (add-hook 'after-save-hook
                 (lambda()
                   (when (member (buffer-file-name) my-config-org-files)
-                    (let ((org-confirm-babel-evaluate nil))
-                      (org-babel-tangle))))))
+                    (setq-local org-confirm-babel-evaluate nil)
+                    (org-babel-tangle)))
+                nil t))
 
     :hook ((org-mode . lgf-tangle-configs))
     )
@@ -1352,13 +1353,10 @@ Therefore, I chose to disable the time grid.
                                 (plantuml . t)
                                 (dot . t)
                                 ))
-    :config
-    (defun my-org-confirm-babel-evaluate (lang body)
-      ;; Do not request confirmation for the following languages
-      (not (or (string= lang "ditaa")
-               (string= lang "plantuml")
-               (string= lang "dot"))))
-    (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+    (org-confirm-babel-evaluate
+     (lambda (lang &rest _)
+       "Don't ask for confirmation when evaluating ditaa, plantuml, or dot code blocks."
+      (not (member lang '("ditaa" "plantuml" "dot")))))
     )
 #+end_src
 
@@ -1954,7 +1952,7 @@ functions used by many other packages.
   (use-package gptel
     :defer
     :defines gptel-mode-map
-    :commands (gptel-make-gh-copilot gptel-make-deepseek gptel-make-openai)
+    :commands (gptel-make-gh-copilot gptel-make-deepseek gptel-make-openai auth-source-search)
     :hook ((gptel-post-stream . gptel-auto-scroll))
     :bind (:map gptel-mode-map ("C-c C-c" . gptel-send))
 
@@ -1966,11 +1964,13 @@ functions used by many other packages.
 
     (gptel-make-deepseek "DeepSeek"
       :stream t
-      :key (funcall
-            (plist-get
-             (car
-              (auth-source-search :host "deepseek" :require '(:secret)))
-             :secret)))
+      :key (lambda ()
+             (require 'auth-source)
+             (let ((result (auth-source-search :host "deepseek" :require '(:secret))))
+               (if result
+                   (funcall (plist-get (car result) :secret))
+                 (error "Failed to retrieve DeepSeek API key"))))
+      )
     )
 #+end_src
 
