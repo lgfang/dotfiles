@@ -3,7 +3,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-03-15 +1100
+#+DATE: 2025-05-01 +1000
 
 * Timestamps
 
@@ -97,6 +97,8 @@ This is needed because audible bell is *not* affected by the system audio volume
   config.send_composed_key_when_right_alt_is_pressed = false
 
   config.disable_default_key_bindings = true
+  config.native_macos_fullscreen_mode = true
+
   config.keys = {
      { action = wezterm.action.CloseCurrentTab {confirm = true}, key = 'w', mods = 'CMD'},
      { action = wezterm.action.QuitApplication, key = 'q', mods = 'CMD'},
