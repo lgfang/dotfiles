@@ -1736,7 +1736,7 @@ to add projects we need. Below is an example:
     :custom
     (major-mode-remap-alist
      '(
-       (bash-mode . bash-ts-mode)
+       (sh-mode . bash-ts-mode)
        (c++-mode . c++-ts-mode)
        (c-mode . c-ts-mode)
        (cmake-mode . cmake-ts-mode)
@@ -2344,7 +2344,7 @@ See also [[* Prettier]]
 #+begin_src emacs-lisp
   (use-package shfmt
     :delight shfmt-on-save-mode
-    :hook (sh-mode . shfmt-on-save-mode)
+    :hook ((sh-mode bash-ts-mode) . shfmt-on-save-mode)
     :custom (shfmt-arguments '("-i" "2"))
     )
 #+end_src
