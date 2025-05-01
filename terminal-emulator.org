@@ -56,17 +56,15 @@ font, nerd font mono, and nerd font propo).
   local font_family = 'JetBrains Mono'
   config.font_size = 19
   config.harfbuzz_features = {'calt=0', 'clig=0', 'liga=0'} -- turn off ligature
-  config.font =  wezterm.font_with_fallback {
-     {
-        family = font_family,
-        weight = 'Bold',
-     },
-  }
   config.font_rules = {
-    {
-      intensity = "Bold",
-      font = wezterm.font({ family = font_family, weight = "ExtraBold" }),
-    },
+     {
+        intensity = "Normal",
+        font = wezterm.font({ family = font_family, weight = "Bold" }),
+     },
+     {
+        intensity = "Bold",
+        font = wezterm.font({ family = font_family, weight = "ExtraBold" }),
+     },
   }
 #+end_src
 
