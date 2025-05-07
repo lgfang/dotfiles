@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-04-30 +1000
+#+DATE: 2025-05-08 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2056,6 +2056,8 @@ than manually crafting prompts with =C-u M-x gptel-send=.
 
     :custom
     (copilot-chat-frontend 'org)
+    ;; `M-x copilot-chat-set-model` to change the value interactively.
+    (copilot-chat-model "gemini-2.5-pro")
 
     :config
     (defun copilot-chat-how ()
