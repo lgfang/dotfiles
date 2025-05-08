@@ -179,11 +179,17 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
   (use-package ibuffer                    ; built-in package
     :commands ibuffer-switch-to-saved-filter-groups
     :custom
-    (ibuffer-saved-filter-groups (quote (("default"
-                                          ("Dired" (mode . dired-mode))
-                                          ("Magit" (name . "^magit"))
-                                          ("Emacs" (name . "^\\*.*\\*$"))
-                                          ))))
+    (ibuffer-saved-filter-groups
+     (quote
+      (("default"
+        ("Dired" (mode . dired-mode))
+        ("LLM" (name . "^\\*\\(Copilot.*\\|\\(DeepSeek\\|.*GPT.*\\|LLM response\\)\\*\\)$"))
+        ("Magit" (name . "^magit"))
+        ("Emacs" (name . "^\\*.*\\*$"))
+        ))))
+    ;; Sort by buffer names, to change sort mode interactively, press `,' or `M-x
+    ;; ibuffer-toggle-sorting-mode' in the ibuffer.
+    (ibuffer-default-sorting-mode 'alphabetic)
     :bind (:map global-map ("C-x C-b" . ibuffer))
     :hook (ibuffer-mode . (lambda() (ibuffer-switch-to-saved-filter-groups "default")))
     )
