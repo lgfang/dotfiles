@@ -2228,11 +2228,26 @@ Or
   (use-package git-link
     :custom
     (git-link-open-in-browser t)
-    (git-link-use-commit t)
+    (git-link-use-commit nil)
     )
 #+end_src
 
-- "Use commit" equals "Copy permalink" in corresponding github page (?)
+- Choosing =git-link-use-commit= value
+
+  For my workflow, I find it more convenient to set =git-link-use-commit= to
+  =nil= rather than =t=. This configuration directs =git-link= to use the
+  current branch name in the generated URL, which offers greater flexibility, as
+  a URL containing a branch name can be easily modified to point to a different
+  branch. This is particularly helpful in situations where I am working on a
+  local development branch (which may not yet be pushed or visible to others)
+  but need to share a link that references the =master= or =main= branch.
+  Editing the branch name in the URL is straightforward in such cases.
+
+  In contrast, when =git-link-use-commit= is set to =t=, the URL includes a
+  specific commit hash. While this creates a permalink (the same as "Copy
+  permalink" in the corresponding github page), it can be less convenient for
+  the scenario described, as changing the URL to point to the =master= branch
+  from a local commit hash requires more adjustment.
 
 ** blamer
 #+begin_src emacs-lisp
