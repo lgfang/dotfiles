@@ -1245,8 +1245,10 @@ The packages works with limited privileges. Frequently used hotkeys
 * Org mode
 
 ** Agenda
+
 #+begin_src emacs-lisp
   (use-package org-agenda
+    :bind (:map global-map ("C-x c a" . org-agenda))
     :custom (org-agenda-use-time-grid nil)
   )
 #+end_src
@@ -1261,7 +1263,9 @@ Therefore, I chose to disable the time grid.
            (800 1000 1200 1400 1600 1800 2000)
            "......" "----------------"))))
 #+end_src
+
 ** Babel
+
 #+begin_src emacs-lisp
   (use-package org
     :custom
@@ -1337,6 +1341,24 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
     :bind (:map global-map
                 ("<f10>" . org-capture))
     )
+#+end_src
+
+** Links
+
+The keybindings below are *not* tangled into the configuration file because they
+either:
+- Address less frequently used functionalities, or
+- Duplicate existing default keybindings.
+#+begin_src emacs-lisp :tangle no
+  (use-package org
+    :ensure nil ; Org is built-in, so we don't need package.el to try and install it.
+    :bind (;; `global-map' by default by :bind
+           ("C-x c l" . org-store-link)
+           ("C-x c o" . org-open-at-point-global)
+           :map org-mode-map
+           ("C-c C-l" . org-insert-link)
+           ("C-c C-o" . org-open-at-point)
+           )))
 #+end_src
 
 ** Repeat map
@@ -1509,6 +1531,35 @@ the time and placing the path and dollar sign on separate lines.
 To create an additional eshell buffer, run =C-u M-x eshell=.
 
 * Utilities
+
+** ASCII values
+
+- To get the ASCII value of certain character
+  + Move the cursor to it and then run ~C-x =~. The ASCII values in base 10, 8, 16
+    are shown in the mini buffer as show below:
+    #+begin_src text
+      Char: a (97, #o141, #x61) ...
+    #+end_src
+  + Alternatively, put a question mark before the character and evaluate that
+    expression (~C-x C-e~).
+    #+begin_src text
+      ?a ==> 97 (#o141, #x61, ?a)
+    #+end_src
+
+- To insert a character using its ASCII value, use the ~insert~ function
+  #+begin_src text
+    (insert 97)
+    (insert #o141)
+    (insert #x61)
+  #+end_src
+
+- Display the ASCII table in a dedicated buffer.
+  #+begin_src emacs-lisp
+    (use-package ascii-table
+      :defer t
+      :commands ascii-table
+      :custom (ascii-table-base 10))
+  #+end_src
 
 ** Calendar
 
@@ -2347,6 +2398,16 @@ NOTE:
     )
 #+end_src
 
+* ASM
+
+#+begin_src emacs-lisp
+  (use-package asm-mode
+    :ensure nil                           ; Explicitly disable for built-ins
+    :custom
+    (asm-comment-char 59)                 ; 35 -> '#', 59 -> ';'
+    )
+#+end_src
+
 * Bash
 
 #+begin_src emacs-lisp
@@ -2656,23 +2717,7 @@ Among the features, it provides the two most useful features when reading large 
 (add-to-list 'load-path my-extension-path)
 (add-to-list 'load-path my-backward-path t)
 
-;;; Personal Info
-
-;; C-, M-, C-M- ... :(
-(define-key global-map (kbd "C-x c l") 'org-store-link)
-(define-key global-map (kbd "C-x c a") 'org-agenda)
-(define-key global-map (kbd "C-x c o") 'org-open-at-point-global)
 (define-key global-map (kbd "M-/") 'hippie-expand)
-;; (define-key global-map (kbd "M-g c") 'move-to-column)
-;; (define-key global-map (kbd "M-g ]") 'lgfang-goto-page)
-
-;;; ascii mode
-(autoload 'ascii-display "ascii" "Toggle ASCII code display." t)
-
-;;; asm mode
-(setq-default asm-comment-char 35)      ; 35 -> ascii code for '#'
-
-;;; auto-complete - use company mode instead
 
 ;;; auto mode list
 (setq auto-mode-alist (append
@@ -2687,55 +2732,8 @@ Among the features, it provides the two most useful features when reading large 
 
 ;;; bbdb & bbdb-vcard-export - removed, use google/apple contacts etc.
 
-
-
 (unless (eq system-type 'darwin)          ; OSX
   (setq browse-url-browser-function 'browse-url-firefox))
-
-;;; c mode configuration
-(defconst lgfang-c-style
-  '((c-tab-always-indent        . t)
-    (c-basic-offset . 4)
-    (c-ignore-auto-fill . nil)
-    (c-comment-only-line-offset . (0 . 0))
-    (c-hanging-braces-alist     . ((substatement-open after before)
-                                   (brace-list-open)))
-    (c-hanging-colons-alist     . ((member-init-intro before)
-                                   (inher-intro)
-                                   (case-label after)
-                                   (label after)
-                                   (access-label after)))
-    (c-cleanup-list             . (scope-operator
-                                   empty-defun-braces
-                                   defun-close-semi))
-    (c-offsets-alist . ((knr-argdecl-intro . 5)
-                        (arglist-intro . +)
-                        (arglist-close . c-lineup-close-paren)
-                        (inclass . +)
-                        (member-init-intro . +)
-                        (statement-block-intro . +)
-                        (defun-block-intro . +)
-                        (substatement-open . 0)
-                        (label . 0)
-                        (statement-case-open . +)
-                        (statement-case-intro . +)
-                        (case-label . 0)
-                        (statement-cont . c-lineup-math)
-                        (inline-open . 0)
-                        (brace-list-open . +)
-                        (topmost-intro-cont . 0)
-                        (c . 1) ; "c" for continue of comment, not "c
-                                ; programming language"
-                        ))
-    (c-special-indent-hook . c-gnu-impose-minimum)
-    (c-block-comment-prefix . "lgf: ")
-    (c-comment-prefix-regexp . ((awk-mode . "#+(lgf: )?")
-                                (other ."lgf: \\|//+\\|\\**")))
-    ;; go to this file and test if c block comments works
-    ;; [[file:./patches/comments-test.c]]
-    (c-echo-syntactic-information-p . t))
-  "lgfang's C Programming Style")
-(c-add-style "lgfang" lgfang-c-style nil)
 
 (add-hook 'c-mode-common-hook
           (lambda ()
@@ -3029,14 +3027,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
         (if (called-interactively-p t)
             (message "/%s" (mapconcat 'identity path "/"))
           (format "/%s" (mapconcat 'identity path "/")))))))
-
-;;; occur
-(define-key occur-mode-map "n" 'next-error-no-select)
-(define-key occur-mode-map "p" 'previous-error-no-select)
-(define-key occur-mode-map " " 'occur-mode-display-occurrence)
-(define-key occur-mode-map "o" (lambda () (interactive)
-                                 (occur-mode-goto-occurrence)
-                                 (delete-other-windows)))
 
 ;;; org mode
 (load "~/.org" t nil nil)
