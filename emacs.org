@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-05-08 +1000
+#+DATE: 2025-05-12 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1244,7 +1244,43 @@ The packages works with limited privileges. Frequently used hotkeys
 
 * Org mode
 
-** Automatically tangle configurations
+** Agenda
+#+begin_src emacs-lisp
+  (use-package org-agenda
+    :custom (org-agenda-use-time-grid nil)
+  )
+#+end_src
+
+Turn off time grid as the grid lines between clocked items are annoying. An
+alternative is to set =remove-match= as shown below. However, this can be
+misleading as people typically expect equal intervals between grid lines.
+Therefore, I chose to disable the time grid.
+#+begin_src emacs-lisp :tangle no
+  (setq org-agenda-time-grid
+        '(((daily today remove-match)
+           (800 1000 1200 1400 1600 1800 2000)
+           "......" "----------------"))))
+#+end_src
+** Babel
+#+begin_src emacs-lisp
+  (use-package org
+    :custom
+    (org-ditaa-jar-path (concat my-downloads "ditaa.jar"))
+    (org-plantuml-jar-path (concat my-downloads "plantuml.jar"))
+    (org-babel-load-languages '((emacs-lisp . t)
+                                (shell . t)
+                                (ditaa . t)
+                                (plantuml . t)
+                                (dot . t)
+                                ))
+    (org-confirm-babel-evaluate
+     (lambda (lang &rest _)
+       "Don't ask for confirmation when evaluating ditaa, plantuml, or dot code blocks."
+      (not (member lang '("ditaa" "plantuml" "dot")))))
+    )
+#+end_src
+
+*** Automatically tangle configurations
 
 To ensure that the corresponding configuration files are updated every time I
 modify this configuration file, add a =after-save-hook= to org-mode: when the
@@ -1278,50 +1314,6 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 *Note*:
 - Remember to adjust =my-config-org-file= to point to your configuration file.
 
-** Repeat map
-
-#+begin_src emacs-lisp
-  (use-package org
-    :bind (:repeat-map my-org-repeat-map
-                       ("C-n" . org-next-visible-heading)
-                       ("C-p" . org-previous-visible-heading)
-                       ("C-b" . org-backward-heading-same-level)
-                       ("C-f" . org-forward-heading-same-level)
-                       )
-    )
-#+end_src
-
-** Structure templates
-I.e. type =<s= + =TAB= to insert =#+begin_src= etc.
-#+begin_src emacs-lisp
-  (use-package org-tempo
-    :config
-    (add-to-list 'org-structure-template-alist '("sb" . "src bash"))
-    (add-to-list 'org-structure-template-alist '("sj" . "src javascript"))
-    ;; yasnippet-snippets/snippets/org-mode/style uses "<st" as well, which
-    ;; overrides the one below. Modify that to "<sty" and then 'yas-reload-all"
-    (add-to-list 'org-structure-template-alist '("st" . "src text"))
-    (add-to-list 'org-structure-template-alist '("se" . "src emacs-lisp"))
-    )
-#+end_src
-
-** Agenda
-#+begin_src emacs-lisp
-  (use-package org-agenda
-    :custom (org-agenda-use-time-grid nil)
-  )
-#+end_src
-
-Turn off time grid as the grid lines between clocked items are annoying. An
-alternative is to set =remove-match= as shown below. However, this can be
-misleading as people typically expect equal intervals between grid lines.
-Therefore, I chose to disable the time grid.
-#+begin_src emacs-lisp :tangle no
-  (setq org-agenda-time-grid
-        '(((daily today remove-match)
-           (800 1000 1200 1400 1600 1800 2000)
-           "......" "----------------"))))
-#+end_src
 ** Clock
 #+begin_src emacs-lisp
   (use-package org-clock
@@ -1347,22 +1339,30 @@ Therefore, I chose to disable the time grid.
     )
 #+end_src
 
-** Babel
+** Repeat map
+
 #+begin_src emacs-lisp
   (use-package org
-    :custom
-    (org-ditaa-jar-path (concat my-downloads "ditaa.jar"))
-    (org-plantuml-jar-path (concat my-downloads "plantuml.jar"))
-    (org-babel-load-languages '((emacs-lisp . t)
-                                (shell . t)
-                                (ditaa . t)
-                                (plantuml . t)
-                                (dot . t)
-                                ))
-    (org-confirm-babel-evaluate
-     (lambda (lang &rest _)
-       "Don't ask for confirmation when evaluating ditaa, plantuml, or dot code blocks."
-      (not (member lang '("ditaa" "plantuml" "dot")))))
+    :bind (:repeat-map my-org-repeat-map
+                       ("C-n" . org-next-visible-heading)
+                       ("C-p" . org-previous-visible-heading)
+                       ("C-b" . org-backward-heading-same-level)
+                       ("C-f" . org-forward-heading-same-level)
+                       )
+    )
+#+end_src
+
+** Structure templates
+I.e. type =<s= + =TAB= to insert =#+begin_src= etc.
+#+begin_src emacs-lisp
+  (use-package org-tempo
+    :config
+    (add-to-list 'org-structure-template-alist '("sb" . "src bash"))
+    (add-to-list 'org-structure-template-alist '("sj" . "src javascript"))
+    ;; yasnippet-snippets/snippets/org-mode/style uses "<st" as well, which
+    ;; overrides the one below. Modify that to "<sty" and then 'yas-reload-all"
+    (add-to-list 'org-structure-template-alist '("st" . "src text"))
+    (add-to-list 'org-structure-template-alist '("se" . "src emacs-lisp"))
     )
 #+end_src
 
