@@ -2230,6 +2230,7 @@ Then, add the following to your Emacs configuration file.
 #+begin_src emacs-lisp
   (use-package magit
     :defer t
+    :bind (:map global-map ("C-x g" . magit-status))
     :custom (magit-log-margin-show-committer-date t)
     :hook
     (magit-refresh-buffer . (lambda() (when (fboundp 'custom-urls) (custom-urls))))
