@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-05-12 +1000
+#+DATE: 2025-05-22 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1862,24 +1862,6 @@ to add projects we need. Below is an example:
     )
 #+end_src
 
-** Which function
-#+begin_src emacs-lisp
-  (use-package which-func
-    :init (which-function-mode t)
-    )
-#+end_src
-
-** Breadcrumb
-#+begin_src emacs-lisp
-  (use-package breadcrumb
-    :defer t
-    :custom
-    (breadcrumb-project-max-length 0.3)
-    (breadcrumb-imenu-max-length 0.9)
-    )
-#+end_src
-- Note: consider replacing =which-function= with this.
-
 ** Code Formatter
 
 Below are two general code formatter packages. For language-specific formatter
@@ -1942,6 +1924,50 @@ restriction of having to start Emacs from that specific directory.
     }
   #+end_src
 
+** Which function
+#+begin_src emacs-lisp
+  (use-package which-func
+    :init (which-function-mode t)
+    )
+#+end_src
+
+** Breadcrumb
+#+begin_src emacs-lisp
+  (use-package breadcrumb
+    :defer t
+    :custom
+    (breadcrumb-project-max-length 0.3)
+    (breadcrumb-imenu-max-length 0.9)
+    )
+#+end_src
+- Note: consider replacing =which-function= with this.
+
+** Imenu
+
+#+begin_src emacs-lisp
+  (use-package imenu
+    :custom (imenu-auto-rescan t)
+    )
+
+  (use-package imenu-list
+    :after imenu
+    :bind (:map global-map ("M-s i" . imenu-list ))
+    )
+#+end_src
+
+** Project
+
+This now built-in package detects the current project and provides some utility
+functions used by many other packages.
+
+#+begin_src emacs-lisp
+  (use-package project
+    :custom
+    ;; Help `project' to correctly identify project root directories
+    (project-vc-extra-root-markers '("pyproject.toml"))
+    )
+#+end_src
+
 ** LSP: eglot
 
 Works very well out of box without any configuration.
@@ -1972,32 +1998,6 @@ non-trivial. In such situations, you can see the error message by setting
     ;; Save files before sessions, useful for interpreted languages, such as
     ;; python; Cannot use `:hook' since this hook name doesn't end with "-hook"
     (add-hook 'dape-on-start-hooks 'save-some-buffers)
-    )
-#+end_src
-
-** Imenu
-
-#+begin_src emacs-lisp
-  (use-package imenu
-    :custom (imenu-auto-rescan t)
-    )
-
-  (use-package imenu-list
-    :after imenu
-    :bind (:map global-map ("M-s i" . imenu-list ))
-    )
-#+end_src
-
-** Project
-
-This now built-in package detects the current project and provides some utility
-functions used by many other packages.
-
-#+begin_src emacs-lisp
-  (use-package project
-    :custom
-    ;; Help `project' to correctly identify project root directories
-    (project-vc-extra-root-markers '("pyproject.toml"))
     )
 #+end_src
 
