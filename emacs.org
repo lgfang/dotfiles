@@ -2001,6 +2001,19 @@ non-trivial. In such situations, you can see the error message by setting
     )
 #+end_src
 
+*** Python examples
+
+IMPORTANT: Ensure the Python project's virtual environment is activated, if
+applicable.
+- Debug a unit test run by =pytest=
+  #+begin_src text
+    Run adapter: debugpy-module :cwd "/home/lgfang/myproject/" :module "pytest" :args ["src/tests/test_xyz.py::TestCustomBuild"]
+  #+end_src
+- Debug a locust run
+  #+begin_src text
+    Run adapter: debugpy-module :cwd "/home/lgfang/myproject/workloads/currentOp/" :module "locust" :args ["--locustfile" "./src/currentOp_workload.py" ...]
+  #+end_src
+
 ** xcscope
 
 This section is kept for reference but excluded from the actual config. The
