@@ -2001,6 +2001,43 @@ non-trivial. In such situations, you can see the error message by setting
     )
 #+end_src
 
+** xcscope
+
+This section is kept for reference but excluded from the actual config. The
+recommended alternative is ~eglot~ + a language server (e.g., ~clangd~ for C++).
+See language-specific sections for details.
+
+#+begin_src emacs-lisp :tangle no
+  (use-package xcscope
+    :custom
+    ;; Use `global' (brew install global) instead of `cscope'
+    (cscope-program "gtags-cscope")
+    ;; The default database filename of `global'
+    (cscope-database-file "GTAGS")
+    ;; Disable database auto-rebuild (for huge projects)
+    (cscope-do-not-update-database t)
+    ;; Cross-project search paths
+    (cscope-database-regexps
+     '(
+       (
+        ( "^/users/jdoe/sources/proj1"
+          ( t )
+          ( "/users/jdoe/sources/proj2")
+          ( "/users/jdoe/sources/proj3/mycscope.out")
+          ( "/users/jdoe/sources/proj4")
+          t
+          ( "/some/master/directory" ("-d" "-I/usr/local/include") )
+          )
+        ( "^/users/jdoe/sources/gnome/"
+          ( "/master/gnome/database" ("-d") )
+          )
+        )))
+
+    :config
+    (cscope-setup)
+    )
+#+end_src
+
 * AI/LLM
 
 ** gptel
@@ -2435,7 +2472,7 @@ See also [[* Prettier]]
     )
 #+end_src
 
-* CPP (C++)
+* C/C++
 
 ** Language server
 
@@ -2443,15 +2480,45 @@ Eglot + =clangd= (on MacOS, =clangd= comes with Developer Command Line Tools)
 
 ** Formatter
 
-Install the =clang-format= tool first, for instance =brew install clang-format=
-or =sudo apt install clang-format=.
+First, install =clang-format=:
+- MacOS :: =brew install clang-format=
+- Ubuntu =sudo apt install clang-format=.
 
+Then configure in Emacs:
 #+begin_src emacs-lisp
   (use-package clang-format
-    ;; Do enable `clang-format-on-save-mode` due to legacy source code.
-    ;; source code
-    :delight clang-format-on-save-mode
     :commands clang-format-buffer clang-format-region clang-format-on-save-mode
+    :delight clang-format-on-save-mode
+    ;; do not hook `clang-format-on-save-mode' due to legacy code
+    )
+#+end_src
+
+** hide ifdefs
+
+#+begin_src emacs-lisp
+  (use-package hideif
+    :ensure nil                           ; Built-in package
+    :delight hide-ifdef-mode
+    :hook ((c-mode c-ts-mode c++-mode c++-ts-mode) . hide-ifdef-mode)
+
+    :custom
+    ;; Fold all #ifdef blocks by default when `hide-ifdef-mode' is activated. This
+    ;; prevents accidentally working in undefined blocks.
+    (hide-ifdef-initially t)
+    ;; (hide-ifdef-shadow t)                 ; shadow instead hide the text
+
+    :config
+    ;; Must set it in `:config' as `:custom' doesn't work for this variable
+    (setq hide-ifdef-define-alist
+     '(
+       ;; Default alist (empty), fold all #ifdef (but *not* #ifndef) blocks
+       (default)
+       ;; MongoDB-specific macros for macOS
+       (mongodb-mac __APPLE__
+                    (__LIBCPP_STD_VER . 14)
+                    )
+
+       ))
     )
 #+end_src
 
@@ -2736,19 +2803,6 @@ Among the features, it provides the two most useful features when reading large 
 (unless (eq system-type 'darwin)          ; OSX
   (setq browse-url-browser-function 'browse-url-firefox))
 
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            (c-set-style "lgfang")
-            (c-toggle-hungry-state 1)
-            (hs-minor-mode 1)
-            ;; (eldoc-mode 1)
-            ))
-;; Can't hook imenu-add-menubar-index to c-mode-common-hook since awk mode don't
-;; support it
-;; (dolist (hook '(c-mode-hook c++-mode-hook java-mode-hook))
-;;   (add-hook hook 'imenu-add-menubar-index))
-
-
 ;;; Clipboard
 ;; from/to tmux buffer
 (defun lgfang-send-to-tmux ()
@@ -2863,66 +2917,6 @@ tmux's buffer"
 (font-lock-add-keywords 'c-mode         ; for c mode only
                         '(("\\<\\(TRUE\\|FALSE\\)\\>"
                            . font-lock-constant-face)))
-
-;;; gdb
-;; (setq gdb-many-windows t)
-
-;;; hide-ifdef-mode settings
-(require 'hideif)
-
-(defun hif-overlay-at (position)
-  "An imitation of the one in hide-show, used by
-lgfang-hif-toggle-block"
-  (let ((overlays (overlays-at position)) ov found)
-    (while (and (not found) (setq ov (car overlays)))
-      (setq found (eq (overlay-get ov 'invisible) 'hide-ifdef)
-            overlays (cdr overlays)))
-    found))
-
-(defun lgfang-hif-toggle-block ()
-  "toggle hide/show-ifdef-block"
-  (interactive)
-  (require 'hideif)
-  (let* ((top-bottom (hif-find-ifdef-block)) (top (car top-bottom)))
-    (goto-char top)
-    (hif-end-of-line)
-    (if (hif-overlay-at (point)) (show-ifdef-block)
-      (hide-ifdef-block))))
-
-;;; Fold ifdef blocks by default. This is safer than showing them by default
-;;; since when you see a code snippet folded, you know it is folded. In
-;;; contrast, if they are not folded, you may learn in a hard way that you are
-;;; in an undefined block.
-(setq hide-ifdef-initially t
-      hide-ifdef-define-alist
-      ;; Add/remove "define" alist per your own need
-      '((default)  ; An empty alist, makes every ifdef block folded, but not
-                   ; ifndef blocks. See below for an example of how to define a
-                   ; list per your project/environment.
-        (mongodb-mac __APPLE__
-                     (__LIBCPP_STD_VER . 14)
-                     )
-        ))
-(defvar my-define-alist "mongodb-mac")
-
-(defun lgfang-hide-ifdef-use-define-alist (name)
-  "A wrapper for `hide-ifdef-use-define-alist' to use NAME define alist."
-  (interactive
-   (list (let* ((prompt "Use MACRO define list: ")
-                (symbol-names
-                 (mapcar (lambda (a) (symbol-name (car a)))
-                         hide-ifdef-define-alist)))
-           (completing-read prompt symbol-names))))
-  (setq my-define-alist name) ; also apply this to buffers not opened yet
-  (hide-ifdefs)                         ; for current buffer
-  (hide-ifdef-use-define-alist name))
-
-(dolist (hook '(c-mode-hook c++-mode-hook))
-  (add-hook hook (lambda () (hide-ifdef-mode 1)
-                   (hide-ifdef-use-define-alist my-define-alist))))
-
-(eval-after-load "cc-mode"
-  '(define-key c-mode-base-map (kbd "M-'") 'lgfang-hif-toggle-block))
 
 ;;; hide-show
 (setq hs-allow-nesting t hs-isearch-open t)
@@ -3121,35 +3115,6 @@ selective-display"
 (autoload 'vimrc-mode "vimrc-mode")
 (add-to-list 'auto-mode-alist '(".vim\\(rc\\)?$" . vimrc-mode))
 
-;;; xcscope,
-;; NOTE: cscope is now just a backup. Normally eglot + clangd is more convient.
-;; Just `M-x eglot` in a C/C++ buffer to activate eglot.
-(when (require 'xcscope nil t)
-  (cscope-setup)
-
-  (setq
-   ;; use gtags-cscope instead of the legacy cscope
-   cscope-program "gtags-cscope"
-   ;; set cscope-database-file accordingly. Otherwise xcscope looks for
-   ;; "cscope.out" and fails and then build the database in the current
-   ;; directory.
-   cscope-database-file "GTAGS")
-
-  ;; ;; Below are for huge code bases. No need of them at the moment
-  ;; (require 'cscope-filter nil t)
-  ;; (setq
-  ;;  cscope-do-not-update-database t ; do not rebuild database for every search.
-  ;;  cscope-database-regexps
-  ;;  '(("\\(sandbox/trunk\\)"
-  ;;     (t) ;; local cscope.out first
-  ;;     ("/home/lgfang/projects/vsg/sandbox/lcp_lite/")
-  ;;     ("/home/lgfang/projects/vsg/sandbox/libsoap-1.1.0/libcsoap/")
-  ;;     ("/home/lgfang/projects/vsg/sandbox/libxml2/")
-  ;;     t ; 't' doesn't work, comment out useless database-dir
-  ;;     ;;("/remote/.../b2008.09_icc_us02/syn/icc_sh/cscope.out.bak")
-  ;;     )))
-
-  )
 
 ;;; ------ end General ------
 
