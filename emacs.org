@@ -416,7 +416,12 @@ remote server to check if these files do exist.
     )
 
   (use-package emacs
-    :custom (split-width-threshold 200)
+    :custom
+    (split-width-threshold 200)
+    ;; Make scrolling behave more like modern applications
+    ;; See: (info "(emacs) Auto Scrolling")
+    (scroll-margin 0)
+    (scroll-conservatively 100)
     )
 
   (use-package winner
@@ -674,7 +679,7 @@ smaller screens. Hence, we keep the fill column to 80.
 (setq-default fill-column 80 comment-fill-column nil)
 #+end_src
 
-** Whitespace
+** White space
 #+begin_src emacs-lisp
   (use-package emacs                      ; clean up tab, indent and whitespace
     :custom
@@ -685,6 +690,9 @@ smaller screens. Hence, we keep the fill column to 80.
     ((before-save . whitespace-cleanup))
     )
 #+end_src
+
+- No longer necessary to set ~require-final-newline~ (or
+  ~mode-require-final-newline~).
 
 ** Yasnippet
 #+begin_src emacs-lisp
@@ -2999,12 +3007,6 @@ tmux's buffer"
 
 (require 'htmlize nil t)
 
-;;; ispell - aspell instead
-(setq ispell-program-name "aspell"
-      ;; regardless locale settings, always use english refer to
-      ;; ispell-dictionary-alist for details
-      ispell-dictionary "english")
-
 ;;; Javascript
 (add-hook 'js-mode-hook
           (lambda()
@@ -3087,10 +3089,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
 ;; Installed using M-x package-install
 (autoload 'php-mode "php-mode" "Major mode for editing PHP code." t)
 
-;;; Always end a file with a newline
-(setq require-final-newline t)
-
-
 ;;; rnc mode - nxml mode uses rnc files
 (add-to-list 'auto-mode-alist '("\\.rnc\\'" . rnc-mode))
 (autoload 'rnc-mode "rnc-mode")
@@ -3106,9 +3104,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
                    (expand-file-name
                     (concat my-extension-path "trang.jar")))
                   (cygpath rnc) (cygpath rng))))
-
-
-(setq scroll-margin 0 scroll-conservatively 100) ;  scroll-step ?
 
 ;;; selective display
 (defun lgfang-toggle-selective-display()
