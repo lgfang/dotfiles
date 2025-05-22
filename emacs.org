@@ -2643,6 +2643,17 @@ This function is based on treesit (=json-ts-mode=)
     )
 #+end_src
 
+* LDAP Schema (LDIF)
+
+Currently Emacs lacks support for editing LDAP schema (LDIF) files:
+- The built-in package ~ldap.el~ is for LDAP server connections, *not* LDIF
+  editing.
+- The ~ldap-mode.el~ (v1.2, by Dave Love) offers very limited functionality
+  (i.e. incomplete syntax highlighting) and is no longer maintained.
+
+Hence, I recommend using ~fundamental-mode~ for LDIF files until a better
+alternative emerges.
+
 * Markdown
 
 #+begin_src emacs-lisp
@@ -2650,6 +2661,18 @@ This function is based on treesit (=json-ts-mode=)
     :defer t
     :custom (markdown-command "pandoc")
     )
+#+end_src
+
+* Mermaid chart
+
+#+begin_src emacs-lisp
+  (use-package mermaid-mode)
+#+end_src
+
+The ~mermaid-mode~ package depends on the mermaid cli tool, which is installed
+on macOS using the following command:
+#+begin_src bash
+npm install -g @mermaid-js/mermaid-cli
 #+end_src
 
 * Python
@@ -2750,6 +2773,15 @@ pyright
 - PageDown/PageUp :: previous/next page
 - TODO: u/d :: one level up/one level down
 
+* Terraform
+
+#+begin_src emacs-lisp
+  (use-package terraform-mode
+    :delight
+    :custom (terraform-indent-level 2)
+    )
+#+end_src
+
 * YAML
 
 ** Formatter
@@ -2778,6 +2810,23 @@ Among the features, it provides the two most useful features when reading large 
     )
 #+end_src
 
+* Verilog
+#+begin_src emacs-lisp
+  (use-package verilog-mode
+    :ensure nil                           ; Built-in package
+    :delight
+    )
+#+end_src
+
+* Vimrc
+
+#+begin_src emacs-lisp
+  (use-package vimrc-mode
+    :defer t
+    :delight
+    )
+#+end_src
+
 * To migrate
 
 #+begin_src emacs-lisp
@@ -2802,12 +2851,12 @@ Among the features, it provides the two most useful features when reading large 
 
 ;;; auto mode list
 (setq auto-mode-alist (append
-                       '(("\\.[xX]\\'" . c-mode)
+                       '(
+                         ("\\.[xX]\\'" . c-mode)
                          ("\\.mak\\'" . makefile-mode)
                          ("\\.make\\'" . makefile-mode)
                          ("\\.gdb\\'" . gdb-script-mode)
-                         ("\\.v\\'" . verilog-mode)
-                         ("\\.ldif\\'" . ldap-mode))
+                         )
                        auto-mode-alist))
 
 
@@ -2853,9 +2902,6 @@ tmux's buffer"
   (setq interprogram-paste-function 'copy-from-osx))
 
 (setq comment-style 'extra-line)
-
-;;; company - auto completion
-
 
 ;;; compilation
 (eval-after-load "compile"
@@ -2966,22 +3012,11 @@ tmux's buffer"
             (define-key js-mode-map [mouse-3] 'lgfang-toggle-level)
             (hs-minor-mode 1)))
 
-;;; ldap mode for ldif files
-(autoload 'ldap-mode "ldap-mode" "Edit ldif files" t)
-
-;;; line number
-;; (setq-default
-;;  ;; Note that corresponding faces maybe undefined and hence the major/minor
-;;  ;; ticks are not shown.
-
 ;;; long lines
 (setq
  longlines-wrap-follows-window-size t
  ;; for visual-line-mode, indicates lines are wrapped
  visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
-
-;;; mermaid mode: package-installed, just remember to install mermaid cli:
-;; 'npm install -g @mermaid-js/mermaid-cli'
 
 (setq messages-buffer-max-lines 500)    ; default value too small
 
@@ -3102,9 +3137,6 @@ selective-display"
             (hs-minor-mode 1)))
 (add-to-list 'interpreter-mode-alist '("expect" . tcl-mode))
 
-;;; Terraform (package install terraform-mode)
-(setq-default terraform-indent-level 4)
-
 ;;; toggle-window-dedicated.el
 (load "toggle-window-dedicated" t nil nil)
 
@@ -3120,14 +3152,6 @@ selective-display"
   (setq trash-directory "~/.trashbin"))
 
 (setq-default truncate-lines nil)
-
-;;; verilog mode
-(autoload 'verilog-mode "verilog-mode" "Verilog mode" t )
-
-;;; vimrc mode
-(autoload 'vimrc-mode "vimrc-mode")
-(add-to-list 'auto-mode-alist '(".vim\\(rc\\)?$" . vimrc-mode))
-
 
 ;;; ------ end General ------
 
