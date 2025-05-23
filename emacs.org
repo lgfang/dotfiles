@@ -2855,6 +2855,9 @@ Among the features, it provides the two most useful features when reading large 
 (add-to-list 'load-path my-extension-path)
 (add-to-list 'load-path my-backward-path t)
 
+(load "~/.org" t nil nil)
+(load "lgfang.emms" t nil nil)
+
 (define-key global-map (kbd "M-/") 'hippie-expand)
 
 ;;; auto mode list
@@ -2911,23 +2914,6 @@ tmux's buffer"
 
 (setq comment-style 'extra-line)
 
-;;; compilation
-(eval-after-load "compile"
-  '(progn
-     (setq compile-command "clang++ --std=c++11 "
-           ;; compile-command "python -m unittest "
-           compilation-scroll-output t)
-     (define-key compilation-mode-map "n" 'next-error-no-select)
-     (define-key compilation-mode-map "p" 'previous-error-no-select)
-     (define-key compilation-mode-map " "
-       (lambda () (interactive)
-         (save-selected-window (compile-goto-error))))
-     (define-key compilation-mode-map [return] 'compile-goto-error)
-     (define-key compilation-mode-map "o"
-       (lambda () (interactive)
-         (compile-goto-error) (delete-other-windows)))
-     (define-key compilation-mode-map "q" 'quit-window)))
-
 ;;; Copy/cut current line
 ;;; from http://blog.waterlin.org
 (defadvice kill-ring-save (before slickcopy activate compile)
@@ -2952,13 +2938,6 @@ tmux's buffer"
     (message (concat "current file: " string))
     (kill-new string)))
 
-;;; delete selection typed text replaces the selection (marked region)
-;; (delete-selection-mode 0)
-
-;;; default major mode
-;; (setq default-major-mode 'text-mode)
-
-
 ;;; ediff
 (setq
  ;; ediff-diff-options "-w"
@@ -2973,7 +2952,7 @@ tmux's buffer"
 
 
 ;;; emms configure in another file
-(load "lgfang.emms" t nil nil)
+
 
 ;;; face, add our own keywords. ctypes.el is too heavy-weight
 (add-hook 'find-file-hooks
@@ -3073,9 +3052,6 @@ path. from http://www.emacswiki.org/emacs/NxmlMode"
             (message "/%s" (mapconcat 'identity path "/"))
           (format "/%s" (mapconcat 'identity path "/")))))))
 
-;;; org mode
-(load "~/.org" t nil nil)
-
 ;;; perl: using cperl-mode instead
 (defalias 'perl-mode 'cperl-mode)
 (setq cperl-indent-level 4
@@ -3131,29 +3107,6 @@ selective-display"
             (imenu-add-menubar-index)
             (hs-minor-mode 1)))
 (add-to-list 'interpreter-mode-alist '("expect" . tcl-mode))
-
-;;; toggle-window-dedicated.el
-(load "toggle-window-dedicated" t nil nil)
-
-;;; tramp
-(require 'tramp)
-(setq tramp-debug-buffer t)
-(add-to-list 'tramp-default-method-alist '("localhost" nil "su"))
-
-;;; trash
-(when (>= emacs-major-version 23)
-  (setq delete-by-moving-to-trash nil)
-  ;; works for *nix only
-  (setq trash-directory "~/.trashbin"))
-
-(setq-default truncate-lines nil)
-
-;;; ------ end General ------
-
-;;; ------ begin MyFunction ------
-
-
-;;; ------ end MyFunction ------
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
