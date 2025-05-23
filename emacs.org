@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-05-22 +1000
+#+DATE: 2025-05-23 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -163,7 +163,17 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
     )
 #+end_src
 
-** comment dwim
+** comment
+
+*** comment style
+#+begin_src emacs-lisp
+  (use-package newcomment
+    :ensure nil                           ; Built-in
+    :custom (comment-style 'extra-line)
+    )
+#+end_src
+
+*** comment dwim
 #+begin_src emacs-lisp
   (define-advice comment-dwim (:before (&rest _))
     "Smartly comment/un-comment current line when no region is active."
@@ -280,6 +290,31 @@ Other useful consult commands:
     )
   (use-package embark-consult)
 #+end_src
+
+** Subword
+
+#+begin_src emacs-lisp
+  (use-package subword
+    :ensure nil                           ; Built-in
+    :delight
+    :config
+    (global-subword-mode)
+    )
+#+end_src
+
+** Sentence
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :ensure nil                           ; Built-in
+    :custom (sentence-end-double-space nil)
+    )
+#+end_src
+
+- ~M-a~ :: backward sentence
+- ~M-e~ :: forward sentence
+- ~M-k~ :: kill sentence
+- ~C-x <backspace>~ :: backward kill sentence
 
 * Shortcuts to files and links
 
@@ -771,6 +806,16 @@ corresponding sections.
     (x-stretch-cursor t))
 #+end_src
 Note, this works for GUI Emacs only.
+
+** Long lines
+#+begin_src emacs-lisp
+  (use-package emacs
+    :config
+    ;; Disable line wrapping by default. Turn on `visual-line-mode' (built-in)
+    ;; manually or via mode hooks if soft-wrapping is neeeded.
+    (setq-default truncate-lines t)
+    )
+#+end_src
 
 ** Display column number in the mode line
 
@@ -2912,8 +2957,6 @@ tmux's buffer"
   (setq interprogram-cut-function 'paste-to-osx)
   (setq interprogram-paste-function 'copy-from-osx))
 
-(setq comment-style 'extra-line)
-
 ;;; Copy/cut current line
 ;;; from http://blog.waterlin.org
 (defadvice kill-ring-save (before slickcopy activate compile)
@@ -2992,12 +3035,6 @@ tmux's buffer"
             (define-key js-mode-map (kbd "M-'") 'lgfang-toggle-level)
             (define-key js-mode-map [mouse-3] 'lgfang-toggle-level)
             (hs-minor-mode 1)))
-
-;;; long lines
-(setq
- longlines-wrap-follows-window-size t
- ;; for visual-line-mode, indicates lines are wrapped
- visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
 
 (setq messages-buffer-max-lines 500)    ; default value too small
 
@@ -3089,17 +3126,10 @@ selective-display"
   (let ((arg (progn (back-to-indentation) (1+ (current-column)))))
     (set-selective-display (if (eq arg selective-display) nil arg))))
 
-;;; sentence end
-(setq sentence-end-double-space nil)
-;; (setq sentence-end
-;;       "\\([。！？]\\|……\\|[.?!][]\"')}]*\\($\\|[ \t]\\)\\)[ \t\n]*")
-
 ;;; server (alternatively, you may use "emacs --daemon")
 (require 'server)
 (when (not (server-running-p))
   (server-start))
-
-(global-subword-mode)
 
 ;;; Tcl & expect
 (add-hook 'tcl-mode-hook
