@@ -143,7 +143,7 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
 
 * Interaction convenience
 
-** mouse
+** Mouse
 
 #+begin_src emacs-lisp
   (use-package emacs
@@ -163,9 +163,9 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
     )
 #+end_src
 
-** comment
+** Comment
 
-*** comment style
+*** Comment style
 #+begin_src emacs-lisp
   (use-package newcomment
     :ensure nil                           ; Built-in
@@ -173,14 +173,84 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
     )
 #+end_src
 
-*** comment dwim
+*** Comment dwim
 #+begin_src emacs-lisp
-  (define-advice comment-dwim (:before (&rest _))
+  (define-advice comment-dwim (:before (&rest _) my-comment-dwim)
     "Smartly comment/un-comment current line when no region is active."
     (unless (or (use-region-p)
                 (looking-at-p "[ \t]*$"))
       (push-mark (line-beginning-position) t t)
       (goto-char (line-end-position))))
+#+end_src
+
+** Copy/paste
+
+*** Copy/cut the current line
+
+If region is not active, copy or cut the current line instead.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :bind (:map global-map
+                ("C-w" . my/cut-region-or-line)
+                ("M-w" . my/copy-region-or-line))
+
+    :config
+    (defun my/cut-region-or-line ()
+      "Cut region (if active) or current line."
+      (interactive)
+      (if (use-region-p)
+          (kill-region (region-beginning) (region-end))
+        (kill-whole-line)))
+
+    (defun my/copy-region-or-line ()
+      "Copy region (if active) or current line."
+      (interactive)
+      (if (use-region-p)
+          (kill-ring-save (region-beginning) (region-end))
+        (kill-ring-save (line-beginning-position) (line-beginning-position 2))))
+    )
+#+end_src
+
+*** MacOS clipboard integration
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :if (eq system-type 'darwin)
+    :preface
+    (defun my/copy-from-osx ()
+      (let ((tramp-mode nil) (default-directory "~"))
+        (shell-command-to-string "pbpaste")))
+    (defun my/paste-to-osx (text &optional _push)
+      (let ((process-connection-type nil))
+        (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+          (process-send-string proc text)
+          (process-send-eof proc))))
+    :custom
+    (interprogram-paste-function #'my/copy-from-osx)
+    (interprogram-cut-function #'my/paste-to-osx)
+    )
+#+end_src
+
+NOTE: To use this within tmux session, upgrade to tmux 2.6+.
+
+*** Tmux buffer (clipboard) integration
+
+#+begin_src emacs-lisp :tangle no
+  (defun lgfang-send-to-tmux ()
+    "Send content of active region or HEAD of the kill-ring to
+  tmux's buffer"
+    (interactive)
+    (let ((file (make-temp-file "/tmp/emacs-to-tmux.clip")))
+      (if (region-active-p) (kill-ring-save (region-beginning) (region-end)))
+      (with-temp-file file (insert-for-yank (current-kill 0)))
+      (call-process "tmux" nil nil nil "load-buffer" file)
+      (delete-file file)))
+
+  (defun lgfang-get-from-tmux ()
+    "Get current tmux buffer."
+    (interactive)
+    (call-process "tmux" nil t nil "show-buffer"))
 #+end_src
 
 ** Ibuffer
@@ -2915,63 +2985,8 @@ Among the features, it provides the two most useful features when reading large 
                          )
                        auto-mode-alist))
 
-
-;;; bbdb & bbdb-vcard-export - removed, use google/apple contacts etc.
-
 (unless (eq system-type 'darwin)          ; OSX
   (setq browse-url-browser-function 'browse-url-firefox))
-
-;;; Clipboard
-;; from/to tmux buffer
-(defun lgfang-send-to-tmux ()
-  "Send content of active region or HEAD of the kill-ring to
-tmux's buffer"
-  (interactive)
-  (let ((file (make-temp-file "/tmp/emacs-to-tmux.clip")))
-    (if (region-active-p) (kill-ring-save (region-beginning) (region-end)))
-    (with-temp-file file (insert-for-yank (current-kill 0)))
-    (call-process "tmux" nil nil nil "load-buffer" file)
-    (delete-file file)))
-
-(defun lgfang-get-from-tmux ()
-  "Get current tmux buffer."
-  (interactive)
-  (call-process "tmux" nil t nil "show-buffer"))
-
-;; aliases to type less characters
-(fset 'to-tmux 'lgfang-send-to-tmux)
-(fset 'from-tmux 'lgfang-get-from-tmux)
-
-;; From/to system clipboard. To use it in tmux, upgrade to tmux 2.6+.
-(when (eq system-type 'darwin)
-  (defun copy-from-osx ()
-    (let ((tramp-mode nil) (default-directory "~"))
-      (shell-command-to-string "pbpaste")))
-
-  (defun paste-to-osx (text &optional push)
-    (let ((process-connection-type nil))
-      (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
-        (process-send-string proc text)
-        (process-send-eof proc))))
-
-  (setq interprogram-cut-function 'paste-to-osx)
-  (setq interprogram-paste-function 'copy-from-osx))
-
-;;; Copy/cut current line
-;;; from http://blog.waterlin.org
-(defadvice kill-ring-save (before slickcopy activate compile)
-  "If region not active, copy current line."
-    (interactive
-     (if mark-active (list (region-beginning) (region-end))
-       (list (line-beginning-position)
-             (line-beginning-position 2)))))
-
-(defadvice kill-region (before slickcut activate compile)
-  "If region not active, kill current line."
-    (interactive
-     (if mark-active (list (region-beginning) (region-end))
-       (list (line-beginning-position)
-             (line-beginning-position 2)))))
 
 ;;; Current path+filename
 (defun current-file-path ()
@@ -2992,10 +3007,6 @@ tmux's buffer"
 ;;; elisp
 (add-hook 'emacs-lisp-mode-hook
           (lambda()  (hs-minor-mode 1)))
-
-
-;;; emms configure in another file
-
 
 ;;; face, add our own keywords. ctypes.el is too heavy-weight
 (add-hook 'find-file-hooks
