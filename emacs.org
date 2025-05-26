@@ -843,7 +843,13 @@ corresponding sections.
 ** Find and replace in multiple files
 
 #+begin_src emacs-lisp
-  (use-package wgrep)
+  (use-package wgrep
+    :after grep
+    ;; ;; Explicitly bind this default hot key to defer loading wgrep until it is
+    ;; ;; needed.
+    ;; :bind (:map grep-mode-map
+    ;;             ("C-c C-p" . wgrep-change-to-wgrep-mode))
+    )
 #+end_src
 
 1. Run =grep-find= as usual. IMPORTANT: Ensure that the command outputs both
@@ -1085,7 +1091,7 @@ line of the other window (inactive) will not be updated until you switch to it.
 * Finance bookkeeping
 #+begin_src emacs-lisp
   (use-package ledger-mode
-    :defer t
+    :mode "\\.ledger\\'"
     :defines ledger-mode-map
     :bind
     (:map ledger-mode-map
@@ -1631,6 +1637,7 @@ the time and placing the path and dollar sign on separate lines.
 
 #+begin_src emacs-lisp
   (use-package eshell
+    :defer t
     :custom (eshell-prompt-function
              (lambda ()
                (concat
@@ -1704,12 +1711,19 @@ To create an additional eshell buffer, run =C-u M-x eshell=.
 
 #+begin_src emacs-lisp
   (use-package calendar
+    :ensure nil                           ; built-in
+    :defer t
     ;; add defines and commands to make compiler happy
     :defines displayed-month displayed-year
     :commands calendar-day-of-week
+    :config
+    (require 'holidays)
+    (require 'cal-china-x nil t)
     )
 
   (use-package holidays
+    :ensure nil                           ; built-in
+    :defer t
     :config
     (defun holiday-new-year-bank-holiday ()
       "This & next copied from https://emacs.stackexchange.com/a/45352/9670"
@@ -1759,13 +1773,12 @@ To create an additional eshell buffer, run =C-u M-x eshell=.
       (setq calendar-holidays (append holiday-nsw-holidays
                                       holiday-other-holidays)))
     )
-
 #+end_src
 
 *** Chinese calendar and holidays
 #+begin_src emacs-lisp
   (use-package cal-china-x
-    :after holidays
+    :defer t
     :defines cal-china-x-chinese-holidays
     :config
     (setq calendar-holidays (append calendar-holidays
@@ -2593,6 +2606,7 @@ NOTE:
 #+begin_src emacs-lisp
   (use-package asm-mode
     :ensure nil                           ; Explicitly disable for built-ins
+    :mode "\\.asm\\'"
     :custom
     (asm-comment-char 59)                 ; 35 -> '#', 59 -> ';'
     )
@@ -2805,7 +2819,9 @@ alternative emerges.
 * Mermaid chart
 
 #+begin_src emacs-lisp
-  (use-package mermaid-mode)
+  (use-package mermaid-mode
+    :mode "\\.mmd\\|.mermaid\\'"
+    )
 #+end_src
 
 The ~mermaid-mode~ package depends on the mermaid cli tool, which is installed
@@ -2821,7 +2837,6 @@ is the simpler default, I generally prefer the more sophisticated ~cperl-mode~.
 #+begin_src emacs-lisp
   (use-package cperl-mode
     :ensure nil                           ; built-in
-    :defer t
     :mode ("\\.\\([pP]\\([Llm]\\|erl\\|od\\)\\|al\\)\\'" . cperl-mode)
     :interpreter ("perl" . cperl-mode)    ; shebang support
     :init
@@ -2958,7 +2973,7 @@ pyright
 
 #+begin_src emacs-lisp
   (use-package terraform-mode
-    :delight
+    :mode "\\.tf\\'"
     :custom (terraform-indent-level 2)
     )
 #+end_src
@@ -2970,7 +2985,9 @@ See [[* Prettier]]
 
 ** Tree-sitter enhanced major mode
 #+begin_src emacs-lisp
-  (use-package yaml-ts-mode)
+  (use-package yaml-ts-mode
+    :mode ("\\.y\\(a?\\)ml\\'" . yaml-ts-mode)
+    )
 #+end_src
 
 ** YAML pro
@@ -2994,8 +3011,8 @@ Among the features, it provides the two most useful features when reading large 
 * Verilog
 #+begin_src emacs-lisp
   (use-package verilog-mode
-    :ensure nil                           ; Built-in package
-    :delight
+    :ensure nil                           ; built-in package
+    :defer
     )
 #+end_src
 
