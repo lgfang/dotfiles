@@ -2978,36 +2978,6 @@ pyright
     )
 #+end_src
 
-* YAML
-
-** Formatter
-See [[* Prettier]]
-
-** Tree-sitter enhanced major mode
-#+begin_src emacs-lisp
-  (use-package yaml-ts-mode
-    :mode ("\\.y\\(a?\\)ml\\'" . yaml-ts-mode)
-    )
-#+end_src
-
-** YAML pro
-#+begin_src emacs-lisp
-  (use-package yaml-pro
-    :hook ((yaml-ts-mode . yaml-pro-ts-mode))
-  )
-#+end_src
-Among the features, it provides the two most useful features when reading large YAML files
-- Show the YAML path of the current node in the mini buffer via eldoc mode
-- Support of imenu
-
-** Flymake
-#+begin_src emacs-lisp
-  (use-package flymake-yamllint
-    :after flymake
-    :hook ((yaml-ts-mode . flymake-yamllint-setup))
-    )
-#+end_src
-
 * Verilog
 #+begin_src emacs-lisp
   (use-package verilog-mode
@@ -3095,6 +3065,35 @@ Among the features, it provides the two most useful features when reading large 
     )
 #+end_src
 
+* YAML
+
+** Formatter
+See [[* Prettier]]
+
+** Tree-sitter enhanced major mode
+#+begin_src emacs-lisp
+  (use-package yaml-ts-mode
+    :mode ("\\.y\\(a?\\)ml\\'" . yaml-ts-mode)
+    )
+#+end_src
+
+** YAML pro
+#+begin_src emacs-lisp
+  (use-package yaml-pro
+    :hook ((yaml-ts-mode . yaml-pro-ts-mode))
+  )
+#+end_src
+Among the features, it provides the two most useful features when reading large YAML files
+- Show the YAML path of the current node in the mini buffer via eldoc mode
+- Support of imenu
+
+** Flymake
+#+begin_src emacs-lisp
+  (use-package flymake-yamllint
+    :after flymake
+    :hook ((yaml-ts-mode . flymake-yamllint-setup))
+    )
+#+end_src
 
 * To migrate
 
