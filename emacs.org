@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-05-23 +1000
+#+DATE: 2025-05-26 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1047,6 +1047,22 @@ NOTE: this package, along with similar ones such as beacon, only updates the
 *active* window. This means that if an action is performed in the current window
 that moves the cursor in another window, the visual indicator of the current
 line of the other window (inactive) will not be updated until you switch to it.
+
+** Hide show minor mode
+#+begin_src emacs-lisp
+  (use-package hideshow
+    :ensure nil                           ; built-in
+    :delight
+    :commands (hs-show-block hs-hide-level)
+    :custom
+    (hs-allow-nesting t)
+    (hs-isearch-open t)
+    :config
+    (defun lgfang-toggle-level ()
+      "hide/show the next level"
+      (interactive) (hs-show-block) (hs-hide-level 1))
+    )
+#+end_src
 
 ** Focus mode
 #+begin_src emacs-lisp
@@ -2798,6 +2814,39 @@ on macOS using the following command:
 npm install -g @mermaid-js/mermaid-cli
 #+end_src
 
+* Perl
+
+Both ~perl-mode~ and ~cperl-mode~ are now built-in packages. While ~perl-mode~
+is the simpler default, I generally prefer the more sophisticated ~cperl-mode~.
+#+begin_src emacs-lisp
+  (use-package cperl-mode
+    :ensure nil                           ; built-in
+    :defer t
+    :mode ("\\.\\([pP]\\([Llm]\\|erl\\|od\\)\\|al\\)\\'" . cperl-mode)
+    :interpreter ("perl" . cperl-mode)    ; shebang support
+    :init
+    ;; Disable the default perl-mode autoloading
+    (setq auto-mode-alist (rassq-delete-all 'perl-mode auto-mode-alist))
+    :custom
+    (cperl-indent-level 4)
+    (cperl-close-paren-offset -4)
+    (cperl-continued-statement-offset 4)
+    (cperl-indent-parens-as-block t)
+    (cperl-tab-always-indent t))
+#+end_src
+
+* PHP
+#+begin_src emacs-lisp
+  (use-package php-mode
+    :mode ("\\.php\\'" "\\.phtml\\'") ; Auto-activate for .php and .phtml files
+    :custom
+    (php-mode-indent-offset 4)
+    (php-align-assignments t)  ; Align assignments like $var = 'value';
+    (php-electric-colon t)     ; Automatically insert '->' after class/object name
+    (php-template-mode nil)    ; Set to t if work with mixed HTML/PHP extensively
+    )
+#+end_src
+
 * Python
 
 ** Tree-sitter enhanced major mode
@@ -2896,6 +2945,15 @@ pyright
 - PageDown/PageUp :: previous/next page
 - TODO: u/d :: one level up/one level down
 
+* Tcl & expect
+#+begin_src emacs-lisp
+  (use-package tcl
+    :ensure nil                           ; built-in package
+    :mode (("\\.tcl\\'" . tcl-mode))
+    :config
+    (add-to-list 'interpreter-mode-alist '("expect" . tcl-mode)))
+#+end_src
+
 * Terraform
 
 #+begin_src emacs-lisp
@@ -2949,6 +3007,77 @@ Among the features, it provides the two most useful features when reading large 
     :delight
     )
 #+end_src
+
+* XML
+
+** nXML
+#+begin_src emacs-lisp
+  (use-package nxml-mode
+    :defer t
+    :mode ("\\.xml\\'"
+           "\\.xsd\\'"
+           "\\.sch\\'"
+           "\\.rng\\'"
+           "\\.xslt\\'"
+           "\\.svg\\'"
+           "\\.rss\\'")
+    :magic ("<\\?xml ") ; Match files starting with <?xml
+    :hook (nxml-mode . hs-minor-mode)
+    :commands (nxml-backward-up-element xmltok-start-tag-local-name)
+    :bind (:map nxml-mode-map
+                ("M-'" . lgfang-toggle-level)
+                ("<mouse-3>" . lgfang-toggle-level)
+                )
+    :config
+    (defun nxml-where ()
+      "Display XPath in mini buffer, from http://www.emacswiki.org/emacs/NxmlMode."
+      (interactive)
+      (let ((path nil))
+        (save-excursion
+          (save-restriction
+            (widen)
+            (while
+                (and (< (point-min) (point)) ;; Doesn't error if point is at
+                     ;; beginning of buffer
+                     (condition-case nil
+                         (progn
+                           (nxml-backward-up-element) ; always returns nil
+                           t)
+                       (error nil)))
+              (setq path (cons (xmltok-start-tag-local-name) path)))
+            (if (called-interactively-p t)
+                (message "/%s" (mapconcat 'identity path "/"))
+              (format "/%s" (mapconcat 'identity path "/")))))))
+
+    (add-to-list 'hs-special-modes-alist
+                 '(nxml-mode
+                   ;; "<!--\\|<[^/>]*[^/]>" ;; regexp for start block
+                   ;; "-->\\|</[^/>]*[^/]>" ;; regexp for end block
+                   "<!--\\|<[^/>][^>]*[^/]>" ;; our xml has names like calea/li
+                   "-->\\|</[^/>][^>]*[^/]>"
+                   "<!--" ;; regexp for comment start. (need this??)
+                   nxml-forward-element
+                   nil))
+    )
+#+end_src
+
+** Relax-NG Compact (RNG & RNC)
+
+#+begin_src emacs-lisp
+  (use-package rnc-mode
+    :defer t
+    :config
+    (defun rnc2rng ()
+      "Convert current RNC buffer to RNG."
+      (interactive)
+      (let* ((rnc (buffer-file-name))
+             (rng (concat (file-name-sans-extension rnc) ".rng")))
+        (call-process "java" nil nil nil "-jar"
+                      (expand-file-name "~/.emacs.d/downloads/trang.jar")
+                      rnc rng)))
+    )
+#+end_src
+
 
 * To migrate
 
@@ -3018,12 +3147,6 @@ Among the features, it provides the two most useful features when reading large 
                         '(("\\<\\(TRUE\\|FALSE\\)\\>"
                            . font-lock-constant-face)))
 
-;;; hide-show
-(setq hs-allow-nesting t hs-isearch-open t)
-(defun lgfang-toggle-level ()
-  "hide/show the next level"
-  (interactive) (hs-show-block) (hs-hide-level 1))
-
 ;;; hippie expand
 (setq hippie-expand-try-functions-list
       '(try-expand-dabbrev
@@ -3049,86 +3172,6 @@ Among the features, it provides the two most useful features when reading large 
 
 (setq messages-buffer-max-lines 500)    ; default value too small
 
-;;; nXML mode
-(add-to-list 'auto-mode-alist
-             '("\\.\\((xml\\|xsd\\|sch\\|rng\\|xslt\\|svg\\|rss\\)\\'"
-               . nxml-mode))
-(setq magic-mode-alist
-      (cons '("<\\?xml " . nxml-mode) magic-mode-alist))
-(fset 'xml-mode 'nxml-mode)
-(fset 'html-mode 'nxml-mode)
-(require 'rng-loc nil t)
-
-(add-hook 'nxml-mode-hook (lambda() (hs-minor-mode 1)))
-
-(add-to-list 'rng-schema-locating-files
-             "~/mynotes/emacs/schema-locations.xml")
-
-(add-to-list 'hs-special-modes-alist
-             '(nxml-mode
-               ;; "<!--\\|<[^/>]*[^/]>" ;; regexp for start block
-               ;; "-->\\|</[^/>]*[^/]>" ;; regexp for end block
-               "<!--\\|<[^/>][^>]*[^/]>" ;; our xml has names like calea/li
-               "-->\\|</[^/>][^>]*[^/]>"
-               "<!--" ;; regexp for comment start. (need this??)
-               nxml-forward-element
-               nil))
-
-(eval-after-load "nxml-mode"
-  '(progn
-     (define-key nxml-mode-map (kbd "M-'") 'lgfang-toggle-level)
-     (define-key nxml-mode-map [mouse-3] 'lgfang-toggle-level)))
-
-(defun nxml-where ()
-  "Display the hierarchy of XML elements the point is on as a
-path. from http://www.emacswiki.org/emacs/NxmlMode"
-  (interactive)
-  (let ((path nil))
-    (save-excursion
-      (save-restriction
-        (widen)
-        (while
-            (and (< (point-min) (point)) ;; Doesn't error if point is at
-                                         ;; beginning of buffer
-                 (condition-case nil
-                     (progn
-                       (nxml-backward-up-element) ; always returns nil
-                       t)
-                   (error nil)))
-          (setq path (cons (xmltok-start-tag-local-name) path)))
-        (if (called-interactively-p t)
-            (message "/%s" (mapconcat 'identity path "/"))
-          (format "/%s" (mapconcat 'identity path "/")))))))
-
-;;; perl: using cperl-mode instead
-(defalias 'perl-mode 'cperl-mode)
-(setq cperl-indent-level 4
-      cperl-close-paren-offset -4
-      cperl-continued-statement-offset 4
-      cperl-indent-parens-as-block t
-      cperl-tab-always-indent t)
-
-;;; PHP
-(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
-;; Installed using M-x package-install
-(autoload 'php-mode "php-mode" "Major mode for editing PHP code." t)
-
-;;; rnc mode - nxml mode uses rnc files
-(add-to-list 'auto-mode-alist '("\\.rnc\\'" . rnc-mode))
-(autoload 'rnc-mode "rnc-mode")
-(setq ;; rnc-enable-imenu t
-      rnc-jing-jar-file (expand-file-name
-                         (concat my-extension-path "jing/bin/jing.jar")))
-(defun rnc2rng ()
-  (interactive)
-  (let* ((rnc (buffer-file-name))
-         (rng (concat (file-name-sans-extension rnc) ".rng")))
-    (call-process "java" nil nil nil "-jar"
-                  (cygpath
-                   (expand-file-name
-                    (concat my-extension-path "trang.jar")))
-                  (cygpath rnc) (cygpath rng))))
-
 ;;; selective display
 (defun lgfang-toggle-selective-display()
   "set-selective-display to current column or toggle
@@ -3141,13 +3184,6 @@ selective-display"
 (require 'server)
 (when (not (server-running-p))
   (server-start))
-
-;;; Tcl & expect
-(add-hook 'tcl-mode-hook
-          (lambda ()
-            (imenu-add-menubar-index)
-            (hs-minor-mode 1)))
-(add-to-list 'interpreter-mode-alist '("expect" . tcl-mode))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
