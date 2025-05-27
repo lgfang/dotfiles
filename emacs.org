@@ -253,6 +253,30 @@ NOTE: To use this within tmux session, upgrade to tmux 2.6+.
     (call-process "tmux" nil t nil "show-buffer"))
 #+end_src
 
+** Hippie expand
+
+#+begin_src emacs-lisp
+  (use-package hippie-exp
+    ;; Use hippie-expand instead of dabbrev-expand,
+    :ensure nil                           ; built-in
+    :bind (:map global-map ("M-/" . hippie-expand))
+    :custom
+    (hippie-expand-try-functions-list
+     '(try-expand-dabbrev                 ; Words from current buffer
+       try-expand-dabbrev-visible         ; Words from visible buffers
+       try-expand-dabbrev-all-buffers     ; Words from all buffers
+       try-expand-dabbrev-from-kill       ; Words from kill ring
+       try-complete-file-name-partially   ; Partial file name completion
+       try-complete-file-name             ; Full file name completion
+       try-expand-all-abbrevs             ; User-defined abbrevs
+       try-expand-list                    ; Expansion from `hippie-expand-list'
+       try-expand-line                    ; Complete entire lines
+       try-complete-lisp-symbol-partially ; Partial Lisp symbol
+       try-complete-lisp-symbol           ; Full Lisp symbol
+       ))
+    )
+#+end_src
+
 ** Ibuffer
 
 #+begin_src emacs-lisp
@@ -505,6 +529,17 @@ Sometimes it can be more convenient than the later.
 Note that, for =recentf= we add =file-remote-p= to the head of the
 =recentf-keep= list so that remote file names are kept without connecting to the
 remote server to check if these files do exist.
+
+* Server (daemon)
+
+#+begin_src emacs-lisp
+  (use-package server
+    :ensure nil                  ; built-in
+    :defer nil                   ; ensure package is loaded and config is executed
+    :commands (server-running-p server-start)
+    :config (when (not (server-running-p)) (server-start))
+    )
+#+end_src
 
 * Frame and window
 
@@ -1829,15 +1864,40 @@ Using =webjump= to navigate to =dict.cn= etc. with the selected text or word at
 point is another alternative. However, it is less inconvenient as it requires
 closing the web browser tab and refocusing on Emacs.
 
-** COMMENT Man pages
+** Diff
+#+begin_src emacs-lisp
+  (use-package ediff
+    :ensure nil                           ; built-in package
+    :custom
+    ;; ignore whitespace
+    (ediff-diff-options "-w")
+    ;; Do not pop up an additional frame for ediff
+    (ediff-window-setup-function 'ediff-setup-windows-plain)
+    ;; split horizontally if the window is big enough
+    (ediff-split-window-function 'split-window-sensibly)
+  )
+#+end_src
+
+** Man pages
 Nowadays the default "man" is already very convenient, no need of woman any
 more.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package woman
     :custom
     (woman-use-own-frame nil)
     (woman-fill-frame t))
 #+end_src
+
+** Htmlize
+#+begin_src emacs-lisp
+  (use-package htmlize
+    :commands (htmlize-file
+               htmlize-buffer
+               htmlize-region
+               htmlize-many-files
+               htmlize-many-files-dired))
+#+end_src
+
 ** Speed type
 #+begin_src emacs-lisp
   (use-package speed-type
@@ -2727,6 +2787,18 @@ with different colors instead (=rainbow-csv-mode=).
     )
 #+end_src
 
+* Emacs lisp (elisp)
+#+begin_src emacs-lisp
+  (use-package emacs-lisp-mode
+    :mode ("\\.el\\'"         ; Auto-activate for .el files
+           "\\.eli\\'"        ; For .eli (Emacs Lisp Info) files
+           "\\.emacs\\'")     ; The old configuration file name
+    :hook (emacs-lisp-mode . (lambda ()
+                              (electric-pair-mode +1)      ; Auto-close delimiters
+                              ))
+    )
+#+end_src
+
 * Golang
 
 No extra set up needed except for installing [[https://github.com/golang/tools/blob/master/gopls/README.md][gopls]] (the official language server
@@ -3149,8 +3221,6 @@ Among the features, it provides the two most useful features when reading large 
 (load "~/.org" t nil nil)
 (load "lgfang.emms" t nil nil)
 
-(define-key global-map (kbd "M-/") 'hippie-expand)
-
 ;;; auto mode list
 (setq auto-mode-alist (append
                        '(
@@ -3161,9 +3231,6 @@ Among the features, it provides the two most useful features when reading large 
                          )
                        auto-mode-alist))
 
-(unless (eq system-type 'darwin)          ; OSX
-  (setq browse-url-browser-function 'browse-url-firefox))
-
 ;;; Current path+filename
 (defun current-file-path ()
   "Copy current path/to/file_name to the kill ring."
@@ -3172,36 +3239,6 @@ Among the features, it provides the two most useful features when reading large 
     (message (concat "current file: " string))
     (kill-new string)))
 
-;;; ediff
-(setq
- ;; ediff-diff-options "-w"
- ;; do not pop a frame for ediff
- ediff-window-setup-function 'ediff-setup-windows-plain
- ;; my screen is large enough
- ediff-split-window-function 'split-window-sensibly)
-
-;;; elisp
-(add-hook 'emacs-lisp-mode-hook
-          (lambda()  (hs-minor-mode 1)))
-
-;;; hippie expand
-(setq hippie-expand-try-functions-list
-      '(try-expand-dabbrev
-        try-expand-dabbrev-visible
-        try-expand-dabbrev-all-buffers
-        try-expand-dabbrev-from-kill
-        try-complete-file-name-partially
-        try-complete-file-name
-        try-expand-all-abbrevs
-        try-expand-list
-        try-expand-line
-        try-complete-lisp-symbol-partially
-        try-complete-lisp-symbol))
-
-(require 'htmlize nil t)
-
-(setq messages-buffer-max-lines 500)    ; default value too small
-
 ;;; selective display
 (defun lgfang-toggle-selective-display()
   "set-selective-display to current column or toggle
@@ -3209,11 +3246,6 @@ selective-display"
   (interactive)
   (let ((arg (progn (back-to-indentation) (1+ (current-column)))))
     (set-selective-display (if (eq arg selective-display) nil arg))))
-
-;;; server (alternatively, you may use "emacs --daemon")
-(require 'server)
-(when (not (server-running-p))
-  (server-start))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
