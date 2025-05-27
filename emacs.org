@@ -1054,6 +1054,22 @@ NOTE: this package, along with similar ones such as beacon, only updates the
 that moves the cursor in another window, the visual indicator of the current
 line of the other window (inactive) will not be updated until you switch to it.
 
+** Highlight custom keywords
+#+begin_src emacs-lisp
+  (use-package font-lock
+    :hook
+    (font-lock-mode . (lambda ()
+                        (font-lock-add-keywords
+                         nil
+                         '(("\\<\\(lgfang\\|TODO\\|FIXME\\|NOTE\\|IMPORTANT\\)"
+                            . (0 font-lock-warning-face t))))))
+    :config
+    (font-lock-add-keywords
+     'c-mode
+     '(("\\<\\(TRUE\\|FALSE\\)\\>" . font-lock-constant-face)))
+    )
+#+end_src
+
 ** Hide show minor mode
 #+begin_src emacs-lisp
   (use-package hideshow
@@ -2732,6 +2748,21 @@ Eglot + [[https://github.com/eclipse-jdtls/eclipse.jdt.ls][Eclipse JDT Language 
    Alternatively, add the path to the OS environment variable =PATH= and restart
    Emacs.
 
+* JavaScript
+#+begin_src emacs-lisp
+  (use-package js-mode
+    :mode "\\.js\\'"
+    :hook (js-mode . hs-minor-mode)
+    :defines js-mode-map
+    :bind (:map js-mode-map
+                ("M-'" . lgfang-toggle-level)
+                ("<mouse-3>" . lgfang-toggle-level)
+                )
+    :custom
+    (js-basic-offset 2)
+    )
+#+end_src
+
 * JSON, JSON Lines
 
 ** JSON ts mode
@@ -3153,16 +3184,6 @@ Among the features, it provides the two most useful features when reading large 
 (add-hook 'emacs-lisp-mode-hook
           (lambda()  (hs-minor-mode 1)))
 
-;;; face, add our own keywords. ctypes.el is too heavy-weight
-(add-hook 'find-file-hooks
-          (lambda ()
-            (font-lock-add-keywords
-             nil '(("\\<\\(lgfang\\|TODO\\|FIXME\\|NOTE\\|IMPORTANT\\):"
-                    . (0 font-lock-warning-face t))))))
-(font-lock-add-keywords 'c-mode         ; for c mode only
-                        '(("\\<\\(TRUE\\|FALSE\\)\\>"
-                           . font-lock-constant-face)))
-
 ;;; hippie expand
 (setq hippie-expand-try-functions-list
       '(try-expand-dabbrev
@@ -3178,13 +3199,6 @@ Among the features, it provides the two most useful features when reading large 
         try-complete-lisp-symbol))
 
 (require 'htmlize nil t)
-
-;;; Javascript
-(add-hook 'js-mode-hook
-          (lambda()
-            (define-key js-mode-map (kbd "M-'") 'lgfang-toggle-level)
-            (define-key js-mode-map [mouse-3] 'lgfang-toggle-level)
-            (hs-minor-mode 1)))
 
 (setq messages-buffer-max-lines 500)    ; default value too small
 
