@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-05-26 +1000
+#+DATE: 2025-05-28 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -805,6 +805,21 @@ Below are two examples:
 If two buffers are both named "buffer_name", they will be renamed to
 =buffer_name@path1= and =buffer_name@path2= respectively.
 
+** Buffer file path
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :config
+    (defun my/current-file-path ()
+      "Copy current path/to/file_name to the kill ring."
+      (interactive)
+      (let ((string (buffer-file-name)))
+        (if string ;; Ensure there's a file name to copy
+            (progn (message "Current file: %s" string) (kill-new string))
+          (error "Current buffer is not associated with a file"))))
+    )
+#+end_src
+
 * Basic editing
 ** Fill
 
@@ -1102,22 +1117,6 @@ line of the other window (inactive) will not be updated until you switch to it.
     (font-lock-add-keywords
      'c-mode
      '(("\\<\\(TRUE\\|FALSE\\)\\>" . font-lock-constant-face)))
-    )
-#+end_src
-
-** Hide show minor mode
-#+begin_src emacs-lisp
-  (use-package hideshow
-    :ensure nil                           ; built-in
-    :delight
-    :commands (hs-show-block hs-hide-level)
-    :custom
-    (hs-allow-nesting t)
-    (hs-isearch-open t)
-    :config
-    (defun lgfang-toggle-level ()
-      "hide/show the next level"
-      (interactive) (hs-show-block) (hs-hide-level 1))
     )
 #+end_src
 
@@ -1582,6 +1581,16 @@ I.e. type =<s= + =TAB= to insert =#+begin_src= etc.
     (add-to-list 'org-structure-template-alist '("st" . "src text"))
     (add-to-list 'org-structure-template-alist '("se" . "src emacs-lisp"))
     )
+#+end_src
+
+** To migrate
+
+TODO:
+1. [ ] migrate the content in =.org.el=.
+2. [ ] when the above is done, delete =.org.el= from git and remove this
+   section.
+#+begin_src emacs-lisp
+ (load "~/.org" t nil nil)
 #+end_src
 
 * PDF
@@ -2242,7 +2251,7 @@ applicable.
     Run adapter: debugpy-module :cwd "/home/lgfang/myproject/workloads/currentOp/" :module "locust" :args ["--locustfile" "./src/currentOp_workload.py" ...]
   #+end_src
 
-** xcscope
+** Xcscope
 
 This section is kept for reference but excluded from the actual config. The
 recommended alternative is ~eglot~ + a language server (e.g., ~clangd~ for C++).
@@ -2276,6 +2285,49 @@ See language-specific sections for details.
 
     :config
     (cscope-setup)
+    )
+#+end_src
+
+* Text folding/hiding
+
+** Hide show
+#+begin_src emacs-lisp
+  (use-package hideshow
+    :ensure nil                           ; built-in
+    :delight
+    :commands (hs-show-block hs-hide-level)
+    :custom
+    (hs-allow-nesting t)
+    (hs-isearch-open t)
+    :config
+    (defun my/toggle-hs-level ()
+      "hide/show the next level"
+      (interactive) (hs-show-block) (hs-hide-level 1))
+    )
+#+end_src
+
+** Selective display
+#+begin_src emacs-lisp
+  (use-package simple
+    :ensure nil                           ; built-in package
+    :bind ("C-x $" . my/toggle-selective-display)
+    :config
+    ;; Define the function here, as it's a custom command.
+    (defun my/toggle-selective-display ()
+      "Set selective-display to current column or toggle selective-display."
+      (interactive)
+      (let ((arg (progn (back-to-indentation) (1+ (current-column)))))
+        (set-selective-display (if (eq arg selective-display) nil arg))))
+    )
+#+end_src
+
+** Narrowing
+#+begin_src emacs-lisp
+  (use-package emacs
+    :ensure nil                           ; built-in
+    :config
+    ;; enable 'narrow-to-region', which is disabled by default.
+    (put 'narrow-to-region 'disabled nil)
     )
 #+end_src
 
@@ -2764,6 +2816,14 @@ Then configure in Emacs:
     )
 #+end_src
 
+** GDB
+
+#+begin_src emacs-lisp
+  (use-package gdb-script-mode
+    :mode "\\.gdb\\'"
+    )
+#+end_src
+
 * CSV
 
 Aligning columns in CSV files (=csv-align-mode=) is usually the most intuitive
@@ -2827,8 +2887,8 @@ Eglot + [[https://github.com/eclipse-jdtls/eclipse.jdt.ls][Eclipse JDT Language 
     :hook (js-mode . hs-minor-mode)
     :defines js-mode-map
     :bind (:map js-mode-map
-                ("M-'" . lgfang-toggle-level)
-                ("<mouse-3>" . lgfang-toggle-level)
+                ("M-'" . my/toggle-hs-level)
+                ("<mouse-3>" . my/toggle-hs-level)
                 )
     :custom
     (js-basic-offset 2)
@@ -3115,8 +3175,8 @@ pyright
     :hook (nxml-mode . hs-minor-mode)
     :commands (nxml-backward-up-element xmltok-start-tag-local-name)
     :bind (:map nxml-mode-map
-                ("M-'" . lgfang-toggle-level)
-                ("<mouse-3>" . lgfang-toggle-level)
+                ("M-'" . my/toggle-hs-level)
+                ("<mouse-3>" . my/toggle-hs-level)
                 )
     :config
     (defun nxml-where ()
@@ -3198,67 +3258,8 @@ Among the features, it provides the two most useful features when reading large 
     )
 #+end_src
 
-* To migrate
-
+* Footer
 #+begin_src emacs-lisp
-;; an intentional assignment to free variable. If the following setq is the
-;; first line in corresponding flymake diagnostics buffer, then all the migrated
-;; configurations are errors/warnings free
-(setq ------OLD-CONFIG-START------ "")
-
-;;; paths -- delete after .org.el is migrated as well
-(defvar my-emacs-base
-  (file-name-as-directory (expand-file-name "~/.emacs.d")))
-(defvar my-extension-path
-  (file-name-as-directory (expand-file-name "~/.emacs.d/emacs-extensions")))
-(defvar my-backward-path
-  (file-name-as-directory (concat my-extension-path "backward-compatibility")))
-
-;; load path
-(add-to-list 'load-path my-extension-path)
-(add-to-list 'load-path my-backward-path t)
-
-(load "~/.org" t nil nil)
-(load "lgfang.emms" t nil nil)
-
-;;; auto mode list
-(setq auto-mode-alist (append
-                       '(
-                         ("\\.[xX]\\'" . c-mode)
-                         ("\\.mak\\'" . makefile-mode)
-                         ("\\.make\\'" . makefile-mode)
-                         ("\\.gdb\\'" . gdb-script-mode)
-                         )
-                       auto-mode-alist))
-
-;;; Current path+filename
-(defun current-file-path ()
-  "Copy current path/to/file_name to the kill ring."
-  (interactive)
-  (let ((string (buffer-file-name)))
-    (message (concat "current file: " string))
-    (kill-new string)))
-
-;;; selective display
-(defun lgfang-toggle-selective-display()
-  "set-selective-display to current column or toggle
-selective-display"
-  (interactive)
-  (let ((arg (progn (back-to-indentation) (1+ (current-column)))))
-    (set-selective-display (if (eq arg selective-display) nil arg))))
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(highlight-parentheses-colors '("#689d6a" "#d79921" "#458588" "#b16286" "#98971a"))
- '(package-selected-packages
-   '(flymake-yamllint editorconfig company cue-mode git-gutter mermaid-mode protobuf-mode cmake-mode magit anaconda-mode eglot blacken git-link csv-mode emms json-reformat windata w3m solarized-theme showtip terraform-mode highlight-parentheses highlight-indentation org-contrib yasnippet-snippets hide-lines ox-gfm yasnippet pydoc-info pydoc markdown-mode jira-markup-mode ht go-mode flycheck f)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+  (provide 'init)
+  ;;; init.el ends here
 #+end_src
