@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-05-28 +1000
+#+DATE: 2025-05-29 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -908,6 +908,13 @@ corresponding sections.
 3. Edit the buffer as if it is a normal buffer.
 4. Press =C-x C-s= to apply the changes.
 
+** Automatic parenthesis pairing
+#+begin_src emacs-lisp
+  (use-package elec-pair
+    :config
+    (electric-pair-mode 1)                ; enable the mode globally
+    )
+#+end_src
 * Spelling check: flyspell
 
 #+begin_src emacs-lisp
@@ -2853,9 +2860,6 @@ with different colors instead (=rainbow-csv-mode=).
     :mode ("\\.el\\'"         ; Auto-activate for .el files
            "\\.eli\\'"        ; For .eli (Emacs Lisp Info) files
            "\\.emacs\\'")     ; The old configuration file name
-    :hook (emacs-lisp-mode . (lambda ()
-                              (electric-pair-mode +1)      ; Auto-close delimiters
-                              ))
     )
 #+end_src
 
