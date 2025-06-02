@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-05-29 +1000
+#+DATE: 2025-06-02 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2886,6 +2886,20 @@ Eglot + [[https://github.com/eclipse-jdtls/eclipse.jdt.ls][Eclipse JDT Language 
   (use-package json-ts-mode
     :mode "\\.json\\(l?\\)\\'" "mongod.*\\.log" ; mongod logs are json lines
     )
+#+end_src
+
+** Formatter
+#+begin_src emacs-lisp
+  (use-package json
+    :ensure nil                           ; built-in package
+    :commands (json-pretty-print-buffer
+               json-pretty-print-buffer-ordered
+               json-pretty-print
+               json-pretty-print-ordered)
+    :hook (((json-mode json-ts-mode) . my/json-prettify))
+    :config
+    (defun my/json-prettify()
+        (add-hook 'before-save-hook #'json-pretty-print-buffer nil t)))
 #+end_src
 
 ** Structured log mode
