@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-06-02 +1000
+#+DATE: 2025-06-04 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2666,11 +2666,14 @@ tools together:
 #+begin_src emacs-lisp
   (use-package forge
     :after magit
-    :config
-    (custom-set-faces
+    :defines magit-status-mode-map
+    :bind (:map magit-status-mode-map
+                ;; To defer loading this package until N is pressed in
+                ;; magit-status buffer
+                ("N" . forge-dispatch))
+    :custom-face
      ;; Do not share "MediumPurple" with merged pull requests.
-     '(forge-pullreq-rejected ((t (:foreground "DarkRed" :strike-through t)))))
-    )
+    (forge-pullreq-rejected ((t (:foreground "DarkRed" :strike-through t)))))
 #+end_src
 
 #+begin_src emacs-lisp
