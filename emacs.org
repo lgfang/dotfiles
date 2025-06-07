@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-06-04 +1000
+#+DATE: 2025-06-07 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1526,6 +1526,119 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
          (concat (string-join (seq-take words limit) " ")
                  (when (> (length words) limit) "...")))))
     )
+#+end_src
+
+** Ticket or review comments
+#+begin_src emacs-lisp
+  (use-package ox-confluence
+    :commands (org-confluence-export-as-confluence))
+
+  (use-package ox-gfm
+    :functions (org-before-first-heading-p
+                outline-next-heading
+                org-mark-subtree
+                org-gfm-export-as-markdown
+                org-confluence-export-as-confluence
+                org-element--property)
+    :commands (my/mark-comment
+               comment-sanitize
+               export-ticket-comment
+               export-github-msg
+               export-commit-msg)
+    :config
+    (defun my/mark-comment ()
+      "Mark a conceptual `comment' as the active region.
+
+    If the point is before the first Org heading, the `comment' is
+    all text from the beginning of the buffer to just before that
+    first heading. If the point is within an Org heading, the
+    `comment' is the content of the top-level heading containing
+    the point.
+
+    Does nothing if a region is already active."
+      (interactive)
+      (cond
+       ;; Do nothing if a region is already active.
+       ((region-active-p) nil)
+
+       ;; Case 1: Point is in the 'prologue', before any headlines.
+       ((org-before-first-heading-p)
+        (push-mark (point-min))
+        ;; Find the position of the first heading, or the end of the buffer.
+        (let ((end-pos (or (save-excursion (outline-next-heading)) (point-max))))
+          ;; Go to one character before the heading, or the buffer end.
+          ;; This avoids including the headline itself in the region.
+          (goto-char (if (> end-pos (point-min)) (1- end-pos) end-pos)))
+        (activate-mark))
+
+       ;; Case 2: Point is within a headline section.
+       (t
+        ;; Mark the entire top-level entry, including its headline.
+        ;; Using `most-positive-fixnum` is a robust way to say "go to the top".
+        (org-mark-subtree most-positive-fixnum)
+        ;; Move the point forward one line to exclude the headline from the region.
+        (forward-line 1))))
+
+    (defun comment-sanitize()
+      "Remove the personal information in my screen outputs.
+
+  Run this function after a screen output is copied into an Emacs
+  buffer so that my personal info is not saved/shared."
+      (interactive)
+      (my/mark-comment)
+
+      ;; remove the extra info in my PS1, which may be unnecessary & confusing.
+      ;; An example PS1:
+      ;; ╭ 1251 16:16:18 git:master kube:api.prod.corp.company.com/my-namespace
+      ;; │ lungang.fang@laptop:~/source/org-contrib
+      ;; ╰ $
+      (replace-regexp-in-region "^\\( *\\)╭ .*\n *│ .*\n *╰ " "\\1"
+                                (region-beginning) (region-end))
+      ;; remove my username, don't want to be super smart with regex.
+      (replace-regexp-in-region "lungang\\(.\\)fang" "<given_name>\\1<family_name>"
+                                (region-beginning) (region-end))
+      (replace-regexp-in-region "fang\\(.\\)lungang" "<family_name>\\1<given_name>"
+                                (region-beginning) (region-end))
+      )
+
+    (defun export-ticket-comment ()
+      "Export the current node to GFM or Confluence(Jira) markdown.
+
+  The format is determined by the buffer name prefix."
+      (interactive)
+      (my/mark-comment)
+      (let ((my/get-relative-level
+             (lambda (headline info)
+               ;; A temporary function to adjust headline levels for export. Start
+               ;; headlines at level 3 (h3), as h1/h2 are often too large in Jira
+               ;; tickets.
+               (+ 2
+                  (org-element-property :level headline)
+                  (or (plist-get info :headline-offset) 0)))))
+        (advice-add 'org-export-get-relative-level :override my/get-relative-level)
+        (if (string-match "sf-" buffer-file-name)
+            (org-gfm-export-as-markdown)
+          (org-confluence-export-as-confluence))
+        (advice-remove 'org-export-get-relative-level my/get-relative-level)))
+
+    (defun export-commit-msg()
+      "Export the current node to github Markdown, preserving breaks."
+      (interactive)
+      (my/mark-comment)
+      (let (;; Preserve line breaks, making the message terminal friendly.
+            (org-export-preserve-breaks t)
+            ;; Use the setext style ("---" and "===") for headlines. The atx style
+            ;; ("#") is treated as comments by git.
+            (org-md-headline-style 'setext))
+        (org-gfm-export-as-markdown)))
+
+    (defun export-github-msg ()
+      "Export the current node to a github Markdown, removing breaks."
+      (interactive)
+      (my/mark-comment)
+      (let ((org-export-preserve-breaks nil)
+            (org-md-headline-style 'setext))
+        (org-gfm-export-as-markdown))))
 #+end_src
 
 ** Getting Things Done (GTD)
