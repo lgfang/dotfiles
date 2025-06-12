@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-06-07 +1000
+#+DATE: 2025-06-12 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1614,7 +1614,8 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
                ;; tickets.
                (+ 2
                   (org-element-property :level headline)
-                  (or (plist-get info :headline-offset) 0)))))
+                  (or (plist-get info :headline-offset) 0))))
+            (org-export-with-toc nil))
         (advice-add 'org-export-get-relative-level :override my/get-relative-level)
         (if (string-match "sf-" buffer-file-name)
             (org-gfm-export-as-markdown)
