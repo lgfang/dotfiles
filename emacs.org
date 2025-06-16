@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-06-13 +1000
+#+DATE: 2025-06-16 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2864,8 +2864,13 @@ See also [[* Prettier]]
   (use-package shfmt
     :delight shfmt-on-save-mode
     :hook ((sh-mode bash-ts-mode) . shfmt-on-save-mode)
-    :custom (shfmt-arguments '("-i" "2"))
-    )
+    :custom (shfmt-arguments
+             '("-i" "2"   ; indent by 2 spaces
+               "-bn"      ; binary ops like && and | may start a line
+               "-ci"      ; switch cases will be indented
+               "-s"       ; simplify the code
+               "-sr"      ; redirect operators will be followed by a space
+               )))
 #+end_src
 
 * C/C++
