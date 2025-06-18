@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-06-16 +1000
+#+DATE: 2025-06-19 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1776,6 +1776,27 @@ Each alist item consists of the identifier and full path."
 #+end_src
 
 * Terminal/shell
+
+** erase keybindings
+
+This setting is generally not required, as Emacs correctly handles keybindings
+by default:
+- The ~Backspace~ key deletes backward.
+- The ~Delete~ key deletes forward.
+- ~C-h~ is the standard prefix for help commands.
+
+However, an issue can sometimes arise after activating a shell environment from
+within Emacs (for example, using ~poetry-venv-workon~). This may cause
+keybindings to behave unexpectedly, such as mapping ~Backspace~ to delete
+forward and ~C-h~ to act as backspace.
+
+If such behaviour is encountered, manually evaluating the following expression
+can restore the correct keybindings. For this reason, the code block is not
+tangled and is intended as a manual fix for this specific situation.
+
+#+begin_src emacs-lisp :tangle no
+  (normal-erase-is-backspace 0)
+#+end_src
 
 ** vterm
 
