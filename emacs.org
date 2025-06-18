@@ -1979,7 +1979,7 @@ closing the web browser tab and refocusing on Emacs.
     :ensure nil                           ; built-in package
     :custom
     ;; ignore whitespace
-    (ediff-diff-options "-w")
+    ;; (ediff-diff-options "-w")
     ;; Do not pop up an additional frame for ediff
     (ediff-window-setup-function 'ediff-setup-windows-plain)
     ;; split horizontally if the window is big enough
