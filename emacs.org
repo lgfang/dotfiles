@@ -1453,6 +1453,19 @@ Therefore, I chose to disable the time grid.
            "......" "----------------"))))
 #+end_src
 
+** Auto pair inhibit angle brackets
+#+begin_src emacs-lisp
+  (use-package org
+    :functions electric-pair-default-inhibit
+    :hook
+    ((org-mode . (lambda ()
+                   (setq-local electric-pair-inhibit-predicate
+                               (lambda (c)
+                                 (if (char-equal c ?<)
+                                     t  ; Inhibit pairing for '<'
+                                   (electric-pair-default-inhibit c))))))))
+#+end_src
+
 ** Babel
 
 #+begin_src emacs-lisp
