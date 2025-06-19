@@ -1685,7 +1685,7 @@ I.e. type =<s= + =TAB= to insert =#+begin_src= etc.
     (add-to-list 'org-structure-template-alist '("sb" . "src bash"))
     (add-to-list 'org-structure-template-alist '("sj" . "src javascript"))
     ;; yasnippet-snippets/snippets/org-mode/style uses "<st" as well, which
-    ;; overrides the one below. Modify that to "<sty" and then 'yas-reload-all"
+    ;; overrides the one below. Modify that to "<sty" and then `yas-reload-all'
     (add-to-list 'org-structure-template-alist '("st" . "src text"))
     (add-to-list 'org-structure-template-alist '("se" . "src emacs-lisp"))
     )
@@ -2803,7 +2803,7 @@ tools together:
                 ;; magit-status buffer
                 ("N" . forge-dispatch))
     :custom-face
-     ;; Do not share "MediumPurple" with merged pull requests.
+    ;; Do not share "MediumPurple" with merged pull requests.
     (forge-pullreq-rejected ((t (:foreground "DarkRed" :strike-through t)))))
 #+end_src
 
