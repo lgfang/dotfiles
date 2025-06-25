@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-06-19 +1000
+#+DATE: 2025-06-25 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -897,12 +897,48 @@ corresponding sections.
 4. Press =C-x C-s= to apply the changes.
 
 ** Automatic parenthesis pairing
+
 #+begin_src emacs-lisp
   (use-package elec-pair
     :config
     (electric-pair-mode 1)                ; enable the mode globally
-    )
+    :custom
+    (electric-pair-preserve-balance nil)
+    :hook
+    ((org-mode . (lambda ()
+                   ;; auto pair "~"
+                   (modify-syntax-entry ?~ "\"")
+                   ;; do not auto pair "<>"
+                   (modify-syntax-entry ?< ".")))))
 #+end_src
+
+In addition to the ~electric-pair-pairs~ variable, the ~electric-pair-mode~
+consults the buffer's *syntax table* to determine which characters form a pair.
+
+In Org mode, ~<~ and ~>~ are defined as a matching pair. You can inspect this by
+running ~M-x describe-syntax~ while in an Org buffer. The output will include
+the following lines:
+#+begin_src text
+...
+<               (>	which means: open, matches >
+>               )<	which means: close, matches <
+...
+#+end_src
+
+The above hook disables auto-pairing for ~<~ because it modifies the syntax
+table to change ~<~ to a punctuation. So far, I don't see any unwanted side
+effects. If any such side effects arise, we can use using the following hook to
+change ~electric-pair-inhibit-predicate~ instead.
+
+#+begin_src emacs-lisp :tangle no
+  (lambda ()
+    (setq-local electric-pair-inhibit-predicate
+                (lambda (c)
+                  (if (char-equal c ?<)
+                      t  ; Inhibit pairing for '<'
+                    (electric-pair-default-inhibit c)))))
+#+end_src
+
 * Spelling check: flyspell
 
 #+begin_src emacs-lisp
@@ -1451,19 +1487,6 @@ Therefore, I chose to disable the time grid.
         '(((daily today remove-match)
            (800 1000 1200 1400 1600 1800 2000)
            "......" "----------------"))))
-#+end_src
-
-** Auto pair inhibit angle brackets
-#+begin_src emacs-lisp
-  (use-package org
-    :functions electric-pair-default-inhibit
-    :hook
-    ((org-mode . (lambda ()
-                   (setq-local electric-pair-inhibit-predicate
-                               (lambda (c)
-                                 (if (char-equal c ?<)
-                                     t  ; Inhibit pairing for '<'
-                                   (electric-pair-default-inhibit c))))))))
 #+end_src
 
 ** Babel
