@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-06-25 +1000
+#+DATE: 2025-06-27 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2383,12 +2383,14 @@ non-trivial. In such situations, you can see the error message by setting
     ;; For Python, `pip3 install debugpy'. Run adapter `debugpy' to test a
     ;; program, adapter `debugpy-module' for testing a module.
     :after eglot
-    :custom (dape-buffer-window-arrangement 'right)
+    :custom
+    ;; `left' is better than `right' as it places the source code area in the
+    ;; primary focus area (the centre of the screen).
+    (dape-buffer-window-arrangement 'left)
     :config
     ;; Save files before sessions, useful for interpreted languages, such as
     ;; python; Cannot use `:hook' since this hook name doesn't end with "-hook"
-    (add-hook 'dape-on-start-hooks 'save-some-buffers)
-    )
+    (add-hook 'dape-on-start-hooks 'save-some-buffers))
 #+end_src
 
 *** Python examples
