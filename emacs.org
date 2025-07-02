@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-06-27 +1000
+#+DATE: 2025-07-02 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -817,20 +817,22 @@ smaller screens. Hence, we keep the fill column to 80.
 (setq-default fill-column 80 comment-fill-column nil)
 #+end_src
 
-** White space
+** Whitespace
 #+begin_src emacs-lisp
-  (use-package emacs                      ; clean up tab, indent and whitespace
+  (use-package emacs
+    ;; tab, indent and whitespace related
     :custom
     (tab-width 4)
-    (tab-stop-list nil)                   ; stops at every `tab-width' columns
-    (indent-tabs-mode nil)                ; space instead of <tab> for indentation
+    ;; stops at every `tab-width' columns
+    (tab-stop-list nil)
+    ;; space instead of <tab> for indentation
+    (indent-tabs-mode nil)
+    ;; Add missing final newline, unless the mode applies
+    ;; `mode-require-final-newline'.
+    (require-final-newline t)
     :hook
-    ((before-save . whitespace-cleanup))
-    )
+    ((before-save . whitespace-cleanup)))
 #+end_src
-
-- No longer necessary to set ~require-final-newline~ (or
-  ~mode-require-final-newline~).
 
 ** Yasnippet
 #+begin_src emacs-lisp
