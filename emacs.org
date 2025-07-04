@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-07-02 +1000
+#+DATE: 2025-07-04 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -877,6 +877,19 @@ corresponding sections.
 
 ** Find and replace in multiple files
 
+*** rg
+
+~rg~ (~ripgrep~) commands are often simpler, faster, and produce cleaner results
+than their ~grep~ counterparts. This is because the default settings of ~rg~ are
+designed to better meet developers' needs, such as automatically ignoring files
+listed in ~.gitignore~.
+
+#+begin_src emacs-lisp
+  (use-package rg
+    :commands (rg rg-project))
+#+end_src
+
+*** wgrep
 #+begin_src emacs-lisp
   (use-package wgrep
     :after grep
@@ -892,8 +905,9 @@ corresponding sections.
     (:map grep-mode-map ("C-c C-p" . wgrep-change-to-wgrep-mode)))
 #+end_src
 
-1. Run =grep-find= as usual. IMPORTANT: Ensure that the command outputs both
-   filenames and line numbers (normally via =-nH=).
+1. Run =grep-find= or =rg= as usual.
+   - IMPORTANT: With ~grep-find~, ensure ~grep~ is run with ~-nH~ so that both
+     filenames and line numbers are shown in the buffer.
 2. In the output buffer, run =C-c C-p= to enter =wgrep= mode.
 3. Edit the buffer as if it is a normal buffer.
 4. Press =C-x C-s= to apply the changes.
