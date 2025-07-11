@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-07-04 +1000
+#+DATE: 2025-07-11 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2740,6 +2740,19 @@ Then, add the following to your Emacs configuration file.
     (magit-refresh-buffer
      . (lambda() (when (fboundp 'custom-urls) (custom-urls)))))
 #+end_src
+
+If you see errors from ~magit~ or ~forge~ after an update, your built-in
+~transient~ package is likely outdated. To fix it, force a re-installation:
+1. Enable upgrades for built-in packages:
+   #+BEGIN_SRC emacs-lisp
+   (setq package-install-upgrade-built-in t)
+   #+END_SRC
+2. Reinstall packages (using ~M-x package-reinstall~) in the following order:
+   1) ~transient~
+   2) ~magit~
+   3) ~magit-section~
+   4) ~forge~
+3. Restart Emacs (mandatory)
 
 ** git-gutter
 #+begin_src emacs-lisp
