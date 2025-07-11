@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-03-28 +1100
+#+DATE: 2025-07-11 +1000
 
 * bash_profile
 :PROPERTIES:
@@ -678,7 +678,7 @@ function tg { # Attach to specified tmux session
     local sessions=$(tmux list-sessions -F "#{session_name}")
 
     if [ -z "$sessions" ]; then
-        tmux -2 new -s 'misc'
+        tmux -2 new -s 'Pri'
         return
     fi
 
