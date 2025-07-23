@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-07-11 +1000
+#+DATE: 2025-07-23 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1187,6 +1187,9 @@ line of the other window (inactive) will not be updated until you switch to it.
 NOTE: this does not work for org mode buffers.
 
 * Finance bookkeeping
+
+** COMMENT Ledger-cli
+
 #+begin_src emacs-lisp
   (use-package ledger-mode
     :mode "\\.ledger\\'"
@@ -1203,17 +1206,35 @@ NOTE: this does not work for org mode buffers.
     )
 #+end_src
 
-** Snippets for ledger mode
+** Beancount
+
+#+begin_src bash
+  brew install beancount beanquery fava
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package beancount
+    :mode ("\\.beancount\\'". beancount-mode))
+#+end_src
+
+** Bookkeeping snippets (for beancount)
+
+Note: all the keys start with ='= to avoid auto-completion of ledger mode
+itself.
 
 #+begin_src snippet :tangle ~/.emacs.d/snippets/ledger-mode/council-rate :mkdirp yes
   # -*- mode: snippet -*-
   # key: council
   # name: Council rate
   # --
-  `(format-time-string "%Y-%m-%d"))` * Council
-      Expenses:House${1:A}:Fee         ${2:888}.${3:00} AUD
-      Assets:Cash:${4:BankX}
+  `(format-time-string "%Y-%m-%d"))` * "Council" "Quarterly Council Rates"
+      Expenses:House${1:A}:Government       ${2:888}.${3:00} AUD
+      Assets:Bank:${4:BankX}
 #+end_src
+
+** Bookkeeping functions (for beancount)
+
+TODO: update functions
 
 * Encryption and credential management
 
