@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-07-25 +1000
+#+DATE: 2025-07-26 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3528,11 +3528,17 @@ See [[* Prettier]]
 #+begin_src emacs-lisp
   (use-package yaml-pro
     :hook ((yaml-ts-mode . yaml-pro-ts-mode))
-  )
+    :bind (:map yaml-pro-ts-mode-map
+                ;; Prefer standard `yank' as `yaml-pro-ts-yank' never worked as I
+                ;; expected.
+                ("C-y" . yank)
+                ;; Reserve this for `org-edit-src-exit'
+                ("C-c '" . nil)))
 #+end_src
-Among the features, it provides the two most useful features when reading large YAML files
-- Show the YAML path of the current node in the mini buffer via eldoc mode
-- Support of imenu
+
+I don't perform complex YAML edits. I install yaml-pro for two features:
+- YAML path in the mini buffer
+- Imenu support
 
 ** Flymake
 #+begin_src emacs-lisp
