@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-07-23 +1000
+#+DATE: 2025-07-25 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2525,12 +2525,6 @@ See language-specific sections for details.
 
 * AI/LLM
 
-** Aider
-
-#+begin_src emacs-lisp :tangle no
-  (use-package aidermacs)
-#+end_src
-
 ** gptel
 
 #+begin_src emacs-lisp
@@ -2713,11 +2707,11 @@ copilot-login=.
     )
 #+end_src
 
-** Minuet
+** COMMENT Minuet
 
 This is another code completion plugin. The following configuration uses
-DeepSeek as its backend. The performance is quite slow - I'm unsure whether this
-is due to my configuration or if it's inherently slow.
+DeepSeek as its backend. It is currently disabled due to performance latency I
+observed, which may be or be not specific to my setup.
 
 Firstly, add your DeepSeek API key to one of your =auth-source= files in the
 following format:
@@ -2750,6 +2744,75 @@ Then, add the following to your Emacs configuration file.
     (minuet-set-optional-options minuet-openai-fim-compatible-options :max_tokens 256)
   )
 #+end_src
+
+** Claude code
+
+#+begin_src emacs-lisp
+  (use-package claude-code
+    :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
+    :bind (:map global-map ("C-c c" . claude-code-transient))
+    :config (claude-code-mode)
+    :custom (claude-code-terminal-backend 'vterm))
+#+end_src
+
+*** Prerequisites
+
+- Access to AWS Bedrock.
+- Install the Claude Code command line tool following the [[https://docs.anthropic.com/en/docs/claude-code/overview#get-started-in-30-seconds][official
+  documentation]].
+- Configure Claude to use AWS Bedrock. Below is an example
+  =~/.claude/settings.json=.
+  #+begin_src json-ts
+    {
+      "env": {
+        "CLAUDE_CODE_USE_BEDROCK": 1,
+        "ANTHROPIC_MODEL": "us.anthropic.claude-3-5-haiku-20241022-v1:0",
+        "AWS_PROFILE": "ai-coder-llm",
+        "AWS_REGION": "us-east-1"
+      }
+    }
+  #+end_src
+
+*** Usage
+
+1. Authenticate with AWS:
+   #+BEGIN_SRC bash
+     aws sso login --profile ai-coder-llm
+   #+END_SRC
+
+2. Start Claude Code in Emacs
+
+** Aider
+
+#+begin_src emacs-lisp
+  (use-package aidermacs
+    :bind (;; `global-map' by default by :bind
+           ("C-c a" . aidermacs-transient-menu)
+           :map aidermacs-comint-mode-map
+           ;; <return> does the job. Adding "C-c C-c" for ergonomic consistency.
+           ("C-c C-c" . comint-send-input)))
+#+end_src
+
+*** Prerequisites
+
+- Install Aider, follow the install instructions from [[https://aider.chat/docs/llms/bedrock.html#amazon-bedrock][aider docs]].
+- Access to AWS Bedrock.
+- Configure Aider to use AWS Bedrock. Below is an example =~/.aider.conf.yml=.
+  #+begin_src yaml-ts
+    # Use bedrock
+    set-env:
+      - AWS_PROFILE=ai-coder-llm
+      - AWS_REGION=us-east-1
+    model: bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0
+  #+end_src
+
+*** Usage
+
+1. Authenticate with AWS
+   #+begin_src bash
+     aws sso login --profile ai-coder-llm
+   #+end_src
+2. Start aidermacs
 
 * Version Control
 ** magit
