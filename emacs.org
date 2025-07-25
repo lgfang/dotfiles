@@ -602,14 +602,19 @@ to the current window layout.
     (popper-reference-buffers
      '("personal.gtd"
        "work.gtd"
-       "\\*Copilot.*\\*"
-       "\\*\\(DeepSeek\\|.*GPT.*\\|LLM response\\)\\*" ; gptel
-       "\\*maple-translate\\*"
-       "\\*Python\\*"
        "\\*Org Agenda\\*"
+
+       "\\*maple-translate\\*"
+
+       "\\*\\(Copilot\\|aidermacs\\).*\\*"
+       "\\*\\(DeepSeek\\|.*GPT.*\\|LLM response\\)\\*" ; gptel
+
+       "\\*Python\\*"
+
        "\\*Flymake diagnostics for .*\\*"
-       help-mode
-       compilation-mode))
+       "\\*Warnings\\*"
+       help-mode))
+
     :config
     (popper-mode +1)
     (popper-echo-mode +1))
