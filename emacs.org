@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-07-26 +1000
+#+DATE: 2025-07-28 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2649,7 +2649,8 @@ than manually crafting prompts with =C-u M-x gptel-send=.
     )
 #+end_src
 
-*Authentication Note:* On first use, you must authenticate via a web browser.
+*** Authentication
+On first use, you must authenticate via a web browser.
 - Local GUI Host: The browser will open automatically.
 - Remote Headless Host:
   1. Ensure Emacs can open a browser successfully although we do not use that
@@ -2662,12 +2663,7 @@ than manually crafting prompts with =C-u M-x gptel-send=.
   3. Open it in a browser on a windowing device (e.g., your local machine).
   4. Complete the login flow.
 
-IMPORTANT: When using this for the first time, you'll be asked to authenticate
-the application via a web page. On a remote host without GUI, you can
-authenticate via a web browser on a different host, but the Emacs must be
-configured to be able to open a web browser successfully, which can be achieved
-via ~(setq browse-url-browser-function 'eww-browse-url)~
-
+*** Usage
 - How to ask questions (send prompts to the LLM):
   - In the dedicated buffer: press ~<f7>~ (bound to ~copilot-chat-display~) to
     go to the Copilot Chat buffer, type in your query in it and then press ~C-c
