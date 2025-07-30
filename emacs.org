@@ -606,7 +606,7 @@ to the current window layout.
 
        "\\*maple-translate\\*"
 
-       "\\*\\(Copilot\\|aidermacs\\).*\\*"
+       "\\*\\(Copilot Chat\\|aidermacs:\\).*\\*"
        "\\*\\(DeepSeek\\|.*GPT.*\\|LLM response\\)\\*" ; gptel
 
        "\\*Python\\*"
