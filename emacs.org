@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-07-28 +1000
+#+DATE: 2025-07-30 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2781,7 +2781,12 @@ Then, add the following to your Emacs configuration file.
      aws sso login --profile ai-coder-llm
    #+END_SRC
 
-2. Start Claude Code in Emacs
+2. [Optional] Verify the authentication information
+   #+begin_src bash
+     aws sts get-caller-identity --profile ai-coder-llm
+   #+end_src
+
+3. Start Claude Code in Emacs
 
 ** Aider
 
@@ -2816,6 +2821,7 @@ Then, add the following to your Emacs configuration file.
 2. Start aidermacs
 
 * Version Control
+
 ** magit
 #+begin_src emacs-lisp
   (use-package magit
@@ -2838,6 +2844,15 @@ If you see errors from ~magit~ or ~forge~ after an update, your built-in
    3) ~magit-section~
    4) ~forge~
 3. Restart Emacs (mandatory)
+
+*** Notes on ediff
+
+By default, ~e~ (~magit-ediff-dwim~) on an unstaged or staged change (not a
+commit) performs a 3-way ediff between the worktree, index, and HEAD. This
+behavior may not always be what you want. In such case, you can use ~E~ (capital
+~E~, ~magit-ediff~) to perform 2-way ediff. Below are some examples:
++ ~E u~ :: ediff the worktree against indexed, i.e. view unstaged changes
++ ~E w~ :: ediff the worktree against HEAD
 
 ** git-gutter
 #+begin_src emacs-lisp
