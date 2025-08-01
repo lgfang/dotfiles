@@ -872,8 +872,8 @@ corresponding sections.
   # --
   `(let* ((mode major-mode))
        (with-temp-buffer
-         (insert "-*- time-stamp-pattern:\"8/Updated:[ \\t]+%U %Y-%02m-%02d %5z$\" -*-\n"
-          (format "Created: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d"))
+         (insert "-*- mode:org; coding:utf-8; time-stamp-pattern:\"8/Updated:[ \\t]+%U %Y-%02m-%02d %5z$\" -*-\n"
+          (format "Created: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d %5z"))
           (format "Updated: %s %s\n" (user-full-name) (format-time-string "%Y-%m-%d %5z")))
          (funcall mode)
          (comment-region (point-min) (point-max))
