@@ -2751,6 +2751,7 @@ Then, add the following to your Emacs configuration file.
 #+begin_src emacs-lisp
   (use-package claude-code
     :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
+    :delight
     :bind (:map global-map ("C-c c" . claude-code-transient))
     :config (claude-code-mode)
     :custom (claude-code-terminal-backend 'vterm))
@@ -2767,7 +2768,7 @@ Then, add the following to your Emacs configuration file.
     {
       "env": {
         "CLAUDE_CODE_USE_BEDROCK": 1,
-        "ANTHROPIC_MODEL": "us.anthropic.claude-3-5-haiku-20241022-v1:0",
+        "ANTHROPIC_MODEL": "us.anthropic.claude-sonnet-4-20250514-v1:0",
         "AWS_PROFILE": "ai-coder-llm",
         "AWS_REGION": "us-east-1"
       }
