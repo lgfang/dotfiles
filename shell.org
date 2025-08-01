@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-07-11 +1000
+#+DATE: 2025-07-31 +1000
 
 * bash_profile
 :PROPERTIES:
@@ -24,6 +24,7 @@
       PATH="${BREW_PREFIX}/bin:$PATH"
       PATH="${BREW_PREFIX}/opt/coreutils/libexec/gnubin:$PATH"
       PATH="${BREW_PREFIX}/opt/openssl/bin:$PATH"
+      PATH="${BREW_PREFIX}/opt/curl/bin:$PATH"
   fi
 #+end_src
 
