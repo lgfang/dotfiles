@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-08-01 +1000
+#+DATE: 2025-08-10 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3552,9 +3552,9 @@ See [[* Prettier]]
   (use-package yaml-pro
     :hook ((yaml-ts-mode . yaml-pro-ts-mode))
     :bind (:map yaml-pro-ts-mode-map
-                ;; Prefer standard `yank' as `yaml-pro-ts-yank' never worked as I
-                ;; expected.
-                ("C-y" . yank)
+                ;; `yaml-pro-ts-yank' is annoying, keep the standard `yank' by
+                ;; removing the command remapping.
+                ([remap yank] . nil)
                 ;; Reserve this for `org-edit-src-exit'
                 ("C-c '" . nil)))
 #+end_src
