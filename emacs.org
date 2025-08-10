@@ -2759,6 +2759,7 @@ Then, add the following to your Emacs configuration file.
 
 ** Claude code
 
+*** COMMENT claude-code.el
 #+begin_src emacs-lisp
   (use-package claude-code
     :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
@@ -2766,6 +2767,16 @@ Then, add the following to your Emacs configuration file.
     :bind (:map global-map ("C-c c" . claude-code-transient))
     :config (claude-code-mode)
     :custom (claude-code-terminal-backend 'vterm))
+#+end_src
+
+*** claude-code-ide.el
+
+#+begin_src emacs-lisp
+  (use-package claude-code-ide
+    :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
+    :bind (:map global-map  ("C-c c" . claude-code-ide-menu))
+    :config
+    (claude-code-ide-emacs-tools-setup)) ; Optionally enable Emacs MCP tools
 #+end_src
 
 *** Prerequisites
