@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-08-10 +1000
+#+DATE: 2025-08-15 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2917,30 +2917,36 @@ Or
 
 ** git-link
 
+The following setup is optimised for a common workflow where I am frequently
+working on local, unpushed branches.
+
 #+begin_src emacs-lisp
   (use-package git-link
     :custom
     (git-link-open-in-browser t)
-    (git-link-use-commit nil)
-    )
+    (git-link-default-branch "master")
+    (git-link-use-commit nil))
 #+end_src
 
-- Choosing =git-link-use-commit= value
+*** Rationale and Usage
 
-  For my workflow, I find it more convenient to set =git-link-use-commit= to
-  =nil= rather than =t=. This configuration directs =git-link= to use the
-  current branch name in the generated URL, which offers greater flexibility, as
-  a URL containing a branch name can be easily modified to point to a different
-  branch. This is particularly helpful in situations where I am working on a
-  local development branch (which may not yet be pushed or visible to others)
-  but need to share a link that references the =master= or =main= branch.
-  Editing the branch name in the URL is straightforward in such cases.
+This configuration provides flexibility for two common scenarios:
 
-  In contrast, when =git-link-use-commit= is set to =t=, the URL includes a
-  specific commit hash. While this creates a permalink (the same as "Copy
-  permalink" in the corresponding github page), it can be less convenient for
-  the scenario described, as changing the URL to point to the =master= branch
-  from a local commit hash requires more adjustment.
+- Linking to code when I am on a local, unpushed branch
+
+  + Problem :: When working on a local branch, the commit hash is not yet
+    visible to others. A permalink to that commit would be a broken link.
+  + Solution :: With the configuration above, running ~M-x git-link~ generates a
+    link to the file's latest version on the default branch (e.g., ~master~).
+    This provides a stable, shareable reference point. The link opens in your
+    browser, where I can manually select lines and create a permalink.
+
+- Linking to code when I am on a pushed commit
+  + Problem :: Since the commit is already on the remote, we can get a permalink
+    without directly.
+  + Solution :: Simply use double prefix argument, i.e. ~C-u C-u M-x git-link~.
+    This overrides the default settings and copies a full permalink (including
+    the commit hash) directly to my kill-ring, ready to be shared.
 
 ** blamer
 
