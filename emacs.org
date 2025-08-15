@@ -613,6 +613,8 @@ to the current window layout.
 
        "\\*Flymake diagnostics for .*\\*"
        "\\*Warnings\\*"
+
+       "\\*Messages\\*"
        help-mode))
 
     :config
