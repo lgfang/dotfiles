@@ -564,8 +564,7 @@ remote server to check if these files do exist.
     :bind (:map global-map ("M-o" . ace-window))
     :custom (aw-dispatch-always t)   ; dispatch even only two windows or less
     :config
-    (add-to-list 'aw-dispatch-alist '(?t rotate-frame-clockwise))
-    )
+    (add-to-list 'aw-dispatch-alist '(?t rotate-frame-clockwise)))
 
   (defun flg-toggle-window-dedicated ()
     "Toggle `set-window-dedicated-p' for the current window."
@@ -580,9 +579,10 @@ remote server to check if these files do exist.
 With =ace-window= package, I feel no more need of =windmove=, =C-x 4 4= or
 =lgf-tiling=. Below are Some =ace-window= hotkeys I frequently use (run =M-o ?=
 to see more):
-- =M-o n= :: jump back and forth between two windows.
-- =M-o m= :: swap two windows.
-- =M-o u= :: change the buffer of another window.
+- =M-o N= :: jump to window numbered ~N~.
+- =M-o m N= :: swap the current window with window ~N~.
+- =M-o x N= :: delete window ~N~.
+- =M-o u N= :: change the buffer of window ~N~.
 - =M-o t= :: run =rotate-frame-clockwise= (from =transpose-frame=).
 
 ** Popper
@@ -1974,6 +1974,8 @@ To create an additional eshell buffer, run =C-u M-x eshell=.
       :commands ascii-table
       :custom (ascii-table-base 10))
   #+end_src
+  Press "b" "d" "o" "x" etc. to switch between different bases (see variable
+  ~ascii-table-mode-map~).
 
 ** Calendar
 
