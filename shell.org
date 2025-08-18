@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-07-31 +1000
+#+DATE: 2025-08-18 +1000
 
 * bash_profile
 :PROPERTIES:
@@ -30,20 +30,27 @@
 
 *** For ubuntu
 #+begin_src bash
-PATH="/snap/bin:$PATH"
+  PATH="/snap/bin:$PATH"
+
+  # Add the user's custom npm global directory to the PATH. This is a common
+  # practice on Linux to allow global package installation without requiring
+  # `sudo`. On macOS, this is typically handled by Homebrew, so this step is not
+  # required.
+  NPM_GLOBAL=$HOME/.npm-global
+  PATH=${NPM_GLOBAL}/bin:$PATH
 #+end_src
 
 *** Common
 #+begin_src bash
-export GOPATH=$HOME/go          # Explicitly specify GOPATH default value
-PATH=${GOPATH}/bin:$PATH
+  export GOPATH=$HOME/go          # Explicitly specify GOPATH default value
+  PATH=${GOPATH}/bin:$PATH
 
-export PATH=$HOME/.local/bin:$PATH
-export MANPATH=$HOME/.local/share/man:$MANPATH
-export INFOPATH=$HOME/.local/share/info:$INFOPATH
-export HISTCONTROL="ignoredups"
-export HISTFILESIZE=1000
-export HISTSIZE=500
+  export PATH=$HOME/.local/bin:$PATH
+  export MANPATH=$HOME/.local/share/man:$MANPATH
+  export INFOPATH=$HOME/.local/share/info:$INFOPATH
+  export HISTCONTROL="ignoredups"
+  export HISTFILESIZE=1000
+  export HISTSIZE=500
 #+end_src
 
 ** Source in bashrc
