@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-08-21 +1000
+#+DATE: 2025-08-22 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3308,11 +3308,66 @@ alternative emerges.
 
 * Markdown
 
+** Markdown language support
+
 #+begin_src emacs-lisp
   (use-package markdown-mode
     :mode ("\\.md\\'" . markdown-mode)
     :custom (markdown-command "pandoc"))
 #+end_src
+
+** Realtime preview using markdown-preview-mode
+
+#+begin_src emacs-lisp
+  (use-package markdown-preview-mode
+    :commands markdown-preview-mode
+    :custom
+    (markdown-preview-stylesheets
+     (list "https://cdn.jsdelivr.net/gh/hyrious/github-markdown-css@main/dist/light.css")))
+#+end_src
+
++ Advantage: A key benefit is the ability to use online CSS files, which offers
+  great flexibility for styling the preview.
++ Challenge: Find a compatible CSS file to replicate the GitHub markdown style.
+
+*** How It Works
+
+1. With a Markdown file open, you run the command ~M-x markdown-preview-mode~.
+2. The package converts the current buffer's Markdown content to HTML using an
+   internal parser.
+3. It starts a simple, built-in web server within Emacs to serve the generated
+   content.
+4. It automatically opens your default web browser to a local URL, displaying
+   the rendered page.
+5. As you edit the Emacs buffer, the preview in the browser is updated when you
+   save the buffer or idle.
+6. Toggling ~M-x markdown-preview-mode~ off or killing the buffer stops the the
+   associated server process.
+
+** COMMENT Realtime preview using grip-mode
+
+Firstly install the command line tool [[https://github.com/chrishrb/go-grip][go-grip]], then configure [[https://github.com/seagle0128/grip-mode][grip-mode]] in
+Emacs:
+
+#+begin_src emacs-lisp
+  (use-package grip-mode)
+#+end_src
+
+This package offers an alternative to ~markdown-preview-mode~ by using the
+external command-line tool [[https://github.com/chrishrb/go-grip][go-grip]] to render Markdown and Org-mode files with
+GitHub's styling.
+
+For Org-mode files, ~grip-mode~ first exports the buffer content to Markdown
+before passing it to ~go-grip~ for rendering.
+
+A benefit of this approach is that it functions entirely offline, as it
+does not depend on an internet connection to download CSS files.
+
+*Important Security Notice*
+
+However, please note the following behaviors of the ~go-grip~ web server:
+- It listens on all network interfaces, not just ~localhost~.
+- It provides web access to all files in the target directory.
 
 * Mermaid chart
 
