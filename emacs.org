@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-08-15 +1000
+#+DATE: 2025-08-21 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -311,14 +311,13 @@ NOTE: To use this within tmux session, upgrade to tmux 2.6+.
     )
 #+end_src
 
-This section contains general settings for repeat mode. To add repeat mode
-support for modes without build in repeat mode support, see [[*org mode repeat map][org mode repeat map]]
-for an example.
-
+This section covers general settings for repeat mode. For an example of
+mode-specific repeat mode configuration, please refer the [[*Repeat map][org mode repeat map]]
+section.
 
 Note that there is normally no need of setting =repeat-eixt-key=, to exit repeat
-mode before =repeat-exit-timeout=, just type any character which is no bound in
-this particular repeat mode or =C-g=.
+mode before =repeat-exit-timeout=, just type any character which is no bound for
+repeat mode or =C-g=.
 
 ** Vertico + orderless + marginalia + consult
 #+begin_src emacs-lisp
