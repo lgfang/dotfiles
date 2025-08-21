@@ -42,15 +42,18 @@ the tangling process, it produces a timestamp that other blocks may reference.
 
 * Bootstrap
 
-** Profile Emacs start time
+** Use-package settings
 
 It is fun to see how long each package takes to load and optimize if possible.
 Hence, I use the following configuration.
 #+begin_src emacs-lisp
   (use-package use-package-core
     :custom
-    (use-package-compute-statistics t)
-    )
+    ;; Uncomment the next line to automatically install all packages
+    (use-package-always-ensure t)
+
+    ;; Profile the start time
+    (use-package-compute-statistics t))
 #+end_src
 
 Run =emacs --no-desktop= to ensure not opening any previous files. Then run the
@@ -71,6 +74,7 @@ following commands to see the statistics:
 
 #+begin_src emacs-lisp
   (use-package package
+    :ensure nil                           ; Built-in
     :config
     (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
     (package-initialize)
@@ -168,7 +172,7 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
 *** Comment style
 #+begin_src emacs-lisp
   (use-package newcomment
-    :ensure nil                           ; Built-in
+    :ensure nil                           ; Feature, not package
     :custom (comment-style 'extra-line)
     )
 #+end_src
@@ -258,7 +262,7 @@ NOTE: To use this within tmux session, upgrade to tmux 2.6+.
 #+begin_src emacs-lisp
   (use-package hippie-exp
     ;; Use hippie-expand instead of dabbrev-expand,
-    :ensure nil                           ; built-in
+    :ensure nil                           ; Built-in
     :bind (:map global-map ("M-/" . hippie-expand))
     :custom
     (hippie-expand-try-functions-list
@@ -386,8 +390,7 @@ Other useful consult commands:
 #+begin_src emacs-lisp
   (use-package emacs
     :ensure nil                           ; Built-in
-    :custom (sentence-end-double-space nil)
-    )
+    :custom (sentence-end-double-space nil))
 #+end_src
 
 - ~M-a~ :: backward sentence
@@ -518,7 +521,7 @@ remote server to check if these files do exist.
 
 #+begin_src emacs-lisp
   (use-package server
-    :ensure nil                  ; built-in
+    :ensure nil                           ; Built-in
     :functions (server-running-p server-start)
     :config (when (not (server-running-p)) (server-start)))
 #+end_src
@@ -769,7 +772,8 @@ Below are two examples:
 
 ** Directories
 #+begin_src emacs-lisp
-  (use-package dired-x                    ; built-in package
+  (use-package dired-x
+    :ensure nil                           ; Feature, not package
     :custom
     (dired-recursive-copies 'top)
     (dired-recursive-deletes 'top)
@@ -786,6 +790,7 @@ Below are two examples:
 ** Uniquify buffer names
 #+begin_src emacs-lisp
   (use-package uniquify
+    :ensure nil                           ; Feature, not package
     :custom
     (uniquify-buffer-name-style 'post-forward)
     (uniquify-strip-common-suffix t)
@@ -1011,7 +1016,7 @@ No configuration is needed. Add this block just to remind myself the command nam
 
 #+begin_src emacs-lisp
   (use-package display-line-numbers
-    :ensure nil                           ; built-in package
+    :ensure nil                           ; Built-in
     :commands display-line-numbers-mode global-display-line-numbers-mode
     ;; :custom
     ;; (display-line-numbers-widen t)
@@ -1026,7 +1031,6 @@ No configuration is needed. Add this block just to remind myself the command nam
 
 #+begin_src emacs-lisp
   (use-package delight
-    :ensure t
     :commands delight
     :config
     ;; delight built-in modes here.
@@ -1087,8 +1091,8 @@ Delete it from the mode line to make room for more useful information, say
 ** Show fill column indicator
 
 #+begin_src emacs-lisp
-  (use-package display-fill-column-indicator-mode
-    :ensure nil                                   ; built-in package
+  (use-package display-fill-column-indicator
+    :ensure nil                           ; Built-in
     :delight
     :defines (display-fill-column-indicator-character
               display-fill-column-indicator-column)
@@ -1146,7 +1150,7 @@ Normally unnecessary, add this section just to remind myself the command names
 in case they are needed.
 #+begin_src emacs-lisp
   (use-package hl-line
-    :ensure nil                           ; built-in package
+    :ensure nil                           ; Built-in
     :delight
     :commands global-hl-line-mode hl-line-mode)
 #+end_src
@@ -1159,6 +1163,7 @@ line of the other window (inactive) will not be updated until you switch to it.
 ** Highlight custom keywords
 #+begin_src emacs-lisp
   (use-package font-lock
+    :ensure nil                           ; Feature, not package
     :hook
     (font-lock-mode . (lambda ()
                         (font-lock-add-keywords
@@ -1396,7 +1401,7 @@ time a password is needed.
 
 #+begin_src emacs-lisp
   (use-package auth-source
-    :ensure nil                           ; built-in package
+    :ensure nil                           ; Built-in
     :custom
     (auth-sources '("~/.authinfo.gpg" "~/my-another-authinfo.gpg"))
     ;; I manually run `auth-source-search' for certain passwords. Do not
@@ -1512,10 +1517,21 @@ The packages works with limited privileges. Frequently used hotkeys:
 
 * Org mode
 
+** Org-contrib
+
+This package bundles a variety of unmaintained org-mode features that I still
+use. Installing this package enables ~(use-pacakge individual-feature-xyz)~ to
+work.
+
+#+begin_src emacs-lisp
+(use-package org-contrib)
+#+end_src
+
 ** Agenda
 
 #+begin_src emacs-lisp
   (use-package org-agenda
+    :ensure nil                           ; Feature, not package
     :bind (:map global-map ("C-x c a" . org-agenda))
     :custom (org-agenda-use-time-grid nil)
   )
@@ -1589,6 +1605,7 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 ** Clock
 #+begin_src emacs-lisp
   (use-package org-clock
+    :ensure nil                           ; Feature, not package
     :bind (:map global-map
                 ("<f9>"   . org-clock-in-last)
                 ("S-<f9>" . org-clock-out))
@@ -1606,6 +1623,7 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 ** Ticket or review comments
 #+begin_src emacs-lisp
   (use-package ox-confluence
+    :ensure nil                           ; Feature provided by org-contrib
     :commands (org-confluence-export-as-confluence))
 
   (use-package ox-gfm
@@ -1720,9 +1738,8 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 ** Getting Things Done (GTD)
 #+begin_src emacs-lisp
   (use-package org-capture
-    :bind (:map global-map
-                ("<f10>" . org-capture))
-    )
+    :ensure nil                           ; Feature, not package
+    :bind (:map global-map ("<f10>" . org-capture)))
 #+end_src
 
 ** Links
@@ -1733,7 +1750,7 @@ either:
 - Duplicate existing default keybindings.
 #+begin_src emacs-lisp :tangle no
   (use-package org
-    :ensure nil ; Org is built-in, so we don't need package.el to try and install it.
+    :ensure nil                           ; Built-in
     :bind (;; `global-map' by default by :bind
            ("C-x c l" . org-store-link)
            ("C-x c o" . org-open-at-point-global)
@@ -1747,6 +1764,7 @@ either:
 
 #+begin_src emacs-lisp
   (use-package org
+    :ensure nil                           ; Built-in
     :bind (:repeat-map my-org-repeat-map
                        ("C-n" . org-next-visible-heading)
                        ("C-p" . org-previous-visible-heading)
@@ -1760,6 +1778,7 @@ either:
 I.e. type =<s= + =TAB= to insert =#+begin_src= etc.
 #+begin_src emacs-lisp
   (use-package org-tempo
+    :ensure nil                           ; Feature, not package
     :config
     (add-to-list 'org-structure-template-alist '("sb" . "src bash"))
     (add-to-list 'org-structure-template-alist '("sj" . "src javascript"))
@@ -1904,7 +1923,7 @@ the time and placing the path and dollar sign on separate lines.
 
 #+begin_src emacs-lisp
   (use-package eshell
-    :ensure nil                           ; built-in package
+    :ensure nil                           ; Built-in
     :commands eshell
     :custom (eshell-prompt-function
              (lambda ()
@@ -1980,7 +1999,7 @@ To create an additional eshell buffer, run =C-u M-x eshell=.
 
 #+begin_src emacs-lisp
   (use-package calendar
-    :ensure nil                           ; built-in package
+    :ensure nil                           ; Built-in
     :defines displayed-month displayed-year
     :functions calendar-day-of-week
     :commands calendar
@@ -1988,8 +2007,8 @@ To create an additional eshell buffer, run =C-u M-x eshell=.
     (require 'holidays)
     (require 'cal-china-x nil t))
 
-  (use-package holidays :defer t
-    :ensure nil                           ; built-in
+  (use-package holidays
+    :ensure nil                           ; Feature, not package
     :config
     (defun holiday-new-year-bank-holiday ()
       "This & next copied from https://emacs.stackexchange.com/a/45352/9670"
@@ -2078,7 +2097,7 @@ closing the web browser tab and refocusing on Emacs.
 ** Diff
 #+begin_src emacs-lisp
   (use-package ediff
-    :ensure nil                           ; built-in package
+    :ensure nil                           ; Built-in
     :custom
     ;; ignore whitespace
     ;; (ediff-diff-options "-w")
@@ -2222,6 +2241,8 @@ to add projects we need. Below is an example:
 
 #+begin_src emacs-lisp
   (use-package treesit
+    :ensure nil                           ; Feature, not package
+
     ;; Remember to run `treesit-install-language-grammar' to install the grammar
     ;; for each designated language.
     :when
@@ -2493,7 +2514,7 @@ See language-specific sections for details.
 ** Hide show
 #+begin_src emacs-lisp
   (use-package hideshow
-    :ensure nil                           ; built-in
+    :ensure nil                           ; Built-in
     :delight
     :commands (hs-show-block hs-hide-level)
     :custom
@@ -2509,7 +2530,7 @@ See language-specific sections for details.
 ** Selective display
 #+begin_src emacs-lisp
   (use-package simple
-    :ensure nil                           ; built-in package
+    :ensure nil                           ; Feature, not package
     :bind ("C-x $" . my/toggle-selective-display)
     :config
     ;; Define the function here, as it's a custom command.
@@ -2524,7 +2545,7 @@ See language-specific sections for details.
 ** Narrowing
 #+begin_src emacs-lisp
   (use-package emacs
-    :ensure nil                           ; built-in
+    :ensure nil                           ; Feature, not package
     :config
     ;; enable 'narrow-to-region', which is disabled by default.
     (put 'narrow-to-region 'disabled nil)
@@ -3045,6 +3066,7 @@ NOTE:
     )
 
   (use-package flg-ansi-color-mode
+    :load-path my-elisps
     :after ansi-color
     :commands flg-ansi-color-mode
     )
@@ -3054,7 +3076,7 @@ NOTE:
 
 #+begin_src emacs-lisp
   (use-package asm-mode
-    :ensure nil                           ; Explicitly disable for built-ins
+    :ensure nil                           ; Built-in
     :mode "\\.asm\\'"
     :custom
     (asm-comment-char 59)                 ; 35 -> '#', 59 -> ';'
@@ -3065,7 +3087,7 @@ NOTE:
 
 #+begin_src emacs-lisp
   (use-package sh-script
-    :ensure nil                           ; built-in package
+    :ensure nil                           ; Built-in
     :commands (sh-mode shell-script-mode)
     :custom ((sh-basic-offset 2) (sh-indentation 2))
     )
@@ -3118,7 +3140,7 @@ Then configure in Emacs:
 
 #+begin_src emacs-lisp
   (use-package hideif
-    :ensure nil                           ; Built-in package
+    :ensure nil                           ; Built-in
     :delight hide-ifdef-mode
     :hook ((c-mode c-ts-mode c++-mode c++-ts-mode) . hide-ifdef-mode)
 
@@ -3146,9 +3168,9 @@ Then configure in Emacs:
 ** GDB
 
 #+begin_src emacs-lisp
-  (use-package gdb-script-mode
-    :mode "\\.gdb\\'"
-    )
+  (use-package gud
+    :ensure nil                           ; Built-in
+    :mode ("\\.gdb\\'" . gdb-script-mode))
 #+end_src
 
 * CSV
@@ -3174,11 +3196,12 @@ with different colors instead (=rainbow-csv-mode=).
 
 * Emacs lisp (elisp)
 #+begin_src emacs-lisp
-  (use-package emacs-lisp-mode
-    :mode ("\\.el\\'"         ; Auto-activate for .el files
-           "\\.eli\\'"        ; For .eli (Emacs Lisp Info) files
-           "\\.emacs\\'")     ; The old configuration file name
-    )
+  (use-package elisp-mode
+    :ensure nil                           ; Feature, not package
+    ;; ".el"    -
+    ;; ".eli"   - Emacs Lisp Info files
+    ;; ".emacs" - Legacy configuration file
+    :mode ("\\.\\(el\\|eli\\|emacs\\)\\'" . emacs-lisp-mode))
 #+end_src
 
 * Golang
@@ -3204,17 +3227,14 @@ Eglot + [[https://github.com/eclipse-jdtls/eclipse.jdt.ls][Eclipse JDT Language 
 
 * JavaScript
 #+begin_src emacs-lisp
-  (use-package js-mode
+  (use-package js
     :mode "\\.js\\'"
     :hook (js-mode . hs-minor-mode)
-    :defines js-mode-map
     :bind (:map js-mode-map
                 ("M-'" . my/toggle-hs-level)
-                ("<mouse-3>" . my/toggle-hs-level)
-                )
+                ("<mouse-3>" . my/toggle-hs-level))
     :custom
-    (js-basic-offset 2)
-    )
+    (js-basic-offset 2))
 #+end_src
 
 * JSON, JSON Lines
@@ -3222,6 +3242,7 @@ Eglot + [[https://github.com/eclipse-jdtls/eclipse.jdt.ls][Eclipse JDT Language 
 ** JSON ts mode
 #+begin_src emacs-lisp
   (use-package json-ts-mode
+    :ensure nil                           ; Built-in
     :mode "\\.json\\(l?\\)\\'" "mongod.*\\.log" ; mongod logs are json lines
     )
 #+end_src
@@ -3229,7 +3250,7 @@ Eglot + [[https://github.com/eclipse-jdtls/eclipse.jdt.ls][Eclipse JDT Language 
 ** Formatter
 #+begin_src emacs-lisp
   (use-package json
-    :ensure nil                           ; built-in package
+    :ensure nil                           ; Built-in
     :commands (json-pretty-print-buffer
                json-pretty-print-buffer-ordered
                json-pretty-print
@@ -3388,7 +3409,7 @@ Both ~perl-mode~ and ~cperl-mode~ are now built-in packages. While ~perl-mode~
 is the simpler default, I generally prefer the more sophisticated ~cperl-mode~.
 #+begin_src emacs-lisp
   (use-package cperl-mode
-    :ensure nil                           ; built-in
+    :ensure nil                           ; Built-in
     :mode ("\\.\\([pP]\\([Llm]\\|erl\\|od\\)\\|al\\)\\'" . cperl-mode)
     :interpreter ("perl" . cperl-mode)    ; shebang support
     :init
@@ -3514,8 +3535,8 @@ pyright
 * Tcl & expect
 #+begin_src emacs-lisp
   (use-package tcl
-    :ensure nil                           ; built-in package
-    :mode (("\\.tcl\\'" . tcl-mode))
+    :ensure nil                           ; Built-in
+    :mode ("\\.tcl\\'" . tcl-mode)
     :config
     (add-to-list 'interpreter-mode-alist '("expect" . tcl-mode)))
 #+end_src
@@ -3531,7 +3552,7 @@ pyright
 * Verilog
 #+begin_src emacs-lisp
   (use-package verilog-mode
-    :ensure nil                           ; built-in package
+    :ensure nil                           ; Built-in
     :mode ("\\.v\\'" . verilog-mode))
 #+end_src
 
@@ -3546,7 +3567,8 @@ pyright
 
 ** nXML
 #+begin_src emacs-lisp
-  (use-package nxml-mode
+  (use-package nxml
+    :ensure nil                           ; Built-in
     :mode ("\\.xml\\'"
            "\\.xsd\\'"
            "\\.sch\\'"
