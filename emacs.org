@@ -2463,13 +2463,25 @@ non-trivial. In such situations, you can see the error message by setting
 
 IMPORTANT: Ensure the Python project's virtual environment is activated, if
 applicable.
+
+- Debug a python script
+  #+begin_src text
+    Run adapter: debugpy :cwd "/home/lgfang/" :program "test.py" :args ["arg1"
+    "arg2" ...]
+  #+end_src
+
 - Debug a unit test run by =pytest=
   #+begin_src text
-    Run adapter: debugpy-module :cwd "/home/lgfang/myproject/" :module "pytest" :args ["src/tests/test_xyz.py::TestCustomBuild"]
+    Run adapter: debugpy-module :cwd "/home/lgfang/myproject/" :module "pytest"
+    :args ["src/tests/test_xyz.py::TestCustomBuild" "--no-cov"]
   #+end_src
+  IMPORTANT: without the additional ~--no-cov~ argument, pytest tests will not
+  stop at break points.
+
 - Debug a locust run
   #+begin_src text
-    Run adapter: debugpy-module :cwd "/home/lgfang/myproject/workloads/currentOp/" :module "locust" :args ["--locustfile" "./src/currentOp_workload.py" ...]
+    Run adapter: debugpy-module :cwd "/home/lgfang/myproject/workloads/currentOp/"
+    :module "locust" :args ["--locustfile" "./src/currentOp_workload.py" ...]
   #+end_src
 
 ** Xcscope
