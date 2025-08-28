@@ -3,7 +3,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-05-30 +1000
+#+DATE: 2025-08-28 +1000
 
 * Timestamps
 
@@ -56,21 +56,7 @@ font, nerd font mono, and nerd font propo).
   local font_family = 'JetBrains Mono'
   config.font_size = 19
   config.harfbuzz_features = {'calt=0', 'clig=0', 'liga=0'} -- turn off ligature
-  config.font_rules = {
-     -- - The ~Regular~ font weight for ~Normal~ text is too thin
-     {
-        intensity = "Normal",
-        font = wezterm.font({ family = font_family, weight = "Bold" }),
-     },
-     {
-        intensity = "Bold",
-        font = wezterm.font({ family = font_family, weight = "ExtraBold" }),
-     },
-  }
-
-  -- Dim display to offset increased brightness from using "Bold" for normal text.
-  -- Note: setting config.bold_brightens_ansi_colors to false does not stop
-  -- brightening bold.
+  -- Lower brightness to make contrast lower
   config.foreground_text_hsb = {
     hue = 1.0,
     saturation = 1.0,
