@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-08-22 +1000
+#+DATE: 2025-09-02 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2794,10 +2794,56 @@ Then, add the following to your Emacs configuration file.
   )
 #+end_src
 
-** Claude code
+** Claude Code
 
-*** COMMENT claude-code.el
+*NOTE:* This section contains configurations for multiple packages for Claude
+Code. Choose and activate only one of them, as they use the same hotkeys.
+Enabling multiple packages simultaneously will cause keybinding conflicts.
+
+*** Claude Code setup (with AWS Bedrock)
+
+1. Install the Claude Code command line tool
+   + Following the [[https://docs.anthropic.com/en/docs/claude-code/overview#get-started-in-30-seconds][official documentation]].
+   + See also [[file:ai.org::*User-Specific "Global" Installation][User-Specific "Global" Installation]].
+
+2. Configure Claude to use AWS Bedrock. For example, add the following to your
+   =~/.claude/settings.json=. See [[file:ai.org::*Claude][my claude notes]] for more information.
+   #+begin_src json-ts
+     {
+       "env": {
+         "CLAUDE_CODE_USE_BEDROCK": 1,
+         "ANTHROPIC_MODEL": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+         "AWS_PROFILE": "ai-coder-llm",
+         "AWS_REGION": "us-east-1"
+       }
+     }
+   #+end_src
+
+3. Authenticate with AWS:
+   #+BEGIN_SRC bash
+     aws sso login --profile ai-coder-llm
+   #+END_SRC
+
+4. Verify the authentication information
+   #+begin_src bash
+     aws sts get-caller-identity --profile ai-coder-llm
+   #+end_src
+
+5. Run Claude to confirm that everything works.
+   #+begin_src bash
+     claude
+   #+end_src
+
+*** claudemacs
 #+begin_src emacs-lisp
+  (use-package claudemacs
+    :vc (:url "https://github.com/cpoile/claudemacs" :rev :newest)
+    :delight
+    :bind (:map global-map ("C-c c" . claudemacs-transient-menu)))
+#+end_src
+
+*** claude-code.el
+#+begin_src emacs-lisp :tangle no
   (use-package claude-code
     :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
     :delight
@@ -2808,45 +2854,13 @@ Then, add the following to your Emacs configuration file.
 
 *** claude-code-ide.el
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package claude-code-ide
     :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
     :bind (:map global-map  ("C-c c" . claude-code-ide-menu))
-    :config
-    (claude-code-ide-emacs-tools-setup)) ; Optionally enable Emacs MCP tools
+    ;; :config (claude-code-ide-emacs-tools-setup) ; Optionally enable Emacs MCP tools
+    )
 #+end_src
-
-*** Prerequisites
-
-- Access to AWS Bedrock.
-- Install the Claude Code command line tool following the [[https://docs.anthropic.com/en/docs/claude-code/overview#get-started-in-30-seconds][official
-  documentation]].
-- Configure Claude to use AWS Bedrock. Below is an example
-  =~/.claude/settings.json=.
-  #+begin_src json-ts
-    {
-      "env": {
-        "CLAUDE_CODE_USE_BEDROCK": 1,
-        "ANTHROPIC_MODEL": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-        "AWS_PROFILE": "ai-coder-llm",
-        "AWS_REGION": "us-east-1"
-      }
-    }
-  #+end_src
-
-*** Usage
-
-1. Authenticate with AWS:
-   #+BEGIN_SRC bash
-     aws sso login --profile ai-coder-llm
-   #+END_SRC
-
-2. [Optional] Verify the authentication information
-   #+begin_src bash
-     aws sts get-caller-identity --profile ai-coder-llm
-   #+end_src
-
-3. Start Claude Code in Emacs
 
 ** Aider
 
