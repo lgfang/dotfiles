@@ -2835,7 +2835,7 @@ Enabling multiple packages simultaneously will cause keybinding conflicts.
    #+end_src
 
 *** claudemacs
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package claudemacs
     :vc (:url "https://github.com/cpoile/claudemacs" :rev :newest)
     :delight
@@ -2854,11 +2854,11 @@ Enabling multiple packages simultaneously will cause keybinding conflicts.
 
 *** claude-code-ide.el
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package claude-code-ide
     :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
     :bind (:map global-map  ("C-c c" . claude-code-ide-menu))
-    ;; :config (claude-code-ide-emacs-tools-setup) ; Optionally enable Emacs MCP tools
+    :config (claude-code-ide-emacs-tools-setup) ; Optionally enable Emacs MCP tools
     )
 #+end_src
 
