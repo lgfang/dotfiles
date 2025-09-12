@@ -2908,7 +2908,15 @@ Enabling multiple packages simultaneously will cause keybinding conflicts.
 #+begin_src emacs-lisp
   (use-package magit
     :bind (:map global-map ("C-x g" . magit-status))
-    :custom (magit-log-margin-show-committer-date t)
+
+    :custom
+    ;; Show committer date instead of author date in log margin
+    (magit-log-margin-show-committer-date t)
+    ;; In magit status buffer, show log margin including author and age
+    (magit-status-margin '(t age magit-log-margin-width t 18))
+    ;; In magit log buffer, display date instead of age
+    (magit-log-margin '(t "%y-%m-%d %H:%M %z" magit-log-margin-width t 18))
+
     :hook
     (magit-refresh-buffer
      . (lambda() (when (fboundp 'custom-urls) (custom-urls)))))
