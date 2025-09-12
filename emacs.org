@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-09-02 +1000
+#+DATE: 2025-09-12 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -459,8 +459,16 @@ Sometimes it can be more convenient than the later.
                                   (cond ((string= str "custom")
                                          (webjump-read-string "Enter custom GitHub path: "))
                                         (t str)))))
-                     ("jira ticket"
+                     ("jira at point"
                       . (concat "https://jira.mongodb.org/browse/"  (thing-at-point 'symbol t)))
+                     ("jira search"
+                      . [simple-query "https://jira.mongodb.org/issues"
+                                      "https://jira.mongodb.org/issues/?jql="
+                                      ""])
+                     ("jira my closed"    ; Tickets I closed in the last 7 days
+                      . (url-encode-url
+                         (concat "https://jira.mongodb.org/issues/?jql="
+                                 "status changed to Closed by currentUser() after -7d")))
                      )))
 #+end_src
 
