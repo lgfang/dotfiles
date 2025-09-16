@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-09-12 +1000
+#+DATE: 2025-09-16 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2925,7 +2925,7 @@ Enabling multiple packages simultaneously will cause keybinding conflicts.
 If you see errors from ~magit~ or ~forge~ after an update, your built-in
 ~transient~ package is likely outdated. To fix it, force a re-installation:
 1. Enable upgrades for built-in packages:
-   #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp :tangle no
    (setq package-install-upgrade-built-in t)
    #+END_SRC
 2. Reinstall packages (using ~M-x package-reinstall~) in the following order:
@@ -3226,7 +3226,7 @@ with different colors instead (=rainbow-csv-mode=).
 #+begin_src emacs-lisp
   (use-package csv-mode
     :commands (csv-mode csv-align-mode tsv-mode)
-    )
+    :hook ((csv-mode . csv-align-mode)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3234,7 +3234,7 @@ with different colors instead (=rainbow-csv-mode=).
     :load-path (lambda() (concat my-downloads "rainbow-csv"))
     :delight
     :commands rainbow-csv-mode
-    )
+    :hook ((csv-mode . rainbow-csv-mode)))
 #+end_src
 
 * Emacs lisp (elisp)
