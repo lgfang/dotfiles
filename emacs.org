@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-09-16 +1000
+#+DATE: 2025-09-26 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -701,6 +701,34 @@ in Solarized Gruvbox.
   (use-package color-theme-sanityinc-tomorrow
     :config
     (load-theme 'sanityinc-tomorrow-night t))
+#+end_src
+
+** My colour theme tweaks
+
+This theme provides only my color tweaks. It is not intended for standalone use;
+enable it alongside another theme or themes.
+
+#+begin_src emacs-lisp
+  (deftheme my/color-theme-tweaks
+    "My custom face tweaks.")
+
+  (custom-theme-set-faces
+   'my/color-theme-tweaks
+   ;; No special background/foreground for flymake warnings. Use underline etc. to
+   ;; indicate flymake warnings.
+   '(flymake-warning ((t (:background unspecified :foreground unspecified))))
+   ;; No special background for magit diff faces
+   '(magit-diff-hunk-heading ((t (:background unspecified))))
+   '(magit-diff-context ((t (:background unspecified))))
+   '(magit-diff-context-highlight ((t (:background unspecified))))
+   '(magit-diff-removed ((t (:background unspecified))))
+   '(magit-diff-removed-highlight ((t (:background unspecified))))
+   '(magit-diff-added ((t (:background unspecified))))
+   '(magit-diff-added-highlight ((t (:background unspecified)))))
+
+  (provide-theme 'my/color-theme-tweaks)
+
+  (enable-theme 'my/color-theme-tweaks)
 #+end_src
 
 * Files and directories
@@ -2229,14 +2257,7 @@ to add projects we need. Below is an example:
                 ("C-c p" . flymake-goto-prev-error)
                 ("C-c n" . flymake-goto-next-error))
 
-    :hook (prog-mode yaml-ts-mode)
-
-    :config
-    ;; Do not highlight flymake warnings due to the current high frequency of
-    ;; warnings in our codebase. Instead, monitor the numbers of flymake
-    ;; errors/warning/info in the mode line.
-    (set-face-attribute 'flymake-warning nil :inherit nil)
-  )
+    :hook (prog-mode yaml-ts-mode))
 #+end_src
 
 ** Syntax parser: tree-sitter
