@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-09-26 +1000
+#+DATE: 2025-10-01 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2593,7 +2593,6 @@ See language-specific sections for details.
 
 #+begin_src emacs-lisp
   (use-package gptel
-    :vc (:url "https://github.com/lgfang/gptel" :rev :newest)
     :defines gptel-mode-map
     :commands (gptel-make-gh-copilot gptel-make-deepseek gptel-make-openai auth-source-search)
     :bind (:map gptel-mode-map ("C-c C-c" . gptel-send))
@@ -2615,16 +2614,17 @@ See language-specific sections for details.
                  (error "Failed to retrieve DeepSeek API key"))))
       )
 
-    (eval-after-load 'gptel-bedrock
-      '(progn
-         (push '(haiku35 . "us.anthropic.claude-3-5-haiku-20241022-v1:0") gptel-bedrock--model-ids)
-         (push '(sonnet4 . "us.anthropic.claude-sonnet-4-20250514-v1:0") gptel-bedrock--model-ids)))
+    (with-eval-after-load 'gptel-bedrock
+      (setq gptel-bedrock--model-ids
+            (append gptel-bedrock--model-ids
+                    '((sonnet-previous . "us.anthropic.claude-sonnet-4-20250514-v1:0")
+                      (sonnet-latest . "us.anthropic.claude-sonnet-4-5-20250929-v1:0")))))
 
     (gptel-make-bedrock "Bedrock"
       :stream t
       :region "us-east-1"
-      :models '(haiku35 sonnet4)
-      :profile "ai-coder-llm"))
+      :models '(sonnet-previous sonnet-latest)
+      :aws-profile "ai-coder-llm"))
 #+end_src
 
 *** DeepSeek authentication note
