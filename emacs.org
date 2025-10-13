@@ -468,7 +468,7 @@ Sometimes it can be more convenient than the later.
                      ("jira my closed"    ; Tickets I closed in the last 7 days
                       . (url-encode-url
                          (concat "https://jira.mongodb.org/issues/?jql="
-                                 "status changed to Closed by currentUser() after -7d")))
+                                 "assignee = currentUser() and resolutiondate >= -7d")))
                      )))
 #+end_src
 
