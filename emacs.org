@@ -1261,7 +1261,15 @@ NOTE: this does not work for org mode buffers.
 
 #+begin_src emacs-lisp
   (use-package beancount
-    :mode ("\\.beancount\\'". beancount-mode))
+    :vc (:url "https://github.com/lgfang/beancount-mode" :rev :newest)
+    :mode ("\\.beancount\\'". beancount-mode)
+    :bind (
+           (:map beancount-mode-map
+                 ("C-c <down>" . beancount-date-down)
+                 ("C-c <up>"   . beancount-date-up))
+           (:repeat-map beancount-repeat-map
+                        ("<down>" . beancount-date-down)
+                        ("<up>"   . beancount-date-up))))
 #+end_src
 
 ** Bookkeeping snippets (for beancount)
