@@ -1232,10 +1232,14 @@ line of the other window (inactive) will not be updated until you switch to it.
     :ensure nil                           ; Feature, not package
     :hook
     (font-lock-mode . (lambda ()
-                        (font-lock-add-keywords
-                         nil
-                         '(("\\<\\(lgfang\\|TODO\\|FIXME\\|NOTE\\|IMPORTANT\\)"
-                            . (0 font-lock-warning-face t))))))
+                        ;; Exclude dired-mode to prevent custom keywords (e.g.,
+                        ;; 'lgfang' in the path) from incorrectly overriding the
+                        ;; standard 'dired-header' face.
+                        (unless (eq major-mode 'dired-mode)
+                          (font-lock-add-keywords
+                           nil
+                           '(("\\<\\(lgfang\\|TODO\\|FIXME\\|NOTE\\|IMPORTANT\\)"
+                              . (0 font-lock-warning-face t)))))))
     :config
     (font-lock-add-keywords
      'c-mode
