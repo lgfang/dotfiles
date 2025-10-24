@@ -807,9 +807,17 @@ Below are two examples:
   the pattern itself being replaced.
 
 ** Directories
+
+#+begin_src emacs-lisp
+  (use-package dired
+    :ensure nil                           ; Built-in
+    :hook (dired-mode . dired-hide-details-mode))
+#+end_src
+
 #+begin_src emacs-lisp
   (use-package dired-x
-    :ensure nil                           ; Feature, not package
+    :ensure nil                           ; Built-in
+    :after dired
     :custom
     (dired-recursive-copies 'top)
     (dired-recursive-deletes 'top)
@@ -817,10 +825,32 @@ Below are two examples:
      '(("\\.gpg\\'" "gpg --decrypt-files")
        ;; By default use `open', which chooses the correct application On MacOS.
        ("\\.*\\'" "open")))
-    ;; `dired-omit-mode' hides all dot files, like `ls'
-    (dired-omit-files "\\`[.#].*")
     (dired-kill-when-opening-new-dired-buffer nil)
-    )
+    (dired-omit-files "\\`[.#].*")     ; omit dot files and auto save files
+    (dired-omit-extensions '("~"))     ; omit backup files
+    :hook (dired-mode . dired-omit-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package dired-subtree
+    :after dired
+    :bind (:map dired-mode-map
+                ("i" . dired-subtree-insert)
+                (";" . dired-subtree-remove)
+                ("TAB" . dired-subtree-toggle)
+                ("<backtab>" . dired-subtree-cycle)
+                ("M-n" . dired-subtree-next-sibling)
+                ("M-p" . dired-subtree-previous-sibling))
+    :custom
+    (dired-subtree-use-backgrounds nil))
+#+end_src
+
+Note: the following is not tangled because it does not work well with
+~dired-subtree~.
+#+begin_src emacs-lisp :tangle no
+  (use-package dired-collapse
+    :after dired
+    :hook (dired-mode . dired-collapse-mode))
 #+end_src
 
 ** Uniquify buffer names
