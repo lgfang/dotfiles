@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-10-01 +1000
+#+DATE: 2025-11-04 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -693,14 +693,12 @@ the Magit diff buffers.
     (load-theme 'solarized-gruvbox-dark t))
 #+end_src
 
-** COMMENT Sanityinc tomorrow
+** COMMENT Doom tomorrow night
 
-The contrast is not very low, but I prefer its Magit diff buffers over the ones
-in Solarized Gruvbox.
 #+begin_src emacs-lisp
-  (use-package color-theme-sanityinc-tomorrow
+  (use-package doom-themes
     :config
-    (load-theme 'sanityinc-tomorrow-night t))
+    (load-theme 'doom-tomorrow-night t))
 #+end_src
 
 ** My colour theme tweaks
