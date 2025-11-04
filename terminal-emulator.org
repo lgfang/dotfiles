@@ -3,7 +3,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-08-28 +1000
+#+DATE: 2025-11-04 +1100
 
 * Timestamps
 
@@ -41,8 +41,6 @@ As a Tmux + Emacs user on MacOS, I don't need multiplexer etc.. Hence, for me th
 ** Appearance
 
 *** Window and frame
-See [[https://github.com/ryanoasis/nerd-fonts/discussions/1103][this post]] for the differences of the 3 variations of nerd fonts, i.e. (nerd
-font, nerd font mono, and nerd font propo).
 
 #+begin_src lua :tangle ~/.wezterm.lua
   config.window_decorations = 'RESIZE'
@@ -52,15 +50,37 @@ font, nerd font mono, and nerd font propo).
 
 *** Fonts
 
+See [[https://github.com/ryanoasis/nerd-fonts/discussions/1103][this post]] for the differences of the 3 variations of nerd fonts, i.e. (nerd
+font, nerd font mono, and nerd font propo).
+
 #+begin_src lua :tangle ~/.wezterm.lua
-  local font_family = 'JetBrains Mono'
+  config.font = wezterm.font_with_fallback(
+     {
+        {
+           family = 'JetBrainsMono Nerd Font',
+        },
+        -- Fallback for missing glyphs (say ) or if the primary font is unavailable.
+        'JetBrainsMono Nerd Font',
+     }
+  )
+
+  -- Ligature settings. The selected font must supports theses features. (Nerd
+  -- Fonts does)
+  config.harfbuzz_features = {
+     -- Contextual Alternates, '->', '!=' etc.
+     'calt=1',
+     -- Contextual Ligatures
+     'clig=0',
+     -- Standard Ligatures
+     'liga=0',
+  }
+
   config.font_size = 19
-  config.harfbuzz_features = {'calt=0', 'clig=0', 'liga=0'} -- turn off ligature
-  -- Lower brightness to make contrast lower
+
   config.foreground_text_hsb = {
-    hue = 1.0,
-    saturation = 1.0,
-    brightness = 0.7,
+     hue = 1.0,
+     saturation = 1.0,
+     brightness = 0.7,
   }
 #+end_src
 
