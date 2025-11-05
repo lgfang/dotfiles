@@ -2509,9 +2509,8 @@ non-trivial. In such situations, you can see the error message by setting
 
 #+begin_src emacs-lisp
   (use-package dape
-    ;; For Python, `pip3 install debugpy'. Run adapter `debugpy' to test a
-    ;; program, adapter `debugpy-module' for testing a module.
     :after eglot
+    :commands (dape dape-breakpoint-toggle)
     :custom
     ;; `left' is better than `right' as it places the source code area in the
     ;; primary focus area (the centre of the screen).
@@ -2524,8 +2523,12 @@ non-trivial. In such situations, you can see the error message by setting
 
 *** Python examples
 
+For Python, `pip3 install debugpy'. Run adapter `debugpy' to test a program,
+adapter `debugpy-module' for testing a module.
+
 IMPORTANT: Ensure the Python project's virtual environment is activated, if
-applicable.
+applicable. For example, if the project uses poetry, run ~poetry-venv-workon~
+before activating dape.
 
 - Debug a python script
   #+begin_src text
