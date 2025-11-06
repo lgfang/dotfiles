@@ -1036,13 +1036,10 @@ change ~electric-pair-inhibit-predicate~ instead.
   (use-package flyspell
     :delight
     :hook ((prog-mode . flyspell-prog-mode)
-           (yaml-mode . flyspell-prog-mode)
-           (yaml-ts-mode . flyspell-prog-mode)
            (markdown-mode . flyspell-mode)
            (git-commit-setup . flyspell-mode)
            (org-mode . flyspell-prog-mode)
-           )
-    )
+           ))
 #+end_src
 
 * Visual aids
