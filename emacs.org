@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-11-04 +1100
+#+DATE: 2025-11-11 -0800
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1659,6 +1659,7 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
                                           "~/.dotfiles/window-manager.org"
                                           "~/.dotfiles/terminal-emulator.org"
                                           "~/.dotfiles/karabiner.org"
+                                          "~/.dotfiles/ai.org"
                                           )))
     (defun lgf-tangle-configs ()
       (add-hook 'after-save-hook
@@ -2867,7 +2868,7 @@ Enabling multiple packages simultaneously will cause keybinding conflicts.
 
 1. Install the Claude Code command line tool
    + Following the [[https://docs.anthropic.com/en/docs/claude-code/overview#get-started-in-30-seconds][official documentation]].
-   + See also [[file:ai.org::*User-Specific "Global" Installation][User-Specific "Global" Installation]].
+   + See also [[file:ai.org::*User-Specific "Global" NPM Installation][User-Specific "Global" NPM Installation]].
 
 2. Configure Claude to use AWS Bedrock. For example, add the following to your
    =~/.claude/settings.json=. See [[file:ai.org::*Claude][my claude notes]] for more information.

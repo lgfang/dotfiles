@@ -1,0 +1,103 @@
+# -*- mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+# Created: Fang Lungang 2025-08-09 +1000
+
+#+TITLE: AI/LLM Configurations
+#+AUTHOR: Fang Lungang
+#+DATE: 2025-11-11 -0800
+#+DESCRIPTION: My AI/LLM related configurations
+#+KEYWORDS: AI LLM Claude
+#+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
+
+* Claude
+
+** User-Specific "Global" NPM Installation
+
+The goal is to reconfigure ~npm~ so that the ~-g~ flag points to a directory
+inside your personal home folder. Once configured, any package installed with
+~-g~ will be user-specific.
+
+Please note, this is a standard, one-time setup for ~npm~. Once configured, it
+will work for any package you install this way.
+
+1. Create a directory for user-specific packages
+
+   First, create a folder in your home directory where your "global" packages
+   will live. A common convention is ~~/.npm-global~.
+   #+BEGIN_SRC bash
+     mkdir ~/.npm-global
+   #+END_SRC
+
+2. Configure npm to use this new directory path
+
+   Next, tell ~npm~ to use this new folder for all future global installations.
+   #+BEGIN_SRC bash
+     npm config set prefix '~/.npm-global'
+   #+END_SRC
+
+3. Add the new location to your system's PATH
+
+   #+BEGIN_SRC bash
+     export PATH=$HOME/.npm-global/bin:$PATH
+   #+END_SRC
+
+4. Install claude code "globally"
+
+   #+begin_src bash
+     npm install -g @anthropic-ai/claude-code
+   #+end_src
+
+** User-wise configuration
+
+*** Settings.json
+
+The following ~env~ section configures Claude code to connect to AWS Bedrock
+using the AWS profile =ai-coder-llm=.
+
+#+begin_src json-ts :tangle ~/.claude/settings.json :mkdirp yes
+  {
+    "env": {
+      "CLAUDE_CODE_USE_BEDROCK": "1",
+      "ANTHROPIC_MODEL": "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+      "AWS_PROFILE": "ai-coder-llm",
+      "AWS_REGION": "us-east-1"
+    },
+    "includeCoAuthoredBy": false,
+    "permissions": {
+      "allow": [
+        "Bash(git commit:*)"
+      ],
+      "deny": [
+        "Bash(git push:*)"
+      ]
+    }
+  }
+#+end_src
+
+*** CLAUDE.md
+
+#+begin_src markdown :tangle ~/.claude/CLAUDE.md
+  # General Claude Instructions
+
+  ## MCP (Model Context Protocol) Usage
+
+  When working with this codebase, use MCP tools appropriately:
+
+  ### Available MCP Tools
+  - **IDE Integration**: Use `mcp__ide__getDiagnostics` for language diagnostics
+  - **Tree-sitter**: Use `mcp__emacs-tools__claude-code-ide-mcp-treesit-info` for syntax tree analysis
+  - **Symbol Navigation**: Use `mcp__emacs-tools__claude-code-ide-mcp-imenu-list-symbols` to explore file structure
+  - **Project Context**: Use `mcp__emacs-tools__claude-code-ide-mcp-project-info` for project overview
+  - **Symbol Search**: Use `mcp__emacs-tools__claude-code-ide-mcp-xref-find-apropos` to find symbols by pattern
+  - **Reference Finding**: Use `mcp__emacs-tools__claude-code-ide-mcp-xref-find-references` to find symbol usage
+
+  ### When to Use MCP Tools
+  - Use MCP tools when they provide better context or functionality than standard tools
+  - Prefer MCP symbol navigation over basic grep when exploring code structure
+  - Use MCP diagnostics to check for language-specific issues
+  - Leverage MCP project info for understanding the current development context
+
+  ### Integration Notes
+  - This project uses Emacs integration with mixed coordinates (1-based lines, 0-based columns)
+  - MCP tools are context-aware and track project/file/selection automatically
+  - Available features include xref (LSP), tree-sitter, imenu, project.el, and flycheck/flymake diagnostics
+#+end_src
