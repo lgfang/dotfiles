@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-04-24 +1000
+#+DATE: 2025-11-21 +1100
 #+DESCRIPTION: Layered hotkeys using Karabiner Elements
 #+KEYWORDS: Karabiner
 #+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
@@ -120,6 +120,7 @@ Swap Option keys and Command keys, converting it to a "Mac compatible keyboard".
     ]
   },
 #+end_src
+
 *** Filco 87
 Swap Option keys and Command keys, converting it to a "Mac compatible keyboard".
 #+begin_src json-ts
@@ -136,6 +137,18 @@ Swap Option keys and Command keys, converting it to a "Mac compatible keyboard".
       {"from": {"key_code": "right_option"}, "to": [{"key_code": "right_command"}]},
       {"from": {"key_code": "right_command"}, "to": [{"key_code": "right_option"}]}
     ]
+  },
+#+end_src
+
+*** Razer Cobra
+#+begin_src json-ts
+  {
+      "identifiers": {
+          "is_pointing_device": true,
+          "product_id": 163,
+          "vendor_id": 5426
+      },
+      "ignore": false
   },
 #+end_src
 
