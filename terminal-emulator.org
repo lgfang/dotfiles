@@ -3,7 +3,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-11-04 +1100
+#+DATE: 2025-11-21 +1100
 
 * Timestamps
 
@@ -54,15 +54,39 @@ See [[https://github.com/ryanoasis/nerd-fonts/discussions/1103][this post]] for 
 font, nerd font mono, and nerd font propo).
 
 #+begin_src lua :tangle ~/.wezterm.lua
-  config.font = wezterm.font_with_fallback(
+  -- Install the font using "brew install font-dejavu-sans-mono-nerd-font"
+  local font_family = 'DejaVuSansM Nerd Font Mono'
+
+  -- Fallback font for missing glyphs (say ) or if the primary font is unavailable.
+  local fallback_font = 'JetBrainsMono Nerd Font'
+
+  -- Helper function to create a font object with fallback
+  local function font_with_weight(weight)
+     return wezterm.font_with_fallback({
+           { family = font_family, weight = weight },
+           fallback_font,
+     })
+  end
+
+  -- To apply the rules, assign this local variable to "config.font_rules" below
+  local font_rules = {
+     -- Change text weight. If the designated weight is unavailable, silently
+     -- falls back to the closest one.
      {
-        {
-           family = 'JetBrainsMono Nerd Font',
-        },
-        -- Fallback for missing glyphs (say ) or if the primary font is unavailable.
-        'JetBrainsMono Nerd Font',
-     }
-  )
+
+        intensity = 'Normal',
+        font = font_with_weight('Medium'),
+     },
+     {
+        -- Increase the weight of Bold text
+        intensity = 'Bold',
+        font = font_with_weight('ExtraBold'),
+     },
+  }
+
+  config.font = font_with_weight('Regular')
+  -- config.font_rules = font_rules
+  config.font_size = 19
 
   -- Ligature settings. The selected font must supports theses features. (Nerd
   -- Fonts does)
@@ -74,8 +98,6 @@ font, nerd font mono, and nerd font propo).
      -- Standard Ligatures
      'liga=0',
   }
-
-  config.font_size = 19
 
   config.foreground_text_hsb = {
      hue = 1.0,
