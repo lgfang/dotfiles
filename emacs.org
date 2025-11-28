@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-11-11 -0800
+#+DATE: 2025-11-28 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1487,18 +1487,24 @@ easily.
 
 *** Example auth info file (gpg encrypted)
 #+begin_src authinfo
-  machine atlas login api_pub_key password api-private-key-xxx
-  machine some_host login username password pa$$w0rd
+  machine a_host login username password pa$$w0rd
+  machine deepseek login deepseek password sk-****
+  machine atlas_api_key login wnaglxyz password ****
+  machine atlas_db_user login dsi-user-2025-09-09 password ****
 #+end_src
 
 *** Retrieve and use credentials
+
 Below is an example of how to do that in an org file (with org-babel).
 
-NOTE: We must =(funcall secret)= to get the actual secret string.
+NOTE:
+- If necessary, call ~(auth-source-forget-all-cached)~ to clear cached results
+- Must =(funcall secret)= to get the actual secret string.
 
 #+begin_src org
   ,#+name: my-token
   ,#+begin_src emacs-lisp
+    (auth-source-forget-all-cached)
     (let* ((credential (car (auth-source-search :host "atlas")))
            (user (plist-get credential :user))
            (secret (plist-get credential :secret))
