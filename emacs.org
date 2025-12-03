@@ -2881,11 +2881,7 @@ Then, add the following to your Emacs configuration file.
 
 ** Claude Code
 
-*NOTE:* This section contains configurations for multiple packages for Claude
-Code. Choose and activate only one of them, as they use the same hotkeys.
-Enabling multiple packages simultaneously will cause keybinding conflicts.
-
-*** Claude Code setup (with AWS Bedrock)
+*** Prerequisite: Setup Claude Code (with AWS Bedrock)
 
 1. Install the Claude Code command line tool
    + Following the [[https://docs.anthropic.com/en/docs/claude-code/overview#get-started-in-30-seconds][official documentation]].
@@ -2919,22 +2915,27 @@ Enabling multiple packages simultaneously will cause keybinding conflicts.
      claude
    #+end_src
 
-*** claudemacs
-#+begin_src emacs-lisp :tangle no
-  (use-package claudemacs
-    :vc (:url "https://github.com/cpoile/claudemacs" :rev :newest)
-    :delight
-    :bind (:map global-map ("C-c c" . claudemacs-transient-menu)))
-#+end_src
+*** Agent Shell
 
-*** claude-code.el
-#+begin_src emacs-lisp :tangle no
-  (use-package claude-code
-    :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
-    :delight
-    :bind (:map global-map ("C-c c" . claude-code-transient))
-    :config (claude-code-mode)
-    :custom (claude-code-terminal-backend 'vterm))
+This package is a *native Emacs shell* that interacts with LLM agents using ACP
+(Agent Client Protocol), providing a more native Emacs experience than most
+other implementations, including ~claude-code-ide.el~, which are essentially
+thin wrappers around the Claude Code CLI.
+
+However, it currently lacks some features offered by ~claude-code-ide.el~, such
+as typing prompts in the minibuffer and context awareness.
+
+#+begin_src emacs-lisp
+  ;; Prerequisites for agent-shell with Claude
+  ;; - Install claude: brew install claude-code
+  ;; - Install claude-code-acp: npm install -g @zed-industries/claude-code-acp
+  (use-package agent-shell
+    :bind (:map agent-shell-mode-map
+                ;; Use RET for newline as S-RET does not work in terminals.
+                ;; Original RET functionality is bound to `C-c C-c', matching
+                ;; other LLM packages.
+                ("RET" . agent-shell-newline)
+                ("C-c C-c" . shell-maker-submit)))
 #+end_src
 
 *** claude-code-ide.el
@@ -2970,14 +2971,6 @@ Enabling multiple packages simultaneously will cause keybinding conflicts.
       - AWS_REGION=us-east-1
     model: bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0
   #+end_src
-
-*** Usage
-
-1. Authenticate with AWS
-   #+begin_src bash
-     aws sso login --profile ai-coder-llm
-   #+end_src
-2. Start aidermacs
 
 * Version Control
 
