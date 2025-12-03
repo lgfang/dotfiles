@@ -2881,60 +2881,34 @@ Then, add the following to your Emacs configuration file.
 
 ** Claude Code
 
-*NOTE:* This section contains configurations for multiple packages for Claude
-Code. Choose and activate only one of them, as they use the same hotkeys.
-Enabling multiple packages simultaneously will cause keybinding conflicts.
+*** Prerequisite
 
-*** Claude Code setup (with AWS Bedrock)
+Install and configure Claude Code. See [[file:ai.org::*Claude][my Claude notes]] for details.
 
-1. Install the Claude Code command line tool
-   + Following the [[https://docs.anthropic.com/en/docs/claude-code/overview#get-started-in-30-seconds][official documentation]].
-   + See also [[file:ai.org::*User-Specific "Global" NPM Installation][User-Specific "Global" NPM Installation]].
+*** Agent Shell
 
-2. Configure Claude to use AWS Bedrock. For example, add the following to your
-   =~/.claude/settings.json=. See [[file:ai.org::*Claude][my claude notes]] for more information.
-   #+begin_src json-ts
-     {
-       "env": {
-         "CLAUDE_CODE_USE_BEDROCK": 1,
-         "ANTHROPIC_MODEL": "us.anthropic.claude-sonnet-4-20250514-v1:0",
-         "AWS_PROFILE": "ai-coder-llm",
-         "AWS_REGION": "us-east-1"
-       }
-     }
-   #+end_src
+This package is a *native Emacs shell* that interacts with LLM agents using ACP
+(Agent Client Protocol), providing a more native Emacs experience than most
+other implementations, including ~claude-code-ide.el~, which are essentially
+thin wrappers around the Claude Code CLI.
 
-3. Authenticate with AWS:
-   #+BEGIN_SRC bash
-     aws sso login --profile ai-coder-llm
-   #+END_SRC
+However, it currently lacks some features offered by ~claude-code-ide.el~, such
+as typing prompts in the minibuffer and context awareness.
 
-4. Verify the authentication information
-   #+begin_src bash
-     aws sts get-caller-identity --profile ai-coder-llm
-   #+end_src
+Additional dependency:
+- ~claude-code-acp~
+  #+begin_src bash
+    npm install -g @zed-industries/claude-code-acp
+  #+end_src
 
-5. Run Claude to confirm that everything works.
-   #+begin_src bash
-     claude
-   #+end_src
-
-*** claudemacs
-#+begin_src emacs-lisp :tangle no
-  (use-package claudemacs
-    :vc (:url "https://github.com/cpoile/claudemacs" :rev :newest)
-    :delight
-    :bind (:map global-map ("C-c c" . claudemacs-transient-menu)))
-#+end_src
-
-*** claude-code.el
-#+begin_src emacs-lisp :tangle no
-  (use-package claude-code
-    :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
-    :delight
-    :bind (:map global-map ("C-c c" . claude-code-transient))
-    :config (claude-code-mode)
-    :custom (claude-code-terminal-backend 'vterm))
+#+begin_src emacs-lisp
+  (use-package agent-shell
+    :bind (:map agent-shell-mode-map
+                ;; Use RET for newline as S-RET does not work in terminals.
+                ;; Original RET functionality is bound to `C-c C-c', matching
+                ;; other LLM packages.
+                ("RET" . agent-shell-newline)
+                ("C-c C-c" . shell-maker-submit)))
 #+end_src
 
 *** claude-code-ide.el
@@ -2970,14 +2944,6 @@ Enabling multiple packages simultaneously will cause keybinding conflicts.
       - AWS_REGION=us-east-1
     model: bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0
   #+end_src
-
-*** Usage
-
-1. Authenticate with AWS
-   #+begin_src bash
-     aws sso login --profile ai-coder-llm
-   #+end_src
-2. Start aidermacs
 
 * Version Control
 
