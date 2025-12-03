@@ -284,19 +284,33 @@ NOTE: To use this within tmux session, upgrade to tmux 2.6+.
 ** Ibuffer
 
 #+begin_src emacs-lisp
+  (defconst my/ibuffer-regexp-llm-buffers
+    (rx line-start
+        (or
+         (seq "Claude Code Agent @ " (* nonl)) ; Claude in agent shell
+         (seq "acp-client-" (* nonl))          ; agent shell debug buffers
+         (seq "*claude-code" (* nonl) "*")     ; Claude in claude-code-ide
+         (seq "*Copilot Chat" (* nonl))        ; Copilot chat
+         (or                                   ; gptel
+          "*DeepSeek*"
+          "*CopilotChat*"
+          "*Bedrock*"
+          (seq "*" (* nonl) "GPT*")
+          ))
+        line-end))
+
   (use-package ibuffer                    ; built-in package
     :functions ibuffer-switch-to-saved-filter-groups
     :bind (:map global-map ("C-x C-b" . ibuffer))
-    :hook (ibuffer-mode . (lambda() (ibuffer-switch-to-saved-filter-groups "default")))
+    :hook (ibuffer-mode . (lambda() (ibuffer-switch-to-saved-filter-groups "my")))
     :custom
     (ibuffer-saved-filter-groups
-     (quote
-      (("default"
+     `(("my"
         ("Dired" (mode . dired-mode))
-        ("LLM" (name . "^\\*\\(Copilot.*\\|\\(DeepSeek\\|.*GPT.*\\|LLM response\\)\\*\\)$"))
+        ("LLM" (name . ,my/ibuffer-regexp-llm-buffers))
         ("Magit" (name . "^magit"))
         ("Emacs" (name . "^\\*.*\\*$"))
-        ))))
+        )))
     ;; Sort by buffer names, to change sort mode interactively, press `,' or `M-x
     ;; ibuffer-toggle-sorting-mode' in the ibuffer.
     (ibuffer-default-sorting-mode 'alphabetic))
