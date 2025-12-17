@@ -534,8 +534,8 @@ Sometimes it can be more convenient than the later.
     (savehist-mode t)
     ;; Save cursor places between sessions
     (save-place-mode t)
-    ;; Reopen files etc. when Emacs restarts
-    (desktop-save-mode 1)
+    ;; Dont reopen files etc. when Emacs restarts
+    (desktop-save-mode -1)
     ;; Automatically close buffers inactive for a long time
     (midnight-mode t)
     )
