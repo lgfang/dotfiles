@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-11-21 +1100
+#+DATE: 2025-12-17 +1100
 #+DESCRIPTION: Layered hotkeys using Karabiner Elements
 #+KEYWORDS: Karabiner
 #+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
@@ -1503,6 +1503,30 @@ IMPORTANT: ~to_if_alone.hold_down_milliseconds~ is required due to [[https://git
         ],
         "from": {
           "key_code": "l",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "type": "variable_if",
+            "name": "select_app",
+            "value": 1
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "description": "GUI emacs",
+        "to": [
+          {
+            "shell_command": "open -a emacs.app"
+          }
+        ],
+        "from": {
+          "key_code": "h",
           "modifiers": {
             "optional": [
               "any"
