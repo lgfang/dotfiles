@@ -3,50 +3,82 @@
 
 #+TITLE: AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-11-11 -0800
+#+DATE: 2025-12-19 +1100
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
 
 * Claude
 
-** User-Specific "Global" NPM Installation
+** Installation
 
-The goal is to reconfigure ~npm~ so that the ~-g~ flag points to a directory
-inside your personal home folder. Once configured, any package installed with
-~-g~ will be user-specific.
+1. Perform a User-Specific "Global" NPM Installation:
 
-Please note, this is a standard, one-time setup for ~npm~. Once configured, it
-will work for any package you install this way.
+   The goal is to reconfigure ~npm~ so that the ~-g~ flag points to a directory
+   inside your personal home folder. Once configured, any package installed with
+   ~-g~ will be user-specific.
 
-1. Create a directory for user-specific packages
+   Please note, this is a standard, one-time setup for ~npm~. Once configured,
+   it will work for any package you install this way.
 
-   First, create a folder in your home directory where your "global" packages
-   will live. A common convention is ~~/.npm-global~.
-   #+BEGIN_SRC bash
-     mkdir ~/.npm-global
-   #+END_SRC
+   1) Create a directory for user-specific packages
 
-2. Configure npm to use this new directory path
+      First, create a folder in your home directory where your "global" packages
+      will live. A common convention is ~~/.npm-global~.
+      #+BEGIN_SRC bash
+        mkdir ~/.npm-global
+      #+END_SRC
 
-   Next, tell ~npm~ to use this new folder for all future global installations.
-   #+BEGIN_SRC bash
-     npm config set prefix '~/.npm-global'
-   #+END_SRC
+   2) Configure npm to use this new directory path
 
-3. Add the new location to your system's PATH
+      Next, tell ~npm~ to use this new folder for all future global installations.
+      #+BEGIN_SRC bash
+        npm config set prefix '~/.npm-global'
+      #+END_SRC
 
-   #+BEGIN_SRC bash
-     export PATH=$HOME/.npm-global/bin:$PATH
-   #+END_SRC
+   3) Add the new location to your system's PATH
 
-4. Install claude code "globally"
+      #+BEGIN_SRC bash
+        export PATH=$HOME/.npm-global/bin:$PATH
+      #+END_SRC
 
-   #+begin_src bash
-     npm install -g @anthropic-ai/claude-code
+   4) Install claude code "globally"
+
+      #+begin_src bash
+        npm install -g @anthropic-ai/claude-code
+      #+end_src
+
+2. Configure Claude to use AWS Bedrock.
+
+   For example, add the following to your =~/.claude/settings.json=. See [[file:ai.org::*Claude][my
+   claude notes]] for more information.
+   #+begin_src json-ts
+     {
+       "env": {
+         "CLAUDE_CODE_USE_BEDROCK": 1,
+         "ANTHROPIC_MODEL": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+         "AWS_PROFILE": "ai-coder-llm",
+         "AWS_REGION": "us-east-1"
+       }
+     }
    #+end_src
 
-** User-wise configuration
+3. Authenticate with AWS:
+   #+BEGIN_SRC bash
+     aws sso login --profile ai-coder-llm
+   #+END_SRC
+
+4. Verify the authentication information
+   #+begin_src bash
+     aws sts get-caller-identity --profile ai-coder-llm
+   #+end_src
+
+5. Run Claude to confirm that everything works.
+   #+begin_src bash
+     claude
+   #+end_src
+
+** Configuration
 
 *** Settings.json
 
