@@ -3,7 +3,7 @@
 
 #+TITLE: AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-12-19 +1100
+#+DATE: 2026-01-13 +1100
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -84,6 +84,9 @@
 
 The following ~env~ section configures Claude code to connect to AWS Bedrock
 using the AWS profile =ai-coder-llm=.
+
+*NOTE*: Do not add comments to this file. Claude uses a strict JSON parser that
+silently ignores invalid JSON.
 
 #+begin_src json-ts :tangle ~/.claude/settings.json :mkdirp yes
   {
