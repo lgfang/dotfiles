@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-12-17 +1100
+#+DATE: 2026-01-13 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1727,6 +1727,15 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
          (concat (string-join (seq-take words limit) " ")
                  (when (> (length words) limit) "...")))))
     )
+#+end_src
+
+** Scratch buffer
+
+#+begin_src emacs-lisp
+  (use-package org
+    :custom
+    ;; Major mode for the initial ‘*scratch*’ buffer.
+    (initial-major-mode 'org-mode))
 #+end_src
 
 ** Ticket or review comments
