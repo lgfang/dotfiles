@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-08-18 +1000
+#+DATE: 2026-01-15 +1100
 
 * bash_profile
 :PROPERTIES:
@@ -32,10 +32,9 @@
 #+begin_src bash
   PATH="/snap/bin:$PATH"
 
-  # Add the user's custom npm global directory to the PATH. This is a common
-  # practice on Linux to allow global package installation without requiring
-  # `sudo`. On macOS, this is typically handled by Homebrew, so this step is not
-  # required.
+  # The custom npm global directory, enables user-specific "global" package
+  # installations on Linux without requiring `sudo`. MacOS does not need this
+  # configuration since npm global installations use Homebrew's bin directory.
   NPM_GLOBAL=$HOME/.npm-global
   PATH=${NPM_GLOBAL}/bin:$PATH
 #+end_src
