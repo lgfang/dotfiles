@@ -93,7 +93,8 @@ silently ignores invalid JSON.
   {
     "env": {
       "CLAUDE_CODE_USE_BEDROCK": "1",
-      "ANTHROPIC_MODEL": "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+      "ANTHROPIC_MODEL": "us.anthropic.claude-opus-4-5-20251101-v1:0",
+      "XXX_ANTHROPIC_MODEL": "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
       "AWS_PROFILE": "ai-coder-llm",
       "AWS_REGION": "us-east-1"
     },
