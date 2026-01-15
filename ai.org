@@ -3,7 +3,7 @@
 
 #+TITLE: AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-01-13 +1100
+#+DATE: 2026-01-15 +1100
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -12,14 +12,15 @@
 
 ** Installation
 
-1. Perform a User-Specific "Global" NPM Installation:
+1. Configure User-Specific NPM Global Installation
 
-   The goal is to reconfigure ~npm~ so that the ~-g~ flag points to a directory
+   This is a one-time setup that applies to all future npm global installations.
+   The goal is to configure ~npm~ so that the ~-g~ flag points to a directory
    inside your personal home folder. Once configured, any package installed with
-   ~-g~ will be user-specific.
+   ~-g~ will be user-specific, and ~root/sudo~ access is not required.
 
-   Please note, this is a standard, one-time setup for ~npm~. Once configured,
-   it will work for any package you install this way.
+   *Note for macOS users:* Skip this step as since npm global installations use
+   Homebrew's bin directory.
 
    1) Create a directory for user-specific packages
 
@@ -42,13 +43,13 @@
         export PATH=$HOME/.npm-global/bin:$PATH
       #+END_SRC
 
-   4) Install claude code "globally"
+2. Install claude code "globally"
 
-      #+begin_src bash
-        npm install -g @anthropic-ai/claude-code
-      #+end_src
+   #+begin_src bash
+     npm install -g @anthropic-ai/claude-code
+   #+end_src
 
-2. Configure Claude to use AWS Bedrock.
+3. Configure Claude to use AWS Bedrock.
 
    For example, add the following to your =~/.claude/settings.json=. See [[file:ai.org::*Claude][my
    claude notes]] for more information.
@@ -63,17 +64,17 @@
      }
    #+end_src
 
-3. Authenticate with AWS:
+4. Authenticate with AWS:
    #+BEGIN_SRC bash
      aws sso login --profile ai-coder-llm
    #+END_SRC
 
-4. Verify the authentication information
+5. Verify the authentication information
    #+begin_src bash
      aws sts get-caller-identity --profile ai-coder-llm
    #+end_src
 
-5. Run Claude to confirm that everything works.
+6. Run Claude to confirm that everything works.
    #+begin_src bash
      claude
    #+end_src
