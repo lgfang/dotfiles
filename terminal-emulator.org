@@ -3,7 +3,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-11-26 +1100
+#+DATE: 2026-01-16 +1100
 
 * Timestamps
 
@@ -90,7 +90,7 @@ font, nerd font mono, and nerd font propo).
 
   config.font = font_with_weight('Regular')
   -- config.font_rules = font_rules
-  config.font_size = 19
+  config.font_size = 16
 
   -- Ligature settings. The selected font must supports theses features. (Nerd
   -- Fonts does)
