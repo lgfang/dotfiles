@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-01-13 +1100
+#+DATE: 2026-01-16 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -683,7 +683,7 @@ different fonts are determined through trial and error. Note:
       (set-face-attribute 'default nil :font
                           (concat (if (member preferred-font (font-family-list))
                                       preferred-font fallback-font)
-                                  "-18:weight=normal")))
+                                  "-16:weight=normal")))
     (let ((zh-font "SimSong"))
       (if ;; Check the availability first to avoid error
           (member zh-font (font-family-list))
