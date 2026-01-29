@@ -2795,9 +2795,10 @@ than manually crafting prompts with =C-u M-x gptel-send=.
 
     :custom
     (copilot-chat-frontend 'org)
-    ;; Only `gpt-4.1' provides unlimited access. To temporarily switch to another
-    ;; modle, please use `M-x copilot-chat-set-model'.
-    (copilot-chat-default-model "gpt-4.1")
+    ;; Note: Our company's subscription has monthly usage limits for most models;
+    ;; `gpt-4.1' is unlimited. If you hit the limit, switch models temporarily
+    ;; using `M-x copilot-chat-set-model'.
+    (copilot-chat-default-model "claude-opus-4.5")
 
     :config
     (defun copilot-chat-how ()
@@ -2932,7 +2933,10 @@ Additional dependency:
                 ;; Original RET functionality is bound to `C-c C-c', matching
                 ;; other LLM packages.
                 ("RET" . agent-shell-newline)
-                ("C-c C-c" . shell-maker-submit)))
+                ("C-c C-c" . shell-maker-submit))
+    :custom
+    ;; *IMPROTANT* agent shell ignore the model specified in claude settings.json
+    (agent-shell-anthropic-default-model-id "us.anthropic.claude-opus-4-5-20251101-v1:0"))
 #+end_src
 
 *** claude-code-ide.el
