@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-01-15 +1100
+#+DATE: 2026-01-30 +1100
 
 * bash_profile
 :PROPERTIES:
@@ -236,6 +236,12 @@ fi
   if command -v pyenv > /dev/null; then
       eval "$(pyenv init -)"
   fi
+#+end_src
+
+** Kubernetes
+#+begin_src bash
+  KUBECONFIG=~/.kube/config.prod:~/.kube/config.staging
+  export KUBECONFIG
 #+end_src
 
 ** To migrate
