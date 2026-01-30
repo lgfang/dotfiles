@@ -244,6 +244,14 @@ fi
   export KUBECONFIG
 #+end_src
 
+** JIRA CLI
+
+#+begin_src bash
+  # The token was stored in MacOS keychain using:
+  #  security add-generic-password -a "jira-api-token" -s "jira-cli" -w "YOUR_TOKEN"
+  export JIRA_API_TOKEN=$(security find-generic-password -a "jira-api-token" -s "jira-cli" -w 2>/dev/null)
+#+end_src
+
 ** To migrate
 #+begin_src bash
 #* Shell options
