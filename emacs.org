@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-01-16 +1100
+#+DATE: 2026-02-02 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -142,6 +142,8 @@ the terminal or as a GUI app.
   (use-package exec-path-from-shell
     :if (and (eq system-type 'darwin) (display-graphic-p))
     :config
+    (dolist (var '("KUBECONFIG" "JIRA_API_TOKEN"))
+      (add-to-list 'exec-path-from-shell-variables var))
     (exec-path-from-shell-initialize))
 #+end_src
 
