@@ -27,113 +27,6 @@
       org-cycle-include-plain-lists t
       org-src-fontify-natively t
       org-reverse-note-order t
-      org-archive-location (concat my-personal-path "archive.gtd::* From %s")
-
-      ;; At the moment, I clock heavily. In such situation, the default value
-      ;; "(closed clock)" becomes annoying in org-agenda-log-mode because is
-      ;; CLOSED entries are kinda out of order due to sorting using the start
-      ;; times.
-
-      ;;  18:00-18:10 Clocked:   (0:10) DONE task1
-      ;;  18:10-18:15 Clocked:   (0:05) DONE task2
-      ;;  18:10...... Closed:     DONE task1 <--- I wish this entry move one line up
-      ;;  18:15...... Closed:     DONE task2
-      org-agenda-log-mode-items '(clock)
-
-      org-clock-update-period 300
-      org-duration-format '(("y")("m")("w")("d") (special . h:mm))
-      org-duration-units `(("min" . 1)  ; IMPORTANT: must round all units to integers
-                           ("h" . 60)
-                           ("d" . ,(round (* 60 7.6))) ; 7.6 hours per day (Aussie law)
-                           ("w" . ,(round (* 60 7.6 5))) ; 38 hours per week
-                           ("m" . ,(round (* 60 7.6 22)))  ; ~22 days per month
-                           ("y" . ,(round (* 60 7.6 250)))) ; ~250 working days per year
-
-      ;;; GTD related
-      ;; refer to [[file:./org-gtd.lgf]] for the usage
-      org-agenda-files
-      (mapcar (lambda (x) (concat my-personal-path x))
-            (list "work.gtd" "personal.gtd" "part-time.gtd"))
-
-      org-todo-keywords '(
-                          ;; !@ means attach timestamps/notes when changing to certain state
-                          (type "INCOME(i!)" "TODO(t!)" "WAIT(w@)" "HOLD(h!)" "MAYBE(m!)"
-                                "|" "DONE(d!)" "CANCEL(c@)" "DELEGATE(@)")
-                          )
-
-      ;;; Todo dependencies
-      ;; block changing to DONE until all tasks it depends on are done.
-      org-enforce-todo-dependencies t
-      ;; hide the task in org agenda until it is  unblocked.
-      org-agenda-dim-blocked-tasks 'invisible
-
-      ;; For easily refile todo items: mark possible targets with the tag
-      ;; "headline". Do not use multiple levels of headers because that
-      ;; generates too many targets.
-      org-refile-targets '((org-agenda-files . (:tag . "headline")))
-
-      org-log-done 'time
-      org-agenda-span 'week
-      org-agenda-skip-deadline-if-done t
-      org-agenda-skip-scheduled-if-done t
-      org-agenda-skip-scheduled-if-deadline-is-shown t
-      org-agenda-show-all-dates nil
-      org-agenda-start-on-weekday nil
-      ;; org-agenda-include-diary t
-      org-deadline-warning-days 3
-      org-agenda-skip-deadline-prewarning-if-scheduled t
-      org-tags-exclude-from-inheritance (list "project")
-      org-agenda-custom-commands
-      '(("x" "TODO items @ALL@"
-         ((todo "INCOME" ((org-agenda-todo-ignore-scheduled 'future)))
-          (todo "TODO" ((org-agenda-todo-ignore-scheduled 'future)))
-          (agenda "" ((org-agenda-span 2)
-                      (org-deadline-warning-days 7)
-                      ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
-                                        ; Do not skip scheduled todo items. 1)
-                                        ; As per my org-gtd, few items have both
-                                        ; schedule and a todo tag. So I don't
-                                        ; expect it would cause many troubles 2)
-                                        ; I do want to see the clocked todo
-                                        ; items in org-agenda-log-mode.
-                      ))))
-        ("y" "TODO items @WORK@"
-         ((todo "INCOME"
-                ((org-agenda-files '("~/mynotes/personal/work.gtd"))
-                 (org-agenda-todo-ignore-scheduled 'future)))
-          (todo "TODO"
-                ((org-agenda-files '("~/mynotes/personal/work.gtd"))
-                 (org-agenda-todo-ignore-scheduled 'future)))
-          (agenda ""
-                  ((org-agenda-span 2)
-                   (org-deadline-warning-days 7)
-                   ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("INCOME" "TODO")))
-                                        ; see above for why no longer skip todo items.
-                   (org-agenda-files '("~/mynotes/personal/work.gtd"))))))
-        ("p" "PENDING items"
-         ((todo "WAIT") (todo "HOLD")  (todo "MAYBE")))
-        ("r" "Report work 1 week" tags "+CLOSED>\"<-7d>\""
-         ((org-agenda-files '("~/mynotes/personal/work.gtd"))))
-        ("b" "My bookmark" search nil
-         ((org-agenda-files '("~/mynotes/personal/bookmarks.lgf"))))
-        ("c" "Bookmark category" tags nil
-         ((org-agenda-files '("~/mynotes/personal/bookmarks.lgf")))))
-
-      org-default-notes-file "~/.income.org" ; overwritten by
-                                             ; org-capture-templates
-      org-capture-templates
-      (list
-       (list "w" "work related" 'entry
-             (list 'file+olp (concat my-personal-path "work.gtd") "Misc.")
-             "* INCOME %?" :prepend t)    ; number of * doesn't matter
-       (list "p" "personal task" 'entry
-             (list 'file+olp (concat my-personal-path "personal.gtd") "Misc.")
-             "* INCOME %?" :prepend t)
-       ;; (list "r" "things to be included in work report" 'entry
-       ;;       ;; this one is a little bit cool :)
-       ;;       (list 'file+datetree (concat my-personal-path "work-report.lgf"))
-       ;;       "* %?" :prepend t)
-       )        ; end of org-capture-templates
 
       ;;; publish related. Refer to my orgpub-levelN files for more
       ;; options
@@ -215,8 +108,6 @@
 (add-to-list 'auto-mode-alist
              '("\\.\\(blog\\|org\\|lgf\\|tkt\\|gtd\\)$" . org-mode))
 
-(add-hook 'remember-mode-hook 'org-remember-apply-template)
-
 (add-hook 'org-mode-hook
           (lambda()
             (imenu-add-menubar-index)
@@ -292,10 +183,6 @@
 according to modification time is good enough."
   (if (file-exists-p file) (nth 5 (file-attributes file))
     (error "No such file: \"%s\"" file)))
-
-
-(eval-after-load "org-agenda"
-  '(define-key org-agenda-mode-map (kbd "M-p") 'add-to-project-list))
 
 (provide 'lgfang.org)
 ;;; .org.el ends here

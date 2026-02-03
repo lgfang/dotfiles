@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-02-02 +1100
+#+DATE: 2026-02-04 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1728,6 +1728,15 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
               (words (split-string heading "[ \t]+" t)))
          (concat (string-join (seq-take words limit) " ")
                  (when (> (length words) limit) "...")))))
+
+    (org-clock-update-period 300)
+    (org-duration-format '(("y")("m")("w")("d") (special . h:mm)))
+    (org-duration-units `(("min" . 1)   ; IMPORTANT: must round all units to integers
+                          ("h" . 60)
+                          ("d" . ,(round (* 60 7.6))) ; 7.6 hours per day (Aussie law)
+                          ("w" . ,(round (* 60 7.6 5))) ; 38 hours per week
+                          ("m" . ,(round (* 60 7.6 22))) ; ~22 days per month
+                          ("y" . ,(round (* 60 7.6 250))))) ; ~250 working days per year
     )
 #+end_src
 
@@ -1851,6 +1860,85 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 
 ** Getting Things Done (GTD)
 #+begin_src emacs-lisp
+  (use-package org
+    :ensure nil                           ; Built-in
+    :custom
+    ;; Todo keywords: !@ means attach timestamps/notes when changing to certain state
+    (org-todo-keywords
+     '((type "INBX(i!)" "TODO(t!)" "PROG(p!)" "WAIT(w@)" "HOLD(h!)" "MAYB(m!)"
+             "|" "DONE(d!)" "DROP(c@)" "PASS(@)")))
+
+    ;; Todo dependencies
+    (org-enforce-todo-dependencies t)     ; Block DONE until dependencies are done
+    (org-agenda-dim-blocked-tasks 'invisible) ; Hide blocked tasks in agenda
+
+    ;; Refile targets: mark possible targets with the tag "headline"
+    (org-refile-targets '((org-agenda-files . (:tag . "headline"))))
+
+    ;; Logging
+    (org-log-done 'time)
+
+    ;; Agenda display
+    (org-agenda-span 'week)
+    (org-agenda-skip-deadline-if-done t)
+    (org-agenda-skip-scheduled-if-done t)
+    (org-agenda-skip-scheduled-if-deadline-is-shown t)
+    (org-agenda-show-all-dates nil)
+    (org-agenda-start-on-weekday nil)
+    (org-deadline-warning-days 3)
+    (org-agenda-skip-deadline-prewarning-if-scheduled t)
+    (org-tags-exclude-from-inheritance (list "project"))
+
+    ;; Default notes file (overwritten by org-capture-templates)
+    (org-default-notes-file "~/.income.org")
+
+    :config
+    ;; Settings that depend on my-personal-path (evaluated at load time)
+    (setq org-agenda-files
+          (mapcar (lambda (x) (concat my-personal-path x))
+                  '("work.gtd" "personal.gtd" "part-time.gtd")))
+
+    (setq org-archive-location (concat my-personal-path "archive.gtd::* From %s"))
+
+    (setq org-capture-templates
+          `(("w" "work related" entry
+             (file+olp ,(concat my-personal-path "work.gtd") "Misc.")
+             "* INBX %?" :prepend t)
+            ("p" "personal task" entry
+             (file+olp ,(concat my-personal-path "personal.gtd") "Misc.")
+             "* INBX %?" :prepend t)))
+
+
+    (setq org-agenda-custom-commands
+          `(("x" "TODO items @ALL@"
+             ((todo "INBX" ((org-agenda-todo-ignore-scheduled 'future)))
+              (todo "PROG" ((org-agenda-todo-ignore-scheduled 'future)))
+              (todo "TODO" ((org-agenda-todo-ignore-scheduled 'future)))
+              (agenda "" ((org-agenda-span 2)
+                          (org-deadline-warning-days 7)))))
+            ("y" "TODO items @WORK@"
+             ((todo "INBX"
+                    ((org-agenda-files '(,(concat my-personal-path "work.gtd")))
+                     (org-agenda-todo-ignore-scheduled 'future)))
+              (todo "PROG"
+                    ((org-agenda-files '(,(concat my-personal-path "work.gtd")))
+                     (org-agenda-todo-ignore-scheduled 'future)))
+              (todo "TODO"
+                    ((org-agenda-files '(,(concat my-personal-path "work.gtd")))
+                     (org-agenda-todo-ignore-scheduled 'future)))
+              (agenda ""
+                      ((org-agenda-span 2)
+                       (org-deadline-warning-days 7)
+                       (org-agenda-files '(,(concat my-personal-path "work.gtd")))))))
+            ("p" "PENDING items"
+             ((todo "WAIT") (todo "HOLD") (todo "MAYB")))
+            ("r" "Report work 1 week" tags "+CLOSED>\"<-7d>\""
+             ((org-agenda-files '(,(concat my-personal-path "work.gtd")))))
+            ("b" "My bookmark" search nil
+             ((org-agenda-files '(,(concat my-personal-path "bookmarks.lgf")))))
+            ("c" "Bookmark category" tags nil
+             ((org-agenda-files '(,(concat my-personal-path "bookmarks.lgf"))))))))
+
   (use-package org-capture
     :ensure nil                           ; Feature, not package
     :bind (:map global-map ("<f10>" . org-capture)))
