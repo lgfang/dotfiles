@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-02-06 +1100
+#+DATE: 2026-02-13 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1608,7 +1608,9 @@ Corresponding configuration files are in my Emacs notes directory for record onl
 * Kubernetes
 #+begin_src emacs-lisp
   (use-package kubel
-    :commands kubel)
+    :commands kubel
+    :init                          ; Must set the value before loading the package
+    (setq-default kubel-namespace "devprod-platform"))
 #+end_src
 
 The packages works with limited privileges. Frequently used hotkeys:
