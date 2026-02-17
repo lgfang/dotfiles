@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-02-13 +1100
+#+DATE: 2026-02-18 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -363,11 +363,14 @@ repeat mode or =C-g=.
     :custom
     (vertico-resize nil)
     (vertico-cycle nil)
-    ;; ;; Avoid `reverse' + `mouse', they are not compatible at the moment.
-    ;; (vertico-multiform-categories '(
-    ;;                                 ;; default, enable buffer & mouse
-    ;;                                 (t buffer mouse)
-    ;;                                 ))
+    ;; Force consistent vertico buffer placement
+    (vertico-buffer-display-action '(display-buffer-in-side-window
+                                     (side . bottom) (window-height . 0.4)))
+    ;; Note: avoid `reverse' + `mouse', they are not compatible at the moment.
+    (vertico-multiform-categories '(
+                                    ;; default, enable buffer & mouse
+                                    (t buffer mouse)
+                                    ))
     ;; (vertico-multiform-commands '(("imenu" buffer mouse)
     ;;                               ("recentf-.*" buffer mouse)
     ;;                               ))
