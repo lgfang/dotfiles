@@ -330,7 +330,12 @@ NOTE: To use this within tmux session, upgrade to tmux 2.6+.
         )))
     ;; Sort by buffer names, to change sort mode interactively, press `,' or `M-x
     ;; ibuffer-toggle-sorting-mode' in the ibuffer.
-    (ibuffer-default-sorting-mode 'alphabetic))
+    (ibuffer-default-sorting-mode 'alphabetic)
+
+    :config
+    ;; Set default view to detailed buffer names with unlimited width.
+    ;; Press ` (backtick) to cycle through standard formats.
+    (push '(mark modified read-only " " (name 30 -1 :left)) ibuffer-formats))
 #+end_src
 
 ** Repeat mode
