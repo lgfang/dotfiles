@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-02-18 +1100
+#+DATE: 2026-02-20 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3008,29 +3008,42 @@ This package is a *native Emacs shell* that interacts with LLM agents using ACP
 other implementations, including ~claude-code-ide.el~, which are essentially
 thin wrappers around the Claude Code CLI.
 
-However, it currently lacks some features offered by ~claude-code-ide.el~, such
-as typing prompts in the minibuffer and context awareness.
-
 Additional dependency:
 - ~claude-code-acp~
   #+begin_src bash
-    npm install -g @zed-industries/claude-code-acp
+    npm install -g @zed-industries/claude-agent-acp
   #+end_src
 
 #+begin_src emacs-lisp
   (use-package agent-shell
+    :vc (:url "https://github.com/lgfang/agent-shell" :rev :newest)
     :bind (:map agent-shell-mode-map
                 ;; Use RET for newline as S-RET does not work in terminals.
                 ;; Original RET functionality is bound to `C-c C-c', matching
                 ;; other LLM packages.
                 ("RET" . agent-shell-newline)
-                ("C-c C-c" . shell-maker-submit))
+                ("C-c C-c" . shell-maker-submit)
+                ("C-c i" . agent-shell-interrupt))
+    :init
+    (defun agent-shell-anthropic-model-id-from-name (name)
+      "Return a function that resolves model NAME to a model ID."
+      (lambda ()
+        (when-let* ((models (and (boundp 'agent-shell--state)
+                                 (map-nested-elt agent-shell--state '(:session :models))))
+                    (model (seq-find (lambda (m)
+                                       (string-equal (downcase (or (map-elt m :name) ""))
+                                                     (downcase name)))
+                                     models)))
+          (map-elt model :model-id))))
     :custom
+    (agent-shell-session-strategy 'new)
+    (agent-shell-preferred-agent-config 'claude-code)
     ;; *IMPROTANT* agent shell ignore the model specified in claude settings.json
-    (agent-shell-anthropic-default-model-id "us.anthropic.claude-opus-4-5-20251101-v1:0"))
+    (agent-shell-anthropic-default-model-id (agent-shell-anthropic-model-id-from-name "opus")))
+
 #+end_src
 
-*** claude-code-ide.el
+*** COMMENT claude-code-ide.el
 
 #+begin_src emacs-lisp
   (use-package claude-code-ide
