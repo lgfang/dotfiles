@@ -61,15 +61,6 @@ following commands to see the statistics:
 - =M-x use-package-report=
 - =M-x emacs-init-time=
 
-** Start up screen
-#+begin_src emacs-lisp
-  (use-package emacs
-    :custom
-    (inhibit-startup-screen t)
-    (initial-scratch-message "")
-    )
-#+end_src
-
 ** Initialize "package"
 
 #+begin_src emacs-lisp
@@ -109,6 +100,42 @@ related configurations together.
   (use-package my-confidential
      :load-path my-personal-path
      )
+#+end_src
+
+* Start up screen and scratch buffer
+#+begin_src emacs-lisp
+  (use-package emacs
+    :custom
+    (inhibit-startup-screen nil)
+    (initial-buffer-choice  (concat my-emacs-d "splash.org"))
+    (initial-scratch-message "")
+    )
+#+end_src
+
+** Splash screen file
+
+This file is shown according to the value of ~initial-buffer-choice~ we set
+above.
+
+You can edit this file to include anything you find useful. For example:
++ Add reminders you want to see occasionally
++ Include shortcuts to start Claude Code (Agent Shell) in your active projects
+
+An example is shown below.
+
+#+begin_src org :tangle ~/.emacs.d/splash.org
+  ,#+TITLE: Splash Screen
+  ,#+startup: showeverything
+
+  ,* Reminders
+
+  + Keep it simple
+  + Measure before optimising
+
+  ,* AI Agents
+
+  - [[elisp:(let ((default-directory "~/source/project-a")) (agent-shell))][Claude @ A]]
+  - [[elisp:(let ((default-directory "~/source/project-b")) (agent-shell))][Claude @ B]]
 #+end_src
 
 * Language environment and coding system
