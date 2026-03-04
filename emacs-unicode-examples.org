@@ -1,0 +1,28 @@
+*NOTE:* To avoid display errors that might block editing, please store this
+snippet outside the main Emacs configuration file.
+
+Move cursor around and press ~C-l~, see if the cursor and chars are still
+displayed correctly.
+
+- 平安喜乐 :: Chinese characters
+- 😃 (\u01F603) :: Smiling Face with Open Mouth
+- 🏖 (\u1F3D6) :: Beach with Umbrella
+  + This renders as a single-width character unless followed by a trailing
+    space, which allows it to expand to two characters. Compare 🏖 and 🏖.
+  + *Reason*: This character originates from an older set of pictographs and can
+    be rendered in two styles: text or emoji. When standalone, the Unicode
+    standard defaults to text style (typically a flat, monochrome icon similar
+    to a standard font character). While modern terminal emulators are smart
+    enough to draw it as a wide graphical emoji anyway, Emacs's core C code
+    strictly follows baseline Unicode definitions for character width and
+    register this character as width 1.
+- 🏖️ (\u1F3D6 \uFE0F) :: Beach with Umbrella + Variation Selector 16
+  + The variation selector character is invisible but explicitly requests the
+    emoji-style presentation. These two characters render as one glyph. However,
+    if ~auto-composition-mode~ is disabled, they render as two separate
+    characters.
+- 👩‍💻 (\u01F469 \u200D \u01F4BB) :: Woman + Zero Width Joiner (ZWJ) + Personal
+  Computer
+  + The ZWJ indicates that 👩 and 💻 should combine into a single glyph (Woman
+    Technologist). Therefore, these three characters render as one. However, if
+    ~auto-composition-mode~ is disabled, all three characters appear separately.
