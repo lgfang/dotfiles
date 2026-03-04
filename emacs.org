@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-02-20 +1100
+#+DATE: 2026-03-06 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -174,12 +174,13 @@ the terminal or as a GUI app.
     (exec-path-from-shell-initialize))
 #+end_src
 
-* ZWJ (Zero Width Joiner) emoji handling.
+* Emojis and Format Characters (Zero Width Joiners, Variation Selectors)
 
-Disable =auto-complete-mode= if running in a terminal as most terminal emulators
-cannot handle Emoji ZWJ. See ZWJ examples in [[file:~/mynotes/emacs/emacs-unicode-test.org][my ZWJ test file]].
+When running Emacs in a terminal, cursor movements may garble the display of the
+buffer's content if it contains emojis, particularly those using format
+characters such as Zero Width Joiners (ZWJ) or Variation Selectors.
 
-NOTE: disabling it on the fly does not work very well, must restart Emacs.
+To prevent this issue, please disable ~auto-composition-mode~ as shown below.
 
 #+begin_src emacs-lisp
   (use-package emacs
@@ -188,6 +189,14 @@ NOTE: disabling it on the fly does not work very well, must restart Emacs.
     (setq-default auto-composition-mode nil)
     )
 #+end_src
+
+NOTE:
+- Emacs must be restarted because disabling auto composition on the fly does not
+  work well.
+- Trade-offs: emojis with ZWJ or variation selectors will render as multiple
+  distinct characters rather than a single combined image.
+
+See [[file:emacs-unicode-examples.org][my unicode examples]] for more information.
 
 * Interaction convenience
 
