@@ -3,7 +3,7 @@
 
 #+TITLE: My Tmux Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-03-14 +1100
+#+DATE: 2026-03-07 +1100
 
 * Timestamps
 
@@ -18,6 +18,7 @@
 #+end_src
 
 * Screen key bindings
+
 In case tmux is not available, below are some basic usage of *Screen*:
 | new session foo        | screen -S foo |
 | attach to session foo  | screen -x foo |
@@ -31,22 +32,23 @@ In case tmux is not available, below are some basic usage of *Screen*:
 
 Force tmux to use "true color":
 #+begin_src conf :tangle ~/.tmux.conf
-set-option -g default-terminal "xterm-256color"
-set-option -ag terminal-overrides ",xterm-256color:RGB"
+set -g default-terminal "xterm-256color"
+set -ag terminal-overrides ",xterm-256color:RGB"
 #+end_src
 
-Ideally, tmux should detect the terminal emulator's color capability automatically, but this does
-not always work. Hence, sometimes we need to explicitly tell tmux that the terminal emulator is
-capable of that.
+Ideally, tmux should detect the terminal emulator's color capability
+automatically, but this does not always work. Hence, sometimes we need to
+explicitly tell tmux that the terminal emulator is capable of that.
 
 * Prefix key
 #+begin_src conf :tangle ~/.tmux.conf
-set-option -g prefix F12        # if not work, check if TERM=xterm
+set -g prefix F12        # if not work, check if TERM=xterm
 bind-key F12 send-prefix
 #+end_src
 
-Use F12 as the prefix. Pressing F12 twice sends the prefix key (i.e. F12 per my configuration) to
-the underlying window. This is makes working with nested tmux sessions much easier:
+Use F12 as the prefix. Pressing F12 twice sends the prefix key (i.e. F12 per my
+configuration) to the underlying window. This is makes working with nested tmux
+sessions much easier:
 - "F12 <key>" sends the key to the outer tmux session.
 - "F12 F12 <key>" sends the key the inner tmux session.
 
@@ -59,8 +61,8 @@ the underlying window. This is makes working with nested tmux sessions much easi
 - Press Shift-F12 again :: Exit nested mode.
 
 #+begin_src conf :tangle ~/.tmux.conf
-  bind -T root S-F12 set prefix None \; set key-table off \; set-option status off \; refresh-client -S
-  bind -T off S-F12 set -u prefix \; set -u key-table \; set-option status on \; refresh-client -S
+  bind -T root S-F12 set prefix None \; set key-table off \; set status off \; refresh-client -S
+  bind -T off S-F12 set -u prefix \; set -u key-table \; set status on \; refresh-client -S
 #+end_src
 
 * Copy mode
@@ -71,105 +73,41 @@ the underlying window. This is makes working with nested tmux sessions much easi
 
 * Status bar
 #+begin_src conf :tangle ~/.tmux.conf
-  # set-option -g base-index 1      # window index starts from 1 instead of 0
-  set-option -g status on
-  set-window-option -g automatic-rename on
-  set-window-option -g monitor-activity on
-  # set-option -g status-utf8 on
-  set-option -g status-justify right # centre
-  # set-option -g window-status-format "#I:#W"
-  set-option -g status-left-length 30
-  set-option -g status-left "[#S@#h] #T"
-  # set-option -g status-left "#[fg=green]#S:#T"
-  set-option -g status-right ""
+  set -g status on
+  set -g status-position bottom
+  # Key to toggle status bar on/off
+  bind-key b set status
 
-  # Toggle status bar on/off
-  bind-key b set-option status
+  # colors
+  set -g status-style 'bg=#1e1e2e fg=#cdd6f4'
+
+  # Left side
+  set -g status-left-length 50
+  set -g status-left '#[fg=#1e1e2e,bg=#a6e3a1,bold] #H #[fg=#89b4fa,bg=#1e1e2e] | #[fg=#1e1e2e,bg=#89b4fa,bold] #S #[fg=#89b4fa,bg=#1e1e2e] | '
+  set -g status-justify left # the window list
+
+  # Right side of status bar
+  set -g status-right-length 0
+  set -g status-right ''
+
+  # Window status
+  set -g window-status-format ' #I:#W '
+  set -g window-status-current-format '#[fg=#1e1e2e,bg=#cba6f7,bold] #I:#W #[fg=#cba6f7,bg=#1e1e2e]'
+  set -g window-status-activity-style fg=red
+
+  # Window Behavior
+  setw -g automatic-rename on
+  setw -g monitor-activity on
+  set -g status-interval 1
 #+end_src
 
 * Terminal emulator window title
-If you do not hide the title bar of the terminal emulator, the following sets its title.
+
+If you do not hide the title bar of the terminal emulator, the following sets
+its title.
 #+begin_src conf :tangle ~/.tmux.conf
-set-option -g set-titles on
-set-option -g set-titles-string 'tmux:#S@#h'
-#+end_src
-
-* Color themes
-
-How to use: uncomment the one to be used and comment out all other themes.
-
-** Concise
-#+begin_src conf :tangle ~/.tmux.conf
-  # default statusbar colors
-  set-option -g status-fg colour244 #base0
-  set-option -g status-bg colour235 #base02
-  set-option -g status-style default
-
-  # default window title colors
-  set-window-option -g window-status-style fg=colour64 #green
-  #set-window-option -g window-status-style dim
-
-  # current window title colors
-  set-window-option -g window-status-current-style fg=colour166 #orange
-  #set-window-option -g window-status-current-style bright
-
-  # activity indication
-  set-window-option -g window-status-activity-style fg=red
-
-  # pane border
-  set-option -g pane-border-style fg=green
-  set-option -g pane-active-border-style fg=colour166
-
-  # message text
-  set-option -g message-style bg=colour235 #base02
-  set-option -g message-style fg=colour166 #orange
-
-  # pane number display
-  set-option -g display-panes-active-colour colour166 #orange
-  set-option -g display-panes-colour colour33 #blue
-
-  # clock
-  set-window-option -g clock-mode-colour colour64 #green
-
-#+end_src
-
-** COMMENT Blocks
-
-#+begin_src conf :tangle ~/.tmux.conf
-  # default statusbar colors
-  set-option -g status-fg colour235
-  set-option -g status-bg colour244
-  set-option -g status-attr default
-
-  # default window title colors
-  set-window-option -g window-status-fg default
-  set-window-option -g window-status-bg colour64
-  #set-window-option -g window-status-attr dim
-
-  # current window title colors
-  set-window-option -g window-status-current-bg colour166
-  set-window-option -g window-status-current-fg default
-  #set-window-option -g window-status-current-attr bright
-
-  # activity indication
-  set-window-option -g window-status-activity-bg red
-  set-window-option -g window-status-activity-fg default
-  set-window-option -g window-status-activity-attr none
-
-  # pane border
-  set-option -g pane-border-fg colour235
-  set-option -g pane-active-border-fg colour240
-
-  # message text
-  set-option -g message-bg colour235
-  set-option -g message-fg colour166
-
-  # pane number display
-  set-option -g display-panes-active-colour colour166
-  set-option -g display-panes-colour colour33
-
-  # clock
-  set-window-option -g clock-mode-colour colour64
+set -g set-titles on
+set -g set-titles-string '#h: #S'
 #+end_src
 
 * Pre-load copy buffers
@@ -183,12 +121,12 @@ How to use: uncomment the one to be used and comment out all other themes.
 #+begin_src conf :tangle ~/.tmux.conf
 
 #* Timers
-set-option -g display-time 3000
-set-option -g history-limit 50000
-set-option -g repeat-time 500
+set -g display-time 3000
+set -g history-limit 50000
+set -g repeat-time 500
 
 #* Mouse support
-set-option -g mouse on
+set -g mouse on
 #** Enter copy mode directly on mouse wheel
 ## Check #{alternate_on} to determine if the underlying application uses the
 ## alternate display and shall we pass the event alone or not.
@@ -200,16 +138,16 @@ bind-key -T copy-mode-emacs C-WheelUpPane send-keys -X halfpage-up
 bind-key -T copy-mode-emacs C-WheelDownPane send-keys -X halfpage-down
 
 #* Key bindings
-set-option -g status-keys emacs
-set-option -g mode-keys emacs
+set -g status-keys emacs
+set -g mode-keys emacs
 bind-key | split-window -h -c "#{pane_current_path}" # default is "
 bind-key _ split-window -v -c "#{pane_current_path}" # default is %
 bind-key -r Tab select-pane -t:.+ # easier to key-chord than F12+<arrow>
 bind-key -r BTab select-pane -t:.-
 bind-key -T copy-mode-emacs C-g send-keys -X cancel # C-g (instead of ESC) to quit copy-mode
 bind-key -T edit-mode-emacs C-g send-keys -X cancel # C-g to quit command editing
-bind-key C-s set-window-option synchronize-panes
-bind-key < set-option automatic-rename on
+bind-key C-s setw synchronize-panes
+bind-key < set automatic-rename on
 bind-key -r n next-window       # same as default ones but are repeat-able
 bind-key -r p previous-window
 bind-key -r Space next-layout
@@ -233,7 +171,7 @@ bind-key -T root PPage if-shell -F "#{alternate_on}" "send-keys PPage" "copy-mod
 # `C-h' to save log
 bind-key C-h command-prompt -p "save log to:" \
          "copy-mode; send-keys 'M->' C-e C-space 'M-<' C-a C-w; save-buffer %%"
-# # if "set-window-option -g mode-keys vi", use this one:
+# # if "setw -g mode-keys vi", use this one:
 # bind-key C-h command-prompt -p "save log to:" \
 #          "copy-mode; send-keys g 'space' G 'enter'; save-buffer %%"
 
@@ -243,7 +181,7 @@ bind-key C-h command-prompt -p "save log to:" \
 #          display-message "Start logging($HOME/#S-#I-#P.log)"
 
 # bind-key H pipe-pane \; \
-#          set-window-option automatic-rename on \; \
+#          setw automatic-rename on \; \
 #          display-message "Stopped logging(#S-#I-#P.log)"
 
 #* Copy/paste buffer
