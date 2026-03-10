@@ -345,6 +345,7 @@ NOTE: To use this within tmux session, upgrade to tmux 2.6+.
          (seq "*claude-code" (* nonl) "*")     ; Claude in claude-code-ide
          (seq "*Copilot Chat" (* nonl))        ; Copilot chat
          (or                                   ; gptel
+          "*gptel chat*"
           "*DeepSeek*"
           "*CopilotChat*"
           "*Bedrock*"
@@ -360,7 +361,7 @@ NOTE: To use this within tmux session, upgrade to tmux 2.6+.
     (ibuffer-saved-filter-groups
      `(("my"
         ("Dired" (mode . dired-mode))
-        ("LLM" (name . ,my/ibuffer-regexp-llm-buffers))
+        ("AI" (name . ,my/ibuffer-regexp-llm-buffers))
         ("Magit" (name . "^magit"))
         ("Emacs" (name . "^\\*.*\\*$"))
         )))
@@ -683,7 +684,7 @@ to the current window layout.
        "\\*maple-translate\\*"
 
        "\\*\\(Copilot Chat\\|aidermacs:\\).*\\*"
-       "\\*\\(DeepSeek\\|.*GPT.*\\|LLM response\\)\\*" ; gptel
+       "\\*\\(gptel chat\\|DeepSeek\\|.*GPT.*\\|LLM response\\)\\*" ; gptel
 
        "\\*Python\\*"
 
@@ -2802,42 +2803,115 @@ See language-specific sections for details.
 
 * AI/LLM
 
+** Agent Shell
+
+This package is a *native Emacs shell* that interacts with LLM agents using ACP
+(Agent Client Protocol), providing a more native Emacs experience than most
+other implementations, including ~claude-code-ide.el~, which are essentially
+thin wrappers around the Claude Code CLI.
+
+Prerequisites (for Claude Code):
+- Claude Code, see [[file:ai.org::*Claude][my Claude notes]] for details.
+- Claude Code ACP
+  #+begin_src bash
+    npm install -g @zed-industries/claude-agent-acp
+  #+end_src
+
+#+begin_src emacs-lisp
+  (use-package agent-shell
+    :vc (:url "https://github.com/xenodium/agent-shell" :rev :newest)
+    :bind (("<f5>" . (lambda () (interactive)
+                       (let ((default-directory "~/source/dsi-0"))
+                         (agent-shell))))
+           ("<f6>" . (lambda () (interactive)
+                       (let ((default-directory "~/source/dsi-1"))
+                         (agent-shell))))
+           :map agent-shell-mode-map
+           ;; Use RET for newline as S-RET does not work in terminals.
+           ;; Original RET functionality is bound to `C-c C-c', matching
+           ;; other LLM packages.
+           ("RET" . agent-shell-newline)
+           ("C-c C-c" . shell-maker-submit)
+           ("C-c i" . agent-shell-interrupt))
+    :init
+    (defun agent-shell-anthropic-model-id-from-name (name)
+      "Return a function that resolves model NAME to a model ID."
+      (lambda ()
+        (when-let* ((models (and (boundp 'agent-shell--state)
+                                 (map-nested-elt agent-shell--state '(:session :models))))
+                    (model (seq-find (lambda (m)
+                                       (string-equal (downcase (or (map-elt m :name) ""))
+                                                     (downcase name)))
+                                     models)))
+          (map-elt model :model-id))))
+    :custom
+    (agent-shell-session-strategy 'prompt)
+    (agent-shell-preferred-agent-config 'claude-code)
+    ;; *IMPROTANT* agent shell ignore the model specified in claude settings.json
+    (agent-shell-anthropic-default-model-id (agent-shell-anthropic-model-id-from-name "opus")))
+
+#+end_src
+
 ** gptel
 
 #+begin_src emacs-lisp
   (use-package gptel
     :defines gptel-mode-map
     :commands (gptel-make-gh-copilot gptel-make-deepseek gptel-make-openai auth-source-search)
-    :bind (:map gptel-mode-map ("C-c C-c" . gptel-send))
+    :bind (("<f7>" . (lambda () (interactive) (switch-to-buffer (gptel "*gptel chat*"))))
+           :map gptel-mode-map ("C-c C-c" . gptel-send))
+
     :hook ((gptel-post-stream . gptel-auto-scroll))
 
     :custom
     (gptel-default-mode 'org-mode)
 
-    :config
-    (gptel-make-gh-copilot "CopilotChat")
+    :preface
+    (defun my/gptel-get-key (host login)
+      "Return a lambda that fetches the API key for HOST and LOGIN from auth-source.
 
+       Returns a lambda not the results so the actual secret is looked up
+       only when gptel needs it, not when Emacs is initializing."
+      (lambda ()
+        (require 'auth-source)
+        (let* ((result (auth-source-search :host host :user login :require '(:secret)))
+               (entry (car result)))
+          (if entry
+              (let ((secret (plist-get entry :secret)))
+                (cond
+                 ((functionp secret) (funcall secret))
+                 ((stringp secret) secret)
+                 (t (error "Secret for %s@%s is not a string or function" login host))))
+            (error "Failed to retrieve API key for %s@%s" login host)))))
+
+    :config
     (gptel-make-deepseek "DeepSeek"
       :stream t
-      :key (lambda ()
-             (require 'auth-source)
-             (let ((result (auth-source-search :host "deepseek" :require '(:secret))))
-               (if result
-                   (funcall (plist-get (car result) :secret))
-                 (error "Failed to retrieve DeepSeek API key"))))
-      )
+      :key (my/gptel-get-key "deepseek" "api"))
 
-    (with-eval-after-load 'gptel-bedrock
-      (setq gptel-bedrock--model-ids
-            (append gptel-bedrock--model-ids
-                    '((sonnet-previous . "us.anthropic.claude-sonnet-4-20250514-v1:0")
-                      (sonnet-latest . "us.anthropic.claude-sonnet-4-5-20250929-v1:0")))))
+    (gptel-make-gemini "Gemini"
+      :stream t
+      :key (my/gptel-get-key "gemini" "free-api"))
 
     (gptel-make-bedrock "Bedrock"
       :stream t
       :region "us-east-1"
-      :models '(sonnet-previous sonnet-latest)
-      :aws-profile "ai-coder-llm"))
+      :aws-profile "ai-coder-llm")
+
+    (setq-default gptel-backend (gptel-make-gh-copilot "CopilotChat"))
+    (setq-default gptel-model 'gemini-3.1-pro-preview)
+
+    (gptel-make-openai "MongoGPT"
+      :stream nil
+      :host "mongogpt.aix.prod.corp.mongodb.com"
+      :endpoint "/api/v1/messages"
+      :key (lambda ()
+             (let* ((key (string-trim
+                          (shell-command-to-string "kanopy-oidc login")))
+                    (jwt-pattern "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"))
+               (if (string-match-p jwt-pattern key)
+                   key
+                 (error "Failed to retrieve API key: [%s]" key))))))
 #+end_src
 
 *** DeepSeek authentication note
@@ -2845,7 +2919,7 @@ See language-specific sections for details.
 To authenticate with the DeepSeek API, ensure your auth source includes an entry
 like this:
 #+begin_src text
-machine deepseek login apikey password sk-*******
+machine deepseek login api password sk-*******
 #+end_src
 
 See [[*Store credentials: auth source][Store credentials: auth source]] for more information with regards to auth
@@ -2896,81 +2970,6 @@ simplified interactions.
 5. Ensure the cursor is in the rewritten region, press =RET= and then choose an
    action following the screen output.
 
-** Copilot chat
-
-While gptel is already powerful and supports Copilot Chat, this package provides
-additional convenience. For example, =M-x copilot-chat-explain= is much simpler
-than manually crafting prompts with =C-u M-x gptel-send=.
-
-#+begin_src emacs-lisp
-  (use-package copilot-chat
-    :commands (copilot-chat-display
-               copilot-chat-custom-prompt-selection
-               copilot-chat-optimize
-               copilot-chat-explain
-               copilot-chat-how
-               )
-
-    :defines (copilot-chat-prompt-mode-map copilot-chat-mode-map)
-
-    :bind (:map global-map
-                ("<f7>" . copilot-chat-display)
-                :map copilot-chat-prompt-mode-map
-                ("C-c C-c" . copilot-chat-prompt-send))
-
-    :hook ((copilot-chat-prompt-mode copilot-chat-mode) . visual-line-mode)
-
-    :custom
-    (copilot-chat-frontend 'org)
-    ;; Note: Our company's subscription has monthly usage limits for most models;
-    ;; `gpt-4.1' is unlimited. If you hit the limit, switch models temporarily
-    ;; using `M-x copilot-chat-set-model'.
-    (copilot-chat-default-model "claude-opus-4.5")
-
-    :config
-    (defun copilot-chat-how ()
-      (interactive)
-      (copilot-chat-custom-prompt-selection "how to "))
-    )
-#+end_src
-
-*** Authentication
-On first use, you must authenticate via a web browser.
-- Local GUI Host: The browser will open automatically.
-- Remote Headless Host:
-  1. Ensure Emacs can open a browser successfully although we do not use that
-     browser for the login flow. Typically this is done by setting the browser
-     function to the built-in ~eww~.
-     #+begin_src emacs-lisp :tangle no
-       (setq browse-url-browser-function 'eww-browse-url)
-     #+end_src
-  2. Copy the authentication URL provided by Emacs.
-  3. Open it in a browser on a windowing device (e.g., your local machine).
-  4. Complete the login flow.
-
-*** Usage
-- How to ask questions (send prompts to the LLM):
-  - In the dedicated buffer: press ~<f7>~ (bound to ~copilot-chat-display~) to
-    go to the Copilot Chat buffer, type in your query in it and then press ~C-c
-    C-c~ (~copilot-chat-prompt-send~) to send the query to the LLM server.
-  - In any buffer: select the text of concern, then run =M-x
-    copilot-chat-custom-prompt-selection= and type in your custom prompt and
-    enter.
-- An alternative configuration that use a shell CLI style front-end
-  #+begin_src emacs-lisp :tangle no
-    (use-package copilot-chat
-       :load-path (lambda() (concat my-downloads "copilot-chat.el"))
-       :custom
-       (copilot-chat-frontend 'shell-maker)
-       )
-
-     (use-package copilot-chat-shell-maker
-       :load-path (lambda() (concat my-downloads "copilot-chat.el"))
-       :config
-       (push '(shell-maker . copilot-chat-shell-maker-init) copilot-chat-frontend-list)
-       )
-  #+end_src
-
 ** Copilot
 
 This is a plugin for copilot code completion.
@@ -2990,102 +2989,6 @@ copilot-login=.
                 )
     :custom (copilot-log-max 50000)
     ;; :hook (python-ts-mode python)
-    )
-#+end_src
-
-** COMMENT Minuet
-
-This is another code completion plugin. The following configuration uses
-DeepSeek as its backend. It is currently disabled due to performance latency I
-observed, which may be or be not specific to my setup.
-
-Firstly, add your DeepSeek API key to one of your =auth-source= files in the
-following format:
-#+begin_src text
-  machine deepseek login apikey password your_deepseek_api_key
-#+end_src
-Replace =your_deepseek_api_key= with your actual API key (e.g., =sk-xxxxx=).
-
-Then, add the following to your Emacs configuration file.
-#+begin_src emacs-lisp :tangle no
-  (use-package minuet
-    :after auth-source
-    :defines minuet-openai-fim-compatible-options
-    :functions auth-source-search minuet-set-optional-options
-
-    :bind
-    (:map global-map
-          ("<f6>" . minuet-next-suggestion))
-
-    :init                  ; use `:init` to set env *before* this module is loaded
-    (let ((auth (auth-source-search :host "deepseek" :require '(:secret))))
-      (if auth (setenv "DEEPSEEK_API_KEY" (funcall (plist-get (car auth) :secret)))
-        (warn "DeepSeek unavailable: API key not in auth source")))
-
-    :custom
-    (minuet-provider 'openai-fim-compatible)
-    (minuet-request-timeout 20)
-
-    :config
-    (minuet-set-optional-options minuet-openai-fim-compatible-options :max_tokens 256)
-  )
-#+end_src
-
-** Claude Code
-
-*** Prerequisite
-
-Install and configure Claude Code. See [[file:ai.org::*Claude][my Claude notes]] for details.
-
-*** Agent Shell
-
-This package is a *native Emacs shell* that interacts with LLM agents using ACP
-(Agent Client Protocol), providing a more native Emacs experience than most
-other implementations, including ~claude-code-ide.el~, which are essentially
-thin wrappers around the Claude Code CLI.
-
-Additional dependency:
-- ~claude-code-acp~
-  #+begin_src bash
-    npm install -g @zed-industries/claude-agent-acp
-  #+end_src
-
-#+begin_src emacs-lisp
-  (use-package agent-shell
-    :vc (:url "https://github.com/xenodium/agent-shell" :rev :newest)
-    :bind (:map agent-shell-mode-map
-                ;; Use RET for newline as S-RET does not work in terminals.
-                ;; Original RET functionality is bound to `C-c C-c', matching
-                ;; other LLM packages.
-                ("RET" . agent-shell-newline)
-                ("C-c C-c" . shell-maker-submit)
-                ("C-c i" . agent-shell-interrupt))
-    :init
-    (defun agent-shell-anthropic-model-id-from-name (name)
-      "Return a function that resolves model NAME to a model ID."
-      (lambda ()
-        (when-let* ((models (and (boundp 'agent-shell--state)
-                                 (map-nested-elt agent-shell--state '(:session :models))))
-                    (model (seq-find (lambda (m)
-                                       (string-equal (downcase (or (map-elt m :name) ""))
-                                                     (downcase name)))
-                                     models)))
-          (map-elt model :model-id))))
-    :custom
-    (agent-shell-session-strategy 'prompt)
-    (agent-shell-preferred-agent-config 'claude-code)
-    ;; *IMPROTANT* agent shell ignore the model specified in claude settings.json
-    (agent-shell-anthropic-default-model-id (agent-shell-anthropic-model-id-from-name "opus")))
-
-#+end_src
-
-*** COMMENT claude-code-ide.el
-
-#+begin_src emacs-lisp
-  (use-package claude-code-ide
-    :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
-    :bind (:map global-map  ("C-c c" . claude-code-ide-menu))
-    :config (claude-code-ide-emacs-tools-setup) ; Optionally enable Emacs MCP tools
     )
 #+end_src
 
