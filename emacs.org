@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-03-10 +1100
+#+DATE: 2026-03-11 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1588,7 +1588,23 @@ NOTE:
 - blog: [[https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources][Keeping Secrets in Emacs with GnuPG and Auth Sources]]
 - youtube: [[https://www.youtube.com/watch?v=nZ_T7Q49B8Y][How to Encrypt Your Passwords with Emacs]]
 
-* IRC
+* Social and Media
+
+** RSS - elfeed
+#+begin_src emacs-lisp
+  (use-package elfeed
+    :ensure t
+    :custom
+    (elfeed-search-filter "@1-weeks-ago +unread")
+    (elfeed-feeds
+     '(("https://www.reddit.com/r/emacs.rss" emacs forum)
+       ("https://emacs-china.org/latest.rss" emacs forum)
+       ("https://feeds.a.dj.com/rss/RSSMarketsMain.xml" market )
+       ))
+    )
+#+end_src
+
+** COMMENT IRC
 
 This section is for record only, no configuration is tangled into the actual configuration file.
 
@@ -1597,7 +1613,7 @@ I started with ERC, then switched to RCIRC, which appeared to be easier to set u
 I attempted to use them as Slack clients, but the experience was suboptimal, so I stopped using
 them.
 
-** ERC                                                             :obsolete:
+*** ERC
 
 #+begin_src emacs-lisp :tangle no
 (require 'erc)
@@ -1617,7 +1633,7 @@ them.
            ))
 #+end_src
 
-** RCIRC                                                           :obsolete:
+*** RCIRC
 
 #+begin_src emacs-lisp :tangle no
   ;; All confidential information defined in another file
@@ -1643,7 +1659,7 @@ them.
               (flyspell-mode 1)))
 #+end_src
 
-* News groups and emails - gnus                                    :obsolete:
+** COMMENT News groups and emails - gnus                                   :obsolete:
 
 In my previous job, I used Gnus to read newsgroups (mainly internal) and occasionally emails. When
 the company decommissioned the NNTP servers, I stopped using Gnus.
