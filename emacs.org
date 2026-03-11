@@ -1662,7 +1662,44 @@ NOTE:
 - blog: [[https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources][Keeping Secrets in Emacs with GnuPG and Auth Sources]]
 - youtube: [[https://www.youtube.com/watch?v=nZ_T7Q49B8Y][How to Encrypt Your Passwords with Emacs]]
 
-* IRC
+* Social and Media
+
+** RSS - elfeed
+#+begin_src emacs-lisp
+  (use-package elfeed
+    :ensure t
+    :bind (:map elfeed-search-mode-map
+                ("SPC" . elfeed-search-untag-all-unread))
+    :custom
+    (elfeed-search-title-max-width 120)
+    (elfeed-search-filter "@1-weeks-ago +unread")
+    (elfeed-feeds
+     '(;; Emacs
+       ("https://www.reddit.com/r/emacs.rss" en emacs)
+       ("https://emacs-china.org/latest.rss" zh emacs)
+
+       ;; Tech
+       ("https://hnrss.org/frontpage" en tech news hn)
+
+       ;; Chinese & World News
+       ("https://plink.anyfeeder.com/newscn/whxw" zh news xinhua)
+       ("https://plink.anyfeeder.com/zaobao/realtime/china" zh news zaobao)
+       ("https://plink.anyfeeder.com/zaobao/realtime/world" zh news zaobao)
+
+       ;; Social network hot
+       ("https://rsshub.rss3.workers.dev/weibo/search/hot" zh social weibo)
+
+       ;; Australia News
+       ("https://www.abc.net.au/news/feed/51120/rss.xml" en news abc)
+       ("https://www.theguardian.com/australia-news/rss" en news guardian)
+       ("https://www.sbs.com.au/news/feed" en news sbs)
+       ("https://www.smh.com.au/rss/feed.xml" en news smh)
+       ("https://theconversation.com/au/articles.atom" en conversation)
+       ("https://www.news.com.au/national/rss" en news newscorp))
+     ))
+#+end_src
+
+** COMMENT IRC
 
 This section is for record only, no configuration is tangled into the actual configuration file.
 
@@ -1671,7 +1708,7 @@ I started with ERC, then switched to RCIRC, which appeared to be easier to set u
 I attempted to use them as Slack clients, but the experience was suboptimal, so I stopped using
 them.
 
-** ERC                                                             :obsolete:
+*** ERC
 
 #+begin_src emacs-lisp :tangle no
 (require 'erc)
@@ -1691,7 +1728,7 @@ them.
            ))
 #+end_src
 
-** RCIRC                                                           :obsolete:
+*** RCIRC
 
 #+begin_src emacs-lisp :tangle no
   ;; All confidential information defined in another file
@@ -1717,7 +1754,7 @@ them.
               (flyspell-mode 1)))
 #+end_src
 
-* News groups and emails - gnus                                    :obsolete:
+** COMMENT News groups and emails - gnus                                   :obsolete:
 
 In my previous job, I used Gnus to read newsgroups (mainly internal) and occasionally emails. When
 the company decommissioned the NNTP servers, I stopped using Gnus.
