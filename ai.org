@@ -3,7 +3,7 @@
 
 #+TITLE: AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-01-20 +1100
+#+DATE: 2026-03-17 +1100
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -91,22 +91,7 @@ silently ignores invalid JSON.
 
 #+begin_src json-ts :tangle ~/.claude/settings.json :mkdirp yes
   {
-    "env": {
-      "CLAUDE_CODE_USE_BEDROCK": "1",
-      "ANTHROPIC_MODEL": "us.anthropic.claude-opus-4-5-20251101-v1:0",
-      "XXX_ANTHROPIC_MODEL": "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
-      "AWS_PROFILE": "ai-coder-llm",
-      "AWS_REGION": "us-east-1"
-    },
-    "includeCoAuthoredBy": false,
-    "permissions": {
-      "allow": [
-        "Bash(git commit:*)"
-      ],
-      "deny": [
-        "Bash(git push:*)"
-      ]
-    }
+    "includeCoAuthoredBy": false
   }
 #+end_src
 
