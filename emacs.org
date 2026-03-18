@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-03-17 +1100
+#+DATE: 2026-03-18 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2883,7 +2883,8 @@ Prerequisites (for Claude Code):
     :bind (("<f7>" . (lambda () (interactive) (switch-to-buffer (gptel "*gptel chat*"))))
            :map gptel-mode-map ("C-c C-c" . gptel-send))
 
-    :hook ((gptel-post-stream . gptel-auto-scroll))
+    :hook ((gptel-mode . visual-line-mode)
+           (gptel-post-stream . gptel-auto-scroll))
 
     :custom
     (gptel-default-mode 'org-mode)
