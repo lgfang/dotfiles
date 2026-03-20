@@ -1335,6 +1335,16 @@ line of the other window (inactive) will not be updated until you switch to it.
 
 NOTE: this does not work for org mode buffers.
 
+* COMMENT MongoDB Evergreen
+
+#+begin_src emacs-lisp
+  (use-package evergreen
+    :vc (:url "https://github.com/lgfang/evergreen.el" :rev :newest)
+    :custom
+    (evergreen-project-source-dirs  '(("sys-perf" . "~/source/mongo")))
+  )
+#+end_src
+
 * Finance bookkeeping
 
 ** COMMENT Ledger-cli
