@@ -1617,11 +1617,29 @@ NOTE:
     :custom
     (elfeed-search-filter "@1-weeks-ago +unread")
     (elfeed-feeds
-     '(("https://www.reddit.com/r/emacs.rss" emacs forum)
-       ("https://emacs-china.org/latest.rss" emacs forum)
-       ("https://feeds.a.dj.com/rss/RSSMarketsMain.xml" market )
-       ))
-    )
+     '(;; Emacs
+       ("https://www.reddit.com/r/emacs.rss" emacs forum reddit)
+       ("https://emacs-china.org/latest.rss" emacs forum china)
+
+       ;; Tech
+       ("https://hnrss.org/frontpage" news tech hn)
+
+       ;; Chinese & World News
+       ("https://plink.anyfeeder.com/newscn/whxw" news china xinhua)
+       ("https://plink.anyfeeder.com/zaobao/realtime/china" news china zaobao)
+       ("https://plink.anyfeeder.com/zaobao/realtime/world" news world zaobao)
+
+       ;; Social network hot
+       ("https://rsshub.rss3.workers.dev/weibo/search/hot" news social china weibo)
+
+       ;; Australia News
+       ("https://www.abc.net.au/news/feed/51120/rss.xml" news au abc)
+       ("https://www.theguardian.com/australia-news/rss" news au guardian)
+       ("https://www.sbs.com.au/news/feed" news au sbs)
+       ("https://www.smh.com.au/rss/feed.xml" news au smh)
+       ("https://theconversation.com/au/articles.atom" news au conversation)
+       ("https://www.news.com.au/national/rss" news au newscorp))
+     ))
 #+end_src
 
 ** COMMENT IRC
