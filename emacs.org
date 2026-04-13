@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-03-27 +1100
+#+DATE: 2026-04-13 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1958,7 +1958,7 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
     ;; Todo keywords: !@ means attach timestamps/notes when changing to certain state
     (org-todo-keywords
      '((type "INBX(i!)" "TODO(t!)" "PROG(p!)" "WAIT(w@)" "HOLD(h!)" "MAYB(m!)"
-             "|" "DONE(d!)" "DROP(c@)" "PASS(@)")))
+             "|" "DONE(d!)" "DROP(c@)" "PASS(o@)")))
 
     ;; Todo dependencies
     (org-enforce-todo-dependencies t)     ; Block DONE until dependencies are done
@@ -1969,6 +1969,7 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 
     ;; Logging
     (org-log-done 'time)
+    (org-log-into-drawer t)              ; log state changes in 'LOGBOOK' drawer
 
     ;; Agenda display
     (org-agenda-span 'week)
@@ -1985,6 +1986,23 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
     (org-default-notes-file "~/.income.org")
 
     :config
+    ;; Skip function for "worked on" agenda command
+    (defun my/skip-unless-worked-on (&optional days)
+      "Skip unless transitioned from PROG within DAYS (default 2)."
+      (let ((end (save-excursion (org-end-of-subtree t)))
+            (case-fold-search nil)
+            (cutoff (format-time-string
+                     "%Y-%m-%d"
+                     (time-subtract (current-time)
+                                    (days-to-time (or days 2))))))
+        (save-excursion
+          (let ((found nil))
+            (while (re-search-forward
+                    "State \"\\(\\w+\\)\" +from \"PROG\" +\\[\\([0-9-]+\\)" end t)
+              (when (string> (match-string 2) cutoff)
+                (setq found t)))
+            (if found nil (point-at-eol))))))
+
     ;; Settings that depend on my-personal-path (evaluated at load time)
     (setq org-agenda-files
           (mapcar (lambda (x) (concat my-personal-path x))
@@ -1999,7 +2017,6 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
             ("p" "personal task" entry
              (file+olp ,(concat my-personal-path "personal.gtd") "Misc.")
              "* INBX %?" :prepend t)))
-
 
     (setq org-agenda-custom-commands
           `(("x" "TODO items @ALL@"
@@ -2024,8 +2041,17 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
                        (org-agenda-files '(,(concat my-personal-path "work.gtd")))))))
             ("p" "PENDING items"
              ((todo "WAIT") (todo "HOLD") (todo "MAYB")))
-            ("r" "Report work 1 week" tags "+CLOSED>\"<-7d>\""
-             ((org-agenda-files '(,(concat my-personal-path "work.gtd")))))
+            ("r" "Report worked on tasks (last 2 days)"
+             ((todo "PROG"
+                    ((org-agenda-overriding-header "Worked on (last 2 days)")))
+              (tags "CLOSED>=\"<-2d>\""
+                    ((org-agenda-overriding-header "")
+                     (org-agenda-skip-function
+                      '(my/skip-unless-worked-on))))
+              (todo "INBX|TODO|WAIT|HOLD|MAYB"
+                    ((org-agenda-overriding-header "")
+                     (org-agenda-skip-function
+                      '(my/skip-unless-worked-on))))))
             ("b" "My bookmark" search nil
              ((org-agenda-files '(,(concat my-personal-path "bookmarks.lgf")))))
             ("c" "Bookmark category" tags nil
