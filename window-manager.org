@@ -3,7 +3,7 @@
 
 #+TITLE: My Window Manager Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2025-08-15 +1000
+#+DATE: 2026-04-24 +1000
 #+DESCRIPTION: My window manager related configurations
 #+KEYWORDS: window manager, hotkey, tiling, yabai, skhd
 
@@ -17,7 +17,7 @@ of tangling, it generates a timestamp may be referred to by other blocks.
 (format-time-string "%Y-%m-%d %5z")
 #+end_src
 
-* Yabai
+* COMMENT Yabai
 
 ** configuration file
 :PROPERTIES:
@@ -250,4 +250,124 @@ I switched from skhd to Karabiner primarily because Karabiner supports defining 
   cmd - 8: open -a iterm.app
   cmd - 9: open -a "google chrome.app"
   cmd - 0: open -a slack.app
+#+end_src
+
+* Aerospace
+
+#+begin_src toml :tangle ~/.config/aerospace/aerospace.toml :mkdirp yes
+  start-at-login = true
+  enable-normalization-flatten-containers = true
+  enable-normalization-opposite-orientation-for-nested-containers = true
+  default-root-container-layout = 'tiles'
+  default-root-container-orientation = 'auto'
+  accordion-padding = 30
+  on-focus-changed = ['move-mouse window-lazy-center']
+
+  [gaps]
+  inner.horizontal = 2
+  inner.vertical = 2
+  outer.left = 2
+  outer.bottom = 2
+  outer.top = 2
+  outer.right = 2
+
+  [[on-window-detected]]
+  if.app-id = 'com.apple.systemsettings'
+  run = 'layout floating'
+
+  [[on-window-detected]]
+  if.app-name-regex-substring = 'Karabiner'
+  run = 'layout floating'
+
+  [mode.main.binding]
+  cmd-ctrl-alt-shift-f = 'mode focus'
+  cmd-ctrl-alt-shift-m = 'mode move'
+  cmd-ctrl-alt-shift-r = 'mode resize'
+  cmd-ctrl-alt-shift-s = 'mode stack'
+  cmd-ctrl-alt-shift-a = 'mode app'
+  cmd-ctrl-alt-shift-w = 'mode workspace'
+
+  [mode.focus.binding]
+  h = 'focus --boundaries all-monitors-outer-frame left'
+  j = 'focus down'
+  k = 'focus up'
+  l = 'focus --boundaries all-monitors-outer-frame right'
+  p = 'focus-back-and-forth'
+  esc = 'mode main'
+  ctrl-g = 'mode main'
+
+  [mode.move.binding]
+  h = 'move left --boundaries all-monitors-outer-frame'
+  j = 'move down'
+  k = 'move up'
+  l = 'move right --boundaries all-monitors-outer-frame'
+  1 = ['move-node-to-workspace 1', 'mode main']
+  2 = ['move-node-to-workspace 2', 'mode main']
+  3 = ['move-node-to-workspace 3', 'mode main']
+  4 = ['move-node-to-workspace 4', 'mode main']
+  5 = ['move-node-to-workspace 5', 'mode main']
+  6 = ['move-node-to-workspace 6', 'mode main']
+  7 = ['move-node-to-workspace 7', 'mode main']
+  8 = ['move-node-to-workspace 8', 'mode main']
+  9 = ['move-node-to-workspace 9', 'mode main']
+  n = ['move-node-to-workspace next', 'mode main']
+  p = ['move-node-to-workspace prev', 'mode main']
+  w = 'mode warp'
+  esc = 'mode main'
+  ctrl-g = 'mode main'
+
+  [mode.warp.binding]
+  h = ['join-with left', 'mode main']
+  j = ['join-with down', 'mode main']
+  k = ['join-with up', 'mode main']
+  l = ['join-with right', 'mode main']
+  esc = 'mode main'
+  ctrl-g = 'mode main'
+
+  [mode.resize.binding]
+  h = 'resize width -25'
+  j = 'resize height +25'
+  k = 'resize height -25'
+  l = 'resize width +25'
+  f = ['fullscreen', 'mode main']
+  space = ['balance-sizes', 'mode main']
+  esc = 'mode main'
+  ctrl-g = 'mode main'
+
+  [mode.stack.binding]
+  h = ['join-with left', 'layout accordion horizontal', 'mode main']
+  j = ['join-with down', 'layout accordion vertical', 'mode main']
+  k = ['join-with up', 'layout accordion vertical', 'mode main']
+  l = ['join-with right', 'layout accordion horizontal', 'mode main']
+  u = ['layout tiles', 'mode main']
+  p = ['focus left', 'focus up']
+  n = ['focus right', 'focus down']
+  esc = 'mode main'
+  ctrl-g = 'mode main'
+
+  # App-select mode (was Hyper-a → j/k/l/o)
+  [mode.app.binding]
+  j = ['exec-and-forget open -a wezterm.app', 'mode main']
+  k = ['exec-and-forget open -a "google chrome.app"', 'mode main']
+  l = ['exec-and-forget open -a slack.app', 'mode main']
+  o = ['exec-and-forget open -a safari.app', 'mode main']
+  esc = 'mode main'
+  ctrl-g = 'mode main'
+
+  [mode.workspace.binding]
+  1 = ['workspace 1', 'mode main']
+  2 = ['workspace 2', 'mode main']
+  3 = ['workspace 3', 'mode main']
+  4 = ['workspace 4', 'mode main']
+  5 = ['workspace 5', 'mode main']
+  6 = ['workspace 6', 'mode main']
+  7 = ['workspace 7', 'mode main']
+  8 = ['workspace 8', 'mode main']
+  9 = ['workspace 9', 'mode main']
+  n = 'workspace next'
+  p = 'workspace prev'
+  h = 'move-workspace-to-monitor left'
+  l = 'move-workspace-to-monitor right'
+  esc = 'mode main'
+  ctrl-g = 'mode main'
 #+end_src
