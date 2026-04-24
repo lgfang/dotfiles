@@ -3,7 +3,7 @@
 
 #+TITLE: My Tmux Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-03-09 +1100
+#+DATE: 2026-04-24 +1000
 
 * Timestamps
 
@@ -115,6 +115,15 @@ set -g set-titles-string '#h: #S'
 #+begin_src conf :tangle ~/.tmux.conf
   # pre-load a frequently used text into the buffer named "hw"
   set-buffer -b hw "hello world"
+#+end_src
+
+* Resizing
+#+begin_src conf :tangle ~/.tmux.conf
+  # Resize panes using Prefix + Shift + Arrow keys
+  bind-key -r S-Up resize-pane -U 5
+  bind-key -r S-Down resize-pane -D 5
+  bind-key -r S-Left resize-pane -L 5
+  bind-key -r S-Right resize-pane -R 5
 #+end_src
 
 * to migrate
