@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-04-17 +1000
+#+DATE: 2026-04-24 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2078,6 +2078,27 @@ either:
            ("C-c C-l" . org-insert-link)
            ("C-c C-o" . org-open-at-point)
            )))
+#+end_src
+
+** Presentation
+
+*** org-tree-slide
+#+begin_src emacs-lisp
+  (use-package org-tree-slide
+    :commands org-tree-slide-mode)
+#+end_src
+
+*** reveal
+
+Convert an org file to HTML reveal slides. Prefer =org-tree-slide= for live presentations.
+#+begin_src emacs-lisp
+  (use-package ox-reveal
+    ;; Prerequisites:
+    ;;    brew install node
+    ;;    git clone https://github.com/hakimel/reveal.js.git ~/source/reveal.js
+    :custom
+    (org-reveal-title-slide 'auto)
+    (org-reveal-root (file-name-as-directory (expand-file-name "~/source/reveal.js"))))
 #+end_src
 
 ** Repeat map
