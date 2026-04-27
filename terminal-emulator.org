@@ -3,7 +3,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-01-16 +1100
+#+DATE: 2026-04-28 +1000
 
 * Timestamps
 
@@ -142,11 +142,24 @@ background to "unspecified-bg" as shown below:
   (set-face-background 'default "unspecified-bg")
 #+end_src
 
-** Audible Bell
-This is needed because audible bell is *not* affected by the system audio volume.
+** Bell
+
+Terminal should ring a bell (alert) upon the ascii character BEL (~printf '\a'~).
 #+begin_src lua :tangle ~/.wezterm.lua
-  config.audible_bell = "Disabled"
+  config.audible_bell = "SystemBeep"
+  config.visual_bell = {
+     fade_in_duration_ms = 75,
+     fade_out_duration_ms = 75,
+     target = "BackgroundColor"
+  }
+  config.colors = {
+     visual_bell = '#202020',
+  }
 #+end_src
+
+NOTE: This does not work in the Emacs TUI, as its constant redrawing obscures
+the terminal emulator's visual effects. Use ~ring-bell-function~ in Emacs for a
+custom effect like flashing the mode line.
 
 ** Keyboard
 #+begin_src lua :tangle ~/.wezterm.lua
