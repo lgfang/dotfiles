@@ -1125,6 +1125,18 @@ change ~electric-pair-inhibit-predicate~ instead.
 #+end_src
 Note, this works for GUI Emacs only.
 
+** Visual Bell
+#+begin_src emacs-lisp
+  (use-package emacs
+    :init
+    (defun my/flash-mode-line ()
+      (invert-face 'mode-line)
+      (run-with-timer 0.1 nil #'invert-face 'mode-line))
+    :custom
+    (visible-bell nil)
+    (ring-bell-function #'my/flash-mode-line))
+#+end_src
+
 ** Long lines
 #+begin_src emacs-lisp
   (use-package emacs
