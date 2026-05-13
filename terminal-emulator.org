@@ -3,7 +3,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-04-28 +1000
+#+DATE: 2026-05-13 +1000
 
 * Timestamps
 
@@ -140,6 +140,12 @@ Additionally, for Emacs running in the terminal to support opacity, set its
 background to "unspecified-bg" as shown below:
 #+begin_src emacs-lisp
   (set-face-background 'default "unspecified-bg")
+#+end_src
+
+*** Color theme
+
+#+begin_src lua :tangle ~/.wezterm.lua
+  config.color_scheme = 'GruvboxDark'
 #+end_src
 
 ** Bell
