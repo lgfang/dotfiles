@@ -2903,7 +2903,7 @@ Prerequisites (for Claude Code):
       (interactive "P")
       (if arg
           (let* ((dirs '("~/source/project1/" "~/source/project2/" "~/source/project3/"))
-                 (chosen-dir (completing-read "Select agent-shell directory: " dirs nil t))
+                 (chosen-dir (completing-read "Select agent-shell directory: " dirs nil nil))
                  (default-directory (expand-file-name chosen-dir)))
             (agent-shell))
         (agent-shell)))
