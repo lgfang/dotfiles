@@ -2887,12 +2887,15 @@ This package is a *native Emacs shell* that interacts with LLM agents using ACP
 other implementations, including ~claude-code-ide.el~, which are essentially
 thin wrappers around the Claude Code CLI.
 
-Prerequisites (for Claude Code):
-- Claude Code, see [[file:ai.org::*Claude][my Claude notes]] for details.
-- Claude Code ACP
+Prerequisites:
+- Install the Agent Client Protocol (ACP):
   #+begin_src bash
-    npm install -g @zed-industries/claude-agent-acp
+    npm install -g @agentclientprotocol/claude-agent-acp
   #+end_src
+- Install Claude Code (if you plan to use it), see [[file:ai.org::*Claude][my Claude notes]] for setup
+  details.
+- Install Opencode (if you plan to use it).
+
 
 #+begin_src emacs-lisp
   (use-package agent-shell
@@ -2909,15 +2912,20 @@ Prerequisites (for Claude Code):
         (agent-shell)))
 
     (defun my/anthropic-model-id-from-name (name)
-      "Return a function that resolves model NAME to a model ID."
+      "Return a function that resolves model NAME to the latest model ID."
       (lambda ()
         (when-let* ((models (and (boundp 'agent-shell--state)
-                                 (map-nested-elt agent-shell--state '(:session :models))))
-                    (model (seq-find (lambda (m)
-                                       (string-equal (downcase (or (map-elt m :name) ""))
-                                                     (downcase name)))
-                                     models)))
-          (map-elt model :model-id))))
+                                 (map-nested-elt agent-shell--state '(:session :models)))))
+          (when-let* ((matches (seq-filter (lambda (m)
+                                             (string-match-p (downcase name)
+                                                             (downcase (or (map-elt m :name) ""))))
+                                           models))
+                      (sorted (seq-sort (lambda (a b)
+                                          (string-greaterp (or (map-elt a :model-id) "")
+                                                           (or (map-elt b :model-id) "")))
+                                        matches))
+                      (latest-model (car sorted)))
+            (map-elt latest-model :model-id)))))
 
     :bind (("C-c a" . my/start-agent-shell)
            :map agent-shell-mode-map
@@ -2931,7 +2939,7 @@ Prerequisites (for Claude Code):
     (agent-shell-session-strategy 'prompt)
     (agent-shell-preferred-agent-config 'claude-code)
     (agent-shell-opencode-default-model-id "grove-openai/gpt-5.5")
-    (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "opus")))
+    (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "recommended")))
 #+end_src
 
 ** gptel
