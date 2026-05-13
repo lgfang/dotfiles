@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-01-30 +1100
+#+DATE: 2026-05-13 +1000
 
 * bash_profile
 :PROPERTIES:
@@ -139,20 +139,18 @@ There is no third pass.
   MY_REVERSE='\x01\e[7m\x02'
 
   MY_GREEN='\x01\e[32m\x02'
-  MY_BLUE='\x01\e[38;5;33m\x02'
+  MY_BLUE='\x01\e[34m\x02'
   MY_PURPLE='\x01\e[35m\x02'
-  MY_CYAN='\x01\e[36m\x02'
   MY_GRAY='\x01\e[37m\x02'
 
   MY_DGRAY='\x01\e[90m\x02'
   MY_LGREEN='\x01\e[92m\x02'
   MY_LBLUE='\x01\e[94m\x02'
 
-  MY_KAHKI='\x01\e[38;5;101m\x02'
-  MY_YEGRE='\x01\e[38;5;106m\x02'
+  MY_YELLOW='\x01\e[33m\x02'
+  MY_LYELLOW='\x01\e[93m\x02'
 
-  PS1='\n'                        # An extra line to separte previous output and PS1
-
+  PS1='\n'                        # An extra line to separate previous output and PS1
   PS1=$PS1'$(printf "${MY_GREEN}╭")'                    # 1st line
   PS1=$PS1'$(ps1_pyvenv)'                               # py venv
   PS1=$PS1'$(ps1_git)'                                  # git branch
@@ -162,11 +160,12 @@ There is no third pass.
   PS1=$PS1'\n'                                          # end of first line
   PS1=$PS1'$(printf "${MY_GREEN}│")'                    # 2nd line
   PS1=$PS1'$(ps1_warn_msg)'                             # warn message (if there is any)
-  PS1=$PS1'$(printf " ${MY_YEGRE}\u@\h")'               # user@host
-  PS1=$PS1'$(printf ":${MY_BLUE}\w")'                   # working directory
+  PS1=$PS1'$(printf " ${MY_BLUE}\u@\h")'                # user@host (Updated variable name)
+  PS1=$PS1'$(printf ":${MY_LBLUE}\w")'                  # working directory
   PS1=$PS1'\n'                                          # end of second line
   PS1=$PS1'$(printf "${MY_GREEN}╰ \$") '                # 3rd line, "$"/"#" sign on a new line
-  # PS1=$PS1'$(printf "${MY_RESET}")'                     # restore to the default color
+  PS1=$PS1'$(printf "${MY_RESET}")'                     # restore to the default color
+
 
   function ps1_pyvenv {
       if [ -z "${VIRTUAL_ENV+x}" ]; then
