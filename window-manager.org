@@ -3,7 +3,7 @@
 
 #+TITLE: My Window Manager Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-11 +1000
+#+DATE: 2026-05-14 +1000
 #+DESCRIPTION: My window manager related configurations
 #+KEYWORDS: window manager, hotkey, tiling, yabai, skhd
 
@@ -18,6 +18,8 @@ of tangling, it generates a timestamp may be referred to by other blocks.
 #+end_src
 
 * COMMENT Yabai
+
+I switched to AeroSpace; see [[*Aerospace]] for the reasoning.
 
 ** configuration file
 :PROPERTIES:
@@ -252,7 +254,14 @@ I switched from skhd to Karabiner primarily because Karabiner supports defining 
   cmd - 0: open -a slack.app
 #+end_src
 
-* Aerospace
+* AeroSpace
+
+I prefer AeroSpace over Yabai for the following reasons:
+- Superior stability, especially when connecting or disconnecting external
+  monitors while moving between workplaces.
+- Proper window management for GUI Emacs.
+- Native application launching, which eliminates the need to configure Karabiner
+  hotkeys to open or focus apps like Slack and Chrome.
 
 ** Main configuration file
 #+begin_src toml :tangle ~/.config/aerospace/aerospace.toml :mkdirp yes
