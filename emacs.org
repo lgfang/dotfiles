@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-12 +1000
+#+DATE: 2026-05-14 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -402,7 +402,34 @@ Note that there is normally no need of setting =repeat-eixt-key=, to exit repeat
 mode before =repeat-exit-timeout=, just type any character which is no bound for
 repeat mode or =C-g=.
 
-** Vertico + orderless + marginalia + consult
+** Completion
+
+Vertico, orderless, marginalia, consult, corfu and cape form the core of the
+modern, minimalist Emacs completion ecosystem. They are designed to work
+together seamlessly while relying on standard Emacs APIs. Here is a summary of
+their roles and usages:
+
+- Minibuffer (Command Line) Packages:
+  + Vertico :: The /UI for the minibuffer/. When you press =M-x= or search for a
+    file, Vertico displays the available completion options in a vertical,
+    interactive list.
+  + Marginalia :: The /annotator for the minibuffer/. It adds helpful contextual
+    information next to Vertico's list, such as function documentation, file
+    sizes, or keybindings.
+  + Consult :: The /search and navigation commands/. It provides advanced
+    commands (like =consult-ripgrep=, =consult-line=, or =consult-buffer=) that
+    feed rich data into the minibuffer for you to filter and select.
+  + Orderless :: The /filtering engine/. It allows you to filter lists in the
+    minibuffer (and in-buffer) by typing multiple search terms separated by
+    spaces, in any order.
+
+- In-Buffer (Text/Code) Packages:
+  + Corfu :: The /UI for in-buffer completion/. It displays a small popup at
+    your cursor to autocomplete code, variables, or text as you type.
+  + Cape :: The /data provider for in-buffer completion/. It supplies extra
+    lists of things to complete (like file paths, dictionary words, or text
+    history) to be displayed by Corfu.
+
 #+begin_src emacs-lisp
   (use-package vertico
     :defines vertico-map
@@ -442,6 +469,23 @@ repeat mode or =C-g=.
                 ("M-g d" . consult-flymake)
                 ("M-y"   . consult-yank-pop) ; replaces `browse-kill-ring'
                 ))
+
+  (use-package corfu
+    :custom
+    (corfu-auto t)
+    :init
+    (global-corfu-mode))
+
+  (use-package corfu-terminal
+    :init
+    (unless (display-graphic-p) (corfu-terminal-mode +1)))
+
+  (use-package cape
+    :init
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+    (add-to-list 'completion-at-point-functions #'cape-file)
+    (add-to-list 'completion-at-point-functions #'cape-keyword)
+    (add-to-list 'completion-at-point-functions #'cape-dict))
 #+end_src
 
 Other useful consult commands:
@@ -2518,16 +2562,6 @@ to add projects we need. Below is an example:
    - path :: ~/.dotfiles
   ,** structure log mode
    - path :: ~/projects/emacs/structured-log-mode
-#+end_src
-
-** Completion: company
-
-#+begin_src emacs-lisp
-  (use-package company
-    :delight
-    :functions global-company-mode
-    :init (global-company-mode)
-    )
 #+end_src
 
 ** Syntax check: flymake
