@@ -670,9 +670,12 @@ remote server to check if these files do exist.
     (tool-bar-mode -1)                            ; turn it off
     (when (display-graphic-p)
       (scroll-bar-mode -1)
+      ;; Remove the title bar, use `(set-frame-parameter nil 'undecorated nil)` to
+      ;; temporarily add the title bar back
+      (add-to-list 'default-frame-alist '(undecorated . t))
+      ;; Fullscreen on start
       (add-to-list 'default-frame-alist '(fullscreen . maximized))
-      )
-    )
+      ))
 
   (use-package emacs
     :custom
