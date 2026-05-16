@@ -3,7 +3,7 @@
 
 #+TITLE: My Window Manager Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-14 +1000
+#+DATE: 2026-05-16 +1000
 #+DESCRIPTION: My window manager related configurations
 #+KEYWORDS: window manager, hotkey, tiling, yabai, skhd
 
@@ -385,38 +385,41 @@ I prefer AeroSpace over Yabai for the following reasons:
 ** Script to swap windows cross monitor boundaries
 
 #+begin_src bash :tangle ~/.config/aerospace/aerospace-swap.sh :shebang "#!/usr/bin/env bash"
-DIRECTION=$1
+  # aerospace is installed in /opt/homebrew/bin
+  export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 
-# Get the ID and workspace of the currently focused window
-ID1=$(aerospace list-windows --focused --format "%{window-id}")
-WS1=$(aerospace list-windows --focused --format "%{workspace}")
+  DIRECTION=$1
 
-# Focus the window in the target direction (allowing monitor crossing)
-aerospace focus --boundaries all-monitors-outer-frame $DIRECTION
+  # Get the ID and workspace of the currently focused window
+  ID1=$(aerospace list-windows --focused --format "%{window-id}")
+  WS1=$(aerospace list-windows --focused --format "%{workspace}")
 
-# Get the ID and workspace of the newly focused window
-ID2=$(aerospace list-windows --focused --format "%{window-id}")
-WS2=$(aerospace list-windows --focused --format "%{workspace}")
+  # Focus the window in the target direction (allowing monitor crossing)
+  aerospace focus --boundaries all-monitors-outer-frame $DIRECTION
 
-# If the window didn't change (e.g., edge of the screen), do nothing
-if [ "$ID1" == "$ID2" ]; then
-    exit 0
-fi
+  # Get the ID and workspace of the newly focused window
+  ID2=$(aerospace list-windows --focused --format "%{window-id}")
+  WS2=$(aerospace list-windows --focused --format "%{workspace}")
 
-if [ "$WS1" == "$WS2" ]; then
-    # If they are in the same workspace, use the native move command
-    aerospace focus --window-id $ID1
-    aerospace move $DIRECTION
-else
-    # Explicitly focus and move the first window
-    aerospace focus --window-id $ID1
-    aerospace move-node-to-workspace $WS2
+  # If the window didn't change (e.g., edge of the screen), do nothing
+  if [ "$ID1" == "$ID2" ]; then
+      exit 0
+  fi
 
-    # Explicitly focus and move the second window
-    aerospace focus --window-id $ID2
-    aerospace move-node-to-workspace $WS1
+  if [ "$WS1" == "$WS2" ]; then
+      # If they are in the same workspace, use the native move command
+      aerospace focus --window-id $ID1
+      aerospace move $DIRECTION
+  else
+      # Explicitly focus and move the first window
+      aerospace focus --window-id $ID1
+      aerospace move-node-to-workspace $WS2
 
-    # Restore focus to the original window
-    aerospace focus --window-id $ID1
-fi
+      # Explicitly focus and move the second window
+      aerospace focus --window-id $ID2
+      aerospace move-node-to-workspace $WS1
+
+      # Restore focus to the original window
+      aerospace focus --window-id $ID1
+  fi
 #+end_src
