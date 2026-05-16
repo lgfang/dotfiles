@@ -1,4 +1,4 @@
-;;; Use built-in org mode, remember to M-x package-install org-contrib
+;;; Use built-in org mode, remember to M-x package-install org-contrib  -*- lexical-binding: t; -*-
 
 (require 'org nil t)
 
