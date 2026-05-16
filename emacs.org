@@ -2671,11 +2671,11 @@ to add projects we need. Below is an example:
        (lambda (parent) (member (treesit-node-type parent) py-things-to-focus))))
 
     (defun py-thing-begin ()
-      (when-let ((thing (or py-thing--thing (py-thing))))
+      (when-let* ((thing (or py-thing--thing (py-thing))))
         (goto-char (treesit-node-start thing))))
 
     (defun py-thing-end ()
-      (when-let ((thing (py-thing)))
+      (when-let* ((thing (py-thing)))
         (setq py-thing--thing thing)
         (goto-char (treesit-node-end thing))))
 
