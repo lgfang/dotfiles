@@ -2997,6 +2997,9 @@ Prerequisites:
                       (latest-model (car sorted)))
             (map-elt latest-model :model-id)))))
 
+    (defconst my/work-macbook-regexp "^M-"
+      "Regular expression to identify my work MacBook from its hostname.")
+
     :bind (("C-c a" . my/start-agent-shell)
            :map agent-shell-mode-map
            ;; Use RET for newline as S-RET does not work in terminals.
@@ -3005,11 +3008,17 @@ Prerequisites:
            ("RET" . agent-shell-newline)
            ("C-c C-c" . shell-maker-submit)
            ("C-c i" . agent-shell-interrupt))
+
     :custom
     (agent-shell-session-strategy 'prompt)
-    (agent-shell-preferred-agent-config 'claude-code)
-    (agent-shell-opencode-default-model-id "grove-openai/gpt-5.5")
-    (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "recommended")))
+    (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "recommended"))
+    ;; Choose agent and model based on work vs. personal laptop.
+    (agent-shell-preferred-agent-config
+     (cond ((string-match-p my/work-macbook-regexp (system-name)) 'claude-code)
+           (t 'opencode)))
+    (agent-shell-opencode-default-model-id
+     (cond ((string-match-p my/work-macbook-regexp (system-name)) "grove-openai/gpt-5.5")
+           (t "deepseek/deepseek-v4-pro"))))
 #+end_src
 
 ** gptel
