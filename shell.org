@@ -3,15 +3,16 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-13 +1000
+#+DATE: 2026-05-20 +1000
 
-* bash_profile
+* COMMENT Bash
+** bash_profile
 :PROPERTIES:
 :header-args:bash: :tangle ~/.bash_profile
 :END:
 
-** Environment variables
-*** OSX specific
+*** Environment variables
+**** OSX specific
 #+begin_src bash
   # Use well-known locations as the PATH is not yet ready for `brew --prefix`.
   if [ "$(uname -m)" == "arm64" ]; then
@@ -28,7 +29,7 @@
   fi
 #+end_src
 
-*** For ubuntu
+**** For ubuntu
 #+begin_src bash
   PATH="/snap/bin:$PATH"
 
@@ -39,7 +40,7 @@
   PATH=${NPM_GLOBAL}/bin:$PATH
 #+end_src
 
-*** Common
+**** Common
 #+begin_src bash
   export GOPATH=$HOME/go          # Explicitly specify GOPATH default value
   PATH=${GOPATH}/bin:$PATH
@@ -52,13 +53,13 @@
   export HISTSIZE=500
 #+end_src
 
-** Source in bashrc
+*** Source in bashrc
 #+begin_src bash
 #* source in .bashrc *after* the ENVs (PATH etc.) are set.
 [ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
 #+end_src
 
-** Attach to a tmux session
+*** Attach to a tmux session
 #+begin_src bash
   if [[ $- == *i* && "$TERM" == "xterm-256color" ]]; then
       # Attach to (or start) a tmux session on when in an inteactive and expected
@@ -67,12 +68,12 @@
   fi
 #+end_src
 
-* bashrc
+** bashrc
 :PROPERTIES:
 :header-args:bash: :tangle ~/.bashrc
 :END:
 
-** Source global settings
+*** Source global settings
 #+begin_src bash
 #* Do nothing if not running interactively
 [[ "$-" != *i* ]] && return
@@ -83,9 +84,9 @@ if [ -f /etc/bashrc ]; then
 fi
 #+end_src
 
-** TTY
+*** TTY
 
-*** Keys
+**** Keys
 
 #+begin_src bash
   stty -ixon        # Disable flow control, i.e. ^s "freeze screen" and ^q resume
@@ -95,7 +96,7 @@ fi
   export EDITOR=vi
 #+end_src
 
-*** Term & color
+**** Term & color
 
 #+begin_src bash
   if [[ $- == *i* && "$TERM" != "dumb" ]]; then
@@ -114,7 +115,7 @@ sessions to them won't use true color, which will causing Emacs color themes to
 appear different (ugly) than they do in local sessions. See [[https://www.gnu.org/software/emacs/manual/html_node/efaq/Colors-on-a-TTY.html][Colors on a TTY]] for
 more information.
 
-** PS1
+*** PS1
 As per [[https://stackoverflow.com/a/77033447][this stack overflow post]], Bash parses the PS1 string in two passes:
 #+begin_quote
 1. During the first pass, Bash handles all of PS1's special characters, including =\a= for a bell,
@@ -199,7 +200,7 @@ There is no third pass.
   }
 #+end_src
 
-** LS_COLORS
+*** LS_COLORS
 Note: as the name indicates, it affects the command =ls= only.
 #+begin_src bash
   if [ -f ~/.dir_colors ] && command -v dircolors >/dev/null 2>&2; then
@@ -207,7 +208,7 @@ Note: as the name indicates, it affects the command =ls= only.
   fi
 #+end_src
 
-** fzf
+*** fzf
 
 To get more details, run =fzf --bash > fzf.bash= and then review the generated file.
 
@@ -221,15 +222,15 @@ if command -v fzf > /dev/null 2>&1; then
 fi
 #+end_src
 
-** Python
+*** Python
 
-*** venv
+**** venv
 #+begin_src bash
   # Don't modify my PS1, which already contains corresponding info.
   VIRTUAL_ENV_DISABLE_PROMPT=true
 #+end_src
 
-*** pyenv
+**** pyenv
 
 #+begin_src bash
   if command -v pyenv > /dev/null; then
@@ -237,13 +238,13 @@ fi
   fi
 #+end_src
 
-** Kubernetes
+*** Kubernetes
 #+begin_src bash
   KUBECONFIG=~/.kube/config.prod:~/.kube/config.staging
   export KUBECONFIG
 #+end_src
 
-** JIRA CLI
+*** JIRA CLI
 
 #+begin_src bash
   # The token was stored in MacOS keychain using:
@@ -251,7 +252,7 @@ fi
   export JIRA_API_TOKEN=$(security find-generic-password -a "jira-api-token" -s "jira-cli" -w 2>/dev/null)
 #+end_src
 
-** To migrate
+*** To migrate
 #+begin_src bash
 #* Shell options
 # command history related
@@ -797,7 +798,7 @@ function wake {
 }
 #+end_src
 
-** Use a different "tmp" directory
+*** Use a different "tmp" directory
 By default, many applications use =/tmp= as the temporary directory. The
 contents in this directory are considered temporary and are deleted upon host
 restart. However, there are scenarios where writing temporary files to a
@@ -813,8 +814,7 @@ For the former, we may set the environment variable =TMPDIR= in our BASH profile
 
 For the later scenario, simply ~TMPDIR=path/to/tmp run_my_command~.
 
-** inputrc (for bash)
-
+*** inputrc (for bash)
 #+begin_src bash
   # Normally, following settings are put into ~/.inputrc, with only stuff
   # enclosed within single quotes kept. For me, I prefer to keep all stuff in
@@ -833,7 +833,7 @@ For the later scenario, simply ~TMPDIR=path/to/tmp run_my_command~.
   bind '"\C-w":kill-region'
 #+end_src
 
-* dirs_colors
+** dirs_colors
 :PROPERTIES:
 :header-args:bash: :tangle ~/.dir_colors
 :END:
@@ -1124,4 +1124,171 @@ EXEC 00;38;5;64
 
 
 
+#+end_src
+
+* Fish
+
+** config.fish
+
+#+begin_src fish :tangle ~/.config/fish/config.fish
+  fish_add_path -g ~/.local/bin
+
+  if status is-interactive
+      if test "$TERM" = xterm-256color; and not set -q TMUX
+          tg
+      end
+  end
+
+#+end_src
+
+** fish prompt
+
+#+begin_src fish :tangle ~/.config/fish/functions/fish_prompt.fish
+function fish_prompt
+    # Save the status of the last run command immediately
+    set -l last_status $status
+
+    # Define Colors
+    set -l MY_RESET (set_color normal)
+    set -l MY_REVERSE (set_color -r)
+
+    set -l MY_GREEN (set_color green)
+    set -l MY_BLUE (set_color blue)
+    set -l MY_PURPLE (set_color magenta)
+    set -l MY_GRAY (set_color brwhite)
+
+    set -l MY_DGRAY (set_color brblack)
+    set -l MY_LGREEN (set_color brgreen)
+    set -l MY_LBLUE (set_color brblue)
+
+    set -l MY_YELLOW (set_color yellow)
+    set -l MY_LYELLOW (set_color bryellow)
+
+    # 1. Print an extra line to separate previous output
+    echo ""
+
+    # 2. Start First Line
+    echo -n "$MY_GREEN╭"
+
+    # Helper: Python Virtual Env
+    if set -q VIRTUAL_ENV
+        # Replaces $HOME with ~ just like your Bash variant
+        set -l venv_path (string replace -r "^$HOME" "~" $VIRTUAL_ENV)
+        echo -n " $MY_PURPLE $MY_DGRAY$venv_path"
+    end
+
+    # Helper: Git Branch
+    if type -q git
+        set -l branch (git symbolic-ref --short -q HEAD 2>/dev/null; or git rev-parse --short HEAD 2>/dev/null)
+        if test -n "$branch"
+            echo -n " $MY_GRAY $MY_DGRAY$branch"
+        end
+    end
+
+    # Helper: Kubernetes Context
+    if type -q kubectl
+        set -l kube_context (kubectl config current-context 2>/dev/null)
+        set -l kube_namespace (kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)
+        if test -n "$kube_context"; or test -n "$kube_namespace"
+            echo -n " $MY_GRAY   $MY_DGRAY$kube_context/$kube_namespace"
+        end
+    end
+
+    # Helper: Command Number & Time
+    # Note: Fish tracks history indices slightly differently than Bash
+    set -l cmd_num (history | count)
+    set -l current_time (date +"%T%z")
+    echo -n " $MY_GRAY   $MY_DGRAY$cmd_num"
+    echo -n " $MY_GRAY $MY_DGRAY$current_time"
+
+    # End First Line
+    echo ""
+
+    # 3. Start Second Line
+    echo -n "$MY_GREEN│"
+
+    # Helper: Warning Message
+    if set -q MY_WARN; and test -n "$MY_WARN"
+        echo -n " $MY_REVERSE$MY_PURPLE$MY_WARN$MY_RESET"
+    end
+
+    # User, Host, and PWD
+    # Fish shortens PWD automatically if desired, prompt_pwd can be used instead of $PWD
+    set -l pwd_display (string replace -r "^$HOME" "~" $PWD)
+    echo -n " $MY_BLUE$USER@"(prompt_hostname)
+    echo -n ":$MY_LBLUE$pwd_display"
+
+    # End Second Line
+    echo ""
+
+    # 4. Third Line (Prompt Symbol)
+    # Automatically switch between '#' for root and '$' for standard users
+    set -l symbol "\$"
+    if functions -q fish_is_root_user; and fish_is_root_user
+        set symbol "#"
+    end
+
+    echo -n "$MY_GREEN╰ $symbol $MY_RESET"
+end
+#+end_src
+
+** ep
+
+#+begin_src fish :tangle ~/.config/fish/functions/ep.fish
+function ep --description 'go to current directory of Emacs daemon'
+    cd (emacsclient -e '(expand-file-name
+        (with-current-buffer (window-buffer) default-directory))' | string trim -c '"')
+end
+#+end_src
+
+** tg
+
+#+begin_src fish :tangle ~/.config/fish/functions/tg.fish
+  function tg --description "Attach to specified tmux session"
+      # 1. If the session does not exist, create it.
+      # 2. If no session name specified, prompt to choose from existing ones.
+
+      if not command -v tmux >/dev/null
+          echo "Warn: tmux could not be found, not starting any tmux session"
+          return
+      end
+
+      set -l session_name $argv[1]
+
+      if test -n "$session_name"
+          tmux -2 attach -t $session_name
+          or tmux -2 new -s $session_name
+          return
+      end
+
+      # No session name specified, act according to the number of sessions
+      set -l sessions (tmux list-sessions -F "#{session_name}" 2>/dev/null)
+
+      if test (count $sessions) -eq 0
+          tmux -2 new -s 'Pri'
+          return
+      end
+
+      if test (count $sessions) -eq 1
+          tmux -2 attach -t $sessions[1]
+          return
+      end
+
+      # Multiple sessions, prompt to choose one
+      for i in (seq (count $sessions))
+          echo "$i) $sessions[$i]"
+      end
+
+      while true
+          read -P "Select a session: " reply
+
+          if string match -qr '^[1-9][0-9]*$' -- $reply
+              and test $reply -le (count $sessions)
+              tmux -2 attach -t $sessions[$reply]
+              return
+          end
+
+          echo "Invalid index '$reply', please retry"
+      end
+  end
 #+end_src
