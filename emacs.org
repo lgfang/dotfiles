@@ -1492,18 +1492,21 @@ convenient (due to gpg agent) and more secure.
 Emacs automatically encrypts/decrypts =.gpg= files using GnuPG out of box,
 needing NO additional configuration.
 
-However, GnuPG must be install and configured properly. For MacOS, follow these
-steps:
-1. =brew install gpg=
-2. =brew install pinentry-mac=
-   * By default, =gpg= comes with =pinentry= which does not work well with GUI
-     Emacs.
-3. =echo "pinentry-program /opt/homebrew/bin/pinentry-mac" > ~/.gnupg/gpg-agent.conf=
-   * Update =gpg-agent= configuration to use =pinentry-mac= instead of =pinentry=.
-4. =killall gpg-agent=
-   * Ensure the new gpg agent configuration takes effect.
-5. Create/import gpg keys.
-   * IMPORTANT: remember to export and backup keys.
+That said, on MacOS, GnuPG must be configured properly, otherwise, you may see
+the following error:
+#+begin_src text
+  Error while decrypting with "/opt/homebrew/bin/gpg":
+  ...
+  gpg: public key decryption failed: Inappropriate ioctl for device
+  gpg: decryption failed: Inappropriate ioctl for device
+#+end_src
+
+Solution: use GUI pinentry for macOS
+#+begin_src bash
+  brew install pinentry-mac
+  echo "pinentry-program /opt/homebrew/bin/pinentry-mac" > ~/.gnupg/gpg-agent.conf
+  killall gpg-agent
+#+end_src
 
 *** Why
 
@@ -1585,8 +1588,16 @@ a number of local files on my laptop.
     sub   rsa4096 2024-06-05 [E]
   #+end_src
 - Change passphrase: =gpg --edit-key "easy" passwd=
-- Export: =gpg --armor --export-secret-keys > my-keys.asc=
-- Import: =gpg --import my-keys.asc=, *then edit trust*
+- Export:
+  #+begin_src bash
+    gpg --armor --export-secret-keys > my-keys.asc
+    gpg --export-ownertrust > ownertrust.txt
+  #+end_src
+- Import
+  #+begin_src bash
+    gpg --import my-keys.asc
+    gpg --import-ownertrust ownertrust.txt
+  #+end_src
 
 *** Create, read, write gpg files in Emacs
 
