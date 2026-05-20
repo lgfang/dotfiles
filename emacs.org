@@ -3062,8 +3062,8 @@ Prerequisites:
     (defun my/gptel-get-key (host login)
       "Return a lambda that fetches the API key for HOST and LOGIN from auth-source.
 
-       Returns a lambda not the results so the actual secret is looked up
-       only when gptel needs it, not when Emacs is initializing."
+         Returns a lambda not the results so the actual secret is looked up
+         only when gptel needs it, not when Emacs is initializing."
       (lambda ()
         (require 'auth-source)
         (let* ((result (auth-source-search :host host :user login :require '(:secret)))
@@ -3085,25 +3085,35 @@ Prerequisites:
       :stream t
       :key (my/gptel-get-key "gemini" "free-api"))
 
-    (gptel-make-bedrock "Bedrock"
-      :stream t
-      :region "us-east-1"
-      :aws-profile "ai-coder-llm")
+    ;; (gptel-make-bedrock "Bedrock"
+    ;;   :stream t
+    ;;   :region "us-east-1"
+    ;;   :aws-profile "ai-coder-llm")
 
-    (setq-default gptel-backend (gptel-make-gh-copilot "CopilotChat"))
-    (setq-default gptel-model 'gemini-3.1-pro-preview)
+    ;; (gptel-make-openai "MongoGPT"
+    ;;   :stream nil
+    ;;   :host "mongogpt.aix.prod.corp.mongodb.com"
+    ;;   :endpoint "/api/v1/messages"
+    ;;   :key (lambda ()
+    ;;          (let* ((key (string-trim
+    ;;                       (shell-command-to-string "kanopy-oidc login")))
+    ;;                 (jwt-pattern "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"))
+    ;;            (if (string-match-p jwt-pattern key)
+    ;;                key
+    ;;              (error "Failed to retrieve API key: [%s]" key)))))
 
-    (gptel-make-openai "MongoGPT"
-      :stream nil
-      :host "mongogpt.aix.prod.corp.mongodb.com"
-      :endpoint "/api/v1/messages"
-      :key (lambda ()
-             (let* ((key (string-trim
-                          (shell-command-to-string "kanopy-oidc login")))
-                    (jwt-pattern "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"))
-               (if (string-match-p jwt-pattern key)
-                   key
-                 (error "Failed to retrieve API key: [%s]" key))))))
+    ;; (setq-default gptel-backend (gptel-make-gh-copilot "CopilotChat"))
+    ;; (setq-default gptel-model 'gemini-3.1-pro-preview)
+
+    (setq-default gptel-backend (gptel-make-openai "Grove"
+                                  :stream nil
+                                  :host "grove-gateway-prod.azure-api.net"
+                                  :endpoint "/grove-foundry-prod/openai/v1/chat/completions"
+                                  :key (my/gptel-get-key "grove" "code-gen-api")
+                                  :header (lambda (_info)
+                                            `(("api-key" . ,(funcall (my/gptel-get-key "grove" "code-gen-api")))))
+                                  ))
+    (setq-default gptel-model 'gpt-5.5))
 #+end_src
 
 *** DeepSeek authentication note
