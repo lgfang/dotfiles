@@ -490,6 +490,16 @@ Other useful consult commands:
 
 ** Embark
 
+When I'm in a completion list from Vertico, Consult etc., Embark lets me say:
+1. act on the current candidate
+2. show me all actions available here
+3. export these candidates to a normal buffer
+4. perform actions by type (file, buffer, symbol, command, package, bookmark,
+   etc.)
+
+Currently, the most useful feature for me is exporting the candidates to a
+normal buffer. With my configuration below, it is done via ~C-x .~ then ~S~.
+
 #+begin_src emacs-lisp
   (use-package embark
     :bind (:map global-map ("C-x ." . embark-act)))
