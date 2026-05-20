@@ -1,0 +1,217 @@
+# -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+# Created: 2016-02-27
+
+#+TITLE: Setting up a new MacBook
+#+AUTHOR:
+#+DATE:
+#+DESCRIPTION: How I set up a new MacBook, updated for Tahoe
+#+KEYWORDS: MacOS, MacBook
+
+* Adjust System Settings
+
+- Mouse:
+  + Turn on "Natural scrolling"
+  + Enable "Secondary click"
+- Keyboard
+  + Adjust "Key repeat rate" and "Delay until repeat"
+  + Dictation:
+    - Languages: select both English and Chinese
+    - Shortcut: set to press right command twice
+- Mouse/trackpad tracking speed: adjust
+- Function Keys: turn on "Use F1, F2, etc. keys as standard function keys"
+- Language input methods: add additional input methods, say "Pinyin -
+  Simplified"
+- Menu Bar > Menu Bar Controls:
+  - Change Sound to "Always Show"
+  - Tick Bluetooth in Menu Bar
+- Remote Login: toggle on/off as needed
+
+* Install homebrew
+
+- Why: http://tedwise.com/2010/08/28/homebrew-vs-macports/
+- How: follow the official instrction of homebrew at http://docs.brew.sh
+
+After installing ~brew~, following the screen output allow the current
+interactive shell can find ~brew~, so that we proceed to install more software.
+
+NOTE: Don't overwrite system default apps, they will be overwritten by future
+MacOS system upgrades.
+
+* Install nerd fonts used by Emacs & terminal emulator
+
+For example:
+#+begin_src bash
+  brew install  --cask font-fira-code-nerd-font
+#+end_src
+
+* Install Emacs and tangle configuration files
+
+Install Emacs early so that we can tangle our literate configurations into
+actual configuration files.
+
+#+begin_src bash
+  brew install --cask emacs
+#+end_src
+
+Alternatively, install emacs-plus-app@master for the bleeding-edge version:
+#+begin_src bash
+  brew tap d12frosted/emacs-plus
+  brew install --cask emacs-plus-app@master
+#+end_src
+
+After Emacs is installed:
+
+My configuration files are org files. In Emacs open each of the following file
+and run =org-babel-tangle=:
+- emacs.org
+- karabiner.org
+- window-manager.org
+- terminal-emulator.org
+- shell.org
+- tmux.org
+- git.org
+
+* Install karabiner-elements
+
+This to make keyboards Emacs user friendly
+
+Goal:
+- 75% mac-compatible keyboards
+  + Issue :: no right control
+  + Solution :: Remap <Enter> to right control when it is held down.
+- Non-mac keyboads
+  + Issue :: different <Option/Meta> keys and <Command> keys positions.
+  + Solution :: Swap there positions
+
+Steps:
+1. Install [[https://karabiner-elements.pqrs.org][Karabiner Elements]] following installation instructions.
+2. Deploy its configurations if have't already: open =.dotfiles/karabiner.org=
+   in Emacs and then =org-babel-babel=.
+3. Start Karabiner Elements and modify system setting as prompted.
+
+* Install window manager
+
+#+begin_src bash
+  brew install --cask nikitabobko/tap/aerospace
+#+end_src
+
+* Install terminal emulator
+
+#+begin_src bash
+  brew install --cask wezterm
+#+end_src
+
+I choose wezterm over iTerm2 mainly because its configuration is done in plain
+text not via GUI.
+
+* Install terminal multiplexer
+
+#+begin_src bash
+  brew install tmux
+#+end_src
+
+* Install shell of my choice
+
+*IMPORTANT* restart the laptop after ~chsh~. Otherwise, other applications may
+keep using the old default shell. For example: without restart, ~(getenv
+"SHELL")~ in GUI Emacs may report ~zsh~.
+
+** COMMENT Bash
+
+#+begin_src bash
+  brew install bash bash-completion
+  echo /opt/homebrew/bin/bash | sudo tee -a /etc/shells
+  chsh -s /opt/homebrew/bin/bash
+#+end_src
+
+** Fish
+
+#+begin_src bash
+brew install fish
+echo /opt/homebrew/bin/fish | sudo tee -a /etc/shells
+chsh -s /opt/homebrew/bin/fish
+#+end_src
+
+* Install utilities
+
+#+begin_src bash
+  brew install node
+  brew install ispell
+  npm install -g prettier
+  brew install pandoc
+#+end_src
+
+* Install LLM/AI software
+
+** Install Claude Code
+
+Install the software following its offical document, then login per company's
+internal document.
+
+#+begin_src bash
+  cd ~/Downloads/
+  curl -fsSL https://claude.ai/install.sh > install.sh
+  chmod 755 install.sh
+  ./install.sh
+#+end_src
+
+NOTE: piping curl outputs to bash is banned due to company policy, must save the
+output to file and then execute it.
+
+** Install OpenCode
+
+#+begin_src bash
+  brew install anomalyco/tap/opencode
+#+end_src
+
+Then, follow the company internal document to connect it to grove.
+
+** Install Agent Communication Protocol (ACP) support
+
+This needed by Emacs agent-shell
+
+#+begin_src bash
+  # ACP (for Emacs agent-shell)
+  npm install -g @agentclientprotocol/claude-agent-acp
+#+end_src
+
+* Migrate credentials
+
+** Import GPG keys
+
+Refer to [[file:emacs.org::*Manage gpg keys (outside Emacs)][Manage gpg keys (outside Emacs)]] for more information including the
+commands.
+
+** Transfer files
+#+begin_src bash
+  ~/.authinfo.gpg
+  ~/.ssh                          # mainly ssh keys, probably also the config
+  ~/.evergreen.yml
+  ~/.kube/config.*                # remember to set env var KUBECONFIG
+  ~/.kanopy/config.yaml
+#+end_src
+
+** Migrate 1password
+
+Open the 1password web page on the new laptop and then follow the prompts.
+
+** Credentials stored in MacOS Keychain
+
+- JIRA PAT (https://jira.mongodb.org/tokens) for jira-cli
+  #+begin_src bash
+    # Retrieve from the old laptop
+    security find-generic-password -a "$USER" -s "jira-cli" -w 2
+    # Add into the new laptop
+    security add-generic-password -a "$USER" -s "jira-cli" -w
+  #+end_src
+
+* Install development tools
+
+- jira-cli
+  #+begin_src bash
+    brew install jira-cli
+    jira init
+  #+end_src
+- kanopy-oidc
+- MCP Glean
+- MCP Evergreen
