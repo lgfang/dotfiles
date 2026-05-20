@@ -3,7 +3,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-13 +1000
+#+DATE: 2026-05-20 +1000
 
 * Timestamps
 
@@ -50,10 +50,13 @@ As a Tmux + Emacs user on MacOS, I don't need multiplexer etc.. Hence, for me th
 
 *** Fonts
 
-See [[https://github.com/ryanoasis/nerd-fonts/discussions/1103][this post]] for the differences of the 3 variations of nerd fonts, i.e. (nerd
-font, nerd font mono, and nerd font propo).
+**** Font
 
-#+begin_src lua :tangle ~/.wezterm.lua
+Update this section and remove ~:tangle no~ to use customize fonts. See [[https://github.com/ryanoasis/nerd-fonts/discussions/1103][this
+post]] for the differences of the 3 variations of nerd fonts, i.e. (nerd font,
+nerd font mono, and nerd font propo).
+
+#+begin_src lua :tangle ~/.wezterm.lua :tangle no
   -- Install the font using "brew install font-dejavu-sans-mono-nerd-font"
   local font_family = 'DejaVuSansM Nerd Font'
 
@@ -90,6 +93,11 @@ font, nerd font mono, and nerd font propo).
 
   config.font = font_with_weight('Regular')
   -- config.font_rules = font_rules
+#+end_src
+
+**** Size and ligatures
+
+#+begin_src lua :tangle ~/.wezterm.lua
   config.font_size = 16
 
   -- Ligature settings. The selected font must supports theses features. (Nerd
