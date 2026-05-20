@@ -3442,38 +3442,6 @@ NOTE:
     )
 #+end_src
 
-* Bash
-
-#+begin_src emacs-lisp
-  (use-package sh-script
-    :ensure nil                           ; Built-in
-    :commands (sh-mode shell-script-mode)
-    :custom ((sh-basic-offset 2) (sh-indentation 2))
-    )
-#+end_src
-
-** Language server
-Eglot + [[https://github.com/bash-lsp/bash-language-server][bash-language-server]]
-
-** Formatter
-See also [[* Prettier]]
-
-1. Install [[https://github.com/mvdan/sh][shfmt]] in command line.
-2. Package install =shfmt=.
-
-#+begin_src emacs-lisp
-  (use-package shfmt
-    :delight shfmt-on-save-mode
-    :hook ((sh-mode bash-ts-mode) . shfmt-on-save-mode)
-    :custom (shfmt-arguments
-             '("-i" "2"   ; indent by 2 spaces
-               "-bn"      ; binary ops like && and | may start a line
-               "-ci"      ; switch cases will be indented
-               "-s"       ; simplify the code
-               "-sr"      ; redirect operators will be followed by a space
-               )))
-#+end_src
-
 * C/C++
 
 ** Language server
@@ -3890,6 +3858,47 @@ pyright
 - n/p :: next/previous section
 - PageDown/PageUp :: previous/next page
 - TODO: u/d :: one level up/one level down
+
+* Shells
+** Bash
+
+#+begin_src emacs-lisp
+  (use-package sh-script
+    :ensure nil                           ; Built-in
+    :commands (sh-mode shell-script-mode)
+    :custom ((sh-basic-offset 2) (sh-indentation 2))
+    )
+#+end_src
+
+*** Language server
+Eglot + [[https://github.com/bash-lsp/bash-language-server][bash-language-server]]
+
+*** Formatter
+See also [[* Prettier]]
+
+1. Install [[https://github.com/mvdan/sh][shfmt]] in command line.
+2. Package install =shfmt=.
+
+#+begin_src emacs-lisp
+  (use-package shfmt
+    :delight shfmt-on-save-mode
+    :hook ((sh-mode bash-ts-mode) . shfmt-on-save-mode)
+    :custom (shfmt-arguments
+             '("-i" "2"   ; indent by 2 spaces
+               "-bn"      ; binary ops like && and | may start a line
+               "-ci"      ; switch cases will be indented
+               "-s"       ; simplify the code
+               "-sr"      ; redirect operators will be followed by a space
+               )))
+#+end_src
+
+** Fish
+
+#+begin_src emacs-lisp
+(use-package fish-mode
+  :ensure t
+  :mode "\\.fish\\'")
+#+end_src
 
 * Tcl & expect
 #+begin_src emacs-lisp
