@@ -2487,30 +2487,24 @@ To create an additional eshell buffer, run =C-u M-x eshell=.
                                     '((holiday-lunar 1 15 "元宵节")))))
 #+end_src
 
-** Dictionary and translation
+** Dictionary
 
-Firstly, clone the package into the =my-downloads= directory:
-#+begin_src bash
-git clone https://github.com/honmaple/emacs-maple-translate ~/.emacs.d/downloads/emacs-maple-translate
-#+end_src
+This is intended for quick word lookup. I chose ~maple-translate~ because it is
+simple and self-contained, and is sufficient for this purpose. Its only downside
+is that it requires internet access.
+
+=scdv= was not chosen, even though it works with local dictionary files, because
+such dictionary files are now difficult to find.
 
 #+begin_src emacs-lisp
-  (use-package maple-translate
-    :load-path (lambda() (concat my-downloads "emacs-maple-translate"))
+  (use-package emacs-maple-translate
+    :vc (:url "https://github.com/honmaple/emacs-maple-translate" :rev :newest)
     :commands (maple-translate maple-translate+)
     :custom (maple-translate-engine 'youdao)
     :bind (:map global-map
                 ("C-h D" . maple-translate)
-                ("C-h d" . maple-translate+))
-    )
+                ("C-h d" . maple-translate+)))
 #+end_src
-
-I no longer use =scdv= despite its offline capability due the difficulty in
-finding and downloading dictionaries.
-
-Using =webjump= to navigate to =dict.cn= etc. with the selected text or word at
-point is another alternative. However, it is less inconvenient as it requires
-closing the web browser tab and refocusing on Emacs.
 
 ** Diff
 #+begin_src emacs-lisp
