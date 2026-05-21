@@ -3,56 +3,31 @@
 
 #+TITLE: AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-03-17 +1100
+#+DATE: 2026-05-21 +1000
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
 
 * Claude
 
-** Installation
+** Add user-global MCP servers
 
-1. Configure User-Specific NPM Global Installation
+NOTE:
+- Do not tangle these bash commands, execute them manually to better handle
+  error cases.
+- They modify ~.claude.json~.
 
-   This is a one-time setup that applies to all future npm global installations.
-   The goal is to configure ~npm~ so that the ~-g~ flag points to a directory
-   inside your personal home folder. Once configured, any package installed with
-   ~-g~ will be user-specific, and ~root/sudo~ access is not required.
+#+begin_src bash :tangle no
+  # mdb-glean: MongoDB's Glean MCP server for searching and chatting over internal company documents and knowledge.
+  claude mcp add mdb-glean --scope user --transport http https://mongodb-be.glean.com/mcp/default
 
-   *Note for macOS users:* Skip this step as since npm global installations use
-   Homebrew's bin directory.
+  # evergreen: MongoDB's Evergreen CI/CD MCP server for querying patches, tasks, builds, and test results.
+  claude mcp add evergreen --scope user -- uvx --from=git+https://github.com/evergreen-ci/evergreen-mcp-server evergreen-mcp-server
+#+end_src
 
-   1) Create a directory for user-specific packages
+** COMMENT Use AWS Bedrock Models
 
-      First, create a folder in your home directory where your "global" packages
-      will live. A common convention is ~~/.npm-global~.
-      #+BEGIN_SRC bash
-        mkdir ~/.npm-global
-      #+END_SRC
-
-   2) Configure npm to use this new directory path
-
-      Next, tell ~npm~ to use this new folder for all future global installations.
-      #+BEGIN_SRC bash
-        npm config set prefix '~/.npm-global'
-      #+END_SRC
-
-   3) Add the new location to your system's PATH
-
-      #+BEGIN_SRC bash
-        export PATH=$HOME/.npm-global/bin:$PATH
-      #+END_SRC
-
-2. Install claude code "globally"
-
-   #+begin_src bash
-     npm install -g @anthropic-ai/claude-code
-   #+end_src
-
-3. Configure Claude to use AWS Bedrock.
-
-   For example, add the following to your =~/.claude/settings.json=. See [[file:ai.org::*Claude][my
-   claude notes]] for more information.
+1. Add the following to =~/.claude/settings.json=:
    #+begin_src json-ts
      {
        "env": {
@@ -64,47 +39,17 @@
      }
    #+end_src
 
-4. Authenticate with AWS:
+2. Authenticate with AWS:
    #+BEGIN_SRC bash
      aws sso login --profile ai-coder-llm
    #+END_SRC
 
-5. Verify the authentication information
+3. Verify the authentication information
    #+begin_src bash
      aws sts get-caller-identity --profile ai-coder-llm
    #+end_src
 
-6. Run Claude to confirm that everything works.
+4. Run Claude to confirm that everything works.
    #+begin_src bash
      claude
    #+end_src
-
-** Configuration
-
-*** Settings.json
-
-The following ~env~ section configures Claude code to connect to AWS Bedrock
-using the AWS profile =ai-coder-llm=.
-
-*NOTE*: Do not add comments to this file. Claude uses a strict JSON parser that
-silently ignores invalid JSON.
-
-#+begin_src json-ts :tangle ~/.claude/settings.json :mkdirp yes
-  {
-    "includeCoAuthoredBy": false
-  }
-#+end_src
-
-*** CLAUDE.md
-
-#+begin_src markdown :tangle ~/.claude/CLAUDE.md
-  # General Claude Instructions
-#+end_src
-
-*** User-global MCP servers
-
-NOTE: these are bash commands, not tangled but need to be executed explicitly. They modify ~.claude.json~.
-
-#+begin_src bash
-  claude mcp add --scope user --transport http mdb-glean https://mongodb-be.glean.com/mcp/default 2>&1
-#+end_src
