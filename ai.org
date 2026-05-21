@@ -53,3 +53,54 @@ NOTE:
    #+begin_src bash
      claude
    #+end_src
+
+* OpenCode
+
+** Skeleton - work laptop
+
+#+begin_src json-ts :tangle (if my/work-machine-p "~/.config/opencode/opencode.json" "no") :noweb yes :mkdirp yes
+  {
+    "$schema": "https://opencode.ai/config.json",
+    "mcp": {
+      "_placeholder_mcp": { "type": "local", "command": ["true"], "enabled": false }
+      <<mcp-shared>>
+      <<mcp-work>>
+    }
+  }
+#+end_src
+
+** Skeleton - personal laptop
+
+#+begin_src json-ts :tangle (if my/work-machine-p "no" "~/.config/opencode/opencode.json") :noweb yes :mkdirp yes
+  {
+    "$schema": "https://opencode.ai/config.json",
+    "mcp": {
+      "_placeholder_mcp": { "type": "local", "command": ["true"], "enabled": false }
+      <<mcp-shared>>
+      <<mcp-personal>>
+    }
+  }
+#+end_src
+
+** MCP servers
+
+*** Evergreen
+#+begin_src json-ts :noweb-ref mcp-work :tangle no
+  ,"evergreen": {
+    "type": "local",
+    "command": [
+      "uvx",
+      "--from=git+https://github.com/evergreen-ci/evergreen-mcp-server",
+      "evergreen-mcp-server"
+    ],
+    "enabled": true
+  }
+#+end_src
+*** Glean
+#+begin_src json-ts :noweb-ref mcp-work :tangle no
+  ,"mdb-glean": {
+    "type": "remote",
+    "url": "https://mongodb-be.glean.com/mcp/default",
+    "enabled": true
+  }
+#+end_src
