@@ -3,7 +3,7 @@
 
 #+TITLE: My Window Manager Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-16 +1000
+#+DATE: 2026-05-22 +1000
 #+DESCRIPTION: My window manager related configurations
 #+KEYWORDS: window manager, hotkey, tiling, yabai, skhd
 
@@ -307,10 +307,10 @@ I prefer AeroSpace over Yabai for the following reasons:
   ctrl-g = 'mode main'
 
   [mode.move.binding]
-  h = ['exec-and-forget ~/.config/aerospace/aerospace-swap.sh left']
-  j = ['exec-and-forget ~/.config/aerospace/aerospace-swap.sh down']
-  k = ['exec-and-forget ~/.config/aerospace/aerospace-swap.sh up']
-  l = ['exec-and-forget ~/.config/aerospace/aerospace-swap.sh right']
+  h = ['exec-and-forget ~/.config/aerospace/aerospace-swap-windows.sh left']
+  j = ['exec-and-forget ~/.config/aerospace/aerospace-swap-windows.sh down']
+  k = ['exec-and-forget ~/.config/aerospace/aerospace-swap-windows.sh up']
+  l = ['exec-and-forget ~/.config/aerospace/aerospace-swap-windows.sh right']
   1 = ['move-node-to-workspace 1', 'mode main']
   2 = ['move-node-to-workspace 2', 'mode main']
   3 = ['move-node-to-workspace 3', 'mode main']
@@ -377,16 +377,18 @@ I prefer AeroSpace over Yabai for the following reasons:
   9 = ['workspace 9', 'mode main']
   n = 'workspace next'
   p = 'workspace prev'
-  h = 'move-workspace-to-monitor left'
-  l = 'move-workspace-to-monitor right'
+  h = ['exec-and-forget ~/.config/aerospace/aerospace-swap-workspaces.sh left']
+  j = ['exec-and-forget ~/.config/aerospace/aerospace-swap-workspaces.sh down']
+  k = ['exec-and-forget ~/.config/aerospace/aerospace-swap-workspaces.sh up']
+  l = ['exec-and-forget ~/.config/aerospace/aerospace-swap-workspaces.sh right']
   esc = 'mode main'
   ctrl-g = 'mode main'
 #+end_src
 
 ** Script to swap windows cross monitor boundaries
 
-#+begin_src bash :tangle ~/.config/aerospace/aerospace-swap.sh :shebang "#!/usr/bin/env bash"
-  # aerospace is installed in /opt/homebrew/bin
+#+begin_src bash :tangle ~/.config/aerospace/aerospace-swap-windows.sh :shebang "#!/usr/bin/env bash"
+  # Ensure aerospace can be found when the script is run without custom PATH
   export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 
   DIRECTION=$1
@@ -423,4 +425,51 @@ I prefer AeroSpace over Yabai for the following reasons:
       # Restore focus to the original window
       aerospace focus --window-id $ID1
   fi
+#+end_src
+
+** Script to swap workspaces
+
+#+begin_src bash :tangle ~/.config/aerospace/aerospace-swap-workspaces.sh :shebang "#!/usr/bin/env bash"
+  # Swap the focused workspace with the visible workspace on the neighboring
+  # monitor in the given direction.
+  # Usage: swap-workspace-with-monitor.sh <left|right|up|down|next|prev>
+
+  # Ensure aerospace can be found when the script is run without custom PATH
+  export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+  set -euo pipefail
+
+  direction="${1:-}"
+  case "$direction" in
+    left|right|up|down|next|prev) ;;
+    ,*)
+      echo "Usage: $(basename "$0") <left|right|up|down|next|prev>" >&2
+      exit 2
+      ;;
+  esac
+
+  src_mon=$(aerospace list-monitors --focused --format '%{monitor-id}')
+  src_ws=$(aerospace list-workspaces --focused)
+
+  # Probe the neighbor by briefly moving focus there.
+  aerospace focus-monitor "$direction"
+  dst_mon=$(aerospace list-monitors --focused --format '%{monitor-id}')
+
+  if [[ "$dst_mon" == "$src_mon" ]]; then
+    # No monitor in that direction — restore focus and bail.
+    aerospace workspace "$src_ws"
+    echo "No monitor '$direction' of monitor $src_mon" >&2
+    exit 0
+  fi
+
+  dst_ws=$(aerospace list-workspaces --focused)
+
+  # Swap.
+  aerospace workspace "$src_ws"
+  aerospace move-workspace-to-monitor "$dst_mon"
+  aerospace workspace "$dst_ws"
+  aerospace move-workspace-to-monitor "$src_mon"
+
+  # Land on the originally-focused workspace (now on the neighbor monitor).
+  aerospace workspace "$src_ws"
 #+end_src
