@@ -2085,6 +2085,29 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
                 (setq found t)))
             (if found nil (point-at-eol))))))
 
+    (defun my/report-worked-on-tasks (days)
+      "Show tasks worked on in the last DAYS days (default 2)."
+      (interactive
+       (list (cond ((null current-prefix-arg) 2)
+                   ((integerp current-prefix-arg) current-prefix-arg)
+                   (t (read-number "Number of days: " 2)))))
+      (let* ((days-str (number-to-string days))
+             (header (format "Worked on (last %s days)" days-str))
+             (closed-match (format "CLOSED>=\"<-%sd>\"" days-str))
+             (org-agenda-custom-commands
+              `(("r" ,header
+                 ((todo "PROG"
+                        ((org-agenda-overriding-header ,header)))
+                  (tags ,closed-match
+                        ((org-agenda-overriding-header "")
+                         (org-agenda-skip-function
+                          '(my/skip-unless-worked-on ,days))))
+                  (todo "INBX|TODO|WAIT|HOLD|MAYB"
+                        ((org-agenda-overriding-header "")
+                         (org-agenda-skip-function
+                          '(my/skip-unless-worked-on ,days)))))))))
+        (org-agenda nil "r")))
+
     ;; Settings that depend on my-personal-path (evaluated at load time)
     (setq org-agenda-files
           (mapcar (lambda (x) (concat my-personal-path x))
@@ -2123,17 +2146,8 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
                        (org-agenda-files '(,(concat my-personal-path "work.gtd")))))))
             ("p" "PENDING items"
              ((todo "WAIT") (todo "HOLD") (todo "MAYB")))
-            ("r" "Report worked on tasks (last 2 days)"
-             ((todo "PROG"
-                    ((org-agenda-overriding-header "Worked on (last 2 days)")))
-              (tags "CLOSED>=\"<-2d>\""
-                    ((org-agenda-overriding-header "")
-                     (org-agenda-skip-function
-                      '(my/skip-unless-worked-on))))
-              (todo "INBX|TODO|WAIT|HOLD|MAYB"
-                    ((org-agenda-overriding-header "")
-                     (org-agenda-skip-function
-                      '(my/skip-unless-worked-on))))))
+            ("r" "Report worked on tasks"
+             (lambda (_) (call-interactively #'my/report-worked-on-tasks)))
             ("b" "My bookmark" search nil
              ((org-agenda-files '(,(concat my-personal-path "bookmarks.lgf")))))
             ("c" "Bookmark category" tags nil
