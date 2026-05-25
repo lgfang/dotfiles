@@ -3267,6 +3267,9 @@ copilot-login=.
     (magit-status-margin '(t age magit-log-margin-width t 18))
     ;; In magit log buffer, display date instead of age
     (magit-log-margin '(t "%y-%m-%d %H:%M %z" magit-log-margin-width t 18))
+    ;; Use the standard mechanism (configurable via `display-buffer-alist')
+    ;; instead of forcing reuse of the same window.
+    (magit-display-buffer-function #'display-buffer)
 
     :hook
     (magit-refresh-buffer
