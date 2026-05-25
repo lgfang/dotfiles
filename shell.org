@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-20 +1000
+#+DATE: 2026-05-25 +1000
 
 * COMMENT Bash
 ** bash_profile
@@ -1139,6 +1139,7 @@ EXEC 00;38;5;64
       end
   end
 
+  set -gx KUBECONFIG (string join : ~/.kube/config.*)
 #+end_src
 
 ** fish prompt
