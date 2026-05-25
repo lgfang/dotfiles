@@ -3029,10 +3029,25 @@ Prerequisites:
     :custom
     (agent-shell-session-strategy 'prompt)
     (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "recommended"))
-    ;; Choose agent and model based on work vs. personal laptop.
-    (agent-shell-preferred-agent-config  (if my/work-machine-p 'claude-code 'opencode))
+    ;; Choose agent based on work/personal laptop.
+    (agent-shell-preferred-agent-config
+     (if my/work-machine-p 'claude-code 'opencode))
+    ;; Choose model based on work/personal laptop.
     (agent-shell-opencode-default-model-id
-     (if my/work-machine-p "grove-openai/gpt-5.5" "deepseek/deepseek-v4-pro")))
+     (if my/work-machine-p "grove-openai/gpt-5.5" "deepseek/deepseek-v4-pro"))
+    ;; Configure MCPs based on work/personal laptop.
+    (agent-shell-mcp-servers
+     (if my/work-machine-p
+         '(((name . "mdb-glean")
+            (type . "http")
+            (url . "https://mongodb-be.glean.com/mcp/default")
+            (headers . ()))
+           ((name . "evergreen")
+            (command . "uvx")
+            (args . ("--from=git+https://github.com/evergreen-ci/evergreen-mcp-server"
+                     "evergreen-mcp-server"))
+            (env . ())))
+       '(()))))
 #+end_src
 
 ** gptel
