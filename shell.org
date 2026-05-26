@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-25 +1000
+#+DATE: 2026-05-26 +1000
 
 * COMMENT Bash
 ** bash_profile
@@ -1121,9 +1121,6 @@ EXEC 00;38;5;64
 .anx 00;38;5;166
 .ogv 00;38;5;166
 .ogx 00;38;5;166
-
-
-
 #+end_src
 
 * Fish
@@ -1140,6 +1137,7 @@ EXEC 00;38;5;64
   end
 
   set -gx KUBECONFIG (string join : ~/.kube/config.*)
+  set -gx JIRA_API_TOKEN (security find-generic-password -a "$USER" -s "jira-cli" -w 2>/dev/null)
 #+end_src
 
 ** fish prompt
