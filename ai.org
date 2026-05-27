@@ -3,10 +3,9 @@
 
 #+TITLE: AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-21 +1000
+#+DATE: 2026-06-24 +1000
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
-#+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
 
 * Claude
 
@@ -23,6 +22,226 @@ NOTE:
 
   # evergreen: MongoDB's Evergreen CI/CD MCP server for querying patches, tasks, builds, and test results.
   claude mcp add evergreen --scope user -- uvx --from=git+https://github.com/evergreen-ci/evergreen-mcp-server evergreen-mcp-server
+#+end_src
+
+** User level CLAUDE.md
+
+#+begin_src markdown-ts :tangle "~/.claude/CLAUDE.md" :noweb yes :mkdirp yes
+  # General Claude Instructions
+
+  ## Scratch / temp files
+
+  - Write scratch and intermediate files under `/tmp/claude-scratch/` (create the
+    directory if needed), never directly in `/tmp`. Prefer the project working
+    directory for scratch files when practical.
+#+end_src
+
+** User level configuration file: =~/.claude/settings.json=
+
+- =~/.claude/settings.json= :: User-level configuration file. Applies globally
+  to Claude Code sessions for the current operating-system user, unless
+  overridden by project-level or local settings.
+
+- =~/.claude/remote-settings.json= :: Remote or account-managed user
+  configuration file. Treat this as policy managed by the organization: local
+  changes are reverted when a Claude session starts.
+  + Note: Claude appears to load permission lists before reverting this file, so
+    edits affect the first session after the change.
+
+- =~/project_root/.claude/settings.json= :: Project-level team-shared
+  configuration file, meant to be checked in version control.
+
+- =~/project_root/.claude/settings.local.json= :: Project-level personal
+  configuration file, meant to be git ignored. Claude Code writes to this file
+  every time we grant a permission interactively, so when it's checked in we get
+  constant unwanted diffs.
+
+#+begin_src json-ts :tangle "~/.claude/settings.json" :noweb yes :mkdirp yes
+  {
+    "includeCoAuthoredBy": false,
+    <<claude-permissions>>,
+    <<sandbox>>
+  }
+#+end_src
+
+*** Permissions
+
+Glob patterns such as ~mcp__evergreen__get_*~ do not work. Therefore, I listed
+all MCP commands individually.
+#+begin_src json-ts :tangle no :noweb yes :noweb-ref claude-permissions
+  "permissions": {
+    "ask": [
+      <<ask>>
+    ],
+    "allow": [
+      <<allow>>
+    ]
+  }
+#+end_src
+
+**** Ask
+
+***** Evergreen
+
+#+begin_src json-ts :tangle no :noweb-ref ask
+  "Bash(evergreen patch *)",
+#+end_src
+
+***** Git
+
+#+begin_src json-ts :tangle no :noweb-ref ask
+  "Bash(git push *)",
+  "Bash(git amend *)",
+#+end_src
+
+***** GitHub
+
+#+begin_src json-ts :tangle no :noweb-ref ask
+  "Bash(gh pr create *)",
+#+end_src
+
+***** Jira cli
+
+#+begin_src json-ts :tangle no :noweb-ref ask
+  "Bash(jira issue create *)",
+  "Bash(jira issue edit *)",
+  "Bash(jira issue move *)"
+#+end_src
+
+**** Allow
+
+***** Aws cli:
+
+#+begin_src json-ts :tangle no :noweb-ref allow
+  "Bash(aws ec2 describe-*)",
+#+end_src
+
+NOTE: company rules defined in =~/.claude/remote-settings.json= may override
+this rule.
+
+***** Git
+
+#+begin_src json-ts :tangle no :noweb-ref allow
+  "Bash(git *)",
+#+end_src
+
+***** GitHub
+
+#+begin_src json-ts :tangle no :noweb-ref allow
+  "Bash(gh pr view *)",
+  "Bash(gh pr diff *)",
+  "Bash(gh api repos/*/files *)",
+  "Bash(gh api repos/*/comments *)",
+  "WebFetch(domain:github.com)",
+#+end_src
+
+***** Jira cli
+
+#+begin_src json-ts :tangle no :noweb-ref allow
+  "Bash(jira issue list *)",
+  "Bash(jira issue view *)",
+  "Bash(jira epic list *)",
+  "Bash(mkdir -p /tmp/jira-drafts/)",
+  "Bash(mkdir -p /private/tmp/jira-drafts/)",
+  "Read(//tmp/jira-drafts/**)",
+  "Read(//private/tmp/jira-drafts/**)",
+  "Write(//tmp/jira-drafts/**)",
+  "Write(//private/tmp/jira-drafts/**)",
+  "Edit(//tmp/jira-drafts/**)",
+  "Edit(//private/tmp/jira-drafts/**)",
+  "WebFetch(domain:jira.mongodb.org)",
+#+end_src
+
+***** MongoDB
+
+#+begin_src json-ts :tangle no :noweb-ref allow
+  "Bash(evergreen list-patches *)",
+  "mcp__mdb-glean__search",
+  "mcp__mdb-glean__read_document",
+  "mcp__mdb-glean__chat",
+  "mcp__evergreen__get_test_results_summary",
+  "mcp__evergreen__get_test_results_detailed",
+  "mcp__evergreen__get_task_log_summary",
+  "mcp__evergreen__get_task_log_detailed",
+  "mcp__evergreen__get_patch_failed_jobs_evergreen",
+  "mcp__evergreen__get_inferred_project_ids_evergreen",
+  "mcp__evergreen__list_user_recent_patches_evergreen",
+  "mcp__evergreen__download_task_artifacts_evergreen",
+#+end_src
+
+****** DSI
+
+#+begin_src json-ts :tangle no :noweb-ref allow
+  "Bash(./run-dsi setup)",
+  "Bash(.venv/bin/pre-commit *)",
+#+end_src
+
+***** Poetry
+
+#+begin_src json-ts :tangle no :noweb-ref allow
+  "Bash(.poetry/bin/poetry run -- pre-commit run:*)",
+  "Bash(.poetry/bin/poetry run pytest:*)",
+#+end_src
+
+***** Skills
+
+#+begin_src json-ts :tangle no :noweb-ref allow
+  "Skill(performance-infrastructure-jira:*)",
+#+end_src
+
+***** Terraform
+
+#+begin_src json-ts :tangle no :noweb-ref allow
+  "Bash(terraform init *)",
+  "Bash(terraform validate *)",
+#+end_src
+
+***** Web search & download
+
+#+begin_src json-ts :tangle no :noweb-ref allow
+  "WebSearch",
+  "Bash(curl *)",
+#+end_src
+
+***** File read & write
+
+#+begin_src json-ts :tangle no :noweb-ref allow
+  "Read(//Users/lgfang/source/**)",
+  "Write(//Users/lgfang/source/**)",
+  "Edit(//Users/lgfang/source/**)",
+  "Read(//Users/lgfang/.emacs.d/elpa/**)",
+  "Read(//Users/lgfang/Downloads/**)",
+  "Read(//tmp/claude-scratch/**)",
+  "Write(//tmp/claude-scratch/**)",
+  "Read(//private/tmp/claude-scratch/**)",
+  "Write(//private/tmp/claude-scratch/**)",
+  "Bash(echo *)",
+  "Bash(head *)",
+  "Bash(tail *)",
+  "Bash(grep *)",
+  "Bash(find *)",
+  "Bash(ls *)",
+  "Bash(awk *)",
+  "Bash(sed *)",
+#+end_src
+
+***** Operating System probe
+
+#+begin_src json-ts :tangle no :noweb-ref allow
+  "Bash(command -v *)",
+  "Bash(which *)"
+#+end_src
+
+*** Sandbox
+#+begin_src json-ts :tangle no :noweb yes :noweb-ref sandbox
+    "sandbox": {
+      "filesystem": {
+        "allowWrite": [
+          "/tmp/claude-scratch/**",
+          "/private/tmp/claude-scratch/**"
+        ]
+      }
+    }
 #+end_src
 
 ** COMMENT Use AWS Bedrock Models
@@ -85,7 +304,7 @@ NOTE:
 ** MCP servers
 
 *** Evergreen
-#+begin_src json-ts :noweb-ref mcp-work :tangle no
+#+begin_src json-ts :tangle no :noweb-ref mcp-work
   ,"evergreen": {
     "type": "local",
     "command": [
@@ -96,8 +315,9 @@ NOTE:
     "enabled": true
   }
 #+end_src
+
 *** Glean
-#+begin_src json-ts :noweb-ref mcp-work :tangle no
+#+begin_src json-ts :tangle no :noweb-ref mcp-work
   ,"mdb-glean": {
     "type": "remote",
     "url": "https://mongodb-be.glean.com/mcp/default",
