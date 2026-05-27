@@ -3,10 +3,9 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-04-22 +1000
+#+DATE: 2026-05-27 +1000
 #+DESCRIPTION: Karabiner Elements configuration (window management now handled by AeroSpace)
 #+KEYWORDS: Karabiner
-#+PROPERTY: header-args:json-ts :tangle ~/.config/karabiner/karabiner.json :mkdirp yes :noweb yes
 
 * Overview
 
@@ -15,98 +14,40 @@ as Hyper), Emacs keybindings system-wide, mouse button remapping, and lock/sleep
 shortcuts. Window management layers (focus, move, resize, etc.) have been moved
 to AeroSpace, which handles its own modal key bindings.
 
-* Configuration file start
-#+begin_src json-ts
+* Configuration file skeleton
+#+begin_src json-ts :tangle ~/.config/karabiner/karabiner.json :noweb yes :mkdirp yes
   {
-#+end_src
-* Global settings
-#+begin_src json-ts
-  "global": {
-    "ask_for_confirmation_before_quitting": true,
-    "check_for_updates_on_startup": true,
-    "show_in_menu_bar": true,
-    "show_profile_name_in_menu_bar": false,
-    "unsafe_ui": false
-  },
-#+end_src
-* Profiles
-** Profiles start
-#+begin_src json-ts
-  "profiles": [{
-      "name": "default",
-      "selected": true,
-      "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" },
-#+end_src
-** Devices
-IMPORTANT: remember to iterate each and every keyboard/mouse and explicitly set
-=ignore= to false.
-*** Start
-#+begin_src json-ts
-  "devices": [
-#+end_src
-*** Built-in keyboard
-#+begin_src json-ts
-  {
-    "identifiers": {
-      "is_game_pad": false,
-      "is_keyboard": true,
-      "is_pointing_device": false,
-      "product_id": 835,
-      "vendor_id": 1452
+    "global": {
+      "ask_for_confirmation_before_quitting": true,
+      "check_for_updates_on_startup": true,
+      "show_in_menu_bar": true,
+      "show_profile_name_in_menu_bar": false,
+      "unsafe_ui": false
     },
-    "ignore": false,
-    "manipulate_caps_lock_led": true
-  },
-#+end_src
-
-*** Keychron Q1
-#+begin_src json-ts
-  {
-    "identifiers": {
-      "is_keyboard": true,
-      "is_pointing_device": true,
-      "product_id": 1552,
-      "vendor_id": 13364
-    },
-    "ignore": false
-  },
-#+end_src
-
-*** Niz
-#+begin_src json-ts
-  {
-      "identifiers": {
-          "is_keyboard": true,
-          "is_pointing_device": true,
-          "product_id": 544,
-          "vendor_id": 1452
-      },
-      "ignore": false
-  },
-#+end_src
-
-*** Ducky 87
-Swap Option keys and Command keys, converting it to a "Mac compatible keyboard".
-#+begin_src json-ts
-  {
-    "identifiers": {
-      "is_keyboard": true,
-      "product_id": 12309,
-      "vendor_id": 1241
-    },
-    "ignore": false,
-    "simple_modifications": [
-      {"from": {"key_code": "left_option"}, "to": [{"key_code": "left_command"}]},
-      {"from": {"key_code": "left_command"}, "to": [{"key_code": "left_option"}]},
-      {"from": {"key_code": "right_option"}, "to": [{"key_code": "right_command"}]},
-      {"from": {"key_code": "right_command"}, "to": [{"key_code": "right_option"}]}
+    "profiles": [
+      {
+        "name": "default",
+        "selected": true,
+        "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" },
+        "devices": [
+          <<device>>
+        ],
+        "complex_modifications": {
+          "rules": [
+            <<complex_rule>>
+          ]
+        }
+      }
     ]
-  },
+  }
 #+end_src
 
-*** Filco 87
+* Devices
+
+** Filco 87
+
 Swap Option keys and Command keys, converting it to a "Mac compatible keyboard".
-#+begin_src json-ts
+#+begin_src json-ts :tangle no :noweb-ref device
   {
     "identifiers": {
       "is_keyboard": true,
@@ -123,8 +64,9 @@ Swap Option keys and Command keys, converting it to a "Mac compatible keyboard".
   },
 #+end_src
 
-*** Razer Cobra
-#+begin_src json-ts
+** Razer Cobra
+
+#+begin_src json-ts :tangle no :noweb-ref device
   {
       "identifiers": {
           "is_pointing_device": true,
@@ -135,8 +77,9 @@ Swap Option keys and Command keys, converting it to a "Mac compatible keyboard".
   },
 #+end_src
 
-*** Lift Mouse
-#+begin_src json-ts
+** Lift Mouse
+
+#+begin_src json-ts :tangle no :noweb-ref device
   {
       "identifiers": {
           "is_pointing_device": true,
@@ -144,20 +87,57 @@ Swap Option keys and Command keys, converting it to a "Mac compatible keyboard".
           "vendor_id": 1133
       },
       "ignore": false
+  },
+#+end_src
+
+** Niz
+
+#+begin_src json-ts :tangle no :noweb-ref device
+  {
+      "identifiers": {
+          "is_keyboard": true,
+          "is_pointing_device": true,
+          "product_id": 544,
+          "vendor_id": 1452
+      },
+      "ignore": false
+  },
+#+end_src
+
+** Keychron Q1
+
+#+begin_src json-ts :tangle no :noweb-ref device
+  {
+    "identifiers": {
+      "is_keyboard": true,
+      "is_pointing_device": true,
+      "product_id": 1552,
+      "vendor_id": 13364
+    },
+    "ignore": false
+  },
+#+end_src
+
+** Built-in keyboard
+
+#+begin_src json-ts :tangle no :noweb-ref device
+  {
+    "identifiers": {
+      "is_game_pad": false,
+      "is_keyboard": true,
+      "is_pointing_device": false,
+      "product_id": 835,
+      "vendor_id": 1452
+    },
+    "ignore": false,
+    "manipulate_caps_lock_led": true
   }
 #+end_src
 
-*** End
-#+begin_src json-ts
-],
-#+end_src
-** Complex modification rules start
-#+begin_src json-ts
-  "complex_modifications": {
-      "rules": [
-#+end_src
+* Complex modifications
+
 ** Enter held down as control
-#+begin_src json-ts
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
   {
     "description": "Hold Enter for Control",
     "manipulators": [
@@ -189,6 +169,7 @@ Swap Option keys and Command keys, converting it to a "Mac compatible keyboard".
     ]
   },
 #+end_src
+
 ** Caps Lock held down as hyper
 
 Caps Lock is mapped to the Hyper key (⌃⌥⇧⌘) when held. This is used by AeroSpace
@@ -197,7 +178,7 @@ usual.
 
 IMPORTANT: ~to_if_alone.hold_down_milliseconds~ is required due to [[https://github.com/pqrs-org/Karabiner-Elements/issues/3949][this issue]].
 
-#+begin_src json-ts
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
   {
     "description": "Caps Lock -> Hyper Key (⌃⌥⇧⌘)",
     "manipulators": [
@@ -238,7 +219,7 @@ IMPORTANT: ~to_if_alone.hold_down_milliseconds~ is required due to [[https://git
 #+end_src
 
 ** Lock and sleep
-#+begin_src json-ts
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
   {
     "description": "Lock screen or sleep",
     "manipulators": [
@@ -288,7 +269,7 @@ IMPORTANT: ~to_if_alone.hold_down_milliseconds~ is required due to [[https://git
 #+end_src
 
 ** Additional mouse buttons
-#+begin_src json-ts
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
   {
     "description": "Mouse button 4/5 to copy/paste",
     "manipulators": [
@@ -335,7 +316,7 @@ NOTE:
   =kill-word= does when run multiple times consecutively.
 - To get the bundle ID of an application, run =osascript -e 'id of app "wezterm"'=.
 
-#+begin_src json-ts
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
   {
     "description": "Emacs key bindings everywhere",
     "manipulators": [
@@ -686,18 +667,5 @@ NOTE:
         "type": "basic"
       }
     ]
-  }
-
-#+end_src
-** Complex modification rules end
-#+begin_src json-ts
-  ]}
-#+end_src
-** Profiles end
-#+begin_src json-ts
-  }]
-#+end_src
-* Configuration file end
-#+begin_src json-ts
   }
 #+end_src
