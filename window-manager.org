@@ -3,7 +3,7 @@
 
 #+TITLE: My Window Manager Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-22 +1000
+#+DATE: 2026-05-29 +1000
 #+DESCRIPTION: My window manager related configurations
 #+KEYWORDS: window manager, hotkey, tiling, yabai, skhd
 
@@ -295,6 +295,7 @@ I prefer AeroSpace over Yabai for the following reasons:
   cmd-ctrl-alt-shift-r = 'mode resize'
   cmd-ctrl-alt-shift-s = 'mode stack'
   cmd-ctrl-alt-shift-a = 'mode app'
+  cmd-ctrl-alt-shift-c = 'mode summon'
   cmd-ctrl-alt-shift-w = 'mode workspace'
 
   [mode.focus.binding]
@@ -362,6 +363,15 @@ I prefer AeroSpace over Yabai for the following reasons:
   l = ['exec-and-forget open -a slack.app', 'mode main']
   i = ['exec-and-forget open -a emacs.app', 'mode main']
   o = ['exec-and-forget open -a safari.app', 'mode main']
+  esc = 'mode main'
+  ctrl-g = 'mode main'
+
+  [mode.summon.binding]
+  j = ['exec-and-forget ~/.config/aerospace/aerospace-summon-app.sh WezTerm', 'mode main']
+  k = ['exec-and-forget ~/.config/aerospace/aerospace-summon-app.sh "Google Chrome"', 'mode main']
+  l = ['exec-and-forget ~/.config/aerospace/aerospace-summon-app.sh Slack', 'mode main']
+  i = ['exec-and-forget ~/.config/aerospace/aerospace-summon-app.sh Emacs', 'mode main']
+  o = ['exec-and-forget ~/.config/aerospace/aerospace-summon-app.sh Safari', 'mode main']
   esc = 'mode main'
   ctrl-g = 'mode main'
 
@@ -472,4 +482,45 @@ I prefer AeroSpace over Yabai for the following reasons:
 
   # Land on the originally-focused workspace (now on the neighbor monitor).
   aerospace workspace "$src_ws"
+#+end_src
+** Script to summon an application to the current workspace
+#+begin_src bash :tangle ~/.config/aerospace/aerospace-summon-app.sh :shebang "#!/usr/bin/env bash"
+# Summon an application:
+#   - If it is running, move all of its windows to the focused workspace
+#     and focus the first one.
+#   - If it is not running, launch it (it will appear on the focused
+#     workspace).
+# Usage: aerospace-summon-app.sh <app-name>
+# Example: aerospace-summon-app.sh WezTerm
+
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+set -euo pipefail
+
+APP_NAME="${1:-}"
+if [ -z "$APP_NAME" ]; then
+    echo "Usage: $(basename "$0") <app-name>" >&2
+    exit 2
+fi
+
+CURRENT_WS=$(aerospace list-workspaces --focused)
+
+# Collect window IDs whose app-name matches (case-insensitive).
+# The "|" delimiter avoids issues with app names containing spaces.
+WINDOW_IDS=$(aerospace list-windows --all --format "%{window-id}|%{app-name}" \
+    | awk -F'|' -v app="$APP_NAME" 'tolower($2) == tolower(app) {print $1}')
+
+if [ -z "$WINDOW_IDS" ]; then
+    open -a "$APP_NAME"
+    exit 0
+fi
+
+FIRST_WID=""
+while IFS= read -r wid; do
+    [ -z "$wid" ] && continue
+    aerospace move-node-to-workspace --window-id "$wid" "$CURRENT_WS"
+    [ -z "$FIRST_WID" ] && FIRST_WID="$wid"
+done <<< "$WINDOW_IDS"
+
+[ -n "$FIRST_WID" ] && aerospace focus --window-id "$FIRST_WID"
+
 #+end_src
