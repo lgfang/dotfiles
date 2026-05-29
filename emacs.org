@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-25 +1000
+#+DATE: 2026-05-29 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -301,6 +301,32 @@ If region is not active, copy or cut the current line instead.
 #+end_src
 
 NOTE: To use this within tmux session, upgrade to tmux 2.6+.
+
+*** Canned responses
+
+Combined with the MacOS clipboard integration, we can select a canned response
+in Emacs and paste into any other applications.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :preface
+    (defvar my/canned-responses
+      '(("ack"          . "Acknowledged — looking into it now.")
+        ("ooo"          . "I'm out today, will respond tomorrow.")
+        ("thanks-ping"  . "Thanks for the ping — context loaded, replying shortly.")
+        ("approve-merge". "LGTM, feel free to merge."))
+      "Alist of (KEY . TEXT) for canned responses.")
+
+    (defun my/canned-to-clipboard ()
+      "Pick a canned response and push it to the macOS clipboard."
+      (interactive)
+      (let* ((key  (completing-read "Canned: " my/canned-responses nil t))
+             (text (cdr (assoc key my/canned-responses))))
+        (kill-new text)
+        (message "Copied %s (%d chars)" key (length text))))
+
+    :bind (("C-c y" . my/canned-to-clipboard)))
+#+end_src
 
 *** Tmux buffer (clipboard) integration
 
