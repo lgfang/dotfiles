@@ -293,9 +293,9 @@ I prefer AeroSpace over Yabai for the following reasons:
   cmd-ctrl-alt-shift-f = 'mode focus'
   cmd-ctrl-alt-shift-m = 'mode move'
   cmd-ctrl-alt-shift-r = 'mode resize'
-  cmd-ctrl-alt-shift-s = 'mode stack'
-  cmd-ctrl-alt-shift-a = 'mode app'
-  cmd-ctrl-alt-shift-c = 'mode summon'
+  cmd-ctrl-alt-shift-a = 'mode accordion'
+  cmd-ctrl-alt-shift-j = 'mode jump'
+  cmd-ctrl-alt-shift-s = 'mode summon'
   cmd-ctrl-alt-shift-w = 'mode workspace'
 
   [mode.focus.binding]
@@ -345,7 +345,7 @@ I prefer AeroSpace over Yabai for the following reasons:
   esc = 'mode main'
   ctrl-g = 'mode main'
 
-  [mode.stack.binding]
+  [mode.accordion.binding]
   h = ['join-with left', 'layout accordion horizontal', 'mode main']
   j = ['join-with down', 'layout accordion vertical', 'mode main']
   k = ['join-with up', 'layout accordion vertical', 'mode main']
@@ -356,8 +356,7 @@ I prefer AeroSpace over Yabai for the following reasons:
   esc = 'mode main'
   ctrl-g = 'mode main'
 
-  # App-select mode (was Hyper-a → j/k/l/o)
-  [mode.app.binding]
+  [mode.jump.binding]
   j = ['exec-and-forget open -a wezterm.app', 'mode main']
   k = ['exec-and-forget open -a "google chrome.app"', 'mode main']
   l = ['exec-and-forget open -a slack.app', 'mode main']
