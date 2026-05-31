@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-29 +1000
+#+DATE: 2026-05-31 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3075,19 +3075,7 @@ Prerequisites:
     ;; Choose model based on work/personal laptop.
     (agent-shell-opencode-default-model-id
      (if my/work-machine-p "grove-openai/gpt-5.5" "deepseek/deepseek-v4-pro"))
-    ;; Configure MCPs based on work/personal laptop.
-    (agent-shell-mcp-servers
-     (if my/work-machine-p
-         '(((name . "mdb-glean")
-            (type . "http")
-            (url . "https://mongodb-be.glean.com/mcp/default")
-            (headers . ()))
-           ((name . "evergreen")
-            (command . "uvx")
-            (args . ("--from=git+https://github.com/evergreen-ci/evergreen-mcp-server"
-                     "evergreen-mcp-server"))
-            (env . ())))
-       '(()))))
+    )
 #+end_src
 
 ** gptel
