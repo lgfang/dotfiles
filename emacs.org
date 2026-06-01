@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-31 +1000
+#+DATE: 2026-06-01 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2094,10 +2094,9 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
     (org-default-notes-file "~/.income.org")
 
     :config
-    ;; Skip function for "worked on" agenda command
     (defun my/skip-unless-worked-on (&optional days)
       "Skip unless transitioned from PROG within DAYS (default 2)."
-      (let ((end (save-excursion (org-end-of-subtree t)))
+      (let ((end (save-excursion (outline-next-heading) (point)))
             (case-fold-search nil)
             (cutoff (format-time-string
                      "%Y-%m-%d"
@@ -2117,18 +2116,12 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
        (list (cond ((null current-prefix-arg) 2)
                    ((integerp current-prefix-arg) current-prefix-arg)
                    (t (read-number "Number of days: " 2)))))
-      (let* ((days-str (number-to-string days))
-             (header (format "Worked on (last %s days)" days-str))
-             (closed-match (format "CLOSED>=\"<-%sd>\"" days-str))
+      (let* ((header (format "Worked on (last %s days)" days))
              (org-agenda-custom-commands
               `(("r" ,header
                  ((todo "PROG"
                         ((org-agenda-overriding-header ,header)))
-                  (tags ,closed-match
-                        ((org-agenda-overriding-header "")
-                         (org-agenda-skip-function
-                          '(my/skip-unless-worked-on ,days))))
-                  (todo "INBX|TODO|WAIT|HOLD|MAYB"
+                  (tags "/-PROG"
                         ((org-agenda-overriding-header "")
                          (org-agenda-skip-function
                           '(my/skip-unless-worked-on ,days)))))))))
