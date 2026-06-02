@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-28 +1000
+#+DATE: 2026-06-03 +1000
 
 * COMMENT Bash
 ** bash_profile
@@ -1295,5 +1295,37 @@ end
 
           echo "Invalid index '$reply', please retry"
       end
+  end
+#+end_src
+
+** ec2s
+
+#+begin_src fish :tangle ~/.config/fish/functions/ec2s.fish
+  function ec2s
+      # List EC2 instances from a Terraform state file, grouped by module. For
+      # each aws_instance resource, prints the module name followed by a
+      # tab-separated row per instance: Name tag, public IP, private IP, AZ.
+      # Defaults to ./terraform.tfstate; pass a path to use a different file.
+
+      set -l tf_state_file "./terraform.tfstate"
+
+      if test (count $argv) -gt 1
+          echo "Usage:" >&2
+          echo "ec2s [path/to/the/tfstate_file]" >&2
+          echo "" >&2
+          return 1
+      end
+
+      if test (count $argv) -eq 1
+          set tf_state_file $argv[1]
+      end
+
+      jq -r '
+      .resources[]
+      | select(.type=="aws_instance" and .instances!=[])
+      | (.module|sub("^.*\\\\."; "")) + ":",
+      (.instances[].attributes| ["", .tags.Name, .public_ip, .private_ip, .availability_zone]|@tsv),
+      ""
+      ' <$tf_state_file
   end
 #+end_src
