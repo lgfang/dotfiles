@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-06-01 +1000
+#+DATE: 2026-06-06 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1537,6 +1537,9 @@ Solution: use GUI pinentry for macOS
   brew install pinentry-mac
   echo "pinentry-program /opt/homebrew/bin/pinentry-mac" > ~/.gnupg/gpg-agent.conf
   killall gpg-agent
+  # Do not select "Save in Keychain" by default in the pinentry-mac dialog box
+  defaults write org.gpgtools.pinentry-mac DisableKeychain -bool YES
+  defaults write org.gpgtools.common DisableKeychain -bool YES
 #+end_src
 
 *** Why
