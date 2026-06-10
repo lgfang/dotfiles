@@ -3022,7 +3022,6 @@ Prerequisites:
   details.
 - Install Opencode (if you plan to use it).
 
-
 #+begin_src emacs-lisp
   (use-package agent-shell
     :vc (:url "https://github.com/xenodium/agent-shell" :rev :newest)
@@ -3058,7 +3057,7 @@ Prerequisites:
 
     :custom
     (agent-shell-session-strategy 'prompt)
-    (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "recommended"))
+    (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "Fable"))
     ;; Choose agent based on work/personal laptop.
     (agent-shell-preferred-agent-config
      (if my/work-machine-p 'claude-code 'opencode))
