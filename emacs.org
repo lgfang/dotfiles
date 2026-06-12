@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-06-06 +1000
+#+DATE: 2026-06-12 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3040,18 +3040,12 @@ Prerequisites:
     (defun my/anthropic-model-id-from-name (name)
       "Return a function that resolves model NAME to the latest model ID."
       (lambda ()
-        (when-let* ((models (and (boundp 'agent-shell--state)
-                                 (map-nested-elt agent-shell--state '(:session :models)))))
-          (when-let* ((matches (seq-filter (lambda (m)
-                                             (string-match-p (downcase name)
-                                                             (downcase (or (map-elt m :name) ""))))
-                                           models))
-                      (sorted (seq-sort (lambda (a b)
-                                          (string-greaterp (or (map-elt a :model-id) "")
-                                                           (or (map-elt b :model-id) "")))
-                                        matches))
-                      (latest-model (car sorted)))
-            (map-elt latest-model :model-id)))))
+        (car (sort (seq-keep (lambda (model)
+                               (when (string-match-p (downcase name)
+                                                     (downcase (or (map-elt model :name) "")))
+                                 (map-elt model :model-id)))
+                             (agent-shell--get-available-models agent-shell--state))
+                   #'string-greaterp))))
 
     :bind (("C-c a" . my/start-agent-shell)
            :map agent-shell-mode-map
