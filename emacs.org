@@ -3014,13 +3014,25 @@ other implementations, including ~claude-code-ide.el~, which are essentially
 thin wrappers around the Claude Code CLI.
 
 Prerequisites:
-- Install the Agent Client Protocol (ACP):
+- Install AI agent(s)  of your choice:
+  + Claude Code
+    #+begin_src sh
+      curl -fsSL https://claude.ai/install.sh | bash
+    #+end_src
+  + Codex
+    #+begin_src sh
+      npm install -g @openai/codex
+    #+end_src
+  + OpenCode
+    #+begin_src sh
+      curl -fsSL https://opencode.ai/install | bash
+    #+end_src
+- Install Agent Client Protocol (ACP) agents accordingly:
   #+begin_src bash
     npm install -g @agentclientprotocol/claude-agent-acp
+    npm install -g @agentclientprotocol/codex-acp
   #+end_src
-- Install Claude Code (if you plan to use it), see [[file:ai.org::*Claude][my Claude notes]] for setup
-  details.
-- Install Opencode (if you plan to use it).
+- Corresponding API keys stored in Emacs auth sources
 
 #+begin_src emacs-lisp
   (use-package agent-shell
@@ -3057,12 +3069,28 @@ Prerequisites:
 
     :custom
     (agent-shell-session-strategy 'prompt)
-    (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "Fable"))
     ;; Choose agent based on work/personal laptop.
-    (agent-shell-preferred-agent-config
-     (if my/work-machine-p 'claude-code 'opencode))
-    ;; Choose model based on work/personal laptop.
+    (agent-shell-preferred-agent-config (if my/work-machine-p 'claude-code 'opencode))
+
+    ;; Anthropic
+    (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "Fable"))
+
+    ;; OpenAI
+    (agent-shell-openai-codex-environment
+     (list (format
+            "GROVE_API_KEY=%s"
+            (or (auth-source-pick-first-password :host "grove" :user "code-gen-api")
+                (error " Grove API key in auth-source for code-gen-api@grove")))))
+    (agent-shell-openai-authentication
+     (agent-shell-openai-make-authentication
+      ;; Placeholder only — satisfies codex-acp's OPENAI_API_KEY presence check.
+      ;; Real auth comes from ~/.codex/config.toml, using GROVE_API_KEY injected
+      ;; via agent-shell-openai-codex-environment.
+      :api-key "grove-placeholder-real-key-from-config-toml"))
+
+    ;; OpenCode
     (agent-shell-opencode-default-model-id
+     ;; choose model based on work/personal laptop
      (if my/work-machine-p "grove-openai/gpt-5.5" "deepseek/deepseek-v4-pro"))
     )
 #+end_src
