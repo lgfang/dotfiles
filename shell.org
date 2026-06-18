@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-06-03 +1000
+#+DATE: 2026-06-18 +1000
 
 * COMMENT Bash
 ** bash_profile
@@ -1110,7 +1110,7 @@ EXEC 00;38;5;64
   set -gx JIRA_API_TOKEN (security find-generic-password -a "$USER" -s "jira-cli" -w 2>/dev/null)
 #+end_src
 
-** fish prompt
+** prompt
 
 #+begin_src fish :tangle ~/.config/fish/functions/fish_prompt.fish
 function fish_prompt
@@ -1199,6 +1199,13 @@ function fish_prompt
 
     echo -n "$MY_GREEN╰ $symbol $MY_RESET"
 end
+#+end_src
+
+** key bindings
+
+#+begin_src fish :tangle ~/.config/fish/functions/fish_user_key_bindings.fish
+  # Do not exit fish on Ctrl-D
+  bind \cd delete-char
 #+end_src
 
 ** ep
