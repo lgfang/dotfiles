@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-05-27 +1000
+#+DATE: 2026-06-18 +1000
 #+DESCRIPTION: Karabiner Elements configuration (window management now handled by AeroSpace)
 #+KEYWORDS: Karabiner
 
@@ -43,26 +43,6 @@ to AeroSpace, which handles its own modal key bindings.
 #+end_src
 
 * Devices
-
-** Filco 87
-
-Swap Option keys and Command keys, converting it to a "Mac compatible keyboard".
-#+begin_src json-ts :tangle no :noweb-ref device
-  {
-    "identifiers": {
-      "is_keyboard": true,
-      "product_id": 8209,
-      "vendor_id": 1241
-    },
-    "ignore": false,
-    "simple_modifications": [
-      {"from": {"key_code": "left_option"}, "to": [{"key_code": "left_command"}]},
-      {"from": {"key_code": "left_command"}, "to": [{"key_code": "left_option"}]},
-      {"from": {"key_code": "right_option"}, "to": [{"key_code": "right_command"}]},
-      {"from": {"key_code": "right_command"}, "to": [{"key_code": "right_option"}]}
-    ]
-  },
-#+end_src
 
 ** Razer Cobra
 
@@ -112,6 +92,20 @@ Swap Option keys and Command keys, converting it to a "Mac compatible keyboard".
       "is_keyboard": true,
       "is_pointing_device": true,
       "product_id": 1552,
+      "vendor_id": 13364
+    },
+    "ignore": false
+  },
+#+end_src
+
+** Keychron V1 Ultra
+
+#+begin_src json-ts :tangle no :noweb-ref device
+  {
+    "identifiers": {
+      "is_keyboard": true,
+      "is_pointing_device": true,
+      "product_id": 3088,
       "vendor_id": 13364
     },
     "ignore": false
