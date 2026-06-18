@@ -1,12 +1,12 @@
-# -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+# -*-mode:org; lexical-binding:t; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
 # Created: Lungang Fang 2024-05-17
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-06-12 +1000
+#+DATE: 2026-06-18 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
-#+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
+#+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
 
 * Timestamp for tangling
 
