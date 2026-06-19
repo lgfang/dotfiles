@@ -302,8 +302,8 @@ I prefer AeroSpace over Yabai for the following reasons:
 
   [mode.focus.binding]
   h = 'focus --boundaries all-monitors-outer-frame left'
-  j = 'focus down'
-  k = 'focus up'
+  j = 'focus --boundaries all-monitors-outer-frame down'
+  k = 'focus --boundaries all-monitors-outer-frame up'
   l = 'focus --boundaries all-monitors-outer-frame right'
   p = 'focus-back-and-forth'
   esc = 'mode main'
