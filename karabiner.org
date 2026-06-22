@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-06-18 +1000
+#+DATE: 2026-06-22 +1000
 #+DESCRIPTION: Karabiner Elements configuration (window management now handled by AeroSpace)
 #+KEYWORDS: Karabiner
 
@@ -138,7 +138,7 @@ to AeroSpace, which handles its own modal key bindings.
       {
         "parameters": {
           "basic.to_if_held_down_threshold_milliseconds": 0,
-          "basic.to_if_alone_timeout_milliseconds": 120
+          "basic.to_if_alone_timeout_milliseconds": 160
         },
         "to_if_held_down": [
           {
@@ -188,7 +188,7 @@ IMPORTANT: ~to_if_alone.hold_down_milliseconds~ is required due to [[https://git
         },
         "parameters": {
           "basic.to_if_held_down_threshold_milliseconds": 0,
-          "basic.to_if_alone_timeout_milliseconds": 120
+          "basic.to_if_alone_timeout_milliseconds": 160
         },
         "to_if_held_down": [
           {
