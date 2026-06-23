@@ -3031,6 +3031,7 @@ Prerequisites:
   #+begin_src bash
     npm install -g @agentclientprotocol/claude-agent-acp
     npm install -g @agentclientprotocol/codex-acp
+    # opencode CLI includes an ACP, so no extra installation needed
   #+end_src
 - Corresponding API keys stored in Emacs auth sources
 
