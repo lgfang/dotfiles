@@ -3,16 +3,17 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-06-22 +1000
+#+DATE: 2026-06-26 +1000
 #+DESCRIPTION: Karabiner Elements configuration (window management now handled by AeroSpace)
 #+KEYWORDS: Karabiner
 
 * Overview
 
-Karabiner handles key remapping: dual-purpose keys (Enter as Control, Caps Lock
-as Hyper), Emacs keybindings system-wide, mouse button remapping, and lock/sleep
-shortcuts. Window management layers (focus, move, resize, etc.) have been moved
-to AeroSpace, which handles its own modal key bindings.
+Karabiner handles key remapping: home row mods (a/s/d/f and ;/l/k/j as
+Hyper/Shift/Alt/Control when held), Emacs keybindings system-wide, mouse button
+remapping, and lock/sleep shortcuts. Window management layers (focus, move,
+resize, etc.) have been moved to AeroSpace, which handles its own modal key
+bindings (entered via Hyper).
 
 * Configuration file skeleton
 #+begin_src json-ts :tangle ~/.config/karabiner/karabiner.json :noweb yes :mkdirp yes
@@ -130,177 +131,16 @@ to AeroSpace, which handles its own modal key bindings.
 
 * Complex modifications
 
-** Enter held down as control
-#+begin_src json-ts :tangle no :noweb-ref complex_rule
-  {
-    "description": "Hold Enter for Control",
-    "manipulators": [
-      {
-        "parameters": {
-          "basic.to_if_held_down_threshold_milliseconds": 0,
-          "basic.to_if_alone_timeout_milliseconds": 160
-        },
-        "to_if_held_down": [
-          {
-            "key_code": "right_control"
-          }
-        ],
-        "to_if_alone": [
-          {
-            "key_code": "return_or_enter"
-          }
-        ],
-        "from": {
-          "modifiers": {
-            "optional": [
-              "any"
-            ]
-          },
-          "key_code": "return_or_enter"
-        },
-        "type": "basic"
-      }
-    ]
-  },
-#+end_src
-
-** Caps Lock held down as hyper
-
-Caps Lock is mapped to the Hyper key (⌃⌥⇧⌘) when held. This is used by AeroSpace
-to enter its modal key binding modes. When tapped alone, it toggles Caps Lock as
-usual.
-
-IMPORTANT: ~to_if_alone.hold_down_milliseconds~ is required due to [[https://github.com/pqrs-org/Karabiner-Elements/issues/3949][this issue]].
-
-#+begin_src json-ts :tangle no :noweb-ref complex_rule
-  {
-    "description": "Caps Lock -> Hyper Key (⌃⌥⇧⌘)",
-    "manipulators": [
-      {
-        "description": "Caps Lock -> Hyper Key",
-        "from": {
-          "key_code": "caps_lock",
-          "modifiers": {
-            "optional": [
-              "any"
-            ]
-          }
-        },
-        "parameters": {
-          "basic.to_if_held_down_threshold_milliseconds": 0,
-          "basic.to_if_alone_timeout_milliseconds": 160
-        },
-        "to_if_held_down": [
-          {
-            "key_code": "left_shift",
-            "modifiers": [
-              "left_command",
-              "left_control",
-              "left_option"
-            ]
-          }
-        ],
-        "to_if_alone": [
-          {
-            "key_code": "caps_lock",
-            "hold_down_milliseconds": 100
-          }
-        ],
-        "type": "basic"
-      }
-    ]
-  },
-#+end_src
-
-** Lock and sleep
-#+begin_src json-ts :tangle no :noweb-ref complex_rule
-  {
-    "description": "Lock screen or sleep",
-    "manipulators": [
-      {
-        "description": "Lock screen",
-        "to": [
-          {
-            "key_code": "q",
-            "modifiers": ["control", "command"]
-          }
-        ],
-        "from": {
-          "key_code": "home",
-          "modifiers": {
-            "mandatory": [
-              "control"
-            ]
-          }
-        },
-        "type": "basic"
-      },
-      {
-        "description": "Lock screen and then Sleep",
-        "to": [
-          {
-            "key_code": "q",
-            "modifiers": ["control", "command"]
-          },
-          {
-            "software_function": {
-              "iokit_power_management_sleep_system": {}
-            }
-          }
-        ],
-        "from": {
-          "key_code": "home",
-          "modifiers": {
-            "mandatory": [
-              "option"
-            ]
-          }
-        },
-        "type": "basic"
-      }
-    ]
-  },
-#+end_src
-
-** Additional mouse buttons
-#+begin_src json-ts :tangle no :noweb-ref complex_rule
-  {
-    "description": "Mouse button 4/5 to copy/paste",
-    "manipulators": [
-      {
-        "from": {
-          "pointing_button": "button4"
-        },
-        "to": [
-          {
-            "key_code": "c",
-            "modifiers": [
-              "command"
-            ]
-          }
-        ],
-        "type": "basic"
-      },
-      {
-        "from": {
-          "pointing_button": "button5"
-        },
-        "to": [
-          {
-            "key_code": "v",
-            "modifiers": [
-              "command"
-            ]
-          }
-        ],
-        "type": "basic"
-      }
-    ]
-  },
-#+end_src
-
 ** Emacs key bindings everywhere
+
 NOTE:
+- IMPORTANT: this rule must come *before* the home row mods. Karabiner gives
+  priority to earlier rules, so the home row mod manipulators (which match their
+  key with ~optional: any~ modifiers) would otherwise intercept modified presses
+  like =Option-f= and emit the literal key, and these Emacs bindings would never
+  fire. Placed first, the Emacs bindings (which require ~mandatory~ modifiers)
+  claim the modified presses, while unmodified taps fall through to the home row
+  mods.
 - A variety of key bindings are already either fully or partially supported by
   certain applications. Hence, only need to define those that missing or not
   fully implemented.
@@ -655,6 +495,590 @@ NOTE:
               "^org\\.gnu\\.Emacs$",
               "^com\\.github\\.wez\\.wezterm$",
               "^com\\.googlecode\\.iterm2$"
+            ]
+          }
+        ],
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+
+** Home row mods
+
+All eight home row keys are dual-purpose: tap = literal key, hold = modifier.
+Each rule uses:
+
+- ~to_if_held_down~ (~to_if_held_down_threshold_milliseconds~) for the modifier. The threshold avoids
+  misfires when rolling into the next character: the modifier only engages if
+  the key is genuinely held that long.
+- ~to_if_alone~ for the tap, with ~halt~ to make the tap/hold decision mutually
+  exclusive.
+- ~to_delayed_action.to_if_canceled~ re-emits the literal key if another key is
+  pressed before the hold threshold, so a fast roll never drops its first key
+  (e.g. typing "as" or "so" quickly still produces both letters).
+
+Known issue: chording two home row mods does not "just work". Pressing the
+second mod before the first key's hold threshold elapses fires the first
+key's ~to_if_canceled~ branch, emitting its literal key -- a chord looks exactly
+like a fast roll. So mashing j+l then 2 yields the literal "jl2" instead of
+Ctrl+Shift+2.
+
+Workaround: hold the *first* key of a chord a moment (past the hold threshold)
+before pressing the rest. Once the first mod has engaged, the chord composes
+normally: hold j, (brief pause), then l then 2 -> Ctrl+Shift+2.
+
+This is the deliberate trade-off: ~to_if_canceled~ protects fast typing from
+dropped letters at the cost of requiring that brief hold to start a chord.
+
+*** j and f held down as control
+
+Hold =j= (right hand) or =f= (left hand) for Control; tap for the literal key.
+
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
+  {
+    "description": "Hold j for Control",
+    "manipulators": [
+      {
+        "parameters": {
+          "basic.to_if_held_down_threshold_milliseconds": 160,
+          "basic.to_if_alone_timeout_milliseconds": 180
+        },
+        "to_if_held_down": [
+          {
+            "key_code": "right_control",
+            "halt": true
+          }
+        ],
+        "to_if_alone": [
+          {
+            "key_code": "j",
+            "halt": true
+          }
+        ],
+        "to_delayed_action": {
+          "to_if_canceled": [
+            {
+              "key_code": "j"
+            }
+          ]
+        },
+        "from": {
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          },
+          "key_code": "j"
+        },
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
+  {
+    "description": "Hold f for Control",
+    "manipulators": [
+      {
+        "parameters": {
+          "basic.to_if_held_down_threshold_milliseconds": 160,
+          "basic.to_if_alone_timeout_milliseconds": 180
+        },
+        "to_if_held_down": [
+          {
+            "key_code": "left_control",
+            "halt": true
+          }
+        ],
+        "to_if_alone": [
+          {
+            "key_code": "f",
+            "halt": true
+          }
+        ],
+        "to_delayed_action": {
+          "to_if_canceled": [
+            {
+              "key_code": "f"
+            }
+          ]
+        },
+        "from": {
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          },
+          "key_code": "f"
+        },
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+
+*** d and k held down as alt (option)
+
+Hold =d= (left hand) for left Option or =k= (right hand) for right Option; tap
+for the literal key.
+
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
+  {
+    "description": "Hold d for Alt (Option)",
+    "manipulators": [
+      {
+        "parameters": {
+          "basic.to_if_held_down_threshold_milliseconds": 160,
+          "basic.to_if_alone_timeout_milliseconds": 180
+        },
+        "to_if_held_down": [
+          {
+            "key_code": "left_option",
+            "halt": true
+          }
+        ],
+        "to_if_alone": [
+          {
+            "key_code": "d",
+            "halt": true
+          }
+        ],
+        "to_delayed_action": {
+          "to_if_canceled": [
+            {
+              "key_code": "d"
+            }
+          ]
+        },
+        "from": {
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          },
+          "key_code": "d"
+        },
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
+  {
+    "description": "Hold k for Alt (Option)",
+    "manipulators": [
+      {
+        "parameters": {
+          "basic.to_if_held_down_threshold_milliseconds": 160,
+          "basic.to_if_alone_timeout_milliseconds": 180
+        },
+        "to_if_held_down": [
+          {
+            "key_code": "right_option",
+            "halt": true
+          }
+        ],
+        "to_if_alone": [
+          {
+            "key_code": "k",
+            "halt": true
+          }
+        ],
+        "to_delayed_action": {
+          "to_if_canceled": [
+            {
+              "key_code": "k"
+            }
+          ]
+        },
+        "from": {
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          },
+          "key_code": "k"
+        },
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+
+*** s and l held down as shift
+
+Hold =s= (left hand) for left Shift or =l= (right hand) for right Shift; tap for
+the literal key.
+
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
+  {
+    "description": "Hold s for Shift",
+    "manipulators": [
+      {
+        "parameters": {
+          "basic.to_if_held_down_threshold_milliseconds": 160,
+          "basic.to_if_alone_timeout_milliseconds": 180
+        },
+        "to_if_held_down": [
+          {
+            "key_code": "left_shift",
+            "halt": true
+          }
+        ],
+        "to_if_alone": [
+          {
+            "key_code": "s",
+            "halt": true
+          }
+        ],
+        "to_delayed_action": {
+          "to_if_canceled": [
+            {
+              "key_code": "s"
+            }
+          ]
+        },
+        "from": {
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          },
+          "key_code": "s"
+        },
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
+  {
+    "description": "Hold l for Shift",
+    "manipulators": [
+      {
+        "parameters": {
+          "basic.to_if_held_down_threshold_milliseconds": 160,
+          "basic.to_if_alone_timeout_milliseconds": 180
+        },
+        "to_if_held_down": [
+          {
+            "key_code": "right_shift",
+            "halt": true
+          }
+        ],
+        "to_if_alone": [
+          {
+            "key_code": "l",
+            "halt": true
+          }
+        ],
+        "to_delayed_action": {
+          "to_if_canceled": [
+            {
+              "key_code": "l"
+            }
+          ]
+        },
+        "from": {
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          },
+          "key_code": "l"
+        },
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+
+*** a and ; held down as hyper
+
+Hold =a= or =;= for the Hyper key (⌃⌥⇧⌘); tap for the literal key. This replaces
+holding Caps Lock for Hyper, which AeroSpace uses to enter its modal key binding
+modes.
+
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
+  {
+    "description": "Hold a for Hyper (⌃⌥⇧⌘)",
+    "manipulators": [
+      {
+        "parameters": {
+          "basic.to_if_held_down_threshold_milliseconds": 160,
+          "basic.to_if_alone_timeout_milliseconds": 180
+        },
+        "to_if_held_down": [
+          {
+            "key_code": "left_shift",
+            "modifiers": [
+              "left_command",
+              "left_control",
+              "left_option"
+            ],
+            "halt": true
+          }
+        ],
+        "to_if_alone": [
+          {
+            "key_code": "a",
+            "halt": true
+          }
+        ],
+        "to_delayed_action": {
+          "to_if_canceled": [
+            {
+              "key_code": "a"
+            }
+          ]
+        },
+        "from": {
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          },
+          "key_code": "a"
+        },
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
+  {
+    "description": "Hold ; for Hyper (⌃⌥⇧⌘)",
+    "manipulators": [
+      {
+        "parameters": {
+          "basic.to_if_held_down_threshold_milliseconds": 160,
+          "basic.to_if_alone_timeout_milliseconds": 180
+        },
+        "to_if_held_down": [
+          {
+            "key_code": "left_shift",
+            "modifiers": [
+              "left_command",
+              "left_control",
+              "left_option"
+            ],
+            "halt": true
+          }
+        ],
+        "to_if_alone": [
+          {
+            "key_code": "semicolon",
+            "halt": true
+          }
+        ],
+        "to_delayed_action": {
+          "to_if_canceled": [
+            {
+              "key_code": "semicolon"
+            }
+          ]
+        },
+        "from": {
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          },
+          "key_code": "semicolon"
+        },
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+
+** COMMENT Caps Lock and Enter dual-role
+
+A lighter alternative to the home row mods above: only two dual-role keys
+instead of eight. Suitable if you prefer as few mods as possible.
+
+- Tap =Caps Lock= for Caps Lock; hold it for Hyper (⌃⌥⇧⌘, used by AeroSpace).
+- Tap =Enter= for Enter; hold it for Control.
+
+To switch configurations, toggle the ~COMMENT~ keyword on this header and on the
+"Home row mods" header: exactly one of the two sections should be active (the
+other marked =** COMMENT ...=) so only its rules are tangled.
+
+Both keys use ~to_if_held_down_threshold_milliseconds: 0~ on purpose: the
+modifier engages the instant the key is held, so chords fire with no pause. This
+matters because Control chords (C-x, C-c, ...) and the Hyper AeroSpace trigger
+are used constantly, and a non-zero threshold forces a brief pause before the
+modifier engages -- precisely the friction that makes home row mods unpleasant
+and the reason for preferring this lighter setup.
+
+The trade-off of a 0 threshold is that rolling the key into the next keystroke
+can misfire as a chord (e.g. "Enter + key" -> "Control + key"). That is accepted
+here: unlike alpha home row keys, Enter and Caps Lock are rarely rolled into
+during normal typing, so misfires are uncommon, while the instant chords are
+worth far more.
+
+*** Caps Lock held down as hyper
+
+IMPORTANT: ~to_if_alone.hold_down_milliseconds~ is required due to [[https://github.com/pqrs-org/Karabiner-Elements/issues/3949][this issue]].
+
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
+  {
+    "description": "Caps Lock -> Hyper Key (⌃⌥⇧⌘)",
+    "manipulators": [
+      {
+        "description": "Caps Lock -> Hyper Key",
+        "from": {
+          "key_code": "caps_lock",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "parameters": {
+          "basic.to_if_held_down_threshold_milliseconds": 0,
+          "basic.to_if_alone_timeout_milliseconds": 180
+        },
+        "to_if_held_down": [
+          {
+            "key_code": "left_shift",
+            "modifiers": [
+              "left_command",
+              "left_control",
+              "left_option"
+            ]
+          }
+        ],
+        "to_if_alone": [
+          {
+            "key_code": "caps_lock",
+            "hold_down_milliseconds": 100
+          }
+        ],
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+
+*** Enter held down as control
+
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
+  {
+    "description": "Hold Enter for Control",
+    "manipulators": [
+      {
+        "parameters": {
+          "basic.to_if_held_down_threshold_milliseconds": 0,
+          "basic.to_if_alone_timeout_milliseconds": 180
+        },
+        "to_if_held_down": [
+          {
+            "key_code": "right_control"
+          }
+        ],
+        "to_if_alone": [
+          {
+            "key_code": "return_or_enter"
+          }
+        ],
+        "from": {
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          },
+          "key_code": "return_or_enter"
+        },
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+
+** Lock and sleep
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
+  {
+    "description": "Lock screen or sleep",
+    "manipulators": [
+      {
+        "description": "Lock screen",
+        "to": [
+          {
+            "key_code": "q",
+            "modifiers": ["control", "command"]
+          }
+        ],
+        "from": {
+          "key_code": "home",
+          "modifiers": {
+            "mandatory": [
+              "control"
+            ]
+          }
+        },
+        "type": "basic"
+      },
+      {
+        "description": "Lock screen and then Sleep",
+        "to": [
+          {
+            "key_code": "q",
+            "modifiers": ["control", "command"]
+          },
+          {
+            "software_function": {
+              "iokit_power_management_sleep_system": {}
+            }
+          }
+        ],
+        "from": {
+          "key_code": "home",
+          "modifiers": {
+            "mandatory": [
+              "option"
+            ]
+          }
+        },
+        "type": "basic"
+      }
+    ]
+  },
+#+end_src
+
+** Additional mouse buttons
+#+begin_src json-ts :tangle no :noweb-ref complex_rule
+  {
+    "description": "Mouse button 4/5 to copy/paste",
+    "manipulators": [
+      {
+        "from": {
+          "pointing_button": "button4"
+        },
+        "to": [
+          {
+            "key_code": "c",
+            "modifiers": [
+              "command"
+            ]
+          }
+        ],
+        "type": "basic"
+      },
+      {
+        "from": {
+          "pointing_button": "button5"
+        },
+        "to": [
+          {
+            "key_code": "v",
+            "modifiers": [
+              "command"
             ]
           }
         ],
