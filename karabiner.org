@@ -3,7 +3,7 @@
 
 #+TITLE: My Karabiner Elements configuration
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-06-26 +1000
+#+DATE: 2026-06-29 +1000
 #+DESCRIPTION: Karabiner Elements configuration (window management now handled by AeroSpace)
 #+KEYWORDS: Karabiner
 
@@ -504,7 +504,7 @@ NOTE:
   },
 #+end_src
 
-** Home row mods
+** COMMENT Home row mods
 
 All eight home row keys are dual-purpose: tap = literal key, hold = modifier.
 Each rule uses:
@@ -897,7 +897,7 @@ modes.
   },
 #+end_src
 
-** COMMENT Caps Lock and Enter dual-role
+** Caps Lock and Enter dual-role
 
 A lighter alternative to the home row mods above: only two dual-role keys
 instead of eight. Suitable if you prefer as few mods as possible.
