@@ -26,6 +26,51 @@
   - Tick Bluetooth in Menu Bar
 - Remote Login: toggle on/off as needed
 
+** COMMENT Prevent weekend battery drain in sleep
+
+NOTE: this root cause analysis is wrong, the fix does not work
+
+Disable the main battery-only wake sources:
+
+#+begin_src bash
+sudo pmset -b powernap 0        # disable Power Nap background tasks
+sudo pmset -b womp 0            # disable Wake-on-LAN
+sudo pmset -b tcpkeepalive 0    # disable network keepalive wakes
+#+end_src
+
+These commands apply only while running on battery (~-b~); AC power settings are
+unchanged.
+
+Verify the battery profile:
+#+begin_src bash
+sudo pmset -g custom
+#+end_src
+
+Check the ~Battery Power~ section and confirm:
+#+begin_src text
+powernap        0
+womp            0
+tcpkeepalive    0
+#+end_src
+
+*** Symptom
+
+A fully charged MacBook is closed and left in a bag on Friday, then is dead by
+Sunday. Seen on newer Apple Silicon MacBook Pros; older M1 systems may be
+unaffected.
+
+*** Cause
+
+The machine is repeatedly dark-waking while asleep on battery, often around
+~220–250 wakes/hour, causing roughly ~1.9–4.5%/hour drain.
+
+Common wake sources:
+1. Power Nap background tasks, especially ~dasd~ jobs such as Find My
+   ~searchpartyd~, Jamf Connect retries, widgets, Photos, or Apple Intelligence
+   tasks.
+2. Wi-Fi/Bluetooth network keepalive activity waking the CPU, commonly logged
+   with wake reasons like ~wifibt SMC.OutboxNotEmpty centauri-beta~.
+
 * Install homebrew
 
 - Why: http://tedwise.com/2010/08/28/homebrew-vs-macports/
@@ -41,7 +86,7 @@ MacOS system upgrades.
 
 For example:
 #+begin_src bash
-  brew install  --cask font-fira-code-nerd-font
+  brew install --cask font-fira-code-nerd-font
 #+end_src
 
 * Install Emacs and tangle configuration files
