@@ -3,19 +3,40 @@
 
 #+TITLE: AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-06-24 +1000
+#+DATE: 2026-06-30 +1000
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
+
+* Installing software
+
+- Install AI agent(s) of your choice:
+  + Claude Code
+    #+begin_src sh
+      curl -fsSL https://claude.ai/install.sh | bash
+    #+end_src
+  + Codex
+    #+begin_src sh
+      npm install -g @openai/codex
+    #+end_src
+  + OpenCode
+    #+begin_src sh
+      curl -fsSL https://opencode.ai/install | bash
+    #+end_src
+- Install Agent Client Protocol (ACP) agents accordingly:
+  #+begin_src bash
+    npm install -g @agentclientprotocol/claude-agent-acp
+    npm install -g @agentclientprotocol/codex-acp
+    # opencode CLI includes an ACP, so no extra installation needed
+  #+end_src
+
+NOTE: piping curl outputs to bash is banned due to company policy, must save the
+output to file and then execute it.
 
 * Claude
 
 ** Add user-global MCP servers
 
-NOTE:
-- Do not tangle these bash commands, execute them manually to better handle
-  error cases.
-- They modify ~.claude.json~.
-
+*** Via shell commands
 #+begin_src bash :tangle no
   # mdb-glean: MongoDB's Glean MCP server for searching and chatting over internal company documents and knowledge.
   claude mcp add mdb-glean --scope user --transport http https://mongodb-be.glean.com/mcp/default
@@ -23,6 +44,19 @@ NOTE:
   # evergreen: MongoDB's Evergreen CI/CD MCP server for querying patches, tasks, builds, and test results.
   claude mcp add evergreen --scope user -- uvx --from=git+https://github.com/evergreen-ci/evergreen-mcp-server evergreen-mcp-server
 #+end_src
+
+NOTE:
+- Do not tangle these bash commands, execute them manually to better handle
+  error cases.
+- They modify ~.claude.json~.
+
+*** Via Claude CLI
+
+Type ~/mcp~, then select and authenticate the following MCP/connectors:
+- Claude.ai gmail
+- Claude.ai google calendar
+- Claude.ai slack
+- Claude.ai zoom
 
 ** User level CLAUDE.md
 

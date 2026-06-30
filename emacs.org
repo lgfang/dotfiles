@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-06-19 +1000
+#+DATE: 2026-06-30 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3014,25 +3014,8 @@ other implementations, including ~claude-code-ide.el~, which are essentially
 thin wrappers around the Claude Code CLI.
 
 Prerequisites:
-- Install AI agent(s)  of your choice:
-  + Claude Code
-    #+begin_src sh
-      curl -fsSL https://claude.ai/install.sh | bash
-    #+end_src
-  + Codex
-    #+begin_src sh
-      npm install -g @openai/codex
-    #+end_src
-  + OpenCode
-    #+begin_src sh
-      curl -fsSL https://opencode.ai/install | bash
-    #+end_src
-- Install Agent Client Protocol (ACP) agents accordingly:
-  #+begin_src bash
-    npm install -g @agentclientprotocol/claude-agent-acp
-    npm install -g @agentclientprotocol/codex-acp
-    # opencode CLI includes an ACP, so no extra installation needed
-  #+end_src
+- Agents are installed
+- ACPs are installed
 - Corresponding API keys stored in Emacs auth sources
 
 #+begin_src emacs-lisp

@@ -188,37 +188,7 @@ chsh -s /opt/homebrew/bin/fish
 
 * Install LLM/AI software
 
-** Install Claude Code
-
-Install the software following its offical document, then login per company's
-internal document.
-
-#+begin_src bash
-  cd ~/Downloads/
-  curl -fsSL https://claude.ai/install.sh > install.sh
-  chmod 755 install.sh
-  ./install.sh
-#+end_src
-
-NOTE: piping curl outputs to bash is banned due to company policy, must save the
-output to file and then execute it.
-
-** Install OpenCode
-
-#+begin_src bash
-  brew install anomalyco/tap/opencode
-#+end_src
-
-Then, follow the company internal document to connect it to grove.
-
-** Install Agent Communication Protocol (ACP) support
-
-This needed by Emacs agent-shell
-
-#+begin_src bash
-  # ACP (for Emacs agent-shell)
-  npm install -g @agentclientprotocol/claude-agent-acp
-#+end_src
+See [[file:ai.org][My AI relate notes]] for details
 
 * Migrate credentials
 
@@ -258,5 +228,3 @@ Open the 1password web page on the new laptop and then follow the prompts.
     jira init
   #+end_src
 - kanopy-oidc
-- MCP Glean
-- MCP Evergreen
