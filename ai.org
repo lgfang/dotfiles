@@ -3,75 +3,119 @@
 
 #+TITLE: AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-06-30 +1000
+#+DATE: 2026-08-07 +1000
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 
-* Installing software
+* Table Of Contents                                                     :TOC:
+- [[#shared-instructions][Shared instructions]]
+- [[#claude][Claude]]
+  - [[#install][Install]]
+  - [[#global-instructions][Global instructions]]
+  - [[#clone-local-skills][Clone local skills]]
+  - [[#config-file-skeleton][Config file skeleton]]
+  - [[#mcp-servers][MCP servers]]
+  - [[#global-permissions][Global permissions]]
+- [[#codex][Codex]]
+  - [[#install-1][Install]]
+  - [[#global-instructions-1][Global instructions]]
+  - [[#config-file-skeleton-1][Config file skeleton]]
+  - [[#ai-gateway-mongodb-grove][AI Gateway: MongoDB Grove]]
+  - [[#mcp-servers-1][MCP servers]]
+  - [[#global-permissions-1][Global permissions]]
+- [[#opencode][OpenCode]]
+  - [[#install-2][Install]]
+  - [[#global-instructions-2][Global instructions]]
+  - [[#config-file-skeleton---work-machine][Config file skeleton - work machine]]
+  - [[#config-file-skeleton---personal-laptop][Config file skeleton - personal laptop]]
+  - [[#mcp-servers-2][MCP servers]]
+  - [[#global-permissions-2][Global permissions]]
+- [[#authenticate-an-mcp-server-on-a-headless-host][Authenticate an MCP server on a headless host]]
 
-- Install AI agent(s) of your choice:
-  + Claude Code
-    #+begin_src sh
-      curl -fsSL https://claude.ai/install.sh | bash
-    #+end_src
-  + Codex
-    #+begin_src sh
-      npm install -g @openai/codex
-    #+end_src
-  + OpenCode
-    #+begin_src sh
-      curl -fsSL https://opencode.ai/install | bash
-    #+end_src
-- Install Agent Client Protocol (ACP) agents accordingly:
-  #+begin_src bash
-    npm install -g @agentclientprotocol/claude-agent-acp
-    npm install -g @agentclientprotocol/codex-acp
-    # opencode CLI includes an ACP, so no extra installation needed
-  #+end_src
+* Shared instructions
 
-NOTE: piping curl outputs to bash is banned due to company policy, must save the
-output to file and then execute it.
+#+begin_src markdown-ts :tangle no :noweb-ref shared-instructions
+  # General AI Coding Instructions
 
-* Claude
+  ## Plan before implementing
 
-** Add user-global MCP servers
-
-*** Via shell commands
-#+begin_src bash :tangle no
-  # mdb-glean: MongoDB's Glean MCP server for searching and chatting over internal company documents and knowledge.
-  claude mcp add mdb-glean --scope user --transport http https://mongodb-be.glean.com/mcp/default
-
-  # evergreen: MongoDB's Evergreen CI/CD MCP server for querying patches, tasks, builds, and test results.
-  claude mcp add evergreen --scope user -- uvx --from=git+https://github.com/evergreen-ci/evergreen-mcp-server evergreen-mcp-server
-#+end_src
-
-NOTE:
-- Do not tangle these bash commands, execute them manually to better handle
-  error cases.
-- They modify ~.claude.json~.
-
-*** Via Claude CLI
-
-Type ~/mcp~, then select and authenticate the following MCP/connectors:
-- Claude.ai gmail
-- Claude.ai google calendar
-- Claude.ai slack
-- Claude.ai zoom
-
-** User level CLAUDE.md
-
-#+begin_src markdown-ts :tangle "~/.claude/CLAUDE.md" :noweb yes :mkdirp yes
-  # General Claude Instructions
+  Before making any code changes, briefly state your plan: what files you
+  intend to modify, what approach you'll take, and any trade-offs. Wait for
+  my confirmation before proceeding. Skip this for trivial one-line fixes or
+  when I've already specified the exact change.
 
   ## Scratch / temp files
 
-  - Write scratch and intermediate files under `/tmp/claude-scratch/` (create the
-    directory if needed), never directly in `/tmp`. Prefer the project working
-    directory for scratch files when practical.
+  Write scratch and intermediate files under `/tmp/agent-scratch/` (create the
+  directory if needed), never directly in `/tmp`. Prefer the project working
+  directory for scratch files when practical.
+
+  ## Headless hosts (no browser / GUI)
+
+  If this host is headless, interactive browser-based auth flows hang silently:
+  a tool may fail simply because it is blocked waiting on an SSO/OIDC login it
+  can't open a browser for. Any such login must be done out-of-band with a
+  device-code or `--no-browser` flow, then restart/retry.
+
+  - Evergreen auth failures (e.g. the `evergreen` MCP showing "Failed to
+    connect", hanging on authentication): fix by running `evergreen login
+    --no-browser` manually, then restart the agent.
+
+  ## Git & GitHub
+
+  1. Run `git commit --amend` and `git push` as standalone commands, never chained
+     with other operations. They often require explicit approval, and chaining
+     would hold the other commands hostage to that approval.
+
+  2. Once a PR has reviews, address feedback with new commits; amend only
+     while the branch is unreviewed.
+
+  3. Never post a PR review output (top-level review bodies, inline review
+     comments and replies to review comments etc.) without my explicit
+     confirmation. Draft the full text and show it to me first every time.
+
+  4. When posting PR review comments, create them as a pending (draft) review so I
+     can review and submit them myself. Only submit the review directly if I
+     explicitly ask.
+     - `gh pr review` has no draft mode per its official manual. Use the GitHub REST
+       API: `POST /repos/{owner}/{repo}/pulls/{n}/reviews` with a body and no event
+       field (omitting event defaults to PENDING). Never pass
+       event=COMMENT/APPROVE/REQUEST_CHANGES without my explicit go-ahead.
 #+end_src
 
-** User level configuration file: =~/.claude/settings.json=
+* Claude
+** Install
+#+begin_src sh
+  curl -fsSL https://claude.ai/install.sh | bash
+  npm install -g @agentclientprotocol/claude-agent-acp
+#+end_src
 
+*** Login and re-login
+
+Start a Claude session and type ~/login~, then follow the screen prompts. Note
+that my login method is subscription plan:
+#+begin_src text
+Select login method:
+
+ ❯ 1. Claude account with subscription · Pro, Max, Team, or Enterprise
+   2. Anthropic Console account · API usage billing
+   3. 3rd-party platform · Amazon Bedrock, Microsoft Foundry, or Vertex AI
+#+end_src
+
+** Global instructions
+
+#+begin_src markdown-ts :tangle "~/.claude/CLAUDE.md" :noweb yes :mkdirp yes
+  <<shared-instructions>>
+#+end_src
+
+** Clone local skills
+#+begin_src sh
+  scp -r ~/.claude/skills ws:.claude/
+#+end_src
+
+** Config file skeleton
+
+Claude configuration files:
 - =~/.claude/settings.json= :: User-level configuration file. Applies globally
   to Claude Code sessions for the current operating-system user, unless
   overridden by project-level or local settings.
@@ -79,8 +123,8 @@ Type ~/mcp~, then select and authenticate the following MCP/connectors:
 - =~/.claude/remote-settings.json= :: Remote or account-managed user
   configuration file. Treat this as policy managed by the organization: local
   changes are reverted when a Claude session starts.
-  + Note: Claude appears to load permission lists before reverting this file, so
-    edits affect the first session after the change.
+  + Note: Claude load permission lists before reverting this file, so edits
+    affect the first session after the change.
 
 - =~/project_root/.claude/settings.json= :: Project-level team-shared
   configuration file, meant to be checked in version control.
@@ -93,106 +137,28 @@ Type ~/mcp~, then select and authenticate the following MCP/connectors:
 #+begin_src json-ts :tangle "~/.claude/settings.json" :noweb yes :mkdirp yes
   {
     "includeCoAuthoredBy": false,
+    "cleanupPeriodDays": 180,
     <<claude-permissions>>,
-    <<sandbox>>
+    <<claude-sandbox>>,
+    <<claude-plugins>>
   }
 #+end_src
 
-*** Permissions
+** MCP servers
+
+*** Evergreen
+
+#+begin_src bash :tangle no
+  # MongoDB's Evergreen CI/CD MCP server for querying patches, tasks, builds, and test results.
+  claude mcp add evergreen --scope user -- uvx --from=git+https://github.com/evergreen-ci/evergreen-mcp-server evergreen-mcp-server
+#+end_src
+
+**** Permissions
 
 Glob patterns such as ~mcp__evergreen__get_*~ do not work. Therefore, I listed
 all MCP commands individually.
-#+begin_src json-ts :tangle no :noweb yes :noweb-ref claude-permissions
-  "permissions": {
-    "ask": [
-      <<ask>>
-    ],
-    "allow": [
-      <<allow>>
-    ]
-  }
-#+end_src
 
-**** Ask
-
-***** Evergreen
-
-#+begin_src json-ts :tangle no :noweb-ref ask
-  "Bash(evergreen patch *)",
-#+end_src
-
-***** Git
-
-#+begin_src json-ts :tangle no :noweb-ref ask
-  "Bash(git push *)",
-  "Bash(git amend *)",
-#+end_src
-
-***** GitHub
-
-#+begin_src json-ts :tangle no :noweb-ref ask
-  "Bash(gh pr create *)",
-#+end_src
-
-***** Jira cli
-
-#+begin_src json-ts :tangle no :noweb-ref ask
-  "Bash(jira issue create *)",
-  "Bash(jira issue edit *)",
-  "Bash(jira issue move *)"
-#+end_src
-
-**** Allow
-
-***** Aws cli:
-
-#+begin_src json-ts :tangle no :noweb-ref allow
-  "Bash(aws ec2 describe-*)",
-#+end_src
-
-NOTE: company rules defined in =~/.claude/remote-settings.json= may override
-this rule.
-
-***** Git
-
-#+begin_src json-ts :tangle no :noweb-ref allow
-  "Bash(git *)",
-#+end_src
-
-***** GitHub
-
-#+begin_src json-ts :tangle no :noweb-ref allow
-  "Bash(gh pr view *)",
-  "Bash(gh pr diff *)",
-  "Bash(gh api repos/*/files *)",
-  "Bash(gh api repos/*/comments *)",
-  "WebFetch(domain:github.com)",
-#+end_src
-
-***** Jira cli
-
-#+begin_src json-ts :tangle no :noweb-ref allow
-  "Bash(jira issue list *)",
-  "Bash(jira issue view *)",
-  "Bash(jira epic list *)",
-  "Bash(mkdir -p /tmp/jira-drafts/)",
-  "Bash(mkdir -p /private/tmp/jira-drafts/)",
-  "Read(//tmp/jira-drafts/**)",
-  "Read(//private/tmp/jira-drafts/**)",
-  "Write(//tmp/jira-drafts/**)",
-  "Write(//private/tmp/jira-drafts/**)",
-  "Edit(//tmp/jira-drafts/**)",
-  "Edit(//private/tmp/jira-drafts/**)",
-  "WebFetch(domain:jira.mongodb.org)",
-#+end_src
-
-***** MongoDB
-
-#+begin_src json-ts :tangle no :noweb-ref allow
-  "Bash(evergreen list-patches *)",
-  "mcp__mdb-glean__search",
-  "mcp__mdb-glean__read_document",
-  "mcp__mdb-glean__chat",
+#+begin_src json-ts :tangle no :noweb-ref claude-perm-mcp
   "mcp__evergreen__get_test_results_summary",
   "mcp__evergreen__get_test_results_detailed",
   "mcp__evergreen__get_task_log_summary",
@@ -203,79 +169,209 @@ this rule.
   "mcp__evergreen__download_task_artifacts_evergreen",
 #+end_src
 
-****** DSI
+*** Glean
 
-#+begin_src json-ts :tangle no :noweb-ref allow
+#+begin_src bash :tangle no
+  # MongoDB's Glean MCP server for searching and chatting over internal company documents and knowledge.
+  claude mcp add mdb-glean --scope user --transport http https://mongodb-be.glean.com/mcp/default
+#+end_src
+
+**** Permissions
+
+#+begin_src json-ts :tangle no :noweb-ref claude-perm-mcp
+  "mcp__mdb-glean__search",
+  "mcp__mdb-glean__read_document",
+  "mcp__mdb-glean__chat",
+#+end_src
+
+*** Claude.ai connectors
+
+In a Claude CLI session, type in ~/mcp~, then select and authenticate the
+following MCP/connectors:
+- Claude.ai gmail
+- Claude.ai google calendar
+- Claude.ai slack
+- Claude.ai zoom
+
+**** Permissions
+
+#+begin_src json-ts :tangle no :noweb-ref claude-perm-mcp
+  "mcp__claude_ai_Slack__slack_read_thread",
+  "mcp__claude_ai_Slack__slack_search_public_and_private",
+#+end_src
+
+** Global permissions
+
+#+begin_src json-ts :tangle no :noweb yes :noweb-ref claude-permissions
+  "permissions": {
+    "allow": [
+      <<claude-allow>>,
+      <<claude-perm-mcp>>
+    ],
+    "ask": [
+      <<claude-ask>>
+    ]
+  }
+#+end_src
+
+IMPORTANT: Use the ~Bash(cmd:*)~ form, not ~Bash(cmd *)~. The =:*= is Claude
+Code's prefix-match operator, which parses the command and validates each
+subcommand (split on ~;~, ~&&~, ~|~, etc.) separately. The space + bare =*= is a
+literal glob over the whole command string, so it also matches chained/injected
+commands like ~grep foo; rm -rf ~~ or ~$(...)~ substitutions — an easy way to
+auto-approve arbitrary execution.
+
+*** MongoDB
+
+**** DSI
+
+#+begin_src json-ts :tangle no :noweb-ref claude-allow
   "Bash(./run-dsi setup)",
-  "Bash(.venv/bin/pre-commit *)",
-#+end_src
-
-***** Poetry
-
-#+begin_src json-ts :tangle no :noweb-ref allow
-  "Bash(.poetry/bin/poetry run -- pre-commit run:*)",
+  "Bash(.poetry/bin/poetry run pre-commit run:*)",
   "Bash(.poetry/bin/poetry run pytest:*)",
-#+end_src
-
-***** Skills
-
-#+begin_src json-ts :tangle no :noweb-ref allow
   "Skill(performance-infrastructure-jira:*)",
 #+end_src
 
-***** Terraform
-
-#+begin_src json-ts :tangle no :noweb-ref allow
-  "Bash(terraform init *)",
-  "Bash(terraform validate *)",
+#+begin_src json-ts :tangle no :noweb-ref claude-ask
+  "Bash(.poetry/bin/poetry run:*)",
 #+end_src
 
-***** Web search & download
+**** Evergreen
 
-#+begin_src json-ts :tangle no :noweb-ref allow
+#+begin_src json-ts :tangle no :noweb-ref claude-ask
+  "Bash(evergreen patch:*)",
+#+end_src
+
+*** Aws cli
+
+#+begin_src json-ts :tangle no :noweb-ref claude-allow
+  "Bash(aws ec2 describe-instances:*)",
+  "Bash(aws ec2 describe-vpcs:*)",
+  "Bash(aws ec2 describe-subnets:*)",
+#+end_src
+
+NOTE: company rules defined in =~/.claude/remote-settings.json= may override
+this rule.
+
+*** File read & edit
+
+#+begin_src json-ts :tangle no :noweb-ref claude-allow
+  "Read(//tmp/agent-scratch/**)",
+  "Edit(//tmp/agent-scratch/**)",
+  "Read(//private/tmp/agent-scratch/**)",
+  "Edit(//private/tmp/agent-scratch/**)",
+  "Bash(mkdir:*)",
+  "Bash(echo:*)",
+  "Bash(head:*)",
+  "Bash(tail:*)",
+  "Bash(grep:*)",
+  "Bash(find:*)",
+  "Bash(ls:*)",
+  "Bash(awk:*)",
+  "Bash(sed:*)",
+#+end_src
+
+*** Git
+
+#+begin_src json-ts :tangle no :noweb-ref claude-allow
+  "Bash(git:*)",
+#+end_src
+
+#+begin_src json-ts :tangle no :noweb-ref claude-ask
+  "Bash(git push:*)",
+  "Bash(git amend:*)",
+#+end_src
+
+*** GitHub
+
+#+begin_src json-ts :tangle no :noweb-ref claude-allow
+  "Bash(gh search:*)",
+  "Bash(gh pr view:*)",
+  "Bash(gh pr checks:*)",
+  "Bash(gh pr diff:*)",
+  "Bash(gh api repos/*/files:*)",
+  "Bash(gh api repos/*/comments:*)",
+  "WebFetch(domain:github.com)",
+#+end_src
+
+#+begin_src json-ts :tangle no :noweb-ref claude-ask
+  "Bash(gh pr create:*)",
+#+end_src
+
+*** Jira cli
+
+#+begin_src json-ts :tangle no :noweb-ref claude-allow
+  "Bash(jira issue list:*)",
+  "Bash(jira issue view:*)",
+  "Bash(jira epic list:*)",
+  "Read(//tmp/jira-drafts/**)",
+  "Read(//private/tmp/jira-drafts/**)",
+  "Edit(//tmp/jira-drafts/**)",
+  "Edit(//private/tmp/jira-drafts/**)",
+  "WebFetch(domain:jira.mongodb.org)",
+#+end_src
+
+#+begin_src json-ts :tangle no :noweb-ref claude-ask
+  "Bash(jira issue create:*)",
+  "Bash(jira issue edit:*)",
+  "Bash(jira issue move:*)"
+#+end_src
+
+*** Operating System probe
+
+#+begin_src json-ts :tangle no :noweb-ref claude-allow
+  "Bash(command -v:*)",
+  "Bash(which:*)",
+#+end_src
+
+*** Skill: Superpowers
+
+#+begin_src json-ts :tangle no :noweb-ref claude-allow
+  "Edit(docs/superpowers/plans/**)",
+#+end_src
+
+*** Terraform
+
+#+begin_src json-ts :tangle no :noweb-ref claude-allow
+  "Bash(terraform init:*)",
+  "Bash(terraform validate:*)",
+#+end_src
+
+*** Web search & download
+
+#+begin_src json-ts :tangle no :noweb-ref claude-allow
   "WebSearch",
-  "Bash(curl *)",
-#+end_src
-
-***** File read & write
-
-#+begin_src json-ts :tangle no :noweb-ref allow
-  "Read(//Users/lgfang/source/**)",
-  "Write(//Users/lgfang/source/**)",
-  "Edit(//Users/lgfang/source/**)",
-  "Read(//Users/lgfang/.emacs.d/elpa/**)",
-  "Read(//Users/lgfang/Downloads/**)",
-  "Read(//tmp/claude-scratch/**)",
-  "Write(//tmp/claude-scratch/**)",
-  "Read(//private/tmp/claude-scratch/**)",
-  "Write(//private/tmp/claude-scratch/**)",
-  "Bash(echo *)",
-  "Bash(head *)",
-  "Bash(tail *)",
-  "Bash(grep *)",
-  "Bash(find *)",
-  "Bash(ls *)",
-  "Bash(awk *)",
-  "Bash(sed *)",
-#+end_src
-
-***** Operating System probe
-
-#+begin_src json-ts :tangle no :noweb-ref allow
-  "Bash(command -v *)",
-  "Bash(which *)"
+  "WebFetch(domain:claude.com)",
+  "Bash(curl:*)"
 #+end_src
 
 *** Sandbox
-#+begin_src json-ts :tangle no :noweb yes :noweb-ref sandbox
+#+begin_src json-ts :tangle no :noweb yes :noweb-ref claude-sandbox
     "sandbox": {
       "filesystem": {
         "allowWrite": [
-          "/tmp/claude-scratch/**",
-          "/private/tmp/claude-scratch/**"
+          "/tmp/agent-scratch/**",
+          "/private/tmp/agent-scratch/**"
         ]
       }
     }
+#+end_src
+
+*** Plugins
+
+#+begin_src json-ts :tangle no :noweb yes :noweb-ref claude-plugins
+  "extraKnownMarketplaces": {
+    "dsi-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "10gen/dsi"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "performance-testing@dsi-plugins": true
+  }
 #+end_src
 
 ** COMMENT Use AWS Bedrock Models
@@ -307,39 +403,322 @@ this rule.
      claude
    #+end_src
 
+* Codex
+
+** Install
+#+begin_src sh
+  npm install -g @openai/codex
+  npm install -g @agentclientprotocol/codex-acp
+#+end_src
+
+** Global instructions
+
+#+begin_src markdown-ts :tangle "~/.codex/AGENTS.md" :noweb yes :mkdirp yes
+  <<shared-instructions>>
+#+end_src
+
+** Config file skeleton
+
+In TOML, a bare ~key = value~ belongs to whichever ~[table]~ precedes it, so
+every top-level option must appear before the first table header. This skeleton
+enforces that ordering, which frees the sub-headers below to group each
+feature's settings together: a heading contributes its top-level keys to
+=codex-toplevel= and its tables to =codex-tables=, and Org concatenates all
+blocks sharing a =:noweb-ref= at the reference site.
+
+#+begin_src toml :tangle ~/.codex/config.toml :noweb yes :mkdirp yes
+  <<codex-toplevel>>
+
+  <<codex-tables>>
+#+end_src
+
+** AI Gateway: MongoDB Grove
+
+#+begin_src toml :tangle no :noweb-ref codex-toplevel
+  model_provider = "grove"
+#+end_src
+
+#+begin_src toml :tangle no :noweb-ref codex-tables
+  [model_providers.grove]
+  name = "grove"
+  base_url = "https://grove-gateway-prod.azure-api.net/grove-foundry-prod/openai/v1"
+  env_key = "GROVE_API_KEY"
+  env_http_headers = { "api-key" = "GROVE_API_KEY" }
+  supports_websockets = false   # avoids repeated websocket 401s
+#+end_src
+
+** MCP servers
+
+*** MongoDB: evergreen
+
+#+begin_src toml :tangle no :noweb-ref codex-tables
+  [mcp_servers.evergreen]
+  command = "uvx"
+  args = [
+    "--from=git+https://github.com/evergreen-ci/evergreen-mcp-server",
+    "evergreen-mcp-server",
+  ]
+#+end_src
+
+Like Claude and OpenCode, Codex cannot glob MCP tool names, so each tool is
+listed individually. =approval_mode = "approve"= auto-approves the tool
+without prompting (confirmed in =codex-rs/config/src/mcp_types.rs=
+=AppToolApproval::Approve=).
+
+#+begin_src toml :tangle no :noweb-ref codex-tables
+  [mcp_servers.evergreen.tools]
+  get_test_results_summary = { approval_mode = "approve" }
+  get_test_results_detailed = { approval_mode = "approve" }
+  get_task_log_summary = { approval_mode = "approve" }
+  get_task_log_detailed = { approval_mode = "approve" }
+  get_patch_failed_jobs_evergreen = { approval_mode = "approve" }
+  get_inferred_project_ids_evergreen = { approval_mode = "approve" }
+  list_user_recent_patches_evergreen = { approval_mode = "approve" }
+  download_task_artifacts_evergreen = { approval_mode = "approve" }
+#+end_src
+
+*** MongoDB: glean
+
+Remote (streamable HTTP) servers need the rmcp client, a top-level option:
+
+#+begin_src toml :tangle no :noweb-ref codex-toplevel
+  experimental_use_rmcp_client = true
+#+end_src
+
+#+begin_src toml :tangle no :noweb-ref codex-tables
+  [mcp_servers.mdb-glean]
+  url = "https://mongodb-be.glean.com/mcp/default"
+#+end_src
+
+#+begin_src toml :tangle no :noweb-ref codex-tables
+  [mcp_servers.mdb-glean.tools]
+  search = { approval_mode = "approve" }
+  read_document = { approval_mode = "approve" }
+  chat = { approval_mode = "approve" }
+#+end_src
+
+=mdb-glean= requires OAuth. Authenticate with:
+#+begin_src sh
+  codex mcp login mdb-glean
+#+end_src
+On a headless host, see [[#headless-mcp-auth]] instead.
+
+** Global permissions
+
+Codex's execpolicy rules (=prefix_rule=) control which commands may run
+outside the sandbox without prompting.  The file lives at
+=~/.codex/rules/default.rules= and uses Starlark syntax.  See
+https://developers.openai.com/codex/agent-configuration/rules and the
+parser source at =codex-rs/execpolicy/src/parser.rs=.
+
+Key differences from Claude/OpenCode permission lists:
+
+- =prefix_rule= matches command-token *prefixes* — there is no =:*= glob;
+  =pattern = ["git"]= is equivalent to Claude's =Bash(git:*)=.
+- *Most restrictive wins*: =forbidden= > =prompt= > =allow=.  This means a
+  broad =prompt= rule would override a narrower =allow=, so the
+  =.poetry/bin/poetry run:= ask rule from Claude/OpenCode is omitted here;
+  its narrow =allow= children suffice, and unmatched =poetry run= commands
+  fall back to the default approval policy (prompt under =on-request=).
+- =prefix_rule= cannot express mid-pattern wildcards.  The Claude/OpenCode
+  rules =gh api repos/*/files:= and =gh api repos/*/comments:= are
+  therefore deferred — add more specific rules once the exact repo patterns
+  are known.
+- In-sandbox commands (workspace reads/writes) are governed by
+  =sandbox_mode= + =approval_policy=, not by rules.  Rules only apply when
+  a command escapes the sandbox (e.g. needs network or writes outside the
+  workspace).
+
+#+begin_src starlark :tangle "~/.codex/rules/default.rules" :noweb yes :mkdirp yes
+  <<codex-rules>>
+#+end_src
+
+All blocks share =:noweb-ref codex-rules= and are accumulated in document
+order into the rules file.
+
+*** MongoDB
+
+**** DSI
+
+#+begin_src starlark :tangle no :noweb-ref codex-rules
+  prefix_rule(
+      pattern = ["./run-dsi", "setup"],
+      decision = "allow",
+  )
+  prefix_rule(
+      pattern = [".poetry/bin/poetry", "run", "pre-commit", "run"],
+      decision = "allow",
+  )
+  prefix_rule(
+      pattern = [".poetry/bin/poetry", "run", "pytest"],
+      decision = "allow",
+  )
+#+end_src
+
+**** Evergreen
+
+#+begin_src starlark :tangle no :noweb-ref codex-rules
+  prefix_rule(
+      pattern = ["evergreen", "patch"],
+      decision = "prompt",
+  )
+#+end_src
+
+*** Aws cli
+
+#+begin_src starlark :tangle no :noweb-ref codex-rules
+  prefix_rule(
+      pattern = ["aws", "ec2", "describe-instances"],
+      decision = "allow",
+  )
+  prefix_rule(
+      pattern = ["aws", "ec2", "describe-vpcs"],
+      decision = "allow",
+  )
+  prefix_rule(
+      pattern = ["aws", "ec2", "describe-subnets"],
+      decision = "allow",
+  )
+#+end_src
+
+*** File utilities
+
+#+begin_src starlark :tangle no :noweb-ref codex-rules
+  prefix_rule(pattern = ["mkdir"], decision = "allow")
+  prefix_rule(pattern = ["echo"], decision = "allow")
+  prefix_rule(pattern = ["head"], decision = "allow")
+  prefix_rule(pattern = ["tail"], decision = "allow")
+  prefix_rule(pattern = ["grep"], decision = "allow")
+  prefix_rule(pattern = ["find"], decision = "allow")
+  prefix_rule(pattern = ["ls"], decision = "allow")
+  prefix_rule(pattern = ["awk"], decision = "allow")
+  prefix_rule(pattern = ["sed"], decision = "allow")
+#+end_src
+
+*** Git
+
+#+begin_src starlark :tangle no :noweb-ref codex-rules
+  prefix_rule(pattern = ["git"], decision = "allow")
+  prefix_rule(pattern = ["git", "push"], decision = "prompt")
+  prefix_rule(pattern = ["git", "amend"], decision = "prompt")
+#+end_src
+
+*** GitHub
+
+#+begin_src starlark :tangle no :noweb-ref codex-rules
+  prefix_rule(pattern = ["gh", "search"], decision = "allow")
+  prefix_rule(pattern = ["gh", "pr", "view"], decision = "allow")
+  prefix_rule(pattern = ["gh", "pr", "checks"], decision = "allow")
+  prefix_rule(pattern = ["gh", "pr", "diff"], decision = "allow")
+  prefix_rule(pattern = ["gh", "pr", "create"], decision = "prompt")
+  # TODO: "gh api repos/*/files" and "gh api repos/*/comments" need
+  # mid-pattern wildcards that prefix_rule does not support.
+#+end_src
+
+*** Jira cli
+
+#+begin_src starlark :tangle no :noweb-ref codex-rules
+  prefix_rule(pattern = ["jira", "issue", "list"], decision = "allow")
+  prefix_rule(pattern = ["jira", "issue", "view"], decision = "allow")
+  prefix_rule(pattern = ["jira", "epic", "list"], decision = "allow")
+  prefix_rule(pattern = ["jira", "issue", "create"], decision = "prompt")
+  prefix_rule(pattern = ["jira", "issue", "edit"], decision = "prompt")
+  prefix_rule(pattern = ["jira", "issue", "move"], decision = "prompt")
+#+end_src
+
+*** Operating System probe
+
+#+begin_src starlark :tangle no :noweb-ref codex-rules
+  prefix_rule(pattern = ["command", "-v"], decision = "allow")
+  prefix_rule(pattern = ["which"], decision = "allow")
+#+end_src
+
+*** Terraform
+
+#+begin_src starlark :tangle no :noweb-ref codex-rules
+  prefix_rule(pattern = ["terraform", "init"], decision = "allow")
+  prefix_rule(pattern = ["terraform", "validate"], decision = "allow")
+#+end_src
+
+*** Web download
+
+#+begin_src starlark :tangle no :noweb-ref codex-rules
+  prefix_rule(pattern = ["curl"], decision = "allow")
+#+end_src
+
+Test with:
+
+#+begin_src sh
+  codex execpolicy check --pretty \
+    --rules ~/.codex/rules/default.rules \
+    -- git push origin main
+#+end_src
+
 * OpenCode
 
-** Skeleton - work laptop
+** Install
 
-#+begin_src json-ts :tangle (if my/work-machine-p "~/.config/opencode/opencode.json" "no") :noweb yes :mkdirp yes
+#+begin_src sh
+  curl -fsSL https://opencode.ai/install | bash
+#+end_src
+OpenCode CLI comes with an ACP, no need to install a standalone ACP for it.
+
+#+begin_src sh
+  gh api repos/10gen/grove-gateway-opencode-plugin/contents/install.sh \
+    -H "Accept: application/vnd.github.raw" | bash
+#+end_src
+The MongoDB Grove AI gateway plugin is needed to access the models provided via
+Grove. Search internal documents for up-to-date instructions.
+
+** Global instructions
+
+#+begin_src markdown-ts :tangle "~/.config/opencode/AGENTS.md" :noweb yes :mkdirp yes
+  <<shared-instructions>>
+#+end_src
+
+** Config file skeleton - work machine
+
+#+begin_src json-ts :tangle (if (bound-and-true-p my/work-machine-p) "~/.config/opencode/opencode.json" "no") :noweb yes :mkdirp yes
   {
     "$schema": "https://opencode.ai/config.json",
+    "provider": {
+      "grove-misc": {
+        "models": {
+          "fw-glm-5.2": {
+            "options": { "reasoning_history": "preserved" }
+          },
+          "fw-kimi-k3.0": {
+            "options": { "reasoning_history": "preserved" }
+          }
+        }
+      }
+    },
     "mcp": {
-      "_placeholder_mcp": { "type": "local", "command": ["true"], "enabled": false }
-      <<mcp-shared>>
-      <<mcp-work>>
-    }
+      <<opencode-mcp-work>>
+      <<opencode-mcp-shared>>
+    },
+    <<opencode-permissions>>
   }
 #+end_src
 
-** Skeleton - personal laptop
+** Config file skeleton - personal laptop
 
-#+begin_src json-ts :tangle (if my/work-machine-p "no" "~/.config/opencode/opencode.json") :noweb yes :mkdirp yes
+#+begin_src json-ts :tangle (if (bound-and-true-p my/work-machine-p) "no" "~/.config/opencode/opencode.json") :noweb yes :mkdirp yes
   {
     "$schema": "https://opencode.ai/config.json",
     "mcp": {
-      "_placeholder_mcp": { "type": "local", "command": ["true"], "enabled": false }
-      <<mcp-shared>>
-      <<mcp-personal>>
-    }
+      <<opencode-mcp-personal>>
+      <<opencode-mcp-shared>>
+    },
+    <<opencode-permissions>>
   }
 #+end_src
 
 ** MCP servers
 
 *** Evergreen
-#+begin_src json-ts :tangle no :noweb-ref mcp-work
-  ,"evergreen": {
+#+begin_src json-ts :tangle no :noweb-ref opencode-mcp-work
+  "evergreen": {
     "type": "local",
     "command": [
       "uvx",
@@ -347,14 +726,234 @@ this rule.
       "evergreen-mcp-server"
     ],
     "enabled": true
-  }
+  },
+#+end_src
+
+**** Permissions
+#+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-mcp
+  "evergreen_get_test_results_summary": "allow",
+  "evergreen_get_test_results_detailed": "allow",
+  "evergreen_get_task_log_summary": "allow",
+  "evergreen_get_task_log_detailed": "allow",
+  "evergreen_get_patch_failed_jobs_evergreen": "allow",
+  "evergreen_get_inferred_project_ids_evergreen": "allow",
+  "evergreen_list_user_recent_patches_evergreen": "allow",
+  "evergreen_download_task_artifacts_evergreen": "allow",
 #+end_src
 
 *** Glean
-#+begin_src json-ts :tangle no :noweb-ref mcp-work
-  ,"mdb-glean": {
+#+begin_src json-ts :tangle no :noweb-ref opencode-mcp-work
+  "mdb-glean": {
     "type": "remote",
     "url": "https://mongodb-be.glean.com/mcp/default",
     "enabled": true
+  },
+#+end_src
+
+=mdb-glean= requires OAuth. Authenticate with:
+#+begin_src sh
+  opencode mcp auth mdb-glean
+#+end_src
+On a headless host, see [[#headless-mcp-auth]] instead.
+
+**** Permissions
+#+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-mcp
+  "mdb-glean_search": "allow",
+  "mdb-glean_read_document": "allow",
+  "mdb-glean_chat": "allow"
+#+end_src
+
+*** Shared placeholder
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-mcp-shared
+  "_placeholder_mcp": { "type": "local", "command": ["true"], "enabled": false }
+#+end_src
+
+** Global permissions
+
+#+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-permissions
+  "permission": {
+    "bash": {
+      "*": "ask",
+      <<opencode-perm-bash>>
+    },
+    <<opencode-perm-external>>,
+    <<opencode-perm-web>>,
+    <<opencode-perm-skill>>,
+    <<opencode-perm-mcp>>
   }
 #+end_src
+
+Opencode's bash permission uses ="cmd *": "action"= glob patterns with *last
+match wins*. A leading ="*": "ask"= catch-all makes any unmatched command prompt
+instead of falling back to opencode's default =allow=; every rule below
+overrides it for the commands it matches. Rules are grouped by command/tool:
+within each group broad =allow= rules come before narrower =ask= overrides so
+the ask wins on overlap. All blocks share =:noweb-ref opencode-perm-bash=
+and are accumulated in document order into the =bash= object.
+
+*** MongoDB
+
+**** DSI
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
+  "./run-dsi setup": "allow",
+#+end_src
+
+**** Evergreen
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
+  "evergreen patch *": "ask",
+#+end_src
+
+*** Aws cli
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
+  "aws ec2 describe-instances *": "allow",
+  "aws ec2 describe-vpcs *": "allow",
+  "aws ec2 describe-subnets *": "allow",
+#+end_src
+
+*** File utilities
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
+  "mkdir *": "allow",
+  "echo *": "allow",
+  "head *": "allow",
+  "tail *": "allow",
+  "grep *": "allow",
+  "find *": "allow",
+  "ls *": "allow",
+  "awk *": "allow",
+  "sed *": "allow",
+#+end_src
+
+*** Git
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
+  "git *": "allow",
+  "git push *": "ask",
+  "git amend *": "ask",
+#+end_src
+
+*** GitHub
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
+  "gh search *": "allow",
+  "gh pr view *": "allow",
+  "gh pr checks *": "allow",
+  "gh pr diff *": "allow",
+  "gh pr create *": "ask",
+  "gh api repos/*/files *": "allow",
+  "gh api repos/*/comments *": "allow",
+#+end_src
+
+*** Jira cli
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
+  "jira issue list *": "allow",
+  "jira issue view *": "allow",
+  "jira epic list *": "allow",
+  "jira issue create *": "ask",
+  "jira issue edit *": "ask",
+  "jira issue move *": "ask",
+#+end_src
+
+*** Operating System probe
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
+  "command -v *": "allow",
+  "which *": "allow",
+#+end_src
+
+*** Poetry
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
+  ".poetry/bin/poetry run *": "ask",
+  ".poetry/bin/poetry run pre-commit run *": "allow",
+  ".poetry/bin/poetry run pytest *": "allow",
+#+end_src
+
+*** Terraform
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
+  "terraform init *": "allow",
+  "terraform validate *": "allow",
+#+end_src
+
+*** Web download
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
+  "curl *": "allow"
+#+end_src
+
+*** File read & edit
+
+No explicit =read= or =edit= rules needed: opencode defaults both to
+="allow"= for project-internal files (including =.env= denial by default).
+External paths are handled by =external_directory= (see [[*External
+directory]]).
+
+*** External directory
+
+This is where Claude's =Read()= and =Edit()= allow rules for external paths
+now live. =external_directory= defaults to ="ask"=, so paths not listed here
+will prompt. Paths listed here inherit the =read= / =edit= defaults (=allow=
+unless overridden).
+
+#+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-external
+  "external_directory": {
+    "*": "ask",
+    "/Users/lgfang/Downloads/**": "allow",
+    "/tmp/agent-scratch/**": "allow",
+    "/private/tmp/agent-scratch/**": "allow",
+    "/tmp/jira-drafts/**": "allow",
+    "/private/tmp/jira-drafts/**": "allow"
+  }
+#+end_src
+
+*** Web
+
+=webfetch= and =websearch= only accept flat actions. Claude's per-domain
+=WebFetch(domain:...)= restrictions (github.com, jira.mongodb.org,
+claude.com) are lost --- all web fetches share one action.
+
+#+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-web
+  "webfetch": "allow",
+  "websearch": "allow"
+#+end_src
+
+*** Skill
+
+#+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-skill
+  "skill": {
+    "*": "ask",
+    "performance-infrastructure-jira*": "allow"
+  }
+#+end_src
+
+* Authenticate an MCP server on a headless host
+:PROPERTIES:
+:CUSTOM_ID: headless-mcp-auth
+:END:
+
+The OAuth callback of a remote MCP server (e.g. =mdb-glean=) opens a listener on
+the headless host, so completing the flow needs an SSH port forward. The steps
+below are common to Claude, Codex and OpenCode; only the command in step 1
+differs per tool.
+
+1. On the headless host, trigger the MCP authentication. The command depends on
+   the tool, e.g. for OpenCode:
+   #+begin_src sh
+     opencode mcp auth mdb-glean
+   #+end_src
+2. Open the printed authorization URL in your local browser.
+3. Complete authentication. The browser will redirect to the OAuth callback URL,
+   usually =http://localhost:<port>/...=, and fail because the callback listener
+   is running on the headless host.
+4. From your local machine, create an SSH local port forward to the headless
+   host. Replace =19876= with the port from the actual callback URL:
+   #+begin_src sh
+     ssh -N -L 19876:localhost:19876 user@headless-host
+   #+end_src
+5. Reload the failed callback URL in your browser.
