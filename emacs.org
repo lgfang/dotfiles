@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-06-30 +1000
+#+DATE: 2026-07-02 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3075,7 +3075,7 @@ Prerequisites:
     ;; OpenCode
     (agent-shell-opencode-default-model-id
      ;; choose model based on work/personal laptop
-     (if my/work-machine-p "grove-openai/gpt-5.5" "deepseek/deepseek-v4-pro"))
+     (if my/work-machine-p "grove-misc/fw-glm-5.2" "deepseek/deepseek-v4-pro"))
     )
 #+end_src
 
