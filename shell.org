@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-06-18 +1000
+#+DATE: 2026-07-04 +1000
 
 * COMMENT Bash
 ** bash_profile
@@ -1098,16 +1098,36 @@ EXEC 00;38;5;64
 ** config.fish
 
 #+begin_src fish :tangle ~/.config/fish/config.fish
-  fish_add_path -g ~/.local/bin
-
   if status is-interactive
       if test "$TERM" = xterm-256color; and not set -q TMUX
           tg
       end
   end
 
-  set -gx KUBECONFIG (string join : ~/.kube/config.*)
-  set -gx JIRA_API_TOKEN (security find-generic-password -a "$USER" -s "jira-cli" -w 2>/dev/null)
+  set -gx COLORTERM truecolor
+
+  # KUBECONFIG
+  set -l kube_configs ~/.kube/config.*
+  if test (count $kube_configs) -gt 0
+      set -gx KUBECONFIG (string join : $kube_configs)
+  end
+
+  # JIRA API token - pick whichever secret store exists on this host
+  if type -q security            # macOS Keychain
+      set -gx JIRA_API_TOKEN (security find-generic-password -a "$USER" -s "jira-cli" -w 2>/dev/null)
+  else if type -q pass           # Linux: GPG-backed pass
+      set -gx JIRA_API_TOKEN (pass show jira-cli 2>/dev/null)
+  end
+
+  # The custom npm global directory, enables user-specific "global" package
+  # installations on Linux without requiring `sudo`. MacOS does not need this
+  # configuration since npm global installations use Homebrew's bin directory.
+  # IMPORTANT: must run `npm config set prefix "$NPM_GLOBAL"` once.
+  set -gx NPM_GLOBAL $HOME/.npm-global
+
+  fish_add_path -g ~/.local/bin
+  fish_add_path -g $NPM_GLOBAL/bin
+  fish_add_path -g ~/.opencode/bin # On Ubuntu, opencode is installed here
 #+end_src
 
 ** prompt
