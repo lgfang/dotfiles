@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-02 +1000
+#+DATE: 2026-07-03 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3022,8 +3022,8 @@ Prerequisites:
   (use-package agent-shell
     :vc (:url "https://github.com/xenodium/agent-shell" :rev :newest)
     :preface
-    (defun my/start-agent-shell (&optional arg)
-      "Run `agent-shell'. With prefix ARG (C-u), select the directory from a pre-defined set."
+    (defun my/agent-shell (&optional arg)
+      "A wrapper of `agent-shell'. With prefix ARG (C-u), select the directory from a pre-defined set."
       (interactive "P")
       (if arg
           (let* ((dirs '("~/source/project1/" "~/source/project2/" "~/source/project3/"))
@@ -3031,6 +3031,16 @@ Prerequisites:
                  (default-directory (expand-file-name chosen-dir)))
             (agent-shell))
         (agent-shell)))
+
+    (defun my/agent-shell-new-worktree-shell ()
+      "A wrapper of `agent-shell-new-worktree-shell', always prompt for the agent."
+      (interactive)
+      (let ((agent-shell-preferred-agent-config nil)
+            ;; Binds `agent-shell-preferred-agent-config' to nil so you pick an
+            ;; agent (e.g. opencode, claude, codex) from
+            ;; `agent-shell-agent-configs' instead of using the preferred one.
+            )
+        (call-interactively #'agent-shell-new-worktree-shell)))
 
     (defun my/anthropic-model-id-from-name (name)
       "Return a function that resolves model NAME to the latest model ID."
@@ -3042,7 +3052,7 @@ Prerequisites:
                              (agent-shell--get-available-models agent-shell--state))
                    #'string-greaterp))))
 
-    :bind (("C-c a" . my/start-agent-shell)
+    :bind (("C-c a" . my/agent-shell)
            :map agent-shell-mode-map
            ;; Use RET for newline as S-RET does not work in terminals.
            ;; Original RET functionality is bound to `C-c C-c', matching
