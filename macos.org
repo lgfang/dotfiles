@@ -2,8 +2,8 @@
 # Created: 2016-02-27
 
 #+TITLE: Setting up a new MacBook
-#+AUTHOR:
-#+DATE:
+#+AUTHOR: Fang Lungang
+#+DATE: 2026-07-04 +1000
 #+DESCRIPTION: How I set up a new MacBook, updated for Tahoe
 #+KEYWORDS: MacOS, MacBook
 
@@ -26,50 +26,61 @@
   - Tick Bluetooth in Menu Bar
 - Remote Login: toggle on/off as needed
 
-** COMMENT Prevent weekend battery drain in sleep
+** Weekend battery drain in sleep
 
-NOTE: this root cause analysis is wrong, the fix does not work
-
-Disable the main battery-only wake sources:
-
-#+begin_src bash
-sudo pmset -b powernap 0        # disable Power Nap background tasks
-sudo pmset -b womp 0            # disable Wake-on-LAN
-sudo pmset -b tcpkeepalive 0    # disable network keepalive wakes
-#+end_src
-
-These commands apply only while running on battery (~-b~); AC power settings are
-unchanged.
-
-Verify the battery profile:
-#+begin_src bash
-sudo pmset -g custom
-#+end_src
-
-Check the ~Battery Power~ section and confirm:
-#+begin_src text
-powernap        0
-womp            0
-tcpkeepalive    0
-#+end_src
+NOTE: This is an *unresolved* issue. Documented here for future reference.
 
 *** Symptom
 
 A fully charged MacBook is closed and left in a bag on Friday, then is dead by
-Sunday. Seen on newer Apple Silicon MacBook Pros; older M1 systems may be
-unaffected.
+Sunday. Seen on the new M5 MacBook Pros.
 
-*** Cause
+*** Root cause
 
-The machine is repeatedly dark-waking while asleep on battery, often around
-~220–250 wakes/hour, causing roughly ~1.9–4.5%/hour drain.
+While asleep on battery the machine dark-wakes ~220–250 times/hour (~1.9%/hour
+drain -> dead in ~2 days). Two distinct sources, found via =pmset -g log=:
+1. Power Nap background tasks (~dasd~ jobs: Find My ~searchpartyd~, Jamf Connect
+   retries, widgets, Photos, Apple Intelligence). Partly fixable — see below.
+2. The Wi-Fi radio waking the CPU for *incoming* network packets (wake reason
+   ~wifibt SMC.OutboxNotEmpty centauri-beta~; some tagged ~E_RX_IP_PACKET ARPT~
+   / ~E_PFN_NET_FOUND ARPT~). This is ordinary LAN broadcast/multicast chatter.
+   NOT fixable via any setting.
 
-Common wake sources:
-1. Power Nap background tasks, especially ~dasd~ jobs such as Find My
-   ~searchpartyd~, Jamf Connect retries, widgets, Photos, or Apple Intelligence
-   tasks.
-2. Wi-Fi/Bluetooth network keepalive activity waking the CPU, commonly logged
-   with wake reasons like ~wifibt SMC.OutboxNotEmpty centauri-beta~.
+The CPU is awake only ~10 min across an entire night (median ~0.3s/wake), so the
+drain is the Wi-Fi *radio* powering up ~230×/hour, not computation.
+
+*** What helped
+
+Disabling Power Nap (source #1) is worth keeping — it cut drain from ~4.5 to
+~1.9%/hour — but does NOT stop the Wi-Fi wakes:
+#+begin_src bash
+  sudo pmset -b powernap 0        # battery only (-b); AC profile unchanged
+#+end_src
+
+*** What we tried that did NOT work
+
+- ~sudo pmset -b tcpkeepalive 0~ :: verified ~TCPKeepAlive=disabled~ in the
+  sleep logs over several nights; the wake storm continued unchanged. It only
+  stops *outbound* keepalives, not the radio waking for *inbound* packets.
+- ~sudo pmset -b womp 0~ :: no effect (~womp~ is Wake-on-LAN magic-packet only;
+  on battery it is already 0 by default on notebooks).
+- ~sudo pmset -b darkwakes 0~ :: NOT a valid key on this macOS (Tahoe). ~pmset~
+  accepts it silently, but it never appears in ~pmset -g custom~ and has no
+  effect.
+- Unpairing Bluetooth devices (AirPods, Magic Keyboard) :: no effect — zero
+  Bluetooth-tagged wakes, confirming the cause is Wi-Fi, not BT.
+
+*** Diagnostics
+
+#+begin_src bash
+  # both Battery + AC profiles (plain -g shows only the currently active source):
+  sudo pmset -g custom
+  # wake history — bucket by hour, check Charge:N% and "Using AC/BATT":
+  pmset -g log | grep -iE "DarkWake|^Wake "
+#+end_src
+
+The same Wi-Fi dark-wake sleep drain is widely reported by others on M5 / Apple
+Silicon MacBooks.
 
 * Install homebrew
 
