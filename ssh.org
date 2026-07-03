@@ -1,0 +1,172 @@
+# -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+# Created:  Fang Lungang 2026-07-03
+
+#+TITLE: My SSH Configurations
+#+AUTHOR: Fang Lungang
+#+DATE: 2026-07-03 +1000
+
+* .ssh/config
+:PROPERTIES:
+:header-args:conf: :tangle ~/.ssh/config
+:END:
+
+** Workstation
+
+The host on which I do my daily work.
+
+#+begin_src conf
+  Host ws
+       HostName lungang.workstations.corp.com
+       IdentityFile ~/.ssh/lungang-laptop
+       User root
+#+end_src
+
+** GitHub SSH access
+
+Access GitHub repos using =git@github.com:...=. Two one-time steps are
+needed before this works:
+
+1. Upload the matching public key to GitHub (Settings → SSH and GPG keys)
+   so the server will authenticate you.
+2. Accept GitHub's host-key fingerprint on the first connection. Run =ssh -T
+   git@github.com= to trigger the prompt; it also verifies auth, replying with a
+   "successfully authenticated, but ... does not provide shell access" banner.
+   Before typing =yes=, check the shown fingerprint against [[https://docs.github.com/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints][GitHub's published
+   SSH key fingerprints]] rather than trusting it blindly (TOFU).
+
+#+begin_src conf
+  Host github.com
+       IdentityFile ~/.ssh/lungang-laptop
+#+end_src
+
+** Hosts on the private network
+
+When a LAN relies on DHCP, hosts change IPs frequently and their host keys
+appear to "change" too. Disabling the host-key check and sending known-hosts to
+=/dev/null= would then avoid the constant warnings.
+
+Caveat: this is risky, because many people, including me, tend to blindly accept
+new fingerprints. That defeats man-in-the-middle protection, so I keep it as a
+reference example only - this block is *not* tangled into my actual config
+(=:tangle no=). I assign static IPs to my servers, so their host keys are
+stable; only mobile devices (phones, etc.) get DHCP addresses, and I don't SSH
+into those.
+
+#+begin_src conf :tangle no
+  Host 192.168.0.*
+       StrictHostKeyChecking no
+       UserKnownHostsFile /dev/null
+#+end_src
+
+** Reaching an internal host through a bastion (ProxyJump)
+
+This pair shows how to reach a host that has *no* public IP by tunneling through
+a publicly reachable bastion. With both blocks defined, a single =ssh target=
+opens the tunnel via =bastion= and lands you on the target - no manual two-step
+hop.
+
+Note that both =IdentityFile= keys live locally, on this client: SSH
+authenticates end-to-end from here to each hop, so the bastion never needs the
+target's key.
+
+*** The bastion
+
+The host reachable from the public network and have access to the target host.
+It forwards the connection onward; it isn't where you work.
+
+#+begin_src conf
+  Host bastion
+       Hostname public_DNS_or_IP_for_the_bastion_server
+       User account_on_bastion_server
+       IdentityFile ~/.ssh/private_key_4_bastion
+#+end_src
+
+*** The target
+
+It lives on a private network (=10.0.1.2=), reached only by jumping through the
+bastion above. =ProxyJump= is the modern one-liner; on older OpenSSH that lacks
+it, use the commented =ProxyCommand= form instead.
+
+#+begin_src conf
+  Host target
+       Hostname 10.0.1.2
+       User account_on_target_server
+       IdentityFile ~/.ssh/private_key_4_target
+       ProxyJump bastion
+       # ProxyCommand ssh -W %h:%p bastion
+#+end_src
+
+*** Connection multiplexing
+
+=ControlMaster= multiplexes several sessions over one TCP connection and one
+authentication. The first connection to a host becomes the "master"; later
+=ssh=/=scp=/=git= connections reuse it. This is most valuable exactly here, on
+the bastion/target path: every hop otherwise re-does the full TCP + key-exchange
++ auth handshake (and any bastion MFA), so reusing the master makes subsequent
+connections near-instant and prompt-free.
+
+Two supporting options make it safe to keep:
+
+- =ControlPath ~/.ssh/cm-%r@%h:%p= — where the master's control socket lives;
+  the =%r@%h:%p= tokens keep one socket per user/host/port.
+- =ControlPersist 10m= — keeps the master alive 10 minutes after the last
+  session, then tears it down automatically. This gives the speedup without
+  leaving stale sockets to clean up, and avoids the classic footgun where a
+  hung master blocks all new sessions.
+
+Note: never set =ControlMaster auto= globally (=Host *=) — a stale or crashed
+master would then break *every* new connection, and multiplexing is undesirable
+for one-off or scripted sessions. Scoping it to =bastion target= keeps the
+benefit contained.
+
+#+begin_src conf
+  Host bastion target
+       ControlMaster auto
+       ControlPath ~/.ssh/cm-%r@%h:%p
+       ControlPersist 10m
+#+end_src
+
+** Interoperating with legacy servers
+
+Some old servers only offer algorithms that modern OpenSSH disables by default,
+causing =Unable to negotiate= errors. This block re-enables the weak algorithms
+*only* for hosts whose name contains =legacy=, keeping the rest of the config
+secure. Each =+= appends the legacy algorithm to the default set.
+
+Errors these settings resolve:
+- =no matching key exchange method ... diffie-hellman-group1-sha1= →
+  re-enabled via =KexAlgorithms +diffie-hellman-group1-sha1=.
+- =no matching host key type ... ssh-dss= → re-enable with
+  =HostKeyAlgorithms +ssh-dss= (kept commented; uncomment if needed).
+- =send_pubkey_test: no mutual signature algorithm= → the old server only
+  accepts the deprecated =ssh-rsa= signature; =PubkeyAcceptedKeyTypes=+ssh-rsa=
+  tells the client to offer it.
+
+#+begin_src conf
+  Host *legacy*
+       User root
+       IdentityFile ~/.ssh/id_autoit
+       LogLevel ERROR
+       KexAlgorithms +diffie-hellman-group1-sha1
+       # HostKeyAlgorithms +ssh-dss
+       PubkeyAcceptedKeyTypes=+ssh-rsa
+#+end_src
+
+** Global defaults
+
+Defaults applied to every host (that a more specific block above hasn't already
+set - SSH takes the *first* value seen for each option).
+
+- =ServerAliveInterval 180= sends a keepalive every 3 minutes so idle sessions
+  aren't dropped by NAT/firewalls.
+- =ForwardX11 no= is the safe default.
+- =Compression= and =ControlPath= are left as commented reminders.
+
+#+begin_src conf
+  Host *
+       User lgfang
+       ServerAliveInterval 180
+       ForwardX11 no
+       # Compression yes
+       # ControlPath /tmp/%r_ssh_%h_%p
+#+end_src

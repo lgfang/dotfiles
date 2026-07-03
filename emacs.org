@@ -1896,6 +1896,7 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
                                           "~/.dotfiles/tmux.org"
                                           "~/.dotfiles/git.org"
                                           "~/.dotfiles/shell.org"
+                                          "~/.dotfiles/ssh.org"
                                           "~/.dotfiles/window-manager.org"
                                           "~/.dotfiles/terminal-emulator.org"
                                           "~/.dotfiles/karabiner.org"
