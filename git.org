@@ -3,7 +3,7 @@
 
 #+TITLE: My Git Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-02 +1000
+#+DATE: 2026-07-03 +1000
 
 * Global git ignore
 :PROPERTIES:
@@ -112,7 +112,7 @@ For example, to block myself from pushing my private configuration branches
 =mine/company= to GitHub, I tangle (write) the following code snippet into
 =~/.dotfiles/.git/hooks/pre-push= in with file permission =o755=.
 
-#+begin_src bash :tangle ~/.dotfiles/.git/hooks/pre-push :tangle-mode o755
+#+begin_src bash :tangle ~/.dotfiles/.git/hooks/pre-push :tangle-mode o755 :mkdirp yes
   #!/usr/bin/env bash
 
   protected_branches=("mine" "company")
