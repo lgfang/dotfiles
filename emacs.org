@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-03 +1000
+#+DATE: 2026-07-04 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -91,12 +91,14 @@ related configurations together.
     (add-to-list 'load-path my-elisps t)
     (defvar my-personal-path (file-name-as-directory
                               (expand-file-name "~/mynotes/personal")))
-    (defconst my/work-macbook-regexp "^M-"
-      "Hostname regexp identifying my work MacBook.")
+    (defconst my/work-machine-regexp
+      (rx (or (seq bos "M-")          ; work MacBook
+              (seq bos "ip-10-")))    ; work AWS dev hosts (e.g. this EC2 box)
+      "Hostname regexp identifying my work machines.")
     (defvar my/work-machine-p
-      (and (string-match-p my/work-macbook-regexp (system-name)) t)
+      (and (string-match-p my/work-machine-regexp (system-name)) t)
       "Is this my work machine? used by multiple packages and by org tangling.")
-  )
+    )
 #+end_src
 
 ** Personal information
