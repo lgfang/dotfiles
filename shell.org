@@ -1112,11 +1112,18 @@ EXEC 00;38;5;64
       set -gx KUBECONFIG (string join : $kube_configs)
   end
 
-  # JIRA API token - pick whichever secret store exists on this host
-  if type -q security            # macOS Keychain
-      set -gx JIRA_API_TOKEN (security find-generic-password -a "$USER" -s "jira-cli" -w 2>/dev/null)
-  else if type -q pass           # Linux: GPG-backed pass
-      set -gx JIRA_API_TOKEN (pass show jira-cli 2>/dev/null)
+  # JIRA API TOKEN
+  function jira --wraps jira --description 'load JIRA token on first use, then run jira'
+      # Lazy-load avoids Emacs remote access hang on password prompt
+      if test -z "$JIRA_API_TOKEN"
+          # pick whichever secret store exists on this host
+          if type -q security          # macOS Keychain
+              set -gx JIRA_API_TOKEN (security find-generic-password -a "$USER" -s jira-cli -w 2>/dev/null)
+          else if type -q pass         # Linux: GPG-backed pass
+              set -gx JIRA_API_TOKEN (pass show jira-cli 2>/dev/null)
+          end
+      end
+      command jira $argv
   end
 
   # The custom npm global directory, enables user-specific "global" package
