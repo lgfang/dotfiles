@@ -1,0 +1,205 @@
+# -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+# Created:  Fang Lungang 2026-07-03
+
+#+TITLE: My Workstation Setup Notes
+#+AUTHOR: Fang Lungang
+#+DATE: 2026-07-04 +1000
+
+This note is for the following Ubuntu EC2 instance:
+#+begin_src sh
+  $ cat /etc/os-release
+  PRETTY_NAME="Ubuntu 22.04.5 LTS"
+  NAME="Ubuntu"
+  VERSION_ID="22.04"
+  VERSION="22.04.5 LTS (Jammy Jellyfish)"
+  VERSION_CODENAME=jammy
+  ID=ubuntu
+  ID_LIKE=debian
+  HOME_URL="https://www.ubuntu.com/"
+  SUPPORT_URL="https://help.ubuntu.com/"
+  BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+  PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+  UBUNTU_CODENAME=jammy
+#+end_src
+
+* Install fish shell
+
+** Install
+
+#+begin_src sh
+  sudo apt-add-repository ppa:fish-shell/release-4
+  sudo apt update
+  sudo apt install fish
+#+end_src
+
+** Make it the login shell
+
+#+begin_src sh
+  # 1. Ensure fish is listed as a valid login shell
+  grep -qxF "$(which fish)" /etc/shells || which fish | sudo tee -a /etc/shells
+
+  # 2. Change ubuntu's login shell with sudo (no -s needed to target another user)
+  sudo chsh -s "$(which fish)" ubuntu
+#+end_src
+
+* Install Emacs
+
+Start a tmux session and run the following commands in it as we are compiling
+Emacs from source, which can be time consuming.
+
+1. Build dependencies (includes native-compilation and tree-sitter support):
+
+   #+begin_src sh
+     sudo apt update
+     sudo apt build-dep emacs        # needs 'deb-src' lines enabled in apt sources
+     sudo apt install -y \
+         build-essential git autoconf texinfo \
+         libgccjit-11-dev gcc-11 \
+         libgnutls28-dev libjansson-dev libtree-sitter-dev \
+         libncurses-dev pkg-config
+   #+end_src
+
+   If apt build-dep fails (no source repos), enable them:
+   #+begin_src sh
+     sudo sed -i 's/^# deb-src/deb-src/' /etc/apt/sources.list
+     sudo apt update
+   #+end_src
+
+2. Get the source — the emacs-31 release branch:
+   #+begin_src sh
+      git clone https://git.savannah.gnu.org/git/emacs.git
+      cd emacs
+      git checkout emacs-31
+   #+end_src
+
+3. Configure, build, install:
+   #+begin_src sh
+     ./autogen.sh
+     export CC=gcc-11        # match libgccjit-11 for native comp
+     ./configure \
+         --with-native-compilation=aot \
+         --with-json \
+         --with-tree-sitter \
+         --without-x           # headless server: terminal-only. Drop this + add --with-x-toolkit=gtk3 if you want GUI over X-forwarding
+     make -j"$(nproc)"
+     sudo make install
+   #+end_src
+
+4. Verify:
+   #+begin_src sh
+     emacs --version
+   #+end_src
+
+* Copy and tangle configuration files using Emacs
+
+#+begin_src sh
+  scp .dotfiles/{ai.org,emacs.org,git.org,shell.org,ssh.org,tmux.org} ws:.dotfiles/
+#+end_src
+
+* Set up pass
+
+1. Install
+   #+begin_src sh
+     sudo apt update
+     sudo apt install pass
+   #+end_src
+
+2. Create a GPG key
+   #+begin_src sh
+     gpg --full-generate-key
+     gpg --list-secret-keys --keyid-format=long
+   #+end_src
+
+3. Initialize the password store
+   #+begin_src sh
+     pass init <your-key-id-or-email>
+   #+end_src
+
+   This creates ~/.password-store/ encrypted to that key.
+
+4. Verify
+   #+begin_src sh
+     pass insert test/hello     # type a throwaway value
+     pass show test/hello       # prompts for GPG passphrase, prints it back
+     pass rm test/hello         # clean up
+   #+end_src
+
+* Set up Jira CLI
+
+1. Install
+   #+begin_src sh
+     # check latest tag at https://github.com/ankitpokhrel/jira-cli/releases
+     set VERSION 1.7.0   # <-- replace with current latest
+     cd /tmp
+     curl -L -o jira.tar.gz \
+       "https://github.com/ankitpokhrel/jira-cli/releases/download/v$VERSION/jira_"$VERSION"_linux_arm64.tar.gz"
+     tar xzf jira.tar.gz
+     sudo install jira_"$VERSION"_linux_arm64/bin/jira /usr/local/bin/jira
+     jira version
+   #+end_src
+
+2. Store jira PAT into pass
+   #+begin_src she
+     pass insert jira-cli
+     pass show jira-cli
+   #+end_src
+
+3. Configure
+   #+begin_src sh
+     jira init # Or copy config: scp ~/.config/.jira/.config.yml ws:.config/.jira/
+     jira me   # verify
+   #+end_src
+
+* Upgrade node/npm
+
+1. Add the NodeSource 22.x repo (provides modern Node for apt):
+   #+begin_src sh
+     curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+   #+end_src
+
+2. Remove the conflicting Ubuntu Node packages, then install the newer ones:
+   #+begin_src sh
+   sudo apt-get remove -y libnode-dev libnode72 npm
+   sudo apt-get install -y nodejs
+   #+end_src
+
+3. Verified:
+   #+begin_src sh
+     node --version                  # v22.23.1
+     npm --version                   # 10.9.8
+   #+end_src
+
+* Upgrade and login gh
+
+1. Upgrade
+   #+begin_src sh
+     sudo mkdir -p -m 755 /etc/apt/keyrings
+     wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+       | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
+     sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+       | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
+     sudo apt update && sudo apt install gh
+   #+end_src
+
+2. Login
+   #+begin_src sh
+     gh auth login
+   #+end_src
+
+* Set up evergreen
+
+1. Download evergreen and create =~/.evergreen.yml= following the official
+   instructions
+2. Run =evergreen login --no-browser=
+
+* Set up aws
+
+#+begin_src sh
+  ssh ws "mkdir -p .aws"
+  scp .aws/config ws:.aws/
+#+end_src
+
+* Set up AI agents
+
+See [[file:ai.org]]
