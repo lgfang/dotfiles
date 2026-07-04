@@ -3,7 +3,7 @@
 
 #+TITLE: My Git Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-03 +1000
+#+DATE: 2026-07-04 +1000
 
 * Global git ignore
 :PROPERTIES:
@@ -141,3 +141,21 @@ IMPORTANT:
 - Manually copy this file to designated directory if you clone the repository to
   a different place as this hook script itself is *not* copied over by =git
   clone=.
+
+* GitHub
+
+** GitHub CLI (gh)
+
+1. Install =gh=
+2. Run =gh auth login= (choose HTTPS, and accept "Authenticate Git with your
+   GitHub credentials").
+
+This allows =git clone= (and fetch/push) over HTTPS on private employer
+repositories to work with no username/token prompt.
+
+=gh auth login= is simplest because it does auth + org SSO in one browser flow.
+Alternatives that also work but need an extra SSO-authorization step:
+- A classic PAT with =repo= scope, then "Configure SSO → Authorize" for the org.
+  - Fine-grained PATs are unreliable for the org and may need admin approval
+    avoid them.
+- An SSH key added to GitHub and SSO-authorized (clone via =git@github.com:=).
