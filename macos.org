@@ -1,10 +1,10 @@
 # -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
 # Created: 2016-02-27
 
-#+TITLE: Setting up a new MacBook
+#+TITLE: My macOS Setup Notes
 #+AUTHOR: Fang Lungang
 #+DATE: 2026-07-04 +1000
-#+DESCRIPTION: How I set up a new MacBook, updated for Tahoe
+#+DESCRIPTION: How I set up a new Mac, updated for macOS Tahoe
 #+KEYWORDS: MacOS, MacBook
 
 * Adjust System Settings
@@ -215,6 +215,7 @@ commands.
   ~/.evergreen.yml
   ~/.kube/config.*                # remember to set env var KUBECONFIG
   ~/.kanopy/config.yaml
+  ~/.aws/config
 #+end_src
 
 ** Migrate 1password
@@ -231,11 +232,26 @@ Open the 1password web page on the new laptop and then follow the prompts.
     security add-generic-password -a "$USER" -s "jira-cli" -w
   #+end_src
 
-* Install development tools
+* Install and setup development tools
 
-- jira-cli
-  #+begin_src bash
-    brew install jira-cli
-    jira init
-  #+end_src
-- kanopy-oidc
+** Jira CLI
+
+#+begin_src bash
+  brew install jira-cli
+  jira init
+#+end_src
+
+NOTE: Jira PAT page ("Profile -> Personal Access Tokens") may appear blank. The
+working entry point is documented internally — search internal docs.
+
+** GitHub CLI
+
+See [[file:git.org::*GitHub CLI (gh)][git notes: gh]]
+
+** Evergreen
+
+1. Download evergreen and create =~/.evergreen.yml= following the official
+   instructions.
+2. Run =evergreen login=
+
+** kanopy-oidc
