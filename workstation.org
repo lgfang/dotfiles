@@ -3,7 +3,7 @@
 
 #+TITLE: My Workstation Setup Notes
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-04 +1000
+#+DATE: 2026-07-06 +1000
 
 This note is for the following Ubuntu EC2 instance:
 #+begin_src sh
@@ -123,6 +123,14 @@ Emacs from source, which can be time consuming.
      pass show test/hello       # prompts for GPG passphrase, prints it back
      pass rm test/hello         # clean up
    #+end_src
+
+* Set up gpg
+
+Add the following settings to =~/.gnupg/gpg-agent.conf=:
+#+begin_src snippet :tangle ~/.gnupg/gpg-agent.conf :mkdirp yes
+  default-cache-ttl 28800
+  max-cache-ttl 8640000
+#+end_src
 
 * Set up Jira CLI
 
