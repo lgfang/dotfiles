@@ -3,7 +3,7 @@
 
 #+TITLE: My macOS Setup Notes
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-06 +1000
+#+DATE: 2026-07-07 +1000
 #+DESCRIPTION: How I set up a new Mac, updated for macOS Tahoe
 #+KEYWORDS: MacOS, MacBook
 
@@ -183,9 +183,13 @@ keep using the old default shell. For example: without restart, ~(getenv
 ** Fish
 
 #+begin_src bash
-brew install fish
-echo /opt/homebrew/bin/fish | sudo tee -a /etc/shells
-chsh -s /opt/homebrew/bin/fish
+  brew install fish
+
+  # Ensure fish is listed as a valid login shell
+  grep -qxF "$(which fish)" /etc/shells || which fish | sudo tee -a /etc/shellsc
+
+  # Change ubuntu's login shell with sudo
+  sudo chsh -s "$(which fish)" "$(whoami)"
 #+end_src
 
 * Install utilities
