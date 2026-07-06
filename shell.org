@@ -1182,7 +1182,7 @@ function fish_prompt
         set -l kube_context (kubectl config current-context 2>/dev/null)
         set -l kube_namespace (kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)
         if test -n "$kube_context"; or test -n "$kube_namespace"
-            echo -n " $MY_GRAY   $MY_DGRAY$kube_context/$kube_namespace"
+            echo -n " $MY_GRAY󰠳 $MY_DGRAY$kube_context/$kube_namespace"
         end
     end
 
@@ -1190,7 +1190,7 @@ function fish_prompt
     # Note: Fish tracks history indices slightly differently than Bash
     set -l cmd_num (history | count)
     set -l current_time (date +"%T%z")
-    echo -n " $MY_GRAY   $MY_DGRAY$cmd_num"
+    echo -n " $MY_GRAY󰞷 $MY_DGRAY$cmd_num"
     echo -n " $MY_GRAY $MY_DGRAY$current_time"
 
     # End First Line
