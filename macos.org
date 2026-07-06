@@ -3,7 +3,7 @@
 
 #+TITLE: My macOS Setup Notes
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-04 +1000
+#+DATE: 2026-07-06 +1000
 #+DESCRIPTION: How I set up a new Mac, updated for macOS Tahoe
 #+KEYWORDS: MacOS, MacBook
 
@@ -227,7 +227,7 @@ Open the 1password web page on the new laptop and then follow the prompts.
 - JIRA PAT (https://jira.mongodb.org/tokens) for jira-cli
   #+begin_src bash
     # Retrieve from the old laptop
-    security find-generic-password -a "$USER" -s "jira-cli" -w 2
+    security find-generic-password -a "$USER" -s "jira-cli" -w
     # Add into the new laptop
     security add-generic-password -a "$USER" -s "jira-cli" -w
   #+end_src
