@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-04 +1000
+#+DATE: 2026-07-06 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1534,106 +1534,7 @@ the following error:
   gpg: decryption failed: Inappropriate ioctl for device
 #+end_src
 
-Solution: use GUI pinentry for macOS
-#+begin_src bash
-  brew install pinentry-mac
-  echo "pinentry-program /opt/homebrew/bin/pinentry-mac" > ~/.gnupg/gpg-agent.conf
-  killall gpg-agent
-  # Do not select "Save in Keychain" by default in the pinentry-mac dialog box
-  defaults write org.gpgtools.pinentry-mac DisableKeychain -bool YES
-  defaults write org.gpgtools.common DisableKeychain -bool YES
-#+end_src
-
-*** Why
-
-I prefer keys (this) than passwords (i.e. ccrypt) for the use case of protecting
-a number of local files on my laptop.
-
-- Pros:
-
-  + Easier to change the password: instead of re-encrypt all the files using the
-    new password, you only need to re-encrypt the key file.
-
-  + Enables network backup: it is rather safe to backup your data to network so
-    long as you *do not upload the key file as well*.
-
-  + Easier to dispose data: similarly, dispose your device is safer as
-    deleting/overwriting the key file ensure the data is not accessible even if
-    the disk isn't properly formatted.
-
-  + Encrypting new files/data does not require password: encrypt is done using
-    the public key.
-
-  + Enables others to encrypt and send data to you online.
-
-  + Can attach comments and notations to keys as reminders of the theirs
-    usages/passphrases.
-
-- Cons:
-  - One extra thing (the keys) to maintain. Must remember to backup and update
-    when a key is edited (say changed passphrase).
-  - =gpg= does not support in place file encryption as =ccrypt= does.
-
-*** Manage gpg keys (outside Emacs)
-
-- Show existing: =gpg --list-keys=
-- Generate: =gpg --full-gen-key=, then follow the screen prompts.
-  #+begin_src text
-    $ gpg --full-generate-key
-    gpg (GnuPG) 2.4.5; Copyright (C) 2024 g10 Code GmbH
-    This is free software: you are free to change and redistribute it.
-    There is NO WARRANTY, to the extent permitted by law.
-
-    Please select what kind of key you want:
-       (1) RSA and RSA
-       (2) DSA and Elgamal
-       (3) DSA (sign only)
-       (4) RSA (sign only)
-       (9) ECC (sign and encrypt) *default*
-      (10) ECC (sign only)
-      (14) Existing key from card
-    Your selection? 1
-    RSA keys may be between 1024 and 4096 bits long.
-    What keysize do you want? (3072) 4096
-    Requested keysize is 4096 bits
-    Please specify how long the key should be valid.
-             0 = key does not expire
-          <n>  = key expires in n days
-          <n>w = key expires in n weeks
-          <n>m = key expires in n months
-          <n>y = key expires in n years
-    Key is valid for? (0) 0
-    Key does not expire at all
-    Is this correct? (y/N) y
-
-    GnuPG needs to construct a user ID to identify your key.
-
-    Real name: Fang lu***
-    Email address: fang.lu***@gmail
-    Comment: easy
-    You selected this USER-ID:
-        "Fang lu*** (easy) <fang.lu**@gmail>"
-
-    Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? o
-    ...
-    public and secret key created and signed.
-
-    pub   rsa4096 2024-06-05 [SC]
-          1EAE54292D6D1495679106947AF7AA621A22738C
-    uid                      Fang lu*** (easy) <fang.lu***@gmail>
-    sub   rsa4096 2024-06-05 [E]
-  #+end_src
-- Change passphrase: =gpg --edit-key "easy" passwd=
-- Export:
-  #+begin_src bash
-    gpg --armor --export-secret-keys > my-keys.asc
-    gpg --export-ownertrust > ownertrust.txt
-  #+end_src
-- Import
-  #+begin_src bash
-    gpg --import my-keys.asc
-    gpg --import-ownertrust ownertrust.txt
-  #+end_src
+See [[file:macos.org::*Setup GnuPG (GPG)][Setup GnuPG (GPG)]] for the details
 
 *** Create, read, write gpg files in Emacs
 
@@ -1661,11 +1562,6 @@ gpg -r easy --encrypt-files file1 file2
 IMPORTANT: Avoid embedding encrypt regions in files without version control, as
 accidental changes are hard to detect and changing a single character can render
 the entire region unreadable.
-
-*** Cache passphrase
-
-By default, a gpg agent is started. Hence you needn't type in password every
-time a password is needed.
 
 ** Store credentials: auth source
 
