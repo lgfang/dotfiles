@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-04 +1000
+#+DATE: 2026-07-06 +1000
 
 * COMMENT Bash
 ** bash_profile
@@ -1113,17 +1113,13 @@ EXEC 00;38;5;64
   end
 
   # JIRA API TOKEN
-  function jira --wraps jira --description 'load JIRA token on first use, then run jira'
-      # Lazy-load avoids Emacs remote access hang on password prompt
-      if test -z "$JIRA_API_TOKEN"
-          # pick whichever secret store exists on this host
-          if type -q security          # macOS Keychain
-              set -gx JIRA_API_TOKEN (security find-generic-password -a "$USER" -s jira-cli -w 2>/dev/null)
-          else if type -q pass         # Linux: GPG-backed pass
-              set -gx JIRA_API_TOKEN (pass show jira-cli 2>/dev/null)
-          end
+  if test "$TERM" != dumb        # Don't load this TOKEN for Emacs Tramp etc.
+      # pick whichever secret store exists on this host
+      if type -q security          # macOS Keychain
+          set -gx JIRA_API_TOKEN (security find-generic-password -a "$USER" -s jira-cli -w 2>/dev/null)
+      else if type -q pass         # Linux: GPG-backed pass
+          set -gx JIRA_API_TOKEN (pass show jira-cli 2>/dev/null)
       end
-      command jira $argv
   end
 
   # The custom npm global directory, enables user-specific "global" package
