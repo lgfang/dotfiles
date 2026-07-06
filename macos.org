@@ -232,6 +232,109 @@ Open the 1password web page on the new laptop and then follow the prompts.
     security add-generic-password -a "$USER" -s "jira-cli" -w
   #+end_src
 
+* Setup GnuPG (GPG)
+
+** macOS: Use the GUI pinentry
+
+1. Install =pinentry-mac=:
+
+   #+begin_src bash
+     brew install pinentry-mac
+   #+end_src
+
+2. Configure =gpg-agent= to use =pinentry-mac= by adding the following to =~/.gnupg/gpg-agent.conf=:
+
+   #+begin_src snippet :tangle ~/.gnupg/gpg-agent.conf :mkdirp yes
+     pinentry-program /opt/homebrew/bin/pinentry-mac
+   #+end_src
+
+3. Restart =gpg-agent=:
+
+   #+begin_src bash
+     killall gpg-agent
+   #+end_src
+
+** macOS: Disable saving passphrases to Keychain
+
+Do not select =Save in Keychain= in the =pinentry-mac= dialog. To disable
+Keychain integration by default, run:
+#+begin_src sh
+  defaults write org.gpgtools.pinentry-mac DisableKeychain -bool YES
+  defaults write org.gpgtools.common DisableKeychain -bool YES
+#+end_src
+
+** Cache passphrases for longer
+
+Add the following settings to =~/.gnupg/gpg-agent.conf=:
+#+begin_src snippet :tangle ~/.gnupg/gpg-agent.conf :mkdirp yes
+  default-cache-ttl 28800
+  max-cache-ttl 8640000
+#+end_src
+
+** Frequently used gpg commands
+
+- Show existing: =gpg --list-keys=
+- Generate: =gpg --full-gen-key=, then follow the screen prompts.
+  #+begin_src text
+    $ gpg --full-generate-key
+    gpg (GnuPG) 2.4.5; Copyright (C) 2024 g10 Code GmbH
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.
+
+    Please select what kind of key you want:
+       (1) RSA and RSA
+       (2) DSA and Elgamal
+       (3) DSA (sign only)
+       (4) RSA (sign only)
+       (9) ECC (sign and encrypt) *default*
+      (10) ECC (sign only)
+      (14) Existing key from card
+    Your selection? 1
+    RSA keys may be between 1024 and 4096 bits long.
+    What keysize do you want? (3072) 4096
+    Requested keysize is 4096 bits
+    Please specify how long the key should be valid.
+             0 = key does not expire
+          <n>  = key expires in n days
+          <n>w = key expires in n weeks
+          <n>m = key expires in n months
+          <n>y = key expires in n years
+    Key is valid for? (0) 0
+    Key does not expire at all
+    Is this correct? (y/N) y
+
+    GnuPG needs to construct a user ID to identify your key.
+
+    Real name: Fang lu***
+    Email address: fang.lu***@gmail
+    Comment: easy
+    You selected this USER-ID:
+        "Fang lu*** (easy) <fang.lu**@gmail>"
+
+    Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? o
+    ...
+    public and secret key created and signed.
+
+    pub   rsa4096 2024-06-05 [SC]
+          1EAE54292D6D1495679106947AF7AA621A22738C
+    uid                      Fang lu*** (easy) <fang.lu***@gmail>
+    sub   rsa4096 2024-06-05 [E]
+  #+end_src
+- Change passphrase:
+  #+begin_src sh
+  gpg --edit-key "easy" passwd
+  #+end_src
+- Export:
+  #+begin_src sh
+    gpg --armor --export-secret-keys > my-keys.asc
+    gpg --export-ownertrust > ownertrust.txt
+  #+end_src
+- Import
+  #+begin_src sh
+    gpg --import my-keys.asc
+    gpg --import-ownertrust ownertrust.txt
+  #+end_src
+
 * Install and setup development tools
 
 ** Jira CLI
