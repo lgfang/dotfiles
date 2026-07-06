@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-06 +1000
+#+DATE: 2026-07-07 +1000
 
 * COMMENT Bash
 ** bash_profile
@@ -1097,7 +1097,7 @@ EXEC 00;38;5;64
 
 ** config.fish
 
-#+begin_src fish :tangle ~/.config/fish/config.fish
+#+begin_src fish :tangle ~/.config/fish/config.fish :mkdirp yes
   if status is-interactive
       if test "$TERM" = xterm-256color; and not set -q TMUX
           tg
@@ -1135,7 +1135,7 @@ EXEC 00;38;5;64
 
 ** prompt
 
-#+begin_src fish :tangle ~/.config/fish/functions/fish_prompt.fish
+#+begin_src fish :tangle ~/.config/fish/functions/fish_prompt.fish :mkdirp yes
 function fish_prompt
     # Save the status of the last run command immediately
     set -l last_status $status
@@ -1226,14 +1226,14 @@ end
 
 ** key bindings
 
-#+begin_src fish :tangle ~/.config/fish/functions/fish_user_key_bindings.fish
+#+begin_src fish :tangle ~/.config/fish/functions/fish_user_key_bindings.fish :mkdirp yes
   # Do not exit fish on Ctrl-D
   bind \cd delete-char
 #+end_src
 
 ** ep
 
-#+begin_src fish :tangle ~/.config/fish/functions/ep.fish
+#+begin_src fish :tangle ~/.config/fish/functions/ep.fish :mkdirp yes
 function ep --description 'go to current directory of Emacs daemon'
     cd (emacsclient -e '(expand-file-name
         (with-current-buffer (window-buffer) default-directory))' | string trim -c '"')
@@ -1242,7 +1242,7 @@ end
 
 ** git_clean_branches
 
-#+begin_src fish :tangle ~/.config/fish/functions/git_clean_branches.fish
+#+begin_src fish :tangle ~/.config/fish/functions/git_clean_branches.fish :mkdirp yes
   function git_clean_branches
       argparse 'n/not-dry-run' 'm/master=' -- $argv
       or return 1
@@ -1278,7 +1278,7 @@ end
 
 ** tg
 
-#+begin_src fish :tangle ~/.config/fish/functions/tg.fish
+#+begin_src fish :tangle ~/.config/fish/functions/tg.fish :mkdirp yes
   function tg --description "Attach to specified tmux session"
       # 1. If the session does not exist, create it.
       # 2. If no session name specified, prompt to choose from existing ones.
@@ -1330,7 +1330,7 @@ end
 
 ** ec2s
 
-#+begin_src fish :tangle ~/.config/fish/functions/ec2s.fish
+#+begin_src fish :tangle ~/.config/fish/functions/ec2s.fish :mkdirp yes
   function ec2s
       # List EC2 instances from a Terraform state file, grouped by module. For
       # each aws_instance resource, prints the module name followed by a
