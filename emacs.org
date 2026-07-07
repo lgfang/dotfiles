@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-06 +1000
+#+DATE: 2026-07-07 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -49,11 +49,10 @@ Hence, I use the following configuration.
 #+begin_src emacs-lisp
   (use-package use-package-core
     :custom
-    ;; Uncomment the next line to automatically install all packages
     (use-package-always-ensure t)
-
-    ;; Profile the start time
-    (use-package-compute-statistics t))
+    (use-package-always-defer t)
+    (use-package-compute-statistics t)    ; Profile start time
+    )
 #+end_src
 
 Run =emacs --no-desktop= to ensure not opening any previous files. Then run the
@@ -114,7 +113,7 @@ related configurations together.
   (use-package emacs
     :custom
     (inhibit-startup-screen nil)
-    (initial-buffer-choice  (concat my-emacs-d "splash.org"))
+    (initial-buffer-choice (concat my-emacs-d "splash.org"))
     (initial-scratch-message "")
     )
 #+end_src
@@ -677,12 +676,16 @@ Sometimes it can be more convenient than the later.
     )
 
   (use-package recentf                    ; built-in package
+    :demand t
     :defines recentf-keep
-    :custom (recentf-max-saved-items 666)
-    :init
+    :custom
+    (recentf-max-saved-items 666)
+    (recentf-auto-cleanup 60)
+    :config
     (recentf-mode 1)
     (add-to-list 'recentf-keep 'file-remote-p)
-    :bind (:map global-map ("<f1>" . recentf-open))
+    :bind
+    (:map global-map ("<f1>" . recentf-open))
     )
 #+end_src
 
@@ -838,6 +841,7 @@ high though.
 
 #+begin_src emacs-lisp
   (use-package emacs
+    :demand t
     :config
     (load-theme 'wombat))
 #+end_src
@@ -848,6 +852,7 @@ My favorite low-contrast color theme, though I dislike the background colors in
 the Magit diff buffers.
 #+begin_src emacs-lisp
   (use-package solarized-theme
+    :demand t
     :config
     (load-theme 'solarized-gruvbox-dark t))
 #+end_src
@@ -856,6 +861,7 @@ the Magit diff buffers.
 
 #+begin_src emacs-lisp
   (use-package doom-themes
+    :demand t
     :config
     (load-theme 'doom-tomorrow-night t))
 #+end_src
@@ -1071,6 +1077,7 @@ smaller screens. Hence, we keep the fill column to 80.
 ** Yasnippet
 #+begin_src emacs-lisp
   (use-package yasnippet
+    :demand t
     :delight yas-minor-mode
     ;; Put personal/customized snippets into the first dir of `yas-snippet-dirs',
     ;; which is `~/.emacs.d/snippets' by default. NOTE: it is `yas-snippet-dirs'
@@ -1078,11 +1085,11 @@ smaller screens. Hence, we keep the fill column to 80.
     ;; `yasnippet-snippets' stores its snippets.
     ;; TODO: cleanup duplicated/similar snippets in different directories.
     :functions yas-global-mode
-    :init (yas-global-mode 1)
+    :config (yas-global-mode 1)
     )
 
   (use-package yasnippet-snippets
-    :after yasnippet-snippets)
+    :after yasnippet)
 #+end_src
 
 Below are some common snippets. For mode specific snippets, see the
@@ -2137,6 +2144,8 @@ I.e. type =<s= + =TAB= to insert =#+begin_src= etc.
 #+begin_src emacs-lisp
   (use-package org-tempo
     :ensure nil                           ; Feature, not package
+    :after org
+    :demand t
     :config
     (add-to-list 'org-structure-template-alist '("sb" . "src bash"))
     (add-to-list 'org-structure-template-alist '("sj" . "src javascript"))
