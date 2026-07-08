@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-07 +1000
+#+DATE: 2026-07-08 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2930,12 +2930,25 @@ Prerequisites:
   (use-package agent-shell
     :vc (:url "https://github.com/xenodium/agent-shell" :rev :newest)
     :preface
+    (defvar my/agent-shell-dir-history nil
+      "History of directories chosen by `my/agent-shell'.")
+
     (defun my/agent-shell (&optional arg)
-      "A wrapper of `agent-shell'. With prefix ARG (C-u), select the directory from a pre-defined set."
+      "A wrapper of `agent-shell'. With prefix ARG (C-u), select the directory.
+  Offers the subdirectories of ~/source and the current directory, but
+  also allows entering any path with directory-name autocompletion."
       (interactive "P")
       (if arg
-          (let* ((dirs '("~/source/project1/" "~/source/project2/" "~/source/project3/"))
-                 (chosen-dir (completing-read "Select agent-shell directory: " dirs nil nil))
+          (let* ((dirs (mapcar #'abbreviate-file-name
+                               (cons default-directory
+                                     (when (file-directory-p "~/source/")
+                                       (directory-files "~/source/" t "\\`[^.]")))))
+                 (chosen-dir
+                  (completing-read
+                   "Select agent-shell directory: "
+                   (completion-table-merge dirs #'completion-file-name-table)
+                   #'file-directory-p
+                   nil nil 'my/agent-shell-dir-history))
                  (default-directory (expand-file-name chosen-dir)))
             (agent-shell))
         (agent-shell)))
