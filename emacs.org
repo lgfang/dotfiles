@@ -2984,6 +2984,11 @@ Prerequisites:
 
     :custom
     (agent-shell-session-strategy 'prompt)
+
+    ;; Blocking sleep on macOS only. Do that on headless workstations makes no
+    ;; sense and fails with AccessDenied on every agent turn.
+    (agent-shell-inhibit-system-sleep (eq system-type 'darwin))
+
     ;; Choose agent based on work/personal laptop.
     (agent-shell-preferred-agent-config (if my/work-machine-p 'claude-code 'opencode))
 
