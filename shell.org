@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-07 +1000
+#+DATE: 2026-07-08 +1000
 
 * COMMENT Bash
 ** bash_profile
@@ -1099,9 +1099,11 @@ EXEC 00;38;5;64
 
 #+begin_src fish :tangle ~/.config/fish/config.fish :mkdirp yes
   if status is-interactive
-      if test "$TERM" = xterm-256color; and not set -q TMUX
-          tg
-      end
+      and not set -q TMUX
+      and test "$TERM" != dumb
+      and not set -q INSIDE_EMACS
+      and not set -q VSCODE_INJECTION
+      tg
   end
 
   set -gx COLORTERM truecolor
@@ -1291,8 +1293,7 @@ end
       set -l session_name $argv[1]
 
       if test -n "$session_name"
-          tmux -2 attach -t $session_name
-          or tmux -2 new -s $session_name
+          tmux -2 new -A -s $session_name
           return
       end
 
@@ -1300,7 +1301,7 @@ end
       set -l sessions (tmux list-sessions -F "#{session_name}" 2>/dev/null)
 
       if test (count $sessions) -eq 0
-          tmux -2 new -s 'Pri'
+          tmux -2 new -A -s 'Pri'
           return
       end
 
