@@ -3,7 +3,7 @@
 
 #+TITLE: My Window Manager Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-06-19 +1000
+#+DATE: 2026-07-08 +1000
 #+DESCRIPTION: My window manager related configurations
 #+KEYWORDS: window manager, hotkey, tiling, yabai, skhd
 
@@ -360,20 +360,22 @@ I prefer AeroSpace over Yabai for the following reasons:
   ctrl-g = 'mode main'
 
   [mode.jump.binding]
-  j = ['exec-and-forget ~/.config/aerospace/aerospace-jump-app.sh WezTerm', 'mode main']
-  k = ['exec-and-forget ~/.config/aerospace/aerospace-jump-app.sh "Google Chrome"', 'mode main']
-  l = ['exec-and-forget ~/.config/aerospace/aerospace-jump-app.sh Slack', 'mode main']
-  i = ['exec-and-forget ~/.config/aerospace/aerospace-jump-app.sh Emacs', 'mode main']
-  o = ['exec-and-forget ~/.config/aerospace/aerospace-jump-app.sh Safari', 'mode main']
+  j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump WezTerm "!ip-10-"', 'mode main']
+  shift-j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump WezTerm ip-10- wezterm cli spawn --new-window -- ssh ws', 'mode main']
+  k = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump "Google Chrome"', 'mode main']
+  l = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump Slack', 'mode main']
+  i = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump Emacs', 'mode main']
+  o = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump Safari', 'mode main']
   esc = 'mode main'
   ctrl-g = 'mode main'
 
   [mode.summon.binding]
-  j = ['exec-and-forget ~/.config/aerospace/aerospace-summon-app.sh WezTerm', 'mode main']
-  k = ['exec-and-forget ~/.config/aerospace/aerospace-summon-app.sh "Google Chrome"', 'mode main']
-  l = ['exec-and-forget ~/.config/aerospace/aerospace-summon-app.sh Slack', 'mode main']
-  i = ['exec-and-forget ~/.config/aerospace/aerospace-summon-app.sh Emacs', 'mode main']
-  o = ['exec-and-forget ~/.config/aerospace/aerospace-summon-app.sh Safari', 'mode main']
+  j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon WezTerm "!ip-10-"', 'mode main']
+  shift-j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon WezTerm ip-10- wezterm cli spawn --new-window -- ssh ws', 'mode main']
+  k = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon "Google Chrome"', 'mode main']
+  l = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon Slack', 'mode main']
+  i = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon Emacs', 'mode main']
+  o = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon Safari', 'mode main']
   esc = 'mode main'
   ctrl-g = 'mode main'
 
@@ -486,57 +488,36 @@ I prefer AeroSpace over Yabai for the following reasons:
   # Land on the originally-focused workspace (now on the neighbor monitor).
   aerospace workspace "$src_ws"
 #+end_src
-** Script to summon an application to the current workspace
 
-#+begin_src bash :tangle ~/.config/aerospace/aerospace-summon-app.sh :shebang "#!/usr/bin/env bash"
-# Summon an application:
-#   - If it is running, move all of its windows to the focused workspace
-#     and focus the first one.
-#   - If it is not running, launch it (it will appear on the focused
-#     workspace).
-# Usage: aerospace-summon-app.sh <app-name>
-# Example: aerospace-summon-app.sh WezTerm
+** Script to jump to / summon an application
 
-export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
-set -euo pipefail
-
-APP_NAME="${1:-}"
-if [ -z "$APP_NAME" ]; then
-    echo "Usage: $(basename "$0") <app-name>" >&2
-    exit 2
-fi
-
-CURRENT_WS=$(aerospace list-workspaces --focused)
-
-# Collect window IDs whose app-name matches (case-insensitive).
-# The "|" delimiter avoids issues with app names containing spaces.
-WINDOW_IDS=$(aerospace list-windows --all --format "%{window-id}|%{app-name}" \
-    | awk -F'|' -v app="$APP_NAME" 'tolower($2) == tolower(app) {print $1}')
-
-if [ -z "$WINDOW_IDS" ]; then
-    open -a "$APP_NAME"
-    exit 0
-fi
-
-FIRST_WID=""
-while IFS= read -r wid; do
-    [ -z "$wid" ] && continue
-    aerospace move-node-to-workspace --window-id "$wid" "$CURRENT_WS"
-    [ -z "$FIRST_WID" ] && FIRST_WID="$wid"
-done <<< "$WINDOW_IDS"
-
-[ -n "$FIRST_WID" ] && aerospace focus --window-id "$FIRST_WID"
-#+end_src
-
-** Script to jump to an application
-
-#+begin_src bash :tangle ~/.config/aerospace/aerospace-jump-app.sh :shebang "#!/usr/bin/env bash"
-  # Jump to an application:
-  #   - If it is running, focus its (first) window wherever it lives,
-  #     switching to that window's workspace as needed.
-  #   - If it is not running, launch it.
-  # Usage: aerospace-jump-app.sh <app-name>
-  # Example: aerospace-jump-app.sh WezTerm
+#+begin_src bash :tangle ~/.config/aerospace/aerospace-app.sh :shebang "#!/usr/bin/env bash"
+  # Jump to or summon an application:
+  #   - jump:   focus its (first) window wherever it lives, switching to
+  #             that window's workspace as needed.
+  #   - summon: move all of its windows to the focused workspace and focus
+  #             the first one.
+  #   - If no window matches, run the fallback command when given,
+  #     otherwise launch the app with `open -a`.
+  # Usage: aerospace-app.sh <jump|summon> <app-name> [prefix [fallback-cmd...]]
+  # Example:
+  #   aerospace-app.sh jump Slack
+  #   aerospace-app.sh summon WezTerm '!ip-10-'   # local WezTerm only
+  #   aerospace-app.sh jump WezTerm ip-10- \
+  #       wezterm cli spawn --new-window -- ssh ws
+  #
+  # When [prefix] is given, only windows whose title starts with the prefix
+  # (case-insensitive) are considered. Prefix the argument with "!" to
+  # negate the match. This lets you distinguish multiple windows of the same
+  # app — e.g. local vs remote WezTerm, whose tmux titles contain the
+  # hostname (see set-titles-string in tmux.conf). A freshly launched
+  # WezTerm window has no tmux title yet, so it matches the negated
+  # (local) filter — which is the desired behavior.
+  #
+  # The fallback command matters for positive-prefix filters: for "remote
+  # WezTerm" (prefix ip-10-), `open -a WezTerm` would open a *local* window
+  # that still wouldn't match, so pass a command that creates the remote
+  # session instead (see the Example above).
 
   # Why this exists (the bug it fixes):
   #   The jump bindings used to call `open -a <app>` directly. macOS treats
@@ -565,20 +546,51 @@ done <<< "$WINDOW_IDS"
   export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
   set -euo pipefail
 
-  APP_NAME="${1:-}"
-  if [ -z "$APP_NAME" ]; then
-      echo "Usage: $(basename "$0") <app-name>" >&2
-      exit 2
+  MODE="${1:-}"
+  APP_NAME="${2:-}"
+  if [ -z "$APP_NAME" ] || { [ "$MODE" != jump ] && [ "$MODE" != summon ]; }; then
+    echo "Usage: $(basename "$0") <jump|summon> <app-name> [prefix [fallback-cmd...]]" >&2
+    exit 2
+  fi
+  shift 2
+  PREFIX="${1:-}"
+  if [ $# -gt 0 ]; then shift; fi
+  # Remaining "$@" is the optional fallback command.
+
+  # Determine whether the prefix filter is negated (starts with "!").
+  NEGATE=0
+  PFX="$PREFIX"
+  if [[ "$PFX" == !* ]]; then
+    NEGATE=1
+    PFX="${PFX#!}"
   fi
 
-  # First window ID whose app-name matches (case-insensitive).
+  # Window IDs whose app-name (and optional title prefix) matches.
   # The "|" delimiter avoids issues with app names containing spaces.
-  FIRST_WID=$(aerospace list-windows --all --format "%{window-id}|%{app-name}" \
-      | awk -F'|' -v app="$APP_NAME" 'tolower($2) == tolower(app) {print $1; exit}')
+  WINDOW_IDS=$(aerospace list-windows --all --format "%{window-id}|%{app-name}|%{window-title}" \
+                 | awk -F'|' -v app="$APP_NAME" -v pfx="$PFX" -v neg="$NEGATE" '
+          tolower($2) == tolower(app) {
+              if (pfx == "") { print $1; next }
+              starts = (index(tolower($3), tolower(pfx)) == 1)
+              if ((neg == 0 && starts) || (neg == 1 && !starts)) print $1
+          }')
 
-  if [ -z "$FIRST_WID" ]; then
-      open -a "$APP_NAME"
-      exit 0
+  if [ -z "$WINDOW_IDS" ]; then
+    if [ $# -gt 0 ]; then
+      exec "$@"
+    fi
+    open -a "$APP_NAME"
+    exit 0
+  fi
+
+  FIRST_WID=$(head -n1 <<< "$WINDOW_IDS")
+
+  if [ "$MODE" = summon ]; then
+    CURRENT_WS=$(aerospace list-workspaces --focused)
+    while IFS= read -r wid; do
+      [ -z "$wid" ] && continue
+      aerospace move-node-to-workspace --window-id "$wid" "$CURRENT_WS"
+    done <<< "$WINDOW_IDS"
   fi
 
   aerospace focus --window-id "$FIRST_WID"
