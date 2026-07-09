@@ -3,7 +3,7 @@
 
 #+TITLE: My Tmux Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-04-24 +1000
+#+DATE: 2026-07-09 +1000
 
 * Timestamps
 
@@ -126,6 +126,19 @@ set -g set-titles-string '#h: #S'
   bind-key -r S-Right resize-pane -R 5
 #+end_src
 
+* Mouse wheel
+
+Enter copy mode directly on mouse wheel:
+#+begin_src conf :tangle ~/.tmux.conf
+  ## Pass the event along if the app either enabled mouse reporting
+  ## (#{mouse_any_flag}, e.g. terminal Emacs) or uses the alternate screen
+  ## (#{alternate_on}); otherwise enter copy mode.
+  bind-key -T root WheelUpPane if-shell -F -t = "#{||:#{mouse_any_flag},#{alternate_on}}" "send-keys -M" "select-pane -t =; copy-mode -e; send-keys -M"
+  #** Speedup (based on Thomas Sattler at
+  ## https://groups.google.com/forum/#!topic/tmux-users/TRwPgEOVqho)
+  bind-key -T root C-WheelUpPane if-shell -F -t = "#{||:#{mouse_any_flag},#{alternate_on}}" "send-keys -M" "select-pane -t =; copy-mode -e; send-keys -M"
+#+end_src
+
 * to migrate
 #+begin_src conf :tangle ~/.tmux.conf
 
@@ -136,13 +149,6 @@ set -g repeat-time 500
 
 #* Mouse support
 set -g mouse on
-#** Enter copy mode directly on mouse wheel
-## Check #{alternate_on} to determine if the underlying application uses the
-## alternate display and shall we pass the event alone or not.
-bind-key -T root WheelUpPane if-shell -F -t = "#{alternate_on}" "send-keys -M" "select-pane -t =; copy-mode -e; send-keys -M"
-#** Speedup (based on Thomas Sattler at
-## https://groups.google.com/forum/#!topic/tmux-users/TRwPgEOVqho)
-bind-key -T root C-WheelUpPane if-shell -F -t = "#{alternate_on}" "send-keys -M" "select-pane -t =; copy-mode -e; send-keys -M"
 bind-key -T copy-mode-emacs C-WheelUpPane send-keys -X halfpage-up
 bind-key -T copy-mode-emacs C-WheelDownPane send-keys -X halfpage-down
 
