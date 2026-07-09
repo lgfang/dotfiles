@@ -3,7 +3,7 @@
 
 #+TITLE: My Git Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-04 +1000
+#+DATE: 2026-07-09 +1000
 
 * Global git ignore
 :PROPERTIES:
@@ -41,11 +41,8 @@ Refer to https://github.com/github/gitignore for more to ignore.
 #+end_src
 
 * Global git config
-:PROPERTIES:
-:header-args:conf: :tangle ~/.gitconfig
-:END:
 
-#+begin_src conf
+#+begin_src conf :tangle ~/.gitconfig
   [github]
       user = GITHUB_USERNAME
 
@@ -87,21 +84,55 @@ Refer to https://github.com/github/gitignore for more to ignore.
 
       recent-branches = for-each-ref refs/heads --sort='-committerdate' --format='%(committerdate:iso) %(refname:short)%09 %(authorname)%09 - %(contents:subject)'
 
-  [credential]
-      helper = cache --timeout=3600
-
   [color]
       ui = auto
 
-  [diff]
-      wsErrorHighlight = all
-
   [apply]
       whitespace = warn
+#+end_src
+
+** diff
+
+#+begin_src conf :tangle ~/.gitconfig
+  [diff]
+      wsErrorHighlight = all
 
   [diff "gpg"]
       textconv = gpg --no-tty --decrypt
 #+end_src
+
+** credential
+
+#+begin_src conf :tangle ~/.gitconfig
+  [credential]
+      helper = cache --timeout=3600
+#+end_src
+
+*** Use gh for github on work machines
+
+#+begin_src conf :tangle (if my/work-machine-p "~/.gitconfig" "no") :noweb yes :mkdirp yes
+  [credential "https://github.com"]
+      helper =
+      helper = !gh auth git-credential
+
+  [credential "https://gist.github.com"]
+      helper =
+      helper = !gh auth git-credential
+#+end_src
+
+1. Install =gh=
+2. Run =gh auth login= (choose HTTPS, and accept "Authenticate Git with your
+   GitHub credentials").
+
+This allows =git clone= (and fetch/push) over HTTPS on private employer
+repositories to work with no username/token prompt.
+
+=gh auth login= is simplest because it does auth + org SSO in one browser flow.
+Alternatives that also work but need an extra SSO-authorization step:
+- A classic PAT with =repo= scope, then "Configure SSO → Authorize" for the org.
+  - Fine-grained PATs are unreliable for the org and may need admin approval
+    avoid them.
+- An SSH key added to GitHub and SSO-authorized (clone via =git@github.com:=).
 
 * Block pushing certain branches
 
@@ -141,21 +172,3 @@ IMPORTANT:
 - Manually copy this file to designated directory if you clone the repository to
   a different place as this hook script itself is *not* copied over by =git
   clone=.
-
-* GitHub
-
-** GitHub CLI (gh)
-
-1. Install =gh=
-2. Run =gh auth login= (choose HTTPS, and accept "Authenticate Git with your
-   GitHub credentials").
-
-This allows =git clone= (and fetch/push) over HTTPS on private employer
-repositories to work with no username/token prompt.
-
-=gh auth login= is simplest because it does auth + org SSO in one browser flow.
-Alternatives that also work but need an extra SSO-authorization step:
-- A classic PAT with =repo= scope, then "Configure SSO → Authorize" for the org.
-  - Fine-grained PATs are unreliable for the org and may need admin approval
-    avoid them.
-- An SSH key added to GitHub and SSO-authorized (clone via =git@github.com:=).
