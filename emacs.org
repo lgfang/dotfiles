@@ -2997,10 +2997,11 @@ Prerequisites:
 
     ;; OpenAI
     (agent-shell-openai-codex-environment
-     (list (format
-            "GROVE_API_KEY=%s"
-            (or (auth-source-pick-first-password :host "grove" :user "code-gen-api")
-                (error " Grove API key in auth-source for code-gen-api@grove")))))
+     (when my/work-machine-p
+       (list (format
+              "GROVE_API_KEY=%s"
+              (or (auth-source-pick-first-password :host "grove" :user "code-gen-api")
+                  (error "API key (code-gen-api@grove) missing in auth-source"))))))
     (agent-shell-openai-authentication
      (agent-shell-openai-make-authentication
       ;; Placeholder only — satisfies codex-acp's OPENAI_API_KEY presence check.
