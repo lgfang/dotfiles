@@ -3,7 +3,7 @@
 
 #+TITLE: My Tmux Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-09 +1000
+#+DATE: 2026-07-10 +1000
 
 * Timestamps
 
@@ -139,6 +139,36 @@ Enter copy mode directly on mouse wheel:
   bind-key -T root C-WheelUpPane if-shell -F -t = "#{||:#{mouse_any_flag},#{alternate_on}}" "send-keys -M" "select-pane -t =; copy-mode -e; send-keys -M"
 #+end_src
 
+* Copy & Paste
+
+** Clipboard
+
+*** App copies
+
+Accept OSC 52 clipboard writes from applications running inside tmux panes
+(for example, Emacs kills). Store them in the tmux buffer and forward them to
+the outer terminal (wezterm → macOS clipboard).
+
+#+begin_src conf :tangle ~/.tmux.conf
+  set -g set-clipboard on
+#+end_src
+
+*** Save macOS clipboard
+
+Bind =C-]= to copy the macOS clipboard into a tmux buffer and paste it in one
+go, simplifying the operation greatly. For ordinary clipboard pasting, use the
+terminal or OS paste shortcut instead, such as Cmd-V in wezterm.
+
+This is intentionally not bound to =]=: tmux buffers are mainly for CLI
+copy/paste, while the system clipboard may contain large documents or source
+code that should not be pasted into a shell accidentally.
+
+#+begin_src conf :tangle ~/.tmux.conf
+  if-shell 'command -v pbpaste' {
+    bind-key C-] run "tmux set-buffer \"$(pbpaste)\"; tmux paste-buffer"
+  }
+#+end_src
+
 * to migrate
 #+begin_src conf :tangle ~/.tmux.conf
 
@@ -198,16 +228,4 @@ bind-key C-h command-prompt -p "save log to:" \
 # bind-key H pipe-pane \; \
 #          setw automatic-rename on \; \
 #          display-message "Stopped logging(#S-#I-#P.log)"
-
-#* Copy/paste buffer
-
-#** Paste from system clipboard (and save it to tmux buffer). Bind it to "C-]"
-#** not "]" so that you need to explicitly request copying from system clipboard
-#** by pressing an additional key (i.e. Control). This decision is made because
-#** tmux buffer is for copying/pasting among CLIs but the system clipboard may
-#** contain a large chunk of documentations or source code. Pasting such
-#** contents into command line can be troublesome. Also see my .bashrc for the
-#** function clean_tmux_buffers.
-bind-key C-] run "tmux set-buffer \"$(pbpaste)\"; tmux paste-buffer"
-
 #+end_src
