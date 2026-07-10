@@ -103,11 +103,24 @@ sessions much easier:
 
 * Terminal emulator window title
 
-If you do not hide the title bar of the terminal emulator, the following sets
-its title.
 #+begin_src conf :tangle ~/.tmux.conf
-set -g set-titles on
-set -g set-titles-string '#h: #S'
+  set -g set-titles on
+#+end_src
+
+The aerospace jump/summon bindings matches the window title prefix to find the
+corresponding WezTerm window. See [[file:window-manager.org]] for details.
+
+For each additional SSH host give it its own name and a matching aerospace
+binding.
+
+** On local laptop
+#+begin_src conf :tangle ~/.tmux.conf
+  set -g set-titles-string 'local: #S'
+#+end_src
+
+** COMMENT On workstation
+#+begin_src conf :tangle ~/.tmux.conf
+  set -g set-titles-string 'ws: #S'
 #+end_src
 
 * Pre-load copy buffers
