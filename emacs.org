@@ -3650,6 +3650,15 @@ alternative emerges.
 Emacs 31+ comes with ~markdown-ts-mode~, use it instead of the 3rd party package
 ~markdown-mode~.
 
+** Preview using online tool StackEdit
+
+1. Open https://stackedit.io/ with a web browser
+2. Click "START WRITING" bar at the top of the page
+3. Paste the content into the editing area (left side)
+
+NOTE: It can be used to preview org mode buffer as well: export the buffer to
+Github Flavoured Markdown first using ~M-x org-gfm-export-as-markdown~.
+
 ** Real time preview using grip-mode
 
 #+begin_src emacs-lisp
