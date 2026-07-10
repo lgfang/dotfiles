@@ -259,6 +259,11 @@ If region is not active, copy or cut the current line instead.
                 ("M-w" . my/copy-region-or-line)
                 ("C-c k" . my/kill-to-end-of-buffer))
 
+    :custom
+    ;; Send kills to the OS clipboard via OSC 52 (through tmux/ssh/wezterm).
+    ;; Requires "set -g set-clipboard on" in tmux.
+    (xterm-extra-capabilities '(setSelection))
+
     :config
     (defun my/cut-region-or-line ()
       "Cut region (if active) or current line."
@@ -281,23 +286,19 @@ If region is not active, copy or cut the current line instead.
     )
 #+end_src
 
-*** MacOS clipboard integration
+*** macOS clipboard integration
 
 #+begin_src emacs-lisp
   (use-package emacs
     :if (eq system-type 'darwin)
     :preface
     (defun my/copy-from-osx ()
-      (let ((tramp-mode nil) (default-directory "~"))
-        (shell-command-to-string "pbpaste")))
-    (defun my/paste-to-osx (text &optional _push)
-      (let ((process-connection-type nil))
-        (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
-          (process-send-string proc text)
-          (process-send-eof proc))))
+      (if (display-graphic-p)
+          (gui-selection-value)         ; GUI frame: native clipboard
+        (let ((tramp-mode nil) (default-directory "~"))
+          (shell-command-to-string "pbpaste"))))
     :custom
     (interprogram-paste-function #'my/copy-from-osx)
-    (interprogram-cut-function #'my/paste-to-osx)
     )
 #+end_src
 
