@@ -360,8 +360,8 @@ I prefer AeroSpace over Yabai for the following reasons:
   ctrl-g = 'mode main'
 
   [mode.jump.binding]
-  j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump WezTerm "!ip-10-"', 'mode main']
-  shift-j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump WezTerm ip-10- wezterm cli spawn --new-window -- ssh ws', 'mode main']
+  j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump WezTerm local sh -c "wezterm cli spawn --new-window || open -a WezTerm"', 'mode main']
+  shift-j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump WezTerm ws sh -c "wezterm cli spawn --new-window -- ssh ws || open -na WezTerm --args start -- ssh ws"', 'mode main']
   k = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump "Google Chrome"', 'mode main']
   l = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump Slack', 'mode main']
   i = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump Emacs', 'mode main']
@@ -370,8 +370,8 @@ I prefer AeroSpace over Yabai for the following reasons:
   ctrl-g = 'mode main'
 
   [mode.summon.binding]
-  j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon WezTerm "!ip-10-"', 'mode main']
-  shift-j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon WezTerm ip-10- wezterm cli spawn --new-window -- ssh ws', 'mode main']
+  j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon WezTerm local sh -c "wezterm cli spawn --new-window || open -a WezTerm"', 'mode main']
+  shift-j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon WezTerm ws sh -c "wezterm cli spawn --new-window -- ssh ws || open -na WezTerm --args start -- ssh ws"', 'mode main']
   k = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon "Google Chrome"', 'mode main']
   l = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon Slack', 'mode main']
   i = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon Emacs', 'mode main']
@@ -502,22 +502,34 @@ I prefer AeroSpace over Yabai for the following reasons:
   # Usage: aerospace-app.sh <jump|summon> <app-name> [prefix [fallback-cmd...]]
   # Example:
   #   aerospace-app.sh jump Slack
-  #   aerospace-app.sh summon WezTerm '!ip-10-'   # local WezTerm only
-  #   aerospace-app.sh jump WezTerm ip-10- \
+  #   aerospace-app.sh summon WezTerm local   # local WezTerm only
+  #   aerospace-app.sh jump WezTerm ws \
   #       wezterm cli spawn --new-window -- ssh ws
   #
   # When [prefix] is given, only windows whose title starts with the prefix
   # (case-insensitive) are considered. Prefix the argument with "!" to
   # negate the match. This lets you distinguish multiple windows of the same
-  # app — e.g. local vs remote WezTerm, whose tmux titles contain the
-  # hostname (see set-titles-string in tmux.conf). A freshly launched
-  # WezTerm window has no tmux title yet, so it matches the negated
-  # (local) filter — which is the desired behavior.
+  # app — e.g. local vs remote WezTerm: each host's tmux.conf hardcodes a
+  # stable title via set-titles-string — "local" here, "ws" on the remote
+  # workstation (see tmux.org). Caveat: a WezTerm window not (yet) running
+  # tmux has no such title and matches no positive prefix, so jump/summon
+  # will fall back to spawning a new window rather than focusing it.
   #
-  # The fallback command matters for positive-prefix filters: for "remote
-  # WezTerm" (prefix ip-10-), `open -a WezTerm` would open a *local* window
-  # that still wouldn't match, so pass a command that creates the remote
-  # session instead (see the Example above).
+  # The fallback command matters whenever a prefix filter is used, because
+  # the default `open -a` only *activates* an app: it neither creates a new
+  # window when the app is already running (breaks the negated/local filter
+  # when only remote windows exist) nor creates a *matching* window for a
+  # positive filter like ws. Pass a command that creates the right kind
+  # of window instead, e.g.:
+  #   local:  sh -c "wezterm cli spawn --new-window || open -a WezTerm"
+  #   remote: sh -c "wezterm cli spawn --new-window -- ssh ws || open -na WezTerm --args start -- ssh ws"
+  # (`wezterm cli` needs a running WezTerm, hence the `||` second tier.)
+  #
+  # The second tier must launch via `open` (the .app bundle), NOT the bare
+  # `wezterm start` binary: a GUI process exec'd from /opt/homebrew/bin has
+  # no macOS bundle identifier, so Karabiner's frontmost_application_unless
+  # exclusions (which match the bundle ID) stop recognizing WezTerm and
+  # remap keys like C-s inside it.
 
   # Why this exists (the bug it fixes):
   #   The jump bindings used to call `open -a <app>` directly. macOS treats
@@ -567,9 +579,13 @@ I prefer AeroSpace over Yabai for the following reasons:
 
   # Window IDs whose app-name (and optional title prefix) matches.
   # The "|" delimiter avoids issues with app names containing spaces.
+  # The app-name comparison is a case-insensitive *prefix* match because
+  # aerospace may report a name that differs from the launchable app name,
+  # e.g. WezTerm shows up as "wezterm-gui" (and `open -a wezterm-gui` fails,
+  # so the binding must keep passing "WezTerm").
   WINDOW_IDS=$(aerospace list-windows --all --format "%{window-id}|%{app-name}|%{window-title}" \
                  | awk -F'|' -v app="$APP_NAME" -v pfx="$PFX" -v neg="$NEGATE" '
-          tolower($2) == tolower(app) {
+          index(tolower($2), tolower(app)) == 1 {
               if (pfx == "") { print $1; next }
               starts = (index(tolower($3), tolower(pfx)) == 1)
               if ((neg == 0 && starts) || (neg == 1 && !starts)) print $1
