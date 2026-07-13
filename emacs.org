@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-08 +1000
+#+DATE: 2026-07-13 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1570,6 +1570,20 @@ gpg -r easy --encrypt-files file1 file2
 IMPORTANT: Avoid embedding encrypt regions in files without version control, as
 accidental changes are hard to detect and changing a single character can render
 the entire region unreadable.
+
+** Prompt for GPG passphrases in the minibuffer
+
+Have GnuPG hand passphrase prompts back to Emacs (the minibuffer) instead of
+spawning an external pinentry. In =emacs -nw= under tmux, the external pinentry
+may draw on a TTY that is not visible, leaving Emacs frozen while gpg waits for
+input that can never arrive. (gpg-agent allows loopback pinentry by default
+since GnuPG 2.1.12.)
+#+begin_src emacs-lisp
+  (use-package epg
+    :ensure nil                           ; Built-in
+    :custom
+    (epg-pinentry-mode 'loopback))
+#+end_src
 
 ** Store credentials: auth source
 
