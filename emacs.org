@@ -3,7 +3,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-13 +1000
+#+DATE: 2026-07-15 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3594,12 +3594,13 @@ Eglot + [[https://github.com/eclipse-jdtls/eclipse.jdt.ls][Eclipse JDT Language 
 #+end_src
 
 ** Structured log mode
+
 This is a minor I wrote to display log files formatted as JSON lines in a more
 human friendly way.
 #+begin_src emacs-lisp
   (use-package structured-log-mode
-    ;; my own package for viewing json format log files.
-    :load-path (lambda() (concat my-elisps "structured-log-mode"))
+    :vc (:url "https://github.com/lgfang/structured-log-mode"
+              :branch "main" :rev :newest)
     :commands structured-log-mode
     )
 #+end_src
