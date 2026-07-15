@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-08 +1000
+#+DATE: 2026-07-15 +1000
 
 * COMMENT Bash
 ** bash_profile
@@ -1249,10 +1249,49 @@ end
       argparse 'n/not-dry-run' 'm/master=' -- $argv
       or return 1
 
-      set -l master_branch_name master
-      set -q _flag_master; and set master_branch_name $_flag_master
-
       git fetch -p
+
+      set -l master_branch_name
+      if set -q _flag_master
+          set master_branch_name $_flag_master
+      else
+          # Pick a remote: prefer origin, else the sole remote
+          set -l remotes (git remote)
+          set -l remote
+          if contains origin $remotes
+              set remote origin
+          else if test (count $remotes) -eq 1
+              set remote $remotes[1]
+          end
+
+          # Ask the remote what its default branch is (e.g. origin/main -> main)
+          if test -n "$remote"
+              set -l remote_head (git symbolic-ref --quiet --short refs/remotes/$remote/HEAD)
+              if test -n "$remote_head"
+                  set master_branch_name (string replace "$remote/" '' $remote_head)
+              end
+          end
+
+          # Fall back to common local branch names
+          if test -z "$master_branch_name"
+              for candidate in main master
+                  if git show-ref --verify --quiet refs/heads/$candidate
+                      set master_branch_name $candidate
+                      break
+                  end
+              end
+          end
+      end
+
+      if test -z "$master_branch_name"
+          echo "error: could not detect the default branch; specify it with -m <branch>" >&2
+          return 1
+      end
+
+      if not git show-ref --verify --quiet refs/heads/$master_branch_name
+          echo "error: branch '$master_branch_name' does not exist in this repo" >&2
+          return 1
+      end
 
       set -l merged (git for-each-ref \
           --format='%(refname:short)' \
