@@ -3,7 +3,7 @@
 
 #+TITLE: My macOS Setup Notes
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-07 +1000
+#+DATE: 2026-07-17 +1000
 #+DESCRIPTION: How I set up a new Mac, updated for macOS Tahoe
 #+KEYWORDS: MacOS, MacBook
 
@@ -21,9 +21,13 @@
 - Function Keys: turn on "Use F1, F2, etc. keys as standard function keys"
 - Language input methods: add additional input methods, say "Pinyin -
   Simplified"
-- Menu Bar > Menu Bar Controls:
-  - Change Sound to "Always Show"
-  - Tick Bluetooth in Menu Bar
+- Menu Bar
+  + "Automatically hide and show the menu bar": set to "Always"
+    - To reveal it manually using keyboard, press =Control+F2=, which moves
+      keyboard focus to the menu bar.
+  + Menu Bar Controls:
+    * "Sound": change to "Always Show"
+    * "Bluetooth": tick
 - Remote Login: toggle on/off as needed
 
 ** Weekend battery drain in sleep
