@@ -1,11 +1,12 @@
 # -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
 # Created: Fang Lungang 2024-08-14
+#+export_exclude_tags: noexport
 
 #+TITLE: My Tmux Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-10 +1000
+#+DATE: 2026-07-21 +1000
 
-* Timestamps
+* Timestamps                                                       :noexport:
 
 #+name: tangle-time-stamp
 #+begin_src emacs-lisp :tangle no
@@ -17,61 +18,86 @@
 # Updated: <<tangle-time-stamp()>>
 #+end_src
 
-* Screen key bindings
+This block is tangled (it generates a timestamp in the target config file) but
+hidden from the GitHub web page to avoid confusing readers. NOTE: org-ruby
+(GitHub's Org renderer) ignores the ~:noexport:~ tag unless the exclude tags are
+declared explicitly, which is what the ~#+export_exclude_tags: noexport~ line at
+the top of this file does.
 
-In case tmux is not available, below are some basic usage of *Screen*:
-| new session foo        | screen -S foo |
-| attach to session foo  | screen -x foo |
-| list all sessions      | screen -ls    |
-| create a new window    | C-a C-c       |
-| list and switch window | C-a "         |
-| detach                 | C-a C-d       |
-| kill window            | C-a k         |
+* Timers and limits
+
+#+begin_src conf :tangle ~/.tmux.conf
+  set -g display-time 3000
+  set -g repeat-time 500
+  set -g history-limit 50000
+#+end_src
 
 * Terminal type
 
-Force tmux to use "true color":
+Force tmux to use true color:
 #+begin_src conf :tangle ~/.tmux.conf
-set -g default-terminal "xterm-256color"
-set -ag terminal-overrides ",xterm-256color:RGB"
+  set -g default-terminal "xterm-256color"
+  set -ag terminal-overrides ",xterm-256color:RGB"
 #+end_src
 
-Ideally, tmux should detect the terminal emulator's color capability
-automatically, but this does not always work. Hence, sometimes we need to
-explicitly tell tmux that the terminal emulator is capable of that.
+Ideally, tmux should detect the terminal emulator's color capabilities
+automatically. In practice, this does not always work, so we may need to
+explicitly tell tmux that the terminal emulator supports true color.
 
 * Prefix key
+
+Use =F12= as the tmux prefix key. If this does not work, check the value of
+"TERM". Try setting it to "xterm" to see if the issue goes away.
 #+begin_src conf :tangle ~/.tmux.conf
-set -g prefix F12        # if not work, check if TERM=xterm
-bind-key F12 send-prefix
+  set -g prefix F12
 #+end_src
 
-Use F12 as the prefix. Pressing F12 twice sends the prefix key (i.e. F12 per my
-configuration) to the underlying window. This is makes working with nested tmux
-sessions much easier:
-- "F12 <key>" sends the key to the outer tmux session.
-- "F12 F12 <key>" sends the key the inner tmux session.
+Pressing =F12= after a prefix key (=F12=) sends the prefix key to the target
+window.
+#+begin_src conf :tangle ~/.tmux.conf
+  bind-key F12 send-prefix
+#+end_src
+
+This makes nested tmux sessions easier to use:
+- =F12 <key>= sends =<key>= to the outer tmux session.
+- =F12 F12 <key>= sends =<key>= to the inner tmux session.
 
 * Nested tmux sessions
 
-- Press Shift+F12 once :: Enter nested mode. The outer session's status bar is
-  hidden, and subsequent keys (except Shift+F12) are sent to the inner session,
-  allowing interaction as if it is not nested.
+- Press Shift+F12 once :: Enter the "nested mode": the outer session's status
+  bar is hidden, and all subsequent keys (except for Shift+F12) are passed through
+  to the inner session, so it behaves as if it were not nested.
 
-- Press Shift-F12 again :: Exit nested mode.
+- Press Shift+F12 again :: Exit nested mode and restore the outer session.
 
 #+begin_src conf :tangle ~/.tmux.conf
   bind -T root S-F12 set prefix None \; set key-table off \; set status off \; refresh-client -S
   bind -T off S-F12 set -u prefix \; set -u key-table \; set status on \; refresh-client -S
 #+end_src
 
-* Copy mode
+* Editing style
+
+Use Emacs key bindings in the status line and in copy mode.
+#+begin_src conf :tangle ~/.tmux.conf
+  set -g status-keys emacs
+  set -g mode-keys emacs
+#+end_src
+
+Use =C-g= (instead of =ESC=) to quit copy mode and command editing, matching
+Emacs.
+#+begin_src conf :tangle ~/.tmux.conf
+  bind-key -T copy-mode-emacs C-g send-keys -X cancel
+  bind-key -T edit-mode-emacs C-g send-keys -X cancel
+#+end_src
+
+* Mouse support
 
 #+begin_src conf :tangle ~/.tmux.conf
-  bind -n F11 copy-mode
+  set -g mouse on
 #+end_src
 
 * Status bar
+
 #+begin_src conf :tangle ~/.tmux.conf
   set -g status on
   set -g status-position bottom
@@ -108,29 +134,50 @@ sessions much easier:
 #+end_src
 
 The aerospace jump/summon bindings matches the window title prefix to find the
-corresponding WezTerm window. See [[file:window-manager.org]] for details.
+corresponding WezTerm window. See the [[file:window-manager.org::*Script to jump to / summon an application]["Script to jump to / summon an
+application"]] section in [[file:window-manager.org][my window manager config]] for details.
 
 For each additional SSH host give it its own name and a matching aerospace
 binding.
 
 ** On local laptop
-#+begin_src conf :tangle ~/.tmux.conf
+#+begin_src conf :tangle (if (bound-and-true-p my/work-station-p) "no" "~/.tmux.conf")
   set -g set-titles-string 'local: #S'
 #+end_src
 
-** COMMENT On workstation
-#+begin_src conf :tangle ~/.tmux.conf
+** On workstation
+#+begin_src conf :tangle (if (bound-and-true-p my/work-station-p) "~/.tmux.conf" "no")
   set -g set-titles-string 'ws: #S'
 #+end_src
 
-* Pre-load copy buffers
+* Panes
 
+Split panes while keeping the current directory, using more mnemonic keys than
+the defaults (=%= and ="=):
 #+begin_src conf :tangle ~/.tmux.conf
-  # pre-load a frequently used text into the buffer named "hw"
-  set-buffer -b hw "hello world"
+  bind-key | split-window -h -c "#{pane_current_path}"
+  bind-key _ split-window -v -c "#{pane_current_path}"
 #+end_src
 
-* Resizing
+Cycle panes with =Tab=, which is easier to key-chord than =F12 <arrow>=:
+#+begin_src conf :tangle ~/.tmux.conf
+  bind-key -r Tab select-pane -t:.+
+  bind-key -r BTab select-pane -t:.-
+#+end_src
+
+Swap, join, and synchronize panes:
+#+begin_src conf :tangle ~/.tmux.conf
+  bind-key C-s setw synchronize-panes
+  bind-key m command-prompt -p "move (swap) current pane with: " "swap-pane -s %1"
+  bind-key j command-prompt "join-pane -h -d -s '%1'"
+#+end_src
+
+Cycle through the predefined layouts:
+#+begin_src conf :tangle ~/.tmux.conf
+  bind-key -r Space next-layout
+#+end_src
+
+** Resizing
 #+begin_src conf :tangle ~/.tmux.conf
   # Resize panes using Prefix + Shift + Arrow keys
   bind-key -r S-Up resize-pane -U 5
@@ -139,22 +186,46 @@ binding.
   bind-key -r S-Right resize-pane -R 5
 #+end_src
 
-* Mouse wheel
+* Windows
 
-Enter copy mode directly on mouse wheel:
+Create windows in the current directory, and navigate between them with
+repeatable keys:
 #+begin_src conf :tangle ~/.tmux.conf
-  ## Pass the event along if the app either enabled mouse reporting
-  ## (#{mouse_any_flag}, e.g. terminal Emacs) or uses the alternate screen
-  ## (#{alternate_on}); otherwise enter copy mode.
-  bind-key -T root WheelUpPane if-shell -F -t = "#{||:#{mouse_any_flag},#{alternate_on}}" "send-keys -M" "select-pane -t =; copy-mode -e; send-keys -M"
-  #** Speedup (based on Thomas Sattler at
-  ## https://groups.google.com/forum/#!topic/tmux-users/TRwPgEOVqho)
-  bind-key -T root C-WheelUpPane if-shell -F -t = "#{||:#{mouse_any_flag},#{alternate_on}}" "send-keys -M" "select-pane -t =; copy-mode -e; send-keys -M"
+  bind-key c new-window -c "#{pane_current_path}"
+  bind-key -r n next-window       # repeatable versions of the defaults
+  bind-key -r p previous-window
 #+end_src
 
-* Copy & Paste
+Re-enable automatic window renaming (handy after tmux turns it off once a window
+has been renamed manually):
+#+begin_src conf :tangle ~/.tmux.conf
+  bind-key < set automatic-rename on
+#+end_src
 
-** Clipboard
+Open a new window running a given command:
+#+begin_src conf :tangle ~/.tmux.conf
+  bind-key C command-prompt "new-window '%1'"
+#+end_src
+
+* Sessions
+
+Create a named session:
+#+begin_src conf :tangle ~/.tmux.conf
+  bind-key S command-prompt "new-session -s '%1'"
+#+end_src
+
+* Copy mode & clipboard
+
+** Page scrolling
+
+=PageUp= enters copy mode and scrolls up, unless an application is using the
+alternate screen (in which case the key is passed through). This mirrors the
+mouse-wheel behavior.
+#+begin_src conf :tangle ~/.tmux.conf
+  bind-key -T root PPage if-shell -F "#{alternate_on}" "send-keys PPage" "copy-mode -e; send-keys PPage"
+#+end_src
+
+** OS Clipboard
 
 *** App copies
 
@@ -168,77 +239,52 @@ the outer terminal (wezterm → macOS clipboard).
 
 *** Save macOS clipboard
 
-Bind =C-]= to copy the macOS clipboard into a tmux buffer and paste it in one
-go, simplifying the operation greatly. For ordinary clipboard pasting, use the
-terminal or OS paste shortcut instead, such as Cmd-V in wezterm.
+Bind =C-]= to paste the current macOS clipboard contents *and* save them into a
+tmux buffer so that the contents are available as a tmux buffer for later reuse.
+
+For ordinary one-off clipboard pasting, use the terminal or OS paste shortcut
+instead, such as Cmd-V in wezterm.
 
 This is intentionally not bound to =]=: tmux buffers are mainly for CLI
 copy/paste, while the system clipboard may contain large documents or source
 code that should not be pasted into a shell accidentally.
-
 #+begin_src conf :tangle ~/.tmux.conf
   if-shell 'command -v pbpaste' {
     bind-key C-] run "tmux set-buffer \"$(pbpaste)\"; tmux paste-buffer"
   }
 #+end_src
 
-* to migrate
+** Pre-loaded copy buffers
+
+Tweak this section to pre-load as many tmux copy buffers as needed.
 #+begin_src conf :tangle ~/.tmux.conf
+  # pre-load a frequently used text into the buffer named "hw"
+  set-buffer -b hw "hello world"
+#+end_src
 
-#* Timers
-set -g display-time 3000
-set -g history-limit 50000
-set -g repeat-time 500
+** Save screen log
 
-#* Mouse support
-set -g mouse on
-bind-key -T copy-mode-emacs C-WheelUpPane send-keys -X halfpage-up
-bind-key -T copy-mode-emacs C-WheelDownPane send-keys -X halfpage-down
+Bind =C-h= to save the whole scrollback of the current pane to a file: it enters
+copy mode, selects everything, and writes it out.
+#+begin_src conf :tangle ~/.tmux.conf
+  bind-key C-h command-prompt -p "save log to:" \
+           "copy-mode; send-keys 'M->' C-e C-space 'M-<' C-a C-w; save-buffer %%"
+#+end_src
 
-#* Key bindings
-set -g status-keys emacs
-set -g mode-keys emacs
-bind-key | split-window -h -c "#{pane_current_path}" # default is "
-bind-key _ split-window -v -c "#{pane_current_path}" # default is %
-bind-key -r Tab select-pane -t:.+ # easier to key-chord than F12+<arrow>
-bind-key -r BTab select-pane -t:.-
-bind-key -T copy-mode-emacs C-g send-keys -X cancel # C-g (instead of ESC) to quit copy-mode
-bind-key -T edit-mode-emacs C-g send-keys -X cancel # C-g to quit command editing
-bind-key C-s setw synchronize-panes
-bind-key < set automatic-rename on
-bind-key -r n next-window       # same as default ones but are repeat-able
-bind-key -r p previous-window
-bind-key -r Space next-layout
+The version below is the equivalent for =mode-keys vi=:
+#+begin_src conf :tangle no
+  bind-key C-h command-prompt -p "save log to:" \
+           "copy-mode; send-keys g 'space' G 'enter'; save-buffer %%"
+#+end_src
 
-# Conflicts with my emacs settings.
-# bind-key -nr C-Up select-pane -U
-# bind-key -nr C-Down select-pane -D
-# bind-key -nr C-Left select-pane -L
-# bind-key -nr C-Right select-pane -R
-
-bind-key c new-window -c "#{pane_current_path}"
-bind-key m command-prompt -p "move (swap) current pane with: " "swap-pane -s %1"
-bind-key j command-prompt "join-pane -h -d -s '%1'"
-bind-key C command-prompt "new-window '%1'" # open a new window running given command
-bind-key S command-prompt "new-session -s '%1'"
-
-# Similar to mouse scroll
-bind-key -T root PPage if-shell -F "#{alternate_on}" "send-keys PPage" "copy-mode -e; send-keys PPage"
-
-#** Screen log
-# `C-h' to save log
-bind-key C-h command-prompt -p "save log to:" \
-         "copy-mode; send-keys 'M->' C-e C-space 'M-<' C-a C-w; save-buffer %%"
-# # if "setw -g mode-keys vi", use this one:
-# bind-key C-h command-prompt -p "save log to:" \
-#          "copy-mode; send-keys g 'space' G 'enter'; save-buffer %%"
-
-# ## NOT recommended
-# bind-key h pipe-pane "cat >>$HOME/#S-#I-#P.log" \; \
-#          rename-window "log" \; \
-#          display-message "Start logging($HOME/#S-#I-#P.log)"
-
-# bind-key H pipe-pane \; \
-#          setw automatic-rename on \; \
-#          display-message "Stopped logging(#S-#I-#P.log)"
+=pipe-pane= can log a pane continuously to a file, but it is not recommended: it
+captures raw output (including control sequences) and is easy to leave running
+unnoticed.
+#+begin_src conf :tangle no
+  bind-key h pipe-pane "cat >>$HOME/#S-#I-#P.log" \; \
+           rename-window "log" \; \
+           display-message "Start logging($HOME/#S-#I-#P.log)"
+  bind-key H pipe-pane \; \
+           setw automatic-rename on \; \
+           display-message "Stopped logging(#S-#I-#P.log)"
 #+end_src
