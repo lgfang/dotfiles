@@ -110,7 +110,7 @@ Refer to https://github.com/github/gitignore for more to ignore.
 
 *** Use gh for github on work machines
 
-#+begin_src conf :tangle (if my/work-machine-p "~/.gitconfig" "no") :noweb yes :mkdirp yes
+#+begin_src conf :tangle (if (bound-and-true-p my/work-machine-p) "~/.gitconfig" "no") :noweb yes :mkdirp yes
   [credential "https://github.com"]
       helper =
       helper = !gh auth git-credential
