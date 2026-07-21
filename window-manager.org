@@ -1,13 +1,14 @@
 # -*-mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
 # Created: 2024-05-17
+#+export_exclude_tags: noexport
 
 #+TITLE: My Window Manager Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-08 +1000
+#+DATE: 2026-07-21 +1000
 #+DESCRIPTION: My window manager related configurations
 #+KEYWORDS: window manager, hotkey, tiling, yabai, skhd
 
-* Time stamp for tangling
+* Time stamp for tangling                                          :noexport:
 
 This block itself is not tangled into any configuration file. But, at the time
 of tangling, it generates a timestamp may be referred to by other blocks.
@@ -258,12 +259,14 @@ I switched from skhd to Karabiner primarily because Karabiner supports defining 
 
 I prefer AeroSpace over Yabai for the following reasons:
 - Superior stability, especially when connecting or disconnecting external
-  monitors while moving between workplaces.
+  monitors after moving between the office and home.
 - Proper window management for GUI Emacs.
 - Native application launching, which eliminates the need to configure Karabiner
   hotkeys to open or focus apps like Slack and Chrome.
 
 ** Main configuration file
+
+*** General settings
 
 #+begin_src toml :tangle ~/.config/aerospace/aerospace.toml :mkdirp yes
   start-at-login = true
@@ -282,7 +285,11 @@ I prefer AeroSpace over Yabai for the following reasons:
   outer.bottom = 2
   outer.top = 2
   outer.right = 2
+#+end_src
 
+*** Floating windows
+
+#+begin_src toml :tangle ~/.config/aerospace/aerospace.toml :mkdirp yes
   [[on-window-detected]]
   if.app-id = 'com.apple.systemsettings'
   run = 'layout floating'
@@ -290,7 +297,11 @@ I prefer AeroSpace over Yabai for the following reasons:
   [[on-window-detected]]
   if.app-name-regex-substring = 'Karabiner'
   run = 'layout floating'
+#+end_src
 
+*** Main mode
+
+#+begin_src toml :tangle ~/.config/aerospace/aerospace.toml :mkdirp yes
   [mode.main.binding]
   cmd-ctrl-alt-shift-f = 'mode focus'
   cmd-ctrl-alt-shift-m = 'mode move'
@@ -299,7 +310,11 @@ I prefer AeroSpace over Yabai for the following reasons:
   cmd-ctrl-alt-shift-j = 'mode jump'
   cmd-ctrl-alt-shift-s = 'mode summon'
   cmd-ctrl-alt-shift-w = 'mode workspace'
+#+end_src
 
+*** Focus mode
+
+#+begin_src toml :tangle ~/.config/aerospace/aerospace.toml :mkdirp yes
   [mode.focus.binding]
   h = 'focus --boundaries all-monitors-outer-frame left'
   j = 'focus --boundaries all-monitors-outer-frame down'
@@ -308,7 +323,11 @@ I prefer AeroSpace over Yabai for the following reasons:
   p = 'focus-back-and-forth'
   esc = 'mode main'
   ctrl-g = 'mode main'
+#+end_src
 
+*** Window manipulation modes
+
+#+begin_src toml :tangle ~/.config/aerospace/aerospace.toml :mkdirp yes
   [mode.move.binding]
   h = ['exec-and-forget ~/.config/aerospace/aerospace-swap-windows.sh left']
   j = ['exec-and-forget ~/.config/aerospace/aerospace-swap-windows.sh down']
@@ -359,6 +378,10 @@ I prefer AeroSpace over Yabai for the following reasons:
   esc = 'mode main'
   ctrl-g = 'mode main'
 
+#+end_src
+
+*** Application modes
+#+begin_src toml :tangle ~/.config/aerospace/aerospace.toml :mkdirp yes
   [mode.jump.binding]
   j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump WezTerm local sh -c "wezterm cli spawn --new-window || open -a WezTerm"', 'mode main']
   shift-j = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh jump WezTerm ws sh -c "wezterm cli spawn --new-window -- ssh ws || open -na WezTerm --args start -- ssh ws"', 'mode main']
@@ -378,7 +401,10 @@ I prefer AeroSpace over Yabai for the following reasons:
   o = ['exec-and-forget ~/.config/aerospace/aerospace-app.sh summon Safari', 'mode main']
   esc = 'mode main'
   ctrl-g = 'mode main'
+#+end_src
 
+*** Workspace mode
+#+begin_src toml :tangle ~/.config/aerospace/aerospace.toml :mkdirp yes
   [mode.workspace.binding]
   0 = ['summon-workspace 0', 'mode main']
   1 = ['summon-workspace 1', 'mode main']
