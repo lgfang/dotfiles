@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-21 +1000
+#+DATE: 2026-07-22 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -306,23 +306,21 @@ If region is not active, copy or cut the current line instead.
     )
 #+end_src
 
-*** macOS clipboard integration
+*** OS clipboard integration
 
+Emacs kills can be copied directly to the OS clipboard by enabling OSC 52
+selection support:
 #+begin_src emacs-lisp
   (use-package emacs
-    :if (eq system-type 'darwin)
-    :preface
-    (defun my/copy-from-osx ()
-      (if (display-graphic-p)
-          (gui-selection-value)         ; GUI frame: native clipboard
-        (let ((tramp-mode nil) (default-directory "~"))
-          (shell-command-to-string "pbpaste"))))
     :custom
-    (interprogram-paste-function #'my/copy-from-osx)
-    )
+    (xterm-extra-capabilities '(setSelection)))
 #+end_src
 
-NOTE: To use this within tmux session, upgrade to tmux 2.6+.
+This works through tmux, SSH, and WezTerm. When using tmux, make sure clipboard
+forwarding is enabled: ~set -g set-clipboard on~
+
+To paste from the OS clipboard into Emacs, use the system paste shortcut
+(for example, Cmd-V on macOS).
 
 *** Canned responses
 
