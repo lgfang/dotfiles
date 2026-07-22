@@ -1223,7 +1223,7 @@ change ~electric-pair-inhibit-predicate~ instead.
   (use-package flyspell
     :delight
     :hook ((prog-mode . flyspell-prog-mode)
-           (markdown-mode . flyspell-mode)
+           (markdown-ts-mode . flyspell-mode)
            (git-commit-setup . flyspell-mode)
            (org-mode . flyspell-prog-mode)
            ))
@@ -3684,6 +3684,12 @@ alternative emerges.
 
 Emacs 31+ comes with ~markdown-ts-mode~, use it instead of the 3rd party package
 ~markdown-mode~.
+
+#+begin_src emacs-lisp
+  (use-package markdown-ts-mode
+    :custom (markdown-ts-hide-markup t)
+    :hook (markdown-ts-mode . visual-line-mode))
+#+end_src
 
 ** Preview using online tool StackEdit
 
