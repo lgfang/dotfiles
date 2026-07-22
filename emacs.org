@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-22 +1000
+#+DATE: 2026-07-23 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2158,20 +2158,6 @@ Convert an org file to HTML reveal slides. Prefer =org-tree-slide= for live pres
     :custom
     (org-reveal-title-slide 'auto)
     (org-reveal-root (file-name-as-directory (expand-file-name "~/source/reveal.js"))))
-#+end_src
-
-** Repeat map
-
-#+begin_src emacs-lisp
-  (use-package org
-    :ensure nil                           ; Built-in
-    :bind (:repeat-map my-org-repeat-map
-                       ("C-n" . org-next-visible-heading)
-                       ("C-p" . org-previous-visible-heading)
-                       ("C-b" . org-backward-heading-same-level)
-                       ("C-f" . org-forward-heading-same-level)
-                       )
-    )
 #+end_src
 
 ** Structure templates
