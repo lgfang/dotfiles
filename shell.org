@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-15 +1000
+#+DATE: 2026-07-22 +1000
 
 * COMMENT Bash
 ** bash_profile
@@ -1233,7 +1233,16 @@ end
   bind \cd delete-char
 #+end_src
 
-** ep
+** aliases
+
+#+begin_src fish :tangle ~/.config/fish/config.fish :mkdirp yes
+  # Start a terminal Emacs client (and an Emacs daemon if necessary).
+  alias et 'emacsclient -a "" -t'
+#+end_src
+
+** functions
+
+*** ep
 
 #+begin_src fish :tangle ~/.config/fish/functions/ep.fish :mkdirp yes
 function ep --description 'go to current directory of Emacs daemon'
@@ -1242,7 +1251,7 @@ function ep --description 'go to current directory of Emacs daemon'
 end
 #+end_src
 
-** git_clean_branches
+*** git_clean_branches
 
 #+begin_src fish :tangle ~/.config/fish/functions/git_clean_branches.fish :mkdirp yes
   function git_clean_branches
@@ -1317,7 +1326,7 @@ end
   end
 #+end_src
 
-** tg
+*** tg
 
 #+begin_src fish :tangle ~/.config/fish/functions/tg.fish :mkdirp yes
   function tg --description "Attach to specified tmux session"
@@ -1368,7 +1377,7 @@ end
   end
 #+end_src
 
-** ec2s
+*** ec2s
 
 #+begin_src fish :tangle ~/.config/fish/functions/ec2s.fish :mkdirp yes
   function ec2s
