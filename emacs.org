@@ -2974,16 +2974,6 @@ Prerequisites:
             (agent-shell))
         (agent-shell)))
 
-    (defun my/agent-shell-new-worktree-shell ()
-      "A wrapper of `agent-shell-new-worktree-shell', always prompt for the agent."
-      (interactive)
-      (let ((agent-shell-preferred-agent-config nil)
-            ;; Binds `agent-shell-preferred-agent-config' to nil so you pick an
-            ;; agent (e.g. opencode, claude, codex) from
-            ;; `agent-shell-agent-configs' instead of using the preferred one.
-            )
-        (call-interactively #'agent-shell-new-worktree-shell)))
-
     (defun my/anthropic-model-id-from-name (name)
       "Return a function that resolves model NAME to the latest model ID."
       (lambda ()
@@ -3010,8 +3000,10 @@ Prerequisites:
     ;; sense and fails with AccessDenied on every agent turn.
     (agent-shell-inhibit-system-sleep (eq system-type 'darwin))
 
-    ;; Choose agent based on work/personal laptop.
-    (agent-shell-preferred-agent-config (if my/work-machine-p 'claude-code 'opencode))
+    ;; Preselect an agent based on work/personal laptop, but keep the picker so
+    ;; another agent can still be chosen.
+    (agent-shell-preferred-agent-config
+     (cons 'preselect (if my/work-machine-p 'claude-code 'opencode)))
 
     ;; Anthropic
     (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "Fable"))
