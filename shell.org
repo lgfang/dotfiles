@@ -1238,6 +1238,7 @@ end
 #+begin_src fish :tangle ~/.config/fish/config.fish :mkdirp yes
   # Start a terminal Emacs client (and an Emacs daemon if necessary).
   alias et 'emacsclient -a "" -t'
+  alias k kubectl
 #+end_src
 
 ** functions
