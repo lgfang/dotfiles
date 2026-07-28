@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-23 +1000
+#+DATE: 2026-07-28 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2994,6 +2994,11 @@ Prerequisites:
            ("C-c i" . agent-shell-interrupt))
 
     :custom
+    ;; Use single-frame busy indicator so that it emits no extra terminal output
+    ;; while thinking. Under tmux this means the window is flagged as active only
+    ;; when real output appears, not the moment the agent starts thinking.
+    (agent-shell-busy-indicator-frames '("⏳Thinking..."))
+
     (agent-shell-session-strategy 'prompt)
 
     ;; Blocking sleep on macOS only. Do that on headless workstations makes no
