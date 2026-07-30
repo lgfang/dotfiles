@@ -3657,6 +3657,7 @@ Emacs 31+ comes with ~markdown-ts-mode~, use it instead of the 3rd party package
 
 #+begin_src emacs-lisp
   (use-package markdown-ts-mode
+    :mode "\\.md\\'" ; remove when all my Emacs are 32+, where the .md association is built-in
     :custom (markdown-ts-hide-markup t)
     :hook (markdown-ts-mode . visual-line-mode))
 #+end_src
