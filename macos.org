@@ -3,7 +3,7 @@
 
 #+TITLE: My macOS Setup Notes
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-17 +1000
+#+DATE: 2026-08-04 +1000
 #+DESCRIPTION: How I set up a new Mac, updated for macOS Tahoe
 #+KEYWORDS: MacOS, MacBook
 
@@ -29,62 +29,6 @@
     * "Sound": change to "Always Show"
     * "Bluetooth": tick
 - Remote Login: toggle on/off as needed
-
-** Weekend battery drain in sleep
-
-NOTE: This is an *unresolved* issue. Documented here for future reference.
-
-*** Symptom
-
-A fully charged MacBook is closed and left in a bag on Friday, then is dead by
-Sunday. Seen on the new M5 MacBook Pros.
-
-*** Root cause
-
-While asleep on battery the machine dark-wakes ~220–250 times/hour (~1.9%/hour
-drain -> dead in ~2 days). Two distinct sources, found via =pmset -g log=:
-1. Power Nap background tasks (~dasd~ jobs: Find My ~searchpartyd~, Jamf Connect
-   retries, widgets, Photos, Apple Intelligence). Partly fixable — see below.
-2. The Wi-Fi radio waking the CPU for *incoming* network packets (wake reason
-   ~wifibt SMC.OutboxNotEmpty centauri-beta~; some tagged ~E_RX_IP_PACKET ARPT~
-   / ~E_PFN_NET_FOUND ARPT~). This is ordinary LAN broadcast/multicast chatter.
-   NOT fixable via any setting.
-
-The CPU is awake only ~10 min across an entire night (median ~0.3s/wake), so the
-drain is the Wi-Fi *radio* powering up ~230×/hour, not computation.
-
-*** What helped
-
-Disabling Power Nap (source #1) is worth keeping — it cut drain from ~4.5 to
-~1.9%/hour — but does NOT stop the Wi-Fi wakes:
-#+begin_src bash
-  sudo pmset -b powernap 0        # battery only (-b); AC profile unchanged
-#+end_src
-
-*** What we tried that did NOT work
-
-- ~sudo pmset -b tcpkeepalive 0~ :: verified ~TCPKeepAlive=disabled~ in the
-  sleep logs over several nights; the wake storm continued unchanged. It only
-  stops *outbound* keepalives, not the radio waking for *inbound* packets.
-- ~sudo pmset -b womp 0~ :: no effect (~womp~ is Wake-on-LAN magic-packet only;
-  on battery it is already 0 by default on notebooks).
-- ~sudo pmset -b darkwakes 0~ :: NOT a valid key on this macOS (Tahoe). ~pmset~
-  accepts it silently, but it never appears in ~pmset -g custom~ and has no
-  effect.
-- Unpairing Bluetooth devices (AirPods, Magic Keyboard) :: no effect — zero
-  Bluetooth-tagged wakes, confirming the cause is Wi-Fi, not BT.
-
-*** Diagnostics
-
-#+begin_src bash
-  # both Battery + AC profiles (plain -g shows only the currently active source):
-  sudo pmset -g custom
-  # wake history — bucket by hour, check Charge:N% and "Using AC/BATT":
-  pmset -g log | grep -iE "DarkWake|^Wake "
-#+end_src
-
-The same Wi-Fi dark-wake sleep drain is widely reported by others on M5 / Apple
-Silicon MacBooks.
 
 * Install homebrew
 
@@ -366,3 +310,145 @@ See [[file:git.org::*GitHub CLI (gh)][git notes: gh]]
 2. Run =evergreen login=
 
 ** kanopy-oidc
+
+* Overnight battery drain
+
+** Symptom
+
+A fully charged MacBook is closed and left in a bag on Friday, then is dead by
+Sunday. Seen on the new M5 MacBook Pro with macOS Tahoe 26.5.2 and 26.6.
+
+** Root cause: Bluetooth HID reconnection
+
+While asleep, macOS relentlessly tries to reconnect Bluetooth keyboards/mice
+that are paired but currently unreachable. This produces around 190
+dark-wakes/hour, draining the battery at roughly 1.85%/hour.
+
+** Workaround (sleepwatcher + blueutil)
+
+macOS has NO built-in setting for this. Desired behaviour:
+
+| Situation                       | Bluetooth | Can wake with BT keyboard |
+|---------------------------------+-----------+---------------------------|
+| Plugged in (incl. clamshell)    | stays on  | yes                       |
+| On battery, lid open            | stays on  | yes                       |
+| On battery, lid closed (bagged) | off       | no, by design             |
+
+*** Install third party tools
+
+#+begin_src bash
+  brew install blueutil sleepwatcher
+#+end_src
+
+*** Compose/tangle scripts
+
+Both hooks apply the same rule, so it lives in one sourced file. Applying it on
+wake as well as on sleep is what makes it robust: the sleep hook only fires on a
+sleep /transition/, so unplugging a Mac that is already asleep would otherwise
+leave Bluetooth on indefinitely. Re-evaluating on every wake, dark wakes
+included, caps that exposure at one wake cycle.
+
+- Shared policy
+  #+begin_src sh :tangle ~/.bluetooth-policy.sh :tangle-mode o700
+    #!/bin/sh
+    # Bluetooth stays on unless we are on battery with the lid closed.
+    BLUEUTIL=/opt/homebrew/bin/blueutil
+    MARKER="$HOME/.bluetooth-off-by-sleepwatcher"
+
+    on_battery() { /usr/bin/pmset -g ps | head -1 | grep -q "Battery Power"; }
+    lid_closed()  { /usr/sbin/ioreg -r -k AppleClamshellState -d 4 | grep -q '"AppleClamshellState" = Yes'; }
+
+    apply_bluetooth_policy() {
+        if on_battery && lid_closed; then
+            if [ "$($BLUEUTIL -p)" = "1" ]; then
+                $BLUEUTIL -p 0
+                touch "$MARKER"
+            fi
+        elif [ -f "$MARKER" ]; then
+            $BLUEUTIL -p 1
+            rm -f "$MARKER"
+        fi
+    }
+  #+end_src
+
+- On sleep
+  #+begin_src sh :tangle ~/.sleep :tangle-mode o700
+    #!/bin/sh
+    . "$HOME/.bluetooth-policy.sh"
+
+    # This hook fires about a second before macOS switches the reported power
+    # source to battery, so poll briefly rather than trust the first reading.
+    i=0
+    while [ $i -lt 6 ] && ! on_battery; do
+        sleep 0.5
+        i=$((i + 1))
+    done
+
+    apply_bluetooth_policy
+  #+end_src
+
+- On wake up
+  #+begin_src sh :tangle ~/.wakeup :tangle-mode o700
+    #!/bin/sh
+    . "$HOME/.bluetooth-policy.sh"
+
+    apply_bluetooth_policy
+  #+end_src
+
+*** Activate
+
+#+begin_src bash
+  brew services start sleepwatcher
+#+end_src
+
+Notes:
+- The first time a hook runs, macOS prompts to let sleepwatcher use Bluetooth.
+  This MUST be allowed (System Settings > Privacy & Security > Bluetooth).
+  Until it is, =blueutil= cannot even read the radio state from inside the hook:
+  it falsely reports 0, and writes silently do nothing.
+- A separate prompt asks to let sleepwatcher monitor all keystrokes. Deny it.
+  That is only needed for sleepwatcher's idle-detection features, not for the
+  =-s= and =-w= hooks used here.
+- The marker file means Bluetooth is only re-enabled if the script disabled it,
+  so a manual "Bluetooth off" is never overridden on wake.
+- Absolute paths are required, sleepwatcher runs hooks with a minimal
+  environment.
+- Arriving at the desk and connecting the dock fully wakes the Mac (display
+  hotplug), which fires =~/.wakeup= and restores Bluetooth. A bare power-only
+  plug-in with the lid still shut only dark-wakes, which fires the hook too.
+- Unplugging, or closing the lid on, an already-sleeping Mac fires no sleep
+  event. The wake hook is what covers these: Bluetooth stays on until the next
+  maintenance wake, at most ~15 minutes, and is then switched off.
+- Both hooks are idempotent, so running either one by hand is a safe way to test
+  the current decision:
+  #+begin_src bash
+    ~/.wakeup; blueutil -p
+  #+end_src
+
+** Diagnostics (reference only)
+
+#+begin_src bash
+  # both Battery + AC profiles (plain -g shows only the currently active source):
+  pmset -g custom
+
+  # wake history, bucket by hour and watch "Charge:N%" and "Using AC/BATT":
+  pmset -g log | grep -iE "DarkWake|^Wake "
+
+  # which processes scheduled wakes:
+  pmset -g log | grep "Wake Requests"
+#+end_src
+
+To capture the Bluetooth side, persist its info-level logs for one night, then
+inspect the window around the storm onset. Note ~/usr/bin/log~, since a bare
+~log~ collides with a fish builtin:
+#+begin_src bash
+  sudo log config --subsystem com.apple.bluetooth --mode "level:debug,persist:info"
+  # ... sleep on battery overnight with Bluetooth ON, then:
+  /usr/bin/log show --start '<onset-20min>' --end '<onset+20min>' \
+      --predicate 'subsystem == "com.apple.bluetooth"' --info --debug
+  # restore when done:
+  sudo log config --subsystem com.apple.bluetooth --mode "level:default,persist:default"
+#+end_src
+
+Beware: unified logs do not survive a reboot, so analyse the capture the same
+day.
