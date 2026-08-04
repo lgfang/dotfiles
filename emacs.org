@@ -3223,7 +3223,7 @@ Prerequisites:
     ;; OpenCode
     (agent-shell-opencode-default-model-id
      ;; choose model based on work/personal laptop
-     (if my/work-machine-p "grove-misc/fw-glm-5.2" "deepseek/deepseek-v4-pro"))
+     (if my/work-machine-p "grove-misc/fw-glm-5.2" "deepseek/deepseek-v4-flash"))
     )
 #+end_src
 
@@ -3305,10 +3305,10 @@ Prerequisites:
       (if my/work-machine-p
           (progn
             (setq-default gptel-backend grove)
-            (setq-default gptel-model 'gpt-5.5))
+            (setq-default gptel-model 'gpt-5.6-sol))
         (progn
           (setq-default gptel-backend deepseek)
-          (setq-default gptel-model 'deepseek-v4-pro)
+          (setq-default gptel-model 'deepseek-v4-flash)
           ))))
 #+end_src
 
