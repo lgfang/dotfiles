@@ -4,10 +4,197 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-30 +1000
+#+DATE: 2026-08-06 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
+
+* Table Of Contents                                                     :TOC:
+- [[#header][Header]]
+- [[#bootstrap][Bootstrap]]
+  - [[#use-package-settings][Use-package settings]]
+  - [[#initialize-package][Initialize "package"]]
+  - [[#paths-and-variables][Paths and variables]]
+  - [[#personal-information][Personal information]]
+- [[#start-up-screen-and-scratch-buffer][Start up screen and scratch buffer]]
+  - [[#splash-screen-file][Splash screen file]]
+- [[#language-environment-and-coding-system][Language environment and coding system]]
+- [[#environment-variables][Environment Variables]]
+- [[#emojis-and-format-characters-zero-width-joiners-variation-selectors][Emojis and Format Characters (Zero Width Joiners, Variation Selectors)]]
+- [[#interaction-convenience][Interaction convenience]]
+  - [[#mouse][Mouse]]
+  - [[#y-or-n][y-or-n]]
+  - [[#comment][Comment]]
+  - [[#copypaste][Copy/paste]]
+  - [[#hippie-expand][Hippie expand]]
+  - [[#ibuffer][Ibuffer]]
+  - [[#repeat-mode][Repeat mode]]
+  - [[#completion][Completion]]
+  - [[#embark][Embark]]
+  - [[#subword][Subword]]
+  - [[#sentence][Sentence]]
+- [[#shortcuts-to-files-and-links][Shortcuts to files and links]]
+  - [[#ffap][ffap]]
+  - [[#openwith-mode][Openwith mode]]
+  - [[#webjump][Webjump]]
+  - [[#custom-urls][Custom URLs]]
+- [[#sessions-and-histories][Sessions and histories]]
+- [[#server-daemon][Server (daemon)]]
+- [[#frame-and-window][Frame and window]]
+  - [[#popper][Popper]]
+- [[#fonts][Fonts]]
+- [[#color-themes][Color themes]]
+  - [[#wombat][Wombat]]
+  - [[#solarized-gruvbox][Solarized gruvbox]]
+  - [[#my-colour-theme-tweaks][My colour theme tweaks]]
+- [[#files-and-directories][Files and directories]]
+  - [[#auto-revert-buffer][Auto revert-buffer]]
+  - [[#backup-files][Backup files]]
+  - [[#dealing-with-huge-files][Dealing with huge files]]
+  - [[#update-timestamps-before-save][Update timestamps before save]]
+  - [[#directories][Directories]]
+  - [[#uniquify-buffer-names][Uniquify buffer names]]
+  - [[#buffer-file-path][Buffer file path]]
+- [[#basic-editing][Basic editing]]
+  - [[#fill][Fill]]
+  - [[#whitespace][Whitespace]]
+  - [[#yasnippet][Yasnippet]]
+  - [[#find-and-replace-in-multiple-files][Find and replace in multiple files]]
+  - [[#automatic-parenthesis-pairing][Automatic parenthesis pairing]]
+- [[#spelling-check-flyspell][Spelling check: flyspell]]
+- [[#visual-aids][Visual aids]]
+  - [[#block-cursor-as-wide-as-the-glyph-under-it][Block cursor as wide as the glyph under it]]
+  - [[#visual-bell][Visual Bell]]
+  - [[#long-lines][Long lines]]
+  - [[#display-column-number-in-the-mode-line][Display column number in the mode line]]
+  - [[#display-line-numbers][Display line numbers]]
+  - [[#clean-up-mode-line][Clean up mode line]]
+  - [[#highlight-whitespace][Highlight whitespace]]
+  - [[#show-fill-column-indicator][Show fill column indicator]]
+  - [[#highlight-indentation-levels][Highlight indentation levels]]
+  - [[#highlight-matching-parenthesis][Highlight matching parenthesis]]
+  - [[#highlight-current-line][Highlight current line]]
+  - [[#highlight-custom-keywords][Highlight custom keywords]]
+  - [[#focus-mode][Focus mode]]
+  - [[#minimap][Minimap]]
+- [[#mongodb-evergreen][MongoDB Evergreen]]
+- [[#finance-bookkeeping][Finance bookkeeping]]
+  - [[#beancount][Beancount]]
+  - [[#bookkeeping-snippets-for-beancount][Bookkeeping snippets (for beancount)]]
+  - [[#bookkeeping-functions-for-beancount][Bookkeeping functions (for beancount)]]
+- [[#encryption-and-credential-management][Encryption and credential management]]
+  - [[#encrypt-files-using-keys-gnupg][Encrypt files using keys: GnuPG]]
+  - [[#prompt-for-gpg-passphrases-in-the-minibuffer][Prompt for GPG passphrases in the minibuffer]]
+  - [[#store-credentials-auth-source][Store credentials: auth source]]
+  - [[#references][References]]
+- [[#social-and-media][Social and Media]]
+  - [[#rss---elfeed][RSS - elfeed]]
+- [[#kubernetes][Kubernetes]]
+- [[#org-mode][Org mode]]
+  - [[#org-contrib][Org-contrib]]
+  - [[#agenda][Agenda]]
+  - [[#babel][Babel]]
+  - [[#clock][Clock]]
+  - [[#scratch-buffer][Scratch buffer]]
+  - [[#ticket-or-review-comments][Ticket or review comments]]
+  - [[#getting-things-done-gtd][Getting Things Done (GTD)]]
+  - [[#links][Links]]
+  - [[#presentation][Presentation]]
+  - [[#structure-templates][Structure templates]]
+  - [[#table-of-contents-toc][Table of contents (TOC)]]
+  - [[#to-migrate][To migrate]]
+- [[#e-books][E-Books]]
+  - [[#pdf][PDF]]
+  - [[#epub][EPUB]]
+- [[#terminalshell][Terminal/shell]]
+  - [[#erase-keybindings][erase keybindings]]
+  - [[#vterm][vterm]]
+  - [[#eshell][eshell]]
+- [[#utilities][Utilities]]
+  - [[#ascii-values][ASCII values]]
+  - [[#calendar][Calendar]]
+  - [[#dictionary][Dictionary]]
+  - [[#diff][Diff]]
+  - [[#man-pages][Man pages]]
+  - [[#htmlize][Htmlize]]
+  - [[#speed-type][Speed type]]
+  - [[#spelling-alphabet][Spelling alphabet]]
+  - [[#weather][Weather]]
+  - [[#world-clock][World clock]]
+- [[#ide][IDE]]
+  - [[#treemacs][Treemacs]]
+  - [[#syntax-check-flymake][Syntax check: flymake]]
+  - [[#syntax-parser-tree-sitter][Syntax parser: tree-sitter]]
+  - [[#code-formatter][Code Formatter]]
+  - [[#which-function][Which function]]
+  - [[#breadcrumb][Breadcrumb]]
+  - [[#imenu][Imenu]]
+  - [[#project][Project]]
+  - [[#lsp-eglot][LSP: eglot]]
+  - [[#dap-dape][DAP: dape]]
+  - [[#xcscope][Xcscope]]
+- [[#text-foldinghiding][Text folding/hiding]]
+  - [[#hide-show][Hide show]]
+  - [[#selective-display][Selective display]]
+  - [[#narrowing][Narrowing]]
+- [[#aillm][AI/LLM]]
+  - [[#agent-shell][Agent Shell]]
+  - [[#gptel][gptel]]
+  - [[#copilot][Copilot]]
+- [[#version-control][Version Control]]
+  - [[#magit][magit]]
+  - [[#git-gutter][git-gutter]]
+  - [[#git-link][git-link]]
+  - [[#blamer][blamer]]
+  - [[#code-review][code review]]
+- [[#ansi-color-code][ANSI color code]]
+- [[#asm][ASM]]
+- [[#cc][C/C++]]
+  - [[#language-server][Language server]]
+  - [[#formatter][Formatter]]
+  - [[#hide-ifdefs][hide ifdefs]]
+  - [[#gdb][GDB]]
+- [[#csv][CSV]]
+- [[#emacs-lisp-elisp][Emacs lisp (elisp)]]
+- [[#golang][Golang]]
+- [[#java][Java]]
+  - [[#language-server-1][Language server]]
+- [[#javascript][JavaScript]]
+- [[#json-json-lines][JSON, JSON Lines]]
+  - [[#json-ts-mode][JSON ts mode]]
+  - [[#formatter-1][Formatter]]
+  - [[#structured-log-mode][Structured log mode]]
+  - [[#json-path-to-the-node-at-point][JSON path to the node at point]]
+- [[#ldap-schema-ldif][LDAP Schema (LDIF)]]
+- [[#markdown][Markdown]]
+  - [[#preview-using-online-tool-stackedit][Preview using online tool StackEdit]]
+  - [[#real-time-preview-using-grip-mode][Real time preview using grip-mode]]
+- [[#mermaid-chart][Mermaid chart]]
+- [[#perl][Perl]]
+- [[#php][PHP]]
+- [[#python][Python]]
+  - [[#tree-sitter-enhanced-major-mode][Tree-sitter enhanced major mode]]
+  - [[#formatter-2][Formatter]]
+  - [[#basic-syntax-check][Basic syntax check]]
+  - [[#poetry-virtual-environment][Poetry virtual environment]]
+  - [[#lsp][LSP]]
+- [[#rfc][RFC]]
+- [[#shells][Shells]]
+  - [[#bash][Bash]]
+  - [[#fish][Fish]]
+- [[#tcl--expect][Tcl & expect]]
+- [[#terraform][Terraform]]
+- [[#verilog][Verilog]]
+- [[#vimrc][Vimrc]]
+- [[#xml][XML]]
+  - [[#nxml][nXML]]
+  - [[#relax-ng-compact-rng--rnc][Relax-NG Compact (RNG & RNC)]]
+- [[#yaml][YAML]]
+  - [[#formatter-3][Formatter]]
+  - [[#tree-sitter-enhanced-major-mode-1][Tree-sitter enhanced major mode]]
+  - [[#yaml-pro][YAML pro]]
+  - [[#flymake][Flymake]]
+- [[#footer][Footer]]
 
 * Timestamp for tangling                                           :noexport:
 
@@ -2177,6 +2364,17 @@ I.e. type =<s= + =TAB= to insert =#+begin_src= etc.
     )
 #+end_src
 
+** Table of contents (TOC)
+
+The ~toc-org-mode~ minor mode ensure the first header with the tag ~:TOC:~ have
+an up-to-date table of contents.
+#+begin_src emacs-lisp
+  (use-package toc-org
+    :ensure t
+    :after org
+    :hook (org-mode))
+#+end_src
+
 ** To migrate
 
 TODO:
@@ -2187,7 +2385,9 @@ TODO:
  (load "~/.org" t nil nil)
 #+end_src
 
-* PDF
+* E-Books
+
+** PDF
 
 #+begin_src emacs-lisp
   (use-package pdf-tools
@@ -2197,14 +2397,14 @@ TODO:
     (pdf-tools-install))
 #+end_src
 
-* EPUB
+** EPUB
 #+begin_src emacs-lisp
   (use-package nov
     :mode ("\\.epub\\'" . nov-mode)
   )
 #+end_src
 
-** Garbled text in Chinese books
+*** Garbled text in Chinese books
 According to [[https://emacs-china.org/t/emacs-epub/4713][this post in emacs-china]], the root cause is that these files do not
 follow the standard, causing =nov= to handle UTF characters incorrectly.
 
@@ -2221,7 +2421,7 @@ The following workaround worked for me (at least for some books):
     (advice-add #'nov-content-unique-identifier :override #'my-nov-content-unique-identifier))
 #+end_src
 
-** COMMENT EPUB 3 ID not found
+*** COMMENT EPUB 3 ID not found
 Also from [[https://emacs-china.org/t/emacs-epub/4713][this post in emacs-china]], this is caused by epub2 books mistaken
 identify them as epub3 ones.
 
