@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-22 +1000
+#+DATE: 2026-08-08 +1000
 
 * COMMENT Bash
 ** bash_profile
@@ -1236,8 +1236,6 @@ end
 ** aliases
 
 #+begin_src fish :tangle ~/.config/fish/config.fish :mkdirp yes
-  # Start a terminal Emacs client (and an Emacs daemon if necessary).
-  alias et 'emacsclient -a "" -t'
   alias k kubectl
 #+end_src
 
@@ -1247,10 +1245,36 @@ end
 
 #+begin_src fish :tangle ~/.config/fish/functions/ep.fish :mkdirp yes
 function ep --description 'go to current directory of Emacs daemon'
-    cd (emacsclient -e '(expand-file-name
+    # cd to the working directory of the Emacs daemon's current buffer.
+    # Usage: ep [-s SESSION]
+    argparse "s/session"= -- $argv
+    or return
+    set -l args
+    if set -q _flag_session
+        set args -s "$_flag_session"
+    end
+    cd (emacsclient $args -e '(expand-file-name
         (with-current-buffer (window-buffer) default-directory))' | string trim -c '"')
 end
 #+end_src
+
+*** et
+
+#+begin_src fish :tangle ~/.config/fish/functions/et.fish :mkdirp yes
+  function et --wraps='emacsclient -a "" -t' --description 'emacsclient in terminal with optional named session'
+      # Connect to (or auto-start) an Emacs daemon and open FILEs in a terminal frame.
+      # Usage: et [-s SESSION] [FILE...]
+      argparse "s/session"= -- $argv
+      or return
+      set -l files $argv
+      if set -q _flag_session
+          emacsclient -t -s "$_flag_session" $files 2>/dev/null
+          or begin; emacs --daemon="$_flag_session"; and emacsclient -t -s "$_flag_session" $files; end
+      else
+          emacsclient -a "" -t $files
+      end
+  end
+  #+end_src
 
 *** git_clean_branches
 
