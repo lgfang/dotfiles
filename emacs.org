@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-08-06 +1000
+#+DATE: 2026-08-10 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3149,7 +3149,6 @@ Prerequisites:
 
 #+begin_src emacs-lisp
   (use-package agent-shell
-    :vc (:url "https://github.com/xenodium/agent-shell" :rev :newest)
     :preface
     (defvar my/agent-shell-dir-history nil
       "History of directories chosen by `my/agent-shell'.")
