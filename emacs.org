@@ -3183,7 +3183,13 @@ Prerequisites:
                              (agent-shell--get-available-models agent-shell--state))
                    #'string-greaterp))))
 
-    :bind (("C-c a" . my/agent-shell))
+    :bind (("C-c a" . my/agent-shell)
+           :map agent-shell-mode-map
+           ;; Use RET for newline, C-c RET to submit: not C-c C-c, because most AI
+           ;; agent CLI tools (opencode, claude, etc.) use C-c C-c to quit, so
+           ;; binding it here causes accidental quits due to muscle memory.
+           ("RET" . agent-shell-newline)
+           ("C-c RET" . shell-maker-submit))
 
     :custom
     ;; Use single-frame busy indicator so that it emits no extra terminal output
@@ -3232,7 +3238,10 @@ Prerequisites:
   (use-package gptel
     :defines gptel-mode-map
     :commands (gptel-make-gh-copilot gptel-make-deepseek gptel-make-openai auth-source-search)
-    :bind (("<f7>" . (lambda () (interactive) (switch-to-buffer (gptel "*gptel chat*")))))
+    :bind (("<f7>" . (lambda () (interactive) (switch-to-buffer (gptel "*gptel chat*"))))
+           :map gptel-mode-map
+           ;; C-c RET jumps to buffer end first, so all text is included in the prompt.
+           ("C-c RET" . (lambda () (interactive) (goto-char (point-max)) (gptel-send))))
 
     :hook ((gptel-mode . visual-line-mode)
            (gptel-post-stream . gptel-auto-scroll))
