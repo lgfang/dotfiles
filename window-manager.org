@@ -345,7 +345,22 @@ I prefer AeroSpace over Yabai for the following reasons:
   9 = ['move-node-to-workspace 9', 'mode main']
   n = ['move-node-to-workspace next', 'mode main']
   p = ['move-node-to-workspace prev', 'mode main']
+  o = 'mode move-others'
   w = 'mode warp'
+  esc = 'mode main'
+  ctrl-g = 'mode main'
+
+  [mode.move-others.binding]
+  0 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 0', 'mode main']
+  1 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 1', 'mode main']
+  2 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 2', 'mode main']
+  3 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 3', 'mode main']
+  4 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 4', 'mode main']
+  5 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 5', 'mode main']
+  6 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 6', 'mode main']
+  7 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 7', 'mode main']
+  8 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 8', 'mode main']
+  9 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 9', 'mode main']
   esc = 'mode main'
   ctrl-g = 'mode main'
 
@@ -466,6 +481,33 @@ I prefer AeroSpace over Yabai for the following reasons:
       # Restore focus to the original window
       aerospace focus --window-id $ID1
   fi
+#+end_src
+
+** Script to move all other windows to a workspace
+
+#+begin_src bash :tangle ~/.config/aerospace/aerospace-move-others.sh :shebang "#!/usr/bin/env bash"
+  # Move all windows in the current workspace EXCEPT the focused one to a
+  # target workspace. Usage: aerospace-move-others.sh <workspace>
+
+  export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+  set -euo pipefail
+
+  target_ws="${1:-}"
+  if [ -z "$target_ws" ]; then
+    echo "Usage: $(basename "$0") <workspace>" >&2
+    exit 2
+  fi
+
+  focused=$(aerospace list-windows --focused --format "%{window-id}")
+  current_ws=$(aerospace list-workspaces --focused)
+
+  # Move every window in the current workspace except the focused one.
+  while IFS= read -r wid; do
+    [ -z "$wid" ] && continue
+    if [ "$wid" != "$focused" ]; then
+      aerospace move-node-to-workspace --window-id "$wid" "$target_ws"
+    fi
+  done < <(aerospace list-windows --workspace "$current_ws" --format "%{window-id}")
 #+end_src
 
 ** Script to swap workspaces
