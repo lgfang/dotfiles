@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-08-10 +1000
+#+DATE: 2026-08-19 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -44,9 +44,8 @@
   - [[#popper][Popper]]
 - [[#fonts][Fonts]]
 - [[#color-themes][Color themes]]
-  - [[#wombat][Wombat]]
-  - [[#solarized-gruvbox][Solarized gruvbox]]
-  - [[#my-colour-theme-tweaks][My colour theme tweaks]]
+  - [[#themes][Themes]]
+  - [[#my-tweaks][My tweaks]]
 - [[#files-and-directories][Files and directories]]
   - [[#auto-revert-buffer][Auto revert-buffer]]
   - [[#backup-files][Backup files]]
@@ -1036,48 +1035,44 @@ different fonts are determined through trial and error. Note:
 
 * Color themes
 
-To fully utilize color themes in text-based Emacs, make sure your terminal is
-set up to support "true color". See the [[file:shell.org::*Term & color][Term & color]] section in my shell
+NOTE: To fully utilize color themes in text-based Emacs, make sure your terminal
+is set up to support "true color". See the [[file:shell.org::*Term & color][Term & color]] section in my shell
 configuration file for the details
 
-** Wombat
+** Themes
 
-My favorite Emacs built-in dark color theme. The contrast is a little bit too
-high though.
+I use a different theme on my workstation so the color scheme also serves as a
+visual cue for which environment I'm in.
 
-#+begin_src emacs-lisp
-  (use-package emacs
-    :if my/work-station-p
-    :demand t
-    :config
-    (load-theme 'wombat))
-#+end_src
+The themes I choose are low-contrast ones that are easy on the eyes.
 
-** Solarized gruvbox
-
-My favorite low-contrast color theme, though I dislike the background colors in
-the Magit diff buffers.
 #+begin_src emacs-lisp
   (use-package solarized-theme
     :if (not my/work-station-p)
     :demand t
     :config
     (load-theme 'solarized-gruvbox-dark t))
-#+end_src
 
-** COMMENT Doom tomorrow night
-
-#+begin_src emacs-lisp
   (use-package doom-themes
+    :if my/work-station-p
     :demand t
     :config
     (load-theme 'doom-tomorrow-night t))
 #+end_src
 
-** My colour theme tweaks
+** My tweaks
 
 This theme provides only my color tweaks. It is not intended for standalone use;
 enable it alongside another theme or themes.
+
+It does two things:
+
+- Removes the background and foreground highlighting from flymake warnings, so
+  that only the underline (and similar decorations) are used to indicate
+  warnings. The default colored backgrounds are too distracting for my taste.
+- Removes the background colors from Magit diff faces. Some themes (e.g.
+  solarized) set loud background colors on diff hunks that I find visually
+  noisy; clearing them lets the foreground colors carry the diff semantics.
 
 #+begin_src emacs-lisp
   (deftheme my/color-theme-tweaks
