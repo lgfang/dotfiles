@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-08-20 +1000
+#+DATE: 2026-08-21 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -60,7 +60,8 @@
   - [[#yasnippet][Yasnippet]]
   - [[#find-and-replace-in-multiple-files][Find and replace in multiple files]]
   - [[#automatic-parenthesis-pairing][Automatic parenthesis pairing]]
-- [[#spelling-check-flyspell][Spelling check: flyspell]]
+- [[#spelling-check][Spelling check]]
+  - [[#jinx][Jinx]]
 - [[#visual-aids][Visual aids]]
   - [[#block-cursor-as-wide-as-the-glyph-under-it][Block cursor as wide as the glyph under it]]
   - [[#visual-bell][Visual Bell]]
@@ -1400,7 +1401,12 @@ change ~electric-pair-inhibit-predicate~ instead.
                     (electric-pair-default-inhibit c)))))
 #+end_src
 
-* Spelling check: flyspell
+* Spelling check
+
+** COMMENT Flyspell
+
+This is a built-in package that I no longer use. I now use Jinx for its better
+user interface.
 
 #+begin_src emacs-lisp
   (use-package flyspell
@@ -1410,6 +1416,46 @@ change ~electric-pair-inhibit-predicate~ instead.
            (git-commit-setup . flyspell-mode)
            (org-mode . flyspell-prog-mode)
            ))
+#+end_src
+
+** Jinx
+
+Jinx is a 3rd party replacement of Flyspell. It comes pre-configured for the
+major modes used below (prog, text, org, ...), so enabling =global-jinx-mode= is
+sufficient.
+
+Jinx uses Enchant, which supports multiple backends (hunspell, aspell, etc.).
+While hunspell is generally recommended, on macOS aspell is often easier because
+hunspell does not ship dictionaries and there are no Homebrew packages for them.
+
+#+begin_src emacs-lisp
+  (use-package jinx
+    :hook (emacs-startup . global-jinx-mode)
+    :bind (("M-$" . jinx-correct)
+           ("C-M-$" . jinx-languages))
+    :custom
+    (jinx-languages "en_AU")
+    :config
+    ;; YAML files: spell-check comments only, not string values
+    (setf (alist-get 'yaml-mode jinx-exclude-faces) '(font-lock-string-face)
+          (alist-get 'yaml-ts-mode jinx-exclude-faces) '(font-lock-string-face))
+    ;; Chinese characters: Jinx uses Emacs syntax tables to identify words.
+    ;; Because CJK characters have word syntax by default, Jinx treats them as
+    ;; words and flags every character as misspelled. Since dictionary-based
+    ;; spell-checking is not applicable to individual CJK characters, classify
+    ;; them as non-word characters.
+    (let ((st jinx--syntax-table))
+      (modify-syntax-entry '(#x4E00 . #x9FFF) "_" st)   ; CJK Unified Ideographs
+      (modify-syntax-entry '(#x3400 . #x4DBF) "_" st)   ; CJK Extension A
+      (modify-syntax-entry '(#x20000 . #x2A6DF) "_" st) ; CJK Extension B
+      (modify-syntax-entry '(#x2A700 . #x2B73F) "_" st) ; CJK Extension C
+      (modify-syntax-entry '(#x2B740 . #x2B81F) "_" st) ; CJK Extension D
+      (modify-syntax-entry '(#x2B820 . #x2CEAF) "_" st) ; CJK Extension E
+      (modify-syntax-entry '(#x2CEB0 . #x2EBEF) "_" st) ; CJK Extension F
+      (modify-syntax-entry '(#x30000 . #x3134F) "_" st) ; CJK Extension G
+      (modify-syntax-entry '(#x31350 . #x323AF) "_" st) ; CJK Extension H
+      (modify-syntax-entry '(#x2EBF0 . #x2EE5F) "_" st) ; CJK Extension I
+      ))
 #+end_src
 
 * Visual aids
