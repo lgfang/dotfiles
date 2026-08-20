@@ -89,6 +89,7 @@
   - [[#rss---elfeed][RSS - elfeed]]
 - [[#kubernetes][Kubernetes]]
 - [[#org-mode][Org mode]]
+  - [[#core-settings][Core settings]]
   - [[#org-contrib][Org-contrib]]
   - [[#agenda][Agenda]]
   - [[#babel][Babel]]
@@ -1951,6 +1952,14 @@ The packages works with limited privileges. Frequently used hotkeys:
 - ? :: help (dispatch list)
 
 * Org mode
+
+** Core settings
+
+#+begin_src emacs-lisp
+  (use-package org
+    :custom
+    (org-startup-folded nil))
+#+end_src
 
 ** Org-contrib
 

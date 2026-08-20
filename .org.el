@@ -15,7 +15,6 @@
   )
 
 (setq org-hide-leading-stars nil
-      org-startup-folded t
       org-cycle-include-plain-lists t
       org-src-fontify-natively t
       org-reverse-note-order t
