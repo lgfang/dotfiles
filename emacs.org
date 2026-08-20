@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-08-19 +1000
+#+DATE: 2026-08-20 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -76,7 +76,6 @@
   - [[#highlight-custom-keywords][Highlight custom keywords]]
   - [[#focus-mode][Focus mode]]
   - [[#minimap][Minimap]]
-- [[#mongodb-evergreen][MongoDB Evergreen]]
 - [[#finance-bookkeeping][Finance bookkeeping]]
   - [[#beancount][Beancount]]
   - [[#bookkeeping-snippets-for-beancount][Bookkeeping snippets (for beancount)]]
@@ -166,6 +165,7 @@
   - [[#json-path-to-the-node-at-point][JSON path to the node at point]]
 - [[#ldap-schema-ldif][LDAP Schema (LDIF)]]
 - [[#markdown][Markdown]]
+  - [[#markdown-ts-mode][markdown-ts-mode]]
   - [[#preview-using-online-tool-stackedit][Preview using online tool StackEdit]]
   - [[#real-time-preview-using-grip-mode][Real time preview using grip-mode]]
 - [[#mermaid-chart][Mermaid chart]]
@@ -1253,7 +1253,7 @@ In the past, the suggestion was to limit code lines to 80 characters for optimal
 printing on A4 paper or for neat screen display.
 
 Nowadays, although larger monitors can comfortably display two buffers side by
-side, each with 100 characters, there are still times we work on the build-in
+side, each with 100 characters, there are still times we work on the built-in
 smaller screens. Hence, we keep the fill column to 80.
 
 #+begin_src emacs-lisp
@@ -3855,14 +3855,30 @@ alternative emerges.
 
 * Markdown
 
-Emacs 31+ comes with ~markdown-ts-mode~, use it instead of the 3rd party package
+The built-in ~markdown-ts-mode~ (Emacs 32+) supersedes the obsolete
 ~markdown-mode~.
+
+** markdown-ts-mode
 
 #+begin_src emacs-lisp
   (use-package markdown-ts-mode
     :mode "\\.md\\'" ; remove when all my Emacs are 32+, where the .md association is built-in
     :custom (markdown-ts-hide-markup t)
     :hook (markdown-ts-mode . visual-line-mode))
+#+end_src
+
+** COMMENT md-mode
+
+Alternatively, I am experimenting with ~md-mode~, which renders Markdown files
+differently.
+
+Enable only one of these configurations, since only one ~:mode~ association for
+Markdown files should be active.
+
+#+begin_src emacs-lisp
+  (use-package md-mode
+    :mode "\\.md\\'"
+    :hook (md-mode . visual-line-mode))
 #+end_src
 
 ** Preview using online tool StackEdit
