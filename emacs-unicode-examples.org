@@ -4,6 +4,8 @@ snippet outside the main Emacs configuration file.
 Move cursor around and press ~C-l~, see if the cursor and chars are still
 displayed correctly.
 
+* Sample text
+
 - 平安喜乐 :: Chinese characters
 - 😃 (\u01F603) :: Smiling Face with Open Mouth
 - 🏖 (\u1F3D6) :: Beach with Umbrella
@@ -26,3 +28,21 @@ displayed correctly.
   + The ZWJ indicates that 👩 and 💻 should combine into a single glyph (Woman
     Technologist). Therefore, these three characters render as one. However, if
     ~auto-composition-mode~ is disabled, all three characters appear separately.
+
+* Entering Unicode Characters and Emojis
+
+** By name or code point: ~C-x 8 RET~ (~insert-char~)
+
+Prompts for a character by Unicode name (e.g. "SMILING FACE WITH OPEN MOUTH")
+or hex code point (e.g. ~1F603~ or ~#x1F603~). Tab completion is available.
+
+#+begin_example
+  C-x 8 RET 1F603 RET      →  😃
+  C-x 8 RET SMILING RET    →  😃   (completes on name substring)
+#+end_example
+
+** Emoji picker: ~C-x 8 e~ (~emoji-insert~)
+
+Available in Emacs 29+. Opens a dedicated emoji selector with categories,
+recent emojis, and search. In terminal Emacs the picker may fall back to
+~insert-char~ if it cannot render the grid.
