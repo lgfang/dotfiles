@@ -3286,6 +3286,28 @@ Prerequisites:
     )
 #+end_src
 
+*** Agent Shell HQ
+
+An add-on to ~agent-shell~ that provides a peek interface for managing
+multiple ~agent-shell~ sessions, organised by project.
+
+#+begin_src emacs-lisp
+  (use-package persp-mode
+    ;; Install and turn on persp-mode for agent-shell-hq-toggle
+    :delight
+    :config
+    (persp-mode 1))
+
+  (use-package agent-shell-hq
+    :vc (:url "https://github.com/lgfang/agent-shell-hq"
+        :rev :newest)
+    :commands (agent-shell-hq-peek agent-shell-hq-label agent-shell-hq-toggle agent-shell-hq-toggle-jump-to-sidebar)
+    :bind (("C-c a p" . agent-shell-hq-peek)
+           ("C-c a s" . agent-shell-hq-toggle-jump-to-sidebar))
+    :custom
+    (agent-shell-hq-peek-position 'right))
+#+end_src
+
 ** gptel
 
 #+begin_src emacs-lisp
