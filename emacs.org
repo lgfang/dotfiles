@@ -3227,7 +3227,7 @@ Prerequisites:
                              (agent-shell--get-available-models agent-shell--state))
                    #'string-greaterp))))
 
-    :bind (("C-c a" . my/agent-shell)
+    :bind (("C-c a a" . my/agent-shell)
            :map agent-shell-mode-map
            ;; Use RET for newline, C-c RET to submit: not C-c C-c, because most AI
            ;; agent CLI tools (opencode, claude, etc.) use C-c C-c to quit, so
