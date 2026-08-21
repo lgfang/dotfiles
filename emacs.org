@@ -382,6 +382,7 @@ the terminal or as a GUI app.
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
     :if (and (eq system-type 'darwin) (display-graphic-p))
+    :demand t
     :config
     (dolist (var '("KUBECONFIG" "JIRA_API_TOKEN"))
       (add-to-list 'exec-path-from-shell-variables var))
