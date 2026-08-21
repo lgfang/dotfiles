@@ -113,7 +113,7 @@
 - [[#utilities][Utilities]]
   - [[#ascii-values][ASCII values]]
   - [[#calendar][Calendar]]
-  - [[#dictionary][Dictionary]]
+  - [[#dictionary--translation][Dictionary & translation]]
   - [[#diff][Diff]]
   - [[#man-pages][Man pages]]
   - [[#htmlize][Htmlize]]
@@ -983,7 +983,7 @@ to the current window layout.
        "work.gtd"
        "\\*Org Agenda\\*"
 
-       "\\*maple-translate\\*"
+       "\\*gt-result\\*"
 
        "\\*\\(Copilot Chat\\|aidermacs:\\).*\\*"
        "\\*\\(gptel chat\\|DeepSeek\\|.*GPT.*\\|LLM response\\)\\*" ; gptel
@@ -2707,23 +2707,19 @@ To create an additional eshell buffer, run =C-u M-x eshell=.
                                     '((holiday-lunar 1 15 "元宵节")))))
 #+end_src
 
-** Dictionary
+** Dictionary & translation
 
-This is intended for quick word lookup. I chose ~maple-translate~ because it is
-simple and self-contained, and is sufficient for this purpose. Its only downside
-is that it requires internet access.
-
-=scdv= was not chosen, even though it works with local dictionary files, because
-such dictionary files are now difficult to find.
+I need sentence/paragraph translation more than single word lookup.
 
 #+begin_src emacs-lisp
-  (use-package emacs-maple-translate
-    :vc (:url "https://github.com/honmaple/emacs-maple-translate" :rev :newest)
-    :commands (maple-translate maple-translate+)
-    :custom (maple-translate-engine 'youdao)
-    :bind (:map global-map
-                ("C-h D" . maple-translate)
-                ("C-h d" . maple-translate+)))
+  (use-package gt
+    :bind ("C-h d" . gt-translate)
+    :config
+    (setq gt-langs '(en zh-CN))
+    (setq gt-default-translator
+          (gt-translator
+           :engines (gt-google-engine)
+           :render (gt-buffer-render))))
 #+end_src
 
 ** Diff
