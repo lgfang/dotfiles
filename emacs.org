@@ -445,7 +445,7 @@ See [[file:emacs-unicode-examples.org][my unicode examples]] for more informatio
     )
 #+end_src
 
-*** Comment dwim
+*** Comment DWIM
 #+begin_src emacs-lisp
   (define-advice comment-dwim (:before (&rest _) my-comment-dwim)
     "Smartly comment/un-comment current line when no region is active."
@@ -717,11 +717,21 @@ their roles and usages:
     (corfu-terminal-mode +1))
 
   (use-package cape
+    :custom
+    (cape-dict-file (expand-file-name "~/.emacs.d/en_AU.words"))
     :init
     (add-to-list 'completion-at-point-functions #'cape-dabbrev)
     (add-to-list 'completion-at-point-functions #'cape-file)
     (add-to-list 'completion-at-point-functions #'cape-keyword)
     (add-to-list 'completion-at-point-functions #'cape-dict))
+#+end_src
+
+NOTE: =cape-dict= reads =cape-dict-file=, whose default
+=/usr/share/dict/words= is US English on macOS and may be absent on Ubuntu.
+Generate an =en_AU= word list from aspell to match Jinx's dictionary:
+
+#+begin_src sh :tangle no
+  aspell dump master en_AU | sort -u > ~/.emacs.d/en_AU.words
 #+end_src
 
 Other useful consult commands:
