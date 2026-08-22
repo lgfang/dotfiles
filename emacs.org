@@ -3237,6 +3237,9 @@ Prerequisites:
                              (agent-shell--get-available-models agent-shell--state))
                    #'string-greaterp))))
 
+    :hook (agent-shell-mode . (lambda ()
+                                (add-hook 'completion-at-point-functions
+                                          #'cape-dict nil t)))
     :bind (("C-c a a" . my/agent-shell)
            :map agent-shell-mode-map
            ;; Use RET for newline, C-c RET to submit: not C-c C-c, because most AI
