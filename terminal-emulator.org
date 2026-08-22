@@ -4,7 +4,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-08-13 +1000
+#+DATE: 2026-08-22 +1000
 
 * Timestamp                                                        :noexport:
 
@@ -169,8 +169,22 @@ background to "unspecified-bg" as shown below:
 
 *** Color theme
 
+The remote window uses a different scheme, keyed off the tmux window
+title prefix set by =set-titles-string= (see tmux.org).
+
 #+begin_src lua :tangle ~/.wezterm.lua
   config.color_scheme = 'GruvboxDark'
+
+  wezterm.on(
+      'update-right-status',
+      function(window, pane)
+          local title = pane:get_title()
+          if title and title:match('^ws:') then
+              window:set_config_overrides({ color_scheme = 'Solarized Dark - Patched' })
+          else
+              window:set_config_overrides({ color_scheme = 'GruvboxDark' })
+          end
+  end)
 #+end_src
 
 ** Bell
