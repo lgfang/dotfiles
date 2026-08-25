@@ -3763,10 +3763,11 @@ Then configure in Emacs:
 
 * CSV
 
-Aligning columns in CSV files (=csv-align-mode=) is usually the most intuitive
-presentation method. However, the added whitespace can sometimes extend lines
-far beyond the screen width. In such cases, consider highlighting the columns
-with different colors instead (=rainbow-csv-mode=).
+=csv-align-mode= pads columns with whitespace so fields line up vertically, easy
+to scan, but wide tables can exceed the window width. =rainbow-csv-mode=
+colourises each column instead, keeping lines short while still distinguishing
+fields visually. Both are enabled below; toggle =csv-align-mode= off if a table
+is too wide.
 
 #+begin_src emacs-lisp
   (use-package csv-mode
@@ -3776,7 +3777,7 @@ with different colors instead (=rainbow-csv-mode=).
 
 #+begin_src emacs-lisp
   (use-package rainbow-csv
-    :load-path (lambda() (concat my-downloads "rainbow-csv"))
+    :vc (:url "https://github.com/emacs-vs/rainbow-csv" :rev :newest)
     :delight
     :commands rainbow-csv-mode
     :hook ((csv-mode . rainbow-csv-mode)))
