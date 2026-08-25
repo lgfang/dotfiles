@@ -398,10 +398,10 @@ To prevent this issue, please disable ~auto-composition-mode~ as shown below.
 
 #+begin_src emacs-lisp
   (use-package emacs
-    :if (not (display-graphic-p))
+    :if (and (not (display-graphic-p))
+             (< emacs-major-version 32))
     :config
-    (setq-default auto-composition-mode nil)
-    )
+    (setq-default auto-composition-mode nil))
 #+end_src
 
 NOTE:
