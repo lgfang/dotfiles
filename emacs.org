@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-08-21 +1000
+#+DATE: 2026-08-25 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -26,7 +26,6 @@
   - [[#y-or-n][y-or-n]]
   - [[#comment][Comment]]
   - [[#copypaste][Copy/paste]]
-  - [[#hippie-expand][Hippie expand]]
   - [[#ibuffer][Ibuffer]]
   - [[#repeat-mode][Repeat mode]]
   - [[#completion][Completion]]
@@ -556,30 +555,6 @@ in Emacs and paste into any other applications.
     (call-process "tmux" nil t nil "show-buffer"))
 #+end_src
 
-** Hippie expand
-
-#+begin_src emacs-lisp
-  (use-package hippie-exp
-    ;; Use hippie-expand instead of dabbrev-expand,
-    :ensure nil                           ; Built-in
-    :bind (:map global-map ("M-/" . hippie-expand))
-    :custom
-    (hippie-expand-try-functions-list
-     '(try-expand-dabbrev                 ; Words from current buffer
-       try-expand-dabbrev-visible         ; Words from visible buffers
-       try-expand-dabbrev-all-buffers     ; Words from all buffers
-       try-expand-dabbrev-from-kill       ; Words from kill ring
-       try-complete-file-name-partially   ; Partial file name completion
-       try-complete-file-name             ; Full file name completion
-       try-expand-all-abbrevs             ; User-defined abbrevs
-       try-expand-list                    ; Expansion from `hippie-expand-list'
-       try-expand-line                    ; Complete entire lines
-       try-complete-lisp-symbol-partially ; Partial Lisp symbol
-       try-complete-lisp-symbol           ; Full Lisp symbol
-       ))
-    )
-#+end_src
-
 ** Ibuffer
 
 #+begin_src emacs-lisp
@@ -670,6 +645,10 @@ their roles and usages:
     lists of things to complete (like file paths, dictionary words, or text
     history) to be displayed by Corfu.
 
+Other useful consult commands:
+- =M-x consult-find= :: when you are certain that a file is within the current
+  directory or project, but unsure about its specific sub-directly.
+
 #+begin_src emacs-lisp
   (use-package vertico
     :defines vertico-map
@@ -717,26 +696,25 @@ their roles and usages:
     (corfu-terminal-mode +1))
 
   (use-package cape
+    :bind (:map global-map ("M-/" . completion-at-point))
     :custom
     (cape-dict-file (expand-file-name "~/.emacs.d/en_AU.words"))
-    :init
-    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-    (add-to-list 'completion-at-point-functions #'cape-file)
-    (add-to-list 'completion-at-point-functions #'cape-keyword)
-    (add-to-list 'completion-at-point-functions #'cape-dict))
+    (completion-at-point-functions
+     '(cape-dabbrev
+       cape-file
+       cape-keyword
+       cape-dict
+       pcomplete-completions-at-point)))
 #+end_src
 
-NOTE: =cape-dict= reads =cape-dict-file=, whose default
-=/usr/share/dict/words= is US English on macOS and may be absent on Ubuntu.
-Generate an =en_AU= word list from aspell to match Jinx's dictionary:
-
-#+begin_src sh :tangle no
-  aspell dump master en_AU | sort -u > ~/.emacs.d/en_AU.words
-#+end_src
-
-Other useful consult commands:
-- =M-x consult-find= :: when you are certain that a file is within the current
-  directory or project, but unsure about its specific sub-directly.
+- Order cape functions :: the first function that returns candidates
+  wins, so order them by priority in the list.
+- Prepare cape-dict dictionary :: =cape-dict= reads =cape-dict-file=, whose
+  default =/usr/share/dict/words= is US English on macOS and may be absent on
+  Ubuntu. Generate an =en_AU= word list from aspell to match Jinx's dictionary:
+  #+begin_src sh :tangle no
+    aspell dump master en_AU | sort -u > ~/.emacs.d/en_AU.words
+  #+end_src
 
 ** Embark
 
