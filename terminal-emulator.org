@@ -30,7 +30,7 @@ panes. That narrows the choice down to a few points that actually matter to me:
     maze of nested preference tabs and panes.
 - Custom hyperlink rules.
 
-** Config Initialization
+** Config Initialisation
 #+begin_src lua :tangle ~/.wezterm.lua
   local wezterm = require 'wezterm'
   local config = wezterm.config_builder()
@@ -169,7 +169,7 @@ background to "unspecified-bg" as shown below:
   (set-face-background 'default "unspecified-bg")
 #+end_src
 
-*** Color theme
+*** Colour theme
 
 The remote window uses a different scheme, keyed off the tmux window
 title prefix set by =set-titles-string= (see tmux.org).
@@ -187,6 +187,16 @@ title prefix set by =set-titles-string= (see tmux.org).
               window:set_config_overrides({ color_scheme = 'GruvboxDark' })
           end
   end)
+#+end_src
+
+** Cursor
+
+Make the cursor blink:
+#+begin_src lua :tangle ~/.wezterm.lua
+  config.default_cursor_style = 'BlinkingBlock'
+  config.cursor_blink_rate = 500
+  config.cursor_blink_ease_in = 'Constant'
+  config.cursor_blink_ease_out = 'Constant'
 #+end_src
 
 ** Bell
