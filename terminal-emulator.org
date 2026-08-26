@@ -4,7 +4,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-08-22 +1000
+#+DATE: 2026-08-26 +1000
 
 * Timestamp                                                        :noexport:
 
@@ -50,36 +50,40 @@ panes. That narrows the choice down to a few points that actually matter to me:
 
 **** Font
 
-I no longer use custom fonts, so neither block below is tangled. To use custom
-fonts, tangle them (remove ~:tangle no~) and tweak to taste. See [[https://github.com/ryanoasis/nerd-fonts/discussions/1103][this post]] for
-the differences between the 3 nerd font variants (nerd font, nerd font mono, and
-nerd font propo).
+See [[https://github.com/ryanoasis/nerd-fonts/discussions/1103][this post]] for the differences between the 3 nerd font variants (nerd font,
+nerd font mono, and nerd font propo).
 
-~config.font~ takes a single font object. The ~font_with_weight~ helper builds
-one, so the same family/fallback chain can be reused at different weights.
+Some popular fonts:
+- ~Liga SFMono Nerd Font~: ~brew install font-sf-mono-nerd-font-ligaturized~
+- ~FiraCode Nerd Font~: ~brew install font-fira-code-nerd-font~
+- ~JetBrains Mono~: builtin
+- ~Cascadia Code NF~ (with ~DemiLight~ weight): ~brew install font-cascadia-code-nf~
 
 On fallback fonts:
 - ~wezterm.font_with_fallback~ takes a list: the first entry is the main font,
   the rest are consulted in order for glyphs the main font lacks.
-- WezTerm ships built-in fallbacks, so setting them is optional. Normally it is
+- WezTerm ships builtin fallbacks, so setting them is optional. Normally it is
   done to deliberately mix fonts.
-- ~STKaiti~ is added to display Chinese characters (otherwise WezTerm uses the
-  system default). It must be placed *last* so ASCII/Latin glyphs do not fall
-  back to it, since a CJK font also covers punctuation and full-width Latin,
-  which is usually undesirable.
+- ~PingFang SC~ is the macOS default Chinese font, listed here as an example of
+  adding a CJK font to the fallback chain. A CJK font must always be placed
+  *last*: it also covers punctuation and full-width Latin, so an earlier
+  position would let ASCII/Latin glyphs fall back to it, which is usually
+  undesirable.
 - The other entries mirror WezTerm's own defaults, kept here as the place to
   edit for further overrides.
 
-#+begin_src lua :tangle ~/.wezterm.lua :tangle no
-  -- Liga SFMono Nerd Font: brew install --cask font-sf-mono-nerd-font-ligaturized
-  -- FiraCode Nerd Font: brew install --cask font-fira-code-nerd-font
-  local font_family = 'Liga SFMono Nerd Font'
+#+begin_src lua :tangle ~/.wezterm.lua
+  config.font_size = 16
+#+end_src
+
+#+begin_src lua :tangle ~/.wezterm.lua
+  local font_family = 'Cascadia Code NF'
 
   local fallback_fonts = {
       'JetBrains Mono',
       'Noto Color Emoji',
       'Symbols Nerd Font Mono',
-      'STKaiti',
+      'PingFang SC',
   }
 
   -- Helper function to create a font object with fallback
@@ -90,7 +94,7 @@ On fallback fonts:
       })
   end
 
-  config.font = font_with_weight('Regular')
+  config.font = font_with_weight('DemiLight')
 #+end_src
 
 Optionally set weights per intensity. An unavailable weight silently falls back
@@ -112,11 +116,9 @@ to the closest one.
   config.font_rules = font_rules
 #+end_src
 
-**** Size and ligatures
+**** Ligatures
 
 #+begin_src lua :tangle ~/.wezterm.lua
-  config.font_size = 16
-
   -- Ligature settings. The selected font must supports theses features. (Nerd
   -- Fonts does)
   config.harfbuzz_features = {
