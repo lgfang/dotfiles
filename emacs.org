@@ -697,6 +697,11 @@ Other useful consult commands:
 
   (use-package cape
     :bind (:map global-map ("M-/" . completion-at-point))
+    :hook (agent-shell-mode . (lambda ()
+                                (add-hook 'completion-at-point-functions
+                                          #'cape-dict nil t)
+                                (add-hook 'completion-at-point-functions
+                                          #'cape-dabbrev nil t)))
     :custom
     (cape-dict-file (expand-file-name "~/.emacs.d/en_AU.words"))
     (completion-at-point-functions
@@ -3216,9 +3221,6 @@ Prerequisites:
                              (agent-shell--get-available-models agent-shell--state))
                    #'string-greaterp))))
 
-    :hook (agent-shell-mode . (lambda ()
-                                (add-hook 'completion-at-point-functions
-                                          #'cape-dict nil t)))
     :bind (("C-c a a" . my/agent-shell)
            :map agent-shell-mode-map
            ;; Use RET for newline, C-c RET to submit: not C-c C-c, because most AI
