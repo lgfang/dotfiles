@@ -345,30 +345,25 @@ I prefer AeroSpace over Yabai for the following reasons:
   9 = ['move-node-to-workspace 9', 'mode main']
   n = ['move-node-to-workspace next', 'mode main']
   p = ['move-node-to-workspace prev', 'mode main']
-  o = 'mode move-others'
-  w = 'mode warp'
+  o = 'mode move-other-windows'
+  shift-h = ['join-with left', 'mode main']
+  shift-j = ['join-with down', 'mode main']
+  shift-k = ['join-with up', 'mode main']
+  shift-l = ['join-with right', 'mode main']
   esc = 'mode main'
   ctrl-g = 'mode main'
 
-  [mode.move-others.binding]
-  0 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 0', 'mode main']
-  1 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 1', 'mode main']
-  2 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 2', 'mode main']
-  3 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 3', 'mode main']
-  4 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 4', 'mode main']
-  5 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 5', 'mode main']
-  6 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 6', 'mode main']
-  7 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 7', 'mode main']
-  8 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 8', 'mode main']
-  9 = ['exec-and-forget ~/.config/aerospace/aerospace-move-others.sh 9', 'mode main']
-  esc = 'mode main'
-  ctrl-g = 'mode main'
-
-  [mode.warp.binding]
-  h = ['join-with left', 'mode main']
-  j = ['join-with down', 'mode main']
-  k = ['join-with up', 'mode main']
-  l = ['join-with right', 'mode main']
+  [mode.move-other-windows.binding]
+  0 = ['exec-and-forget ~/.config/aerospace/aerospace-move-other-windows.sh 0', 'mode main']
+  1 = ['exec-and-forget ~/.config/aerospace/aerospace-move-other-windows.sh 1', 'mode main']
+  2 = ['exec-and-forget ~/.config/aerospace/aerospace-move-other-windows.sh 2', 'mode main']
+  3 = ['exec-and-forget ~/.config/aerospace/aerospace-move-other-windows.sh 3', 'mode main']
+  4 = ['exec-and-forget ~/.config/aerospace/aerospace-move-other-windows.sh 4', 'mode main']
+  5 = ['exec-and-forget ~/.config/aerospace/aerospace-move-other-windows.sh 5', 'mode main']
+  6 = ['exec-and-forget ~/.config/aerospace/aerospace-move-other-windows.sh 6', 'mode main']
+  7 = ['exec-and-forget ~/.config/aerospace/aerospace-move-other-windows.sh 7', 'mode main']
+  8 = ['exec-and-forget ~/.config/aerospace/aerospace-move-other-windows.sh 8', 'mode main']
+  9 = ['exec-and-forget ~/.config/aerospace/aerospace-move-other-windows.sh 9', 'mode main']
   esc = 'mode main'
   ctrl-g = 'mode main'
 
@@ -437,6 +432,10 @@ I prefer AeroSpace over Yabai for the following reasons:
   j = ['exec-and-forget ~/.config/aerospace/aerospace-swap-workspaces.sh down']
   k = ['exec-and-forget ~/.config/aerospace/aerospace-swap-workspaces.sh up']
   l = ['exec-and-forget ~/.config/aerospace/aerospace-swap-workspaces.sh right']
+  shift-h = ['exec-and-forget ~/.config/aerospace/aerospace-move-workspace.sh left']
+  shift-j = ['exec-and-forget ~/.config/aerospace/aerospace-move-workspace.sh down']
+  shift-k = ['exec-and-forget ~/.config/aerospace/aerospace-move-workspace.sh up']
+  shift-l = ['exec-and-forget ~/.config/aerospace/aerospace-move-workspace.sh right']
   esc = 'mode main'
   ctrl-g = 'mode main'
 #+end_src
@@ -485,9 +484,9 @@ I prefer AeroSpace over Yabai for the following reasons:
 
 ** Script to move all other windows to a workspace
 
-#+begin_src bash :tangle ~/.config/aerospace/aerospace-move-others.sh :shebang "#!/usr/bin/env bash"
+#+begin_src bash :tangle ~/.config/aerospace/aerospace-move-other-windows.sh :shebang "#!/usr/bin/env bash"
   # Move all windows in the current workspace EXCEPT the focused one to a
-  # target workspace. Usage: aerospace-move-others.sh <workspace>
+  # target workspace. Usage: aerospace-move-other-windows.sh <workspace>
 
   export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
   set -euo pipefail
@@ -508,6 +507,42 @@ I prefer AeroSpace over Yabai for the following reasons:
       aerospace move-node-to-workspace --window-id "$wid" "$target_ws"
     fi
   done < <(aerospace list-windows --workspace "$current_ws" --format "%{window-id}")
+#+end_src
+
+** Script to move workspace to another monitor
+
+#+begin_src bash :tangle ~/.config/aerospace/aerospace-move-workspace.sh :shebang "#!/usr/bin/env bash"
+  # Move the focused workspace to the neighboring monitor in the given
+  # direction. Unlike swap-workspaces, the destination monitor's current
+  # workspace stays put (it just becomes invisible).
+  # Usage: aerospace-move-workspace.sh <left|right|up|down>
+
+  export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+  set -euo pipefail
+
+  direction="${1:-}"
+  case "$direction" in
+    left|right|up|down) ;;
+    ,*)
+      echo "Usage: $(basename "$0") <left|right|up|down>" >&2
+      exit 2
+      ;;
+  esac
+
+  src_mon=$(aerospace list-monitors --focused --format '%{monitor-id}')
+  src_ws=$(aerospace list-workspaces --focused)
+
+  aerospace move-workspace-to-monitor "$direction"
+
+  # If no monitor in that direction, the workspace stays put.
+  dst_mon=$(aerospace list-monitors --focused --format '%{monitor-id}')
+  if [[ "$dst_mon" == "$src_mon" ]]; then
+    echo "No monitor '$direction' of monitor $src_mon" >&2
+    exit 0
+  fi
+
+  # Follow the workspace to its new monitor.
+  aerospace workspace "$src_ws"
 #+end_src
 
 ** Script to swap workspaces
