@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-08-25 +1000
+#+DATE: 2026-08-30 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -98,6 +98,7 @@
   - [[#ticket-or-review-comments][Ticket or review comments]]
   - [[#getting-things-done-gtd][Getting Things Done (GTD)]]
   - [[#links][Links]]
+  - [[#latex-preview][LaTeX preview]]
   - [[#presentation][Presentation]]
   - [[#structure-templates][Structure templates]]
   - [[#table-of-contents-toc][Table of contents (TOC)]]
@@ -164,6 +165,7 @@
   - [[#formatter-1][Formatter]]
   - [[#structured-log-mode][Structured log mode]]
   - [[#json-path-to-the-node-at-point][JSON path to the node at point]]
+- [[#latex][LaTeX]]
 - [[#ldap-schema-ldif][LDAP Schema (LDIF)]]
 - [[#markdown][Markdown]]
   - [[#markdown-ts-mode][markdown-ts-mode]]
@@ -383,7 +385,7 @@ the terminal or as a GUI app.
     :if (and (eq system-type 'darwin) (display-graphic-p))
     :demand t
     :config
-    (dolist (var '("KUBECONFIG" "JIRA_API_TOKEN"))
+    (dolist (var '("KUBECONFIG" "JIRA_API_TOKEN" "LIBGS"))
       (add-to-list 'exec-path-from-shell-variables var))
     (exec-path-from-shell-initialize))
 #+end_src
@@ -2368,6 +2370,55 @@ either:
            )))
 #+end_src
 
+** LaTeX preview
+
+If using karthink's org-mode fork (see below):
+#+begin_src emacs-lisp
+  (use-package org-latex-preview
+    :if (locate-library "org-latex-preview")
+    :ensure nil
+    :after org
+    :config
+    (setq org-latex-preview-process-default 'dvisvgm)
+    (setq org-latex-preview-appearance-options
+          (plist-put org-latex-preview-appearance-options :zoom 1.2)))
+#+end_src
+
+Otherwise, using the built-in org-mode:
+#+begin_src emacs-lisp
+  (use-package org
+    :unless (locate-library "org-latex-preview")
+    :config
+    (setq org-preview-latex-default-process 'dvisvgm)
+    (setq org-format-latex-options
+          (plist-put org-format-latex-options :scale
+                     (/ (face-attribute 'default :height) 100.0))))
+#+end_src
+
+*** Optional: live preview with karthink's org-mode fork
+
+To get automatic live rendering of LaTeX fragments as you type, you can use
+[[https://github.com/karthink/org-mode][karthink's org-mode fork]] (branch ~olp~) which provides ~org-latex-preview-mode~.
+When the cursor enters a LaTeX fragment, the source code is shown for editing;
+when the cursor leaves, the rendered preview is restored automatically.
+
+The feature has been under review on the org-mode mailing list since 2023
+("[Pre-PATCH] Overhaul of the LaTeX preview system") but is not yet merged
+upstream. When it merges, remove the fork and revert to the built-in org.
+
+Install the fork:
+#+begin_src sh
+  git clone https://github.com/karthink/org-mode --branch olp ~/source/org-mode
+  cd ~/source/org-mode && make autoloads compile
+#+end_src
+
+Then create =~/.emacs.d/early-init.el= to load the fork instead of the
+built-in org:
+#+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el :tangle no
+  ;;; -*- lexical-binding:t; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+  (add-to-list 'load-path (expand-file-name "~/source/org-mode/lisp"))
+#+end_src
+
 ** Presentation
 
 *** org-tree-slide
@@ -3907,6 +3958,18 @@ This function is based on treesit (=json-ts-mode=)
     :hook ((json-ts-mode . lgf-json-path-set-up-eldoc))
     )
 #+end_src
+
+* LaTeX
+
+Firstly, ensure TeX tools are installed. On macOS, install ~mactex-no-gui~,
+which provides the full TeX Live distribution needed for preview rendering and
+PDF export, without the GUI applications bundled in the full ~mactex~ cask.
+#+begin_src sh
+  brew install --cask mactex-no-gui
+#+end_src
+
+Then, write LaTeX directly with the ~auctex~ package, or embed LaTeX snippets in
+org files and enable ~org-latex-preview-mode~ for live preview.
 
 * LDAP Schema (LDIF)
 

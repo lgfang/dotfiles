@@ -1,0 +1,78 @@
+# -*-mode:org; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+# Created: Fang Lungang 2026-08-28
+
+#+TITLE: Org Latex Preview Example file
+#+AUTHOR: Fang Lungang
+#+DATE: 2026-08-30 +1000
+#+LATEX_HEADER: \usepackage{tikz}
+
+* Why billiard balls always separate at a 90° angle
+
+A cue ball strikes a target ball of equal mass. Before the collision, the cue
+ball travels with velocity $\vec{v}_0$. After the collision, the cue ball
+deflects with velocity $\vec{v}_1$ and the target ball moves off with velocity
+$\vec{v}_2$. The angle $\theta$ between $\vec{v}_1$ and $\vec{v}_2$ is what we
+want to determine.
+
+\begin{tikzpicture}[thick]
+  \coordinate (O) at (0, 0);
+  \coordinate (T) at (3.61, 0);       % collision point
+  \coordinate (V1) at (6.11, 1.66);   % end of v1
+  \coordinate (V2) at (4.72, -1.66);  % end of v2
+
+  % cue ball incoming: v0
+  \draw[->] (O) -- (T) node[midway, below] {$\vec{v}_0$};
+
+  % after collision: v1 and v2 from collision point
+  \draw[->] (T) -- (V1) node[midway, above left] {$\vec{v}_1$};
+  \draw[->] (T) -- (V2) node[midway, below right] {$\vec{v}_2$};
+
+  % collision point
+  \fill (T) circle (0.05);
+
+  % angle theta between v1 and v2
+  \draw (4.03,0.28) arc[start angle=33.69, end angle=-56.31, radius=0.5] node[midway, right] {$\theta$};
+\end{tikzpicture}
+
+NOTE: the proof below assumes an *elastic collision* (kinetic energy is
+conserved) and *neglects friction*.
+
+1. Conservation of Momentum:
+
+   $$m\vec{v}_0 = m\vec{v}_1 + m\vec{v}_2$$
+
+   Since the masses $m$ are equal and non-zero, cancel $m$:
+
+   $$\vec{v}_0 = \vec{v}_1 + \vec{v}_2$$
+
+   This vector sum forms a closed triangle where $\vec{v}_0$ is the resultant
+   vector, and $\vec{v}_1$ and $\vec{v}_2$ are the legs.
+
+   \begin{tikzpicture}[thick,scale=1.5]
+     \coordinate (O) at (0, 0);
+     \coordinate (B) at (2.50, 1.66);    % vertex above v0
+     \coordinate (T) at (3.61, 0);       % right end of v0
+
+     % triangle sides
+     \draw[->] (O) -- (B) node[midway, below] {$\vec{v}_1$};
+     \draw[->] (B) -- (T) node[midway, right] {$\vec{v}_2$};
+     \draw[->] (O) -- (T) node[midway, below] {$\vec{v}_0$};
+
+     % angle theta at B (between v1 and v2)
+     \draw (2.08,1.38) arc[start angle=213.69, end angle=303.69, radius=0.5] node[midway, below] {$180^\circ - \theta$};
+   \end{tikzpicture}
+
+2. Conservation of Kinetic Energy:
+
+   $$\frac{1}{2}m\vert{}\vec{v}_0\vert{}^2 = \frac{1}{2}m\vert{}\vec{v}_1\vert{}^2 + \frac{1}{2}m\vert{}\vec{v}_2\vert{}^2$$
+
+   Cancel $\frac{1}{2}m$:
+
+   $$\vert{}\vec{v}_0\vert{}^2 = \vert{}\vec{v}_1\vert{}^2 + \vert{}\vec{v}_2\vert{}^2$$
+
+3. Application of the Converse of the Pythagorean Theorem:
+
+   By the Converse of the Pythagorean Theorem, a triangle whose sides satisfy
+   $c^2 = a^2 + b^2$ is a right triangle. Therefore, the angle between the
+   velocity vectors $\vec{v}_1$ and $\vec{v}_2$ after the collision is exactly
+   90 degrees, i.e. $\vec{v}_1 \perp \vec{v}_2$.
