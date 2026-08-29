@@ -1108,6 +1108,12 @@ EXEC 00;38;5;64
 
   set -gx COLORTERM truecolor
 
+  # dvisvgm (from MacTeX) can't find Ghostscript's libgs on Apple Silicon
+  # where Homebrew installs to /opt/homebrew/lib instead of /usr/local/lib.
+  if test -e /opt/homebrew/lib/libgs.dylib
+      set -gx LIBGS /opt/homebrew/lib/libgs.dylib
+  end
+
   # KUBECONFIG
   set -l kube_configs ~/.kube/config.*
   if test (count $kube_configs) -gt 0
