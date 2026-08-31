@@ -73,6 +73,7 @@
   - [[#highlight-indentation-levels][Highlight indentation levels]]
   - [[#highlight-matching-parenthesis][Highlight matching parenthesis]]
   - [[#highlight-current-line][Highlight current line]]
+  - [[#flash-cursor-on-windowbuffer-switch][Flash cursor on window/buffer switch]]
   - [[#highlight-custom-keywords][Highlight custom keywords]]
   - [[#focus-mode][Focus mode]]
   - [[#minimap][Minimap]]
@@ -1644,6 +1645,18 @@ NOTE: this package, along with similar ones such as beacon, only updates the
 *active* window. This means that if an action is performed in the current window
 that moves the cursor in another window, the visual indicator of the current
 line of the other window (inactive) will not be updated until you switch to it.
+
+** Flash cursor on window/buffer switch
+
+When switching windows or buffers, it is easy to lose track of where the
+cursor landed. ~beacon-mode~ briefly flashes a light ring at the cursor
+position, making the new location immediately obvious.
+
+#+begin_src emacs-lisp
+  (use-package beacon
+    :delight
+    :init (beacon-mode 1))
+#+end_src
 
 ** Highlight custom keywords
 #+begin_src emacs-lisp
