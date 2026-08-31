@@ -1426,6 +1426,7 @@ hunspell does not ship dictionaries and there are no Homebrew packages for them.
 
 #+begin_src emacs-lisp
   (use-package jinx
+    :delight
     :hook (emacs-startup . global-jinx-mode)
     :bind (("<f6>" . jinx-correct)
            ("M-$" . jinx-correct)
