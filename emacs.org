@@ -990,6 +990,7 @@ to the current window layout.
        "\\*Warnings\\*"
 
        "\\*Messages\\*"
+       "\\*Backtrace\\*"
        help-mode))
 
     :config
