@@ -686,8 +686,9 @@ Other useful consult commands:
                 ))
 
   (use-package corfu
+    :bind (:map global-map ("M-/" . completion-at-point))
     :custom
-    (corfu-auto t)
+    (corfu-auto nil)                      ; disable auto popup; use M-/ to invoke manually
     :init
     (global-corfu-mode))
 
@@ -698,7 +699,6 @@ Other useful consult commands:
     (corfu-terminal-mode +1))
 
   (use-package cape
-    :bind (:map global-map ("M-/" . completion-at-point))
     :hook (agent-shell-mode . (lambda ()
                                 (add-hook 'completion-at-point-functions
                                           #'cape-dict nil t)
