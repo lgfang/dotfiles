@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-08-30 +1000
+#+DATE: 2026-08-31 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -168,9 +168,8 @@
 - [[#latex][LaTeX]]
 - [[#ldap-schema-ldif][LDAP Schema (LDIF)]]
 - [[#markdown][Markdown]]
-  - [[#markdown-ts-mode][markdown-ts-mode]]
-  - [[#preview-using-online-tool-stackedit][Preview using online tool StackEdit]]
-  - [[#real-time-preview-using-grip-mode][Real time preview using grip-mode]]
+  - [[#major-modes][Major modes]]
+  - [[#preview][Preview]]
 - [[#mermaid-chart][Mermaid chart]]
 - [[#perl][Perl]]
 - [[#php][PHP]]
@@ -3984,33 +3983,42 @@ alternative emerges.
 
 * Markdown
 
+** Major modes
+
+*** markdown-ts-mode
+
 The built-in ~markdown-ts-mode~ (Emacs 32+) supersedes the obsolete
-~markdown-mode~.
+~markdown-mode~. Not currently in use (~:tangle no~).
 
-** markdown-ts-mode
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package markdown-ts-mode
     :mode "\\.md\\'" ; remove when all my Emacs are 32+, where the .md association is built-in
     :custom (markdown-ts-hide-markup t)
     :hook (markdown-ts-mode . visual-line-mode))
 #+end_src
 
-** COMMENT md-mode
+*** md-mode
 
-Alternatively, I am experimenting with ~md-mode~, which renders Markdown files
-differently.
-
-Enable only one of these configurations, since only one ~:mode~ association for
-Markdown files should be active.
+My preferred Markdown mode. Advantages over ~markdown-ts-mode~:
+- View mode with single-key navigation, ideal for reading (most of my Markdown
+  time is reading, not editing).
+- Correct wrapping of bullet lists in ~visual-line-mode~.
+- Rendering style that I prefer.
 
 #+begin_src emacs-lisp
   (use-package md-mode
+    :vc (:url "https://github.com/yibie/md-mode" :rev :newest)
     :mode "\\.md\\'"
-    :hook (md-mode . visual-line-mode))
+    :hook ((md-mode . visual-line-mode)
+           (md-mode . md-mode-render)))
 #+end_src
 
-** Preview using online tool StackEdit
+** Preview
+
+These are rarely needed: ~md-mode~'s view mode and ~markdown-ts-mode~'s
+~markdown-ts-hide-markup~ already render the content well enough for reading.
+
+*** StackEdit (online)
 
 1. Open https://stackedit.io/ with a web browser
 2. Click "START WRITING" bar at the top of the page
@@ -4019,7 +4027,7 @@ Markdown files should be active.
 NOTE: It can be used to preview org mode buffer as well: export the buffer to
 Github Flavoured Markdown first using ~M-x org-gfm-export-as-markdown~.
 
-** Real time preview using grip-mode
+*** grip-mode (real-time)
 
 #+begin_src emacs-lisp
   (use-package grip-mode
@@ -4031,12 +4039,12 @@ Github Flavoured Markdown first using ~M-x org-gfm-export-as-markdown~.
                            :user "your-user-name^grip")))
 #+end_src
 
-*** Privacy note
+**** Privacy note
 
 IMPORTANT: By default grip sends the Markdown to GitHub's rendering API so the output
 matches GitHub exactly. That means the file contents leave our machine.
 
-*** Prerequisites:
+**** Prerequisites:
   - Install the command line tool ~grip~ via ~pipx install grip~.
   - Store GitHub PAT in Emacs auth source, if you want to
     - Avoid GitHub markdown API rate limit
