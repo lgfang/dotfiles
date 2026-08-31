@@ -1013,21 +1013,23 @@ different fonts are determined through trial and error. Note:
 #+begin_src emacs-lisp
   (use-package emacs
     :if (display-graphic-p)
-    :config
-    (let ((preferred-font "FiraCode Nerd Font")
-          (fallback-font "JetBrainsMono Nerd Font Propo"))
-      (set-face-attribute 'default nil :font
-                          (concat (if (member preferred-font (font-family-list))
-                                      preferred-font fallback-font)
-                                  "-16:weight=normal")))
-    (let ((zh-font "SimSong"))
-      (if ;; Check the availability first to avoid error
-          (member zh-font (font-family-list))
-           (set-fontset-font t 'han zh-font)))
+    :custom
+    (face-font-rescale-alist '(("SimSong" . 1.25) ("PingFang SC" . 1.25)))
 
-    (setq face-font-rescale-alist '(("SimSong" . 1.25)
-                                    ("PingFang SC" . 1.25)
-                                    ))
+    :config
+    ;; font size: 160 = 16pt (1/10 pt units)
+    (set-face-attribute 'default nil :height 160 :weight 'normal)
+    ;; Default font: use the first available in the list
+    (let ((mono-font (seq-find (lambda (f) (member f (font-family-list)))
+                               '("FiraCode Nerd Font" "JetBrainsMono Nerd Font Propo"))))
+      (when mono-font (set-face-attribute 'default nil :family mono-font)))
+    ;; CJK font: use the first available in the list
+    (let ((zh-font (seq-find (lambda (f) (member f (font-family-list)))
+                              '("PingFang SC" "SimSong"))))
+      (when zh-font (set-fontset-font t 'han zh-font)))
+    ;; ;; Emoji font
+    ;; (when (member "Noto Color Emoji" (font-family-list))
+    ;;   (set-fontset-font t 'emoji "Noto Color Emoji" nil 'prepend))
     )
 #+end_src
 
