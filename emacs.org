@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-08-31 +1000
+#+DATE: 2026-09-04 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3259,24 +3259,26 @@ Prerequisites:
       "History of directories chosen by `my/agent-shell'.")
 
     (defun my/agent-shell (&optional arg)
-      "A wrapper of `agent-shell'. With prefix ARG (C-u), select the directory.
-  Offers the subdirectories of ~/source and the current directory, but
-  also allows entering any path with directory-name autocompletion."
+      "A wrapper of `agent-shell' and `agent-shell-new-shell'.
+  Without prefix, run `agent-shell'. With prefix ARG (C-u), select a
+  directory and run `agent-shell-new-shell' there. Offers the
+  sub-directories of ~/source and the current directory, but also allows
+  entering any path with directory-name autocompletion."
       (interactive "P")
-      (if arg
-          (let* ((dirs (mapcar #'abbreviate-file-name
-                               (cons default-directory
-                                     (when (file-directory-p "~/source/")
-                                       (directory-files "~/source/" t "\\`[^.]")))))
-                 (chosen-dir
-                  (completing-read
-                   "Select agent-shell directory: "
-                   (completion-table-merge dirs #'completion-file-name-table)
-                   #'file-directory-p
-                   nil nil 'my/agent-shell-dir-history))
-                 (default-directory (expand-file-name chosen-dir)))
-            (agent-shell))
-        (agent-shell)))
+      (if (not arg)
+          (agent-shell)
+        (let* ((dirs (mapcar #'abbreviate-file-name
+                             (cons default-directory
+                                   (when (file-directory-p "~/source/")
+                                     (directory-files "~/source/" t "\\`[^.]")))))
+               (chosen-dir
+                (completing-read
+                 "Select agent-shell directory: "
+                 (completion-table-merge dirs #'completion-file-name-table)
+                 #'file-directory-p
+                 nil nil 'my/agent-shell-dir-history))
+               (default-directory (expand-file-name chosen-dir)))
+          (agent-shell-new-shell))))
 
     (defun my/anthropic-model-id-from-name (name)
       "Return a function that resolves model NAME to the latest model ID."
@@ -3289,6 +3291,8 @@ Prerequisites:
                    #'string-greaterp))))
 
     :bind (("C-c a a" . my/agent-shell)
+           ("C-c a w" . agent-shell-new-worktree-shell)
+           ("C-c a r" . agent-shell-send-region-to)
            :map agent-shell-mode-map
            ;; Use RET for newline, C-c RET to submit: not C-c C-c, because most AI
            ;; agent CLI tools (opencode, claude, etc.) use C-c C-c to quit, so
