@@ -185,6 +185,11 @@ MCP; verify with =claude mcp list= after connecting. To limit the tool
 surface, connect to a subset URL (e.g. =/mcp/evg= for Evergreen only).
 
 #+begin_src json-ts :tangle no :noweb-ref claude-perm-mcp
+  "mcp__mdb-devprod__bb_get_bf",
+  "mcp__mdb-devprod__bb_search_bfgs",
+  "mcp__mdb-devprod__jira_get_issue",
+  "mcp__mdb-devprod__jira_get_issue_comments",
+  "mcp__mdb-devprod__jira_search_issues",
   "mcp__mdb-devprod__evg_debug_task",
   "mcp__mdb-devprod__evg_download_task_artifacts",
   "mcp__mdb-devprod__evg_get_inferred_project_ids",
@@ -202,6 +207,10 @@ surface, connect to a subset URL (e.g. =/mcp/evg= for Evergreen only).
   "mcp__mdb-devprod__evg_list_names",
   "mcp__mdb-devprod__evg_list_project_versions",
   "mcp__mdb-devprod__evg_list_user_recent_patches",
+#+end_src
+
+#+begin_src json-ts :tangle no :noweb-ref claude-ask
+  "mcp__mdb-devprod__jira_create_issue",
 #+end_src
 
 *** MongoDB: Glean
@@ -233,6 +242,7 @@ following MCP/connectors:
 #+begin_src json-ts :tangle no :noweb-ref claude-perm-mcp
   "mcp__claude_ai_Slack__slack_read_thread",
   "mcp__claude_ai_Slack__slack_search_public_and_private",
+  "mcp__claude_ai_Slack__slack_search_users",
 #+end_src
 
 ** Global permissions
@@ -336,6 +346,7 @@ this rule.
 
 #+begin_src json-ts :tangle no :noweb-ref claude-allow
   "Bash(gh search:*)",
+  "Bash(gh issue view:*)",
   "Bash(gh pr view:*)",
   "Bash(gh pr checks:*)",
   "Bash(gh pr diff:*)",
@@ -500,6 +511,12 @@ without prompting (confirmed in =codex-rs/config/src/mcp_types.rs=
 
 #+begin_src toml :tangle no :noweb-ref codex-tables
   [mcp_servers.mdb-devprod.tools]
+  bb_get_bf = { approval_mode = "approve" }
+  bb_search_bfgs = { approval_mode = "approve" }
+  jira_get_issue = { approval_mode = "approve" }
+  jira_get_issue_comments = { approval_mode = "approve" }
+  jira_search_issues = { approval_mode = "approve" }
+  jira_create_issue = { approval_mode = "prompt" }
   evg_debug_task = { approval_mode = "approve" }
   evg_download_task_artifacts = { approval_mode = "approve" }
   evg_get_inferred_project_ids = { approval_mode = "approve" }
@@ -780,6 +797,12 @@ The gateway prefixes Evergreen tools with =evg_=; verify exact names after
 connecting with =opencode mcp list=.
 
 #+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-mcp
+  "mdb-devprod_bb_get_bf": "allow",
+  "mdb-devprod_bb_search_bfgs": "allow",
+  "mdb-devprod_jira_get_issue": "allow",
+  "mdb-devprod_jira_get_issue_comments": "allow",
+  "mdb-devprod_jira_search_issues": "allow",
+  "mdb-devprod_jira_create_issue": "ask",
   "mdb-devprod_evg_debug_task": "allow",
   "mdb-devprod_evg_download_task_artifacts": "allow",
   "mdb-devprod_evg_get_inferred_project_ids": "allow",
@@ -882,6 +905,7 @@ and are accumulated in document order into the =bash= object.
   "head *": "allow",
   "tail *": "allow",
   "grep *": "allow",
+  "rg *": "allow",
   "find *": "allow",
   "ls *": "allow",
   "awk *": "allow",
@@ -900,6 +924,7 @@ and are accumulated in document order into the =bash= object.
 
 #+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
   "gh search *": "allow",
+  "gh issue view *": "allow",
   "gh pr list *": "allow",
   "gh pr view *": "allow",
   "gh pr checks *": "allow",
@@ -988,7 +1013,7 @@ unless overridden).
 
 #+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-skill
   "skill": {
-    "*": "ask"
+    "*": "allow"
   }
 #+end_src
 
