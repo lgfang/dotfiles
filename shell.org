@@ -1408,6 +1408,26 @@ end
   end
 #+end_src
 
+*** ws-stop / ws-start
+
+Convenience wrappers to stop/start my Evergreen workstation (spawn host
+=i-00a993ea98ed9536b=). =ws-start= waits until the host is running so it is
+ready to SSH into when the command returns; =ws-stop= returns immediately
+(the Friday-night uptime schedule acts as the safety net). Extra arguments,
+if any, are forwarded to the underlying evergreen command.
+
+#+begin_src fish :tangle ~/.config/fish/functions/ws-stop.fish :mkdirp yes
+  function ws-stop --description 'Stop my Evergreen workstation (returns immediately)'
+      evergreen host stop --host i-00a993ea98ed9536b $argv
+  end
+#+end_src
+
+#+begin_src fish :tangle ~/.config/fish/functions/ws-start.fish :mkdirp yes
+  function ws-start --description 'Start my Evergreen workstation and wait until ready'
+      evergreen host start --host i-00a993ea98ed9536b -w $argv
+  end
+#+end_src
+
 *** ec2s
 
 #+begin_src fish :tangle ~/.config/fish/functions/ec2s.fish :mkdirp yes
