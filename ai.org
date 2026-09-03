@@ -46,9 +46,9 @@
 
   ## Scratch / temp files
 
-  Write scratch and intermediate files under `/tmp/agent-scratch/` (create the
-  directory if needed), never directly in `/tmp`. Prefer the project working
-  directory for scratch files when practical.
+  Write scratch and intermediate files under `<repo_root>/agent-scratch/` (create
+  the directory if needed). Use `/tmp/agent-scratch/` only for data that may be
+  lost, since it is cleared on reboot.
 
   ## Headless hosts (no browser / GUI)
 
@@ -866,7 +866,7 @@ and are accumulated in document order into the =bash= object.
   "evergreen patch *": "ask",
 #+end_src
 
-*** Aws cli
+*** AWS CLI
 
 #+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
   "aws ec2 describe-instances *": "allow",
@@ -909,7 +909,7 @@ and are accumulated in document order into the =bash= object.
   "gh api repos/*/comments *": "allow",
 #+end_src
 
-*** Jira cli
+*** JIRA CLI
 
 #+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
   "jira issue list *": "allow",
@@ -950,7 +950,7 @@ and are accumulated in document order into the =bash= object.
 
 *** File read & edit
 
-No explicit =read= or =edit= rules needed: opencode defaults both to
+No explicit =read= or =edit= rules needed: OpenCode defaults both to
 ="allow"= for project-internal files (including =.env= denial by default).
 External paths are handled by =external_directory= (see [[*External
 directory]]).
@@ -976,8 +976,8 @@ unless overridden).
 *** Web
 
 =webfetch= and =websearch= only accept flat actions. Claude's per-domain
-=WebFetch(domain:...)= restrictions (github.com, jira.mongodb.org,
-claude.com) are lost --- all web fetches share one action.
+=WebFetch(domain:...)= restrictions (~github.com~, ~jira.mongodb.org~,
+~claude.com~) are lost --- all web fetches share one action.
 
 #+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-web
   "webfetch": "allow",
@@ -1007,7 +1007,7 @@ differs per tool.
    #+begin_src sh
      opencode mcp auth mdb-glean
    #+end_src
-2. Open the printed authorization URL in your local browser.
+2. Open the printed authorisation URL in your local browser.
 3. Complete authentication. The browser will redirect to the OAuth callback URL,
    usually =http://localhost:<port>/...=, and fail because the callback listener
    is running on the headless host.
