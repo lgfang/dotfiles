@@ -3,7 +3,7 @@
 
 #+TITLE: AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-08-14 +1000
+#+DATE: 2026-09-02 +1000
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 
@@ -28,6 +28,7 @@
   - [[#global-instructions-2][Global instructions]]
   - [[#config-file-skeleton---work-machine][Config file skeleton - work machine]]
   - [[#config-file-skeleton---personal-laptop][Config file skeleton - personal laptop]]
+  - [[#subagent-models][Subagent models]]
   - [[#mcp-servers-2][MCP servers]]
   - [[#global-permissions-2][Global permissions]]
 - [[#authenticate-an-mcp-server-on-a-headless-host][Authenticate an MCP server on a headless host]]
@@ -733,6 +734,15 @@ Grove. Search internal documents for up-to-date instructions.
 
 #+begin_src markdown-ts :tangle "~/.config/opencode/AGENTS.md" :noweb yes :mkdirp yes
   <<shared-instructions>>
+
+  ## Subagent model routing
+
+  Subagents cannot switch models per invocation; each runs on its configured
+  model. When dispatching subagents for the superpowers workflows
+  (`subagent-driven-development`, `dispatching-parallel-agents`) or any task
+  where the subagent does substantial implementation work, dispatch the
+  `implementer` subagent rather than `general` — it runs the capable model.
+  Reserve `general` for lightweight research and execution.
 #+end_src
 
 ** Config file skeleton - work machine
@@ -756,6 +766,7 @@ Grove. Search internal documents for up-to-date instructions.
       <<opencode-mcp-work>>
       <<opencode-mcp-shared>>
     },
+    <<opencode-subagents>>,
     <<opencode-permissions>>
   }
 #+end_src
@@ -771,6 +782,34 @@ Grove. Search internal documents for up-to-date instructions.
     },
     <<opencode-permissions>>
   }
+#+end_src
+
+** Subagent models
+
+Built-in subagents inherit the invoking primary agent's model unless
+overridden. The Task tool has no per-invocation model override, so heavyweight
+work is routed through a dedicated subagent instead: =implementer= (dispatched
+engineering work, e.g. the superpowers subagent-driven-development and
+dispatching-parallel-agents workflows) gets the most capable model, while
+=general= (lightweight research and execution), =scout=
+(external/dependency research) and =explore= (fast read-only codebase search)
+run cheaper ones. The primary agent is instructed (see Global instructions) to
+pick =implementer= over =general= whenever the subagent will do heavy lifting.
+=small_model= covers the hidden background agents (session titles, summaries,
+compaction). Work-machine only: these providers come from the Grove gateway.
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-subagents
+  "agent": {
+    "general": { "model": "grove-misc/fw-glm-5.3" },
+    "implementer": {
+      "description": "Heavyweight implementation agent for dispatched engineering work: executing plan tasks in the subagent-driven-development workflow, parallel fix dispatches, and any multi-step task involving real code changes. Use instead of general when the subagent will do heavy lifting.",
+      "mode": "subagent",
+      "model": "grove-openai/gpt-5.6-sol"
+    },
+    "scout": { "model": "grove-misc/fw-glm-5.3" },
+    "explore": { "model": "grove-misc/deepseek-v4-flash" }
+  },
+  "small_model": "grove-misc/deepseek-v4-flash"
 #+end_src
 
 ** MCP servers
