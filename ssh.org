@@ -3,12 +3,38 @@
 
 #+TITLE: My SSH Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-07-03 +1000
+#+DATE: 2026-09-05 +1000
 
 * .ssh/config
 :PROPERTIES:
 :header-args:conf: :tangle ~/.ssh/config
 :END:
+
+** Home LAN SSH servers
+
+#+begin_src conf
+  Host mine
+       # my personal laptop
+       HostName 192.168.0.1
+       User mylogin
+#+end_src
+
+To keep this config stable, I configure the DHCP server to assign a static IP
+address to each home-LAN device that provides SSH access.
+
+Dynamic DHCP addresses force config edits and re-acceptance of host keys
+whenever they change. Disabling host-key checking and pointing
+=UserKnownHostsFile= to =/dev/null= (see below) silences the warnings, but I do
+*not* recommend it: blindly accepting new fingerprints defeats man-in-the-middle
+protection - though at home that risk is arguably low, since attackers rarely
+target average home users. The block is a reference only and is *not* tangled
+into my actual config (=:tangle no=).
+
+#+begin_src conf :tangle no
+  Host 192.168.0.*
+       StrictHostKeyChecking no
+       UserKnownHostsFile /dev/null
+#+end_src
 
 ** Workstation
 
@@ -37,25 +63,6 @@ needed before this works:
 #+begin_src conf
   Host github.com
        IdentityFile ~/.ssh/lungang-laptop
-#+end_src
-
-** Hosts on the private network
-
-When a LAN relies on DHCP, hosts change IPs frequently and their host keys
-appear to "change" too. Disabling the host-key check and sending known-hosts to
-=/dev/null= would then avoid the constant warnings.
-
-Caveat: this is risky, because many people, including me, tend to blindly accept
-new fingerprints. That defeats man-in-the-middle protection, so I keep it as a
-reference example only - this block is *not* tangled into my actual config
-(=:tangle no=). I assign static IPs to my servers, so their host keys are
-stable; only mobile devices (phones, etc.) get DHCP addresses, and I don't SSH
-into those.
-
-#+begin_src conf :tangle no
-  Host 192.168.0.*
-       StrictHostKeyChecking no
-       UserKnownHostsFile /dev/null
 #+end_src
 
 ** Reaching an internal host through a bastion (ProxyJump)
@@ -100,8 +107,8 @@ it, use the commented =ProxyCommand= form instead.
 
 =ControlMaster= multiplexes several sessions over one TCP connection and one
 authentication. The first connection to a host becomes the "master"; later
-=ssh=/=scp=/=git= connections reuse it. This is most valuable exactly here, on
-the bastion/target path: every hop otherwise re-does the full TCP + key-exchange
+=ssh/scp/git= connections reuse it. This is most valuable exactly here, on the
+bastion/target path: every hop otherwise re-does the full TCP + key-exchange
 + auth handshake (and any bastion MFA), so reusing the master makes subsequent
 connections near-instant and prompt-free.
 
