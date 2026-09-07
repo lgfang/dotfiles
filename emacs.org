@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-04 +1000
+#+DATE: 2026-09-07 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -876,6 +876,9 @@ Sometimes it can be more convenient than the later.
     (desktop-save-mode -1)
     ;; Automatically close buffers inactive for a long time
     (midnight-mode t)
+    :custom
+    ;; Ask for confirmation before killing Emacs
+    (confirm-kill-emacs #'yes-or-no-p)
     )
 
   (use-package recentf                    ; built-in package
@@ -895,6 +898,11 @@ Sometimes it can be more convenient than the later.
 Note that, for =recentf= we add =file-remote-p= to the head of the
 =recentf-keep= list so that remote file names are kept without connecting to the
 remote server to check if these files do exist.
+
+As I typically run the same Emacs instance for days, an accidental =C-x C-c=
+would cost me the whole session (there is no desktop saving); setting
+=confirm-kill-emacs= to =yes-or-no-p= makes killing Emacs a deliberate act
+instead of an accident.
 
 * Server (daemon)
 
