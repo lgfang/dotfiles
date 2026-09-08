@@ -931,6 +931,7 @@ instead of an accident.
       ))
 
   (use-package emacs
+    :bind (:map global-map ("M-o" . other-window))
     :custom
     (split-width-threshold 200)
     ;; Make scrolling behave more like modern applications
@@ -944,29 +945,16 @@ instead of an accident.
     (winner-mode 1)
     ;; default key bindings: C-c <left>/<right>
     )
-
-  (use-package transpose-frame
-    ;; Do not bind any keys because the only command I use rather frequently is
-    ;; `rotate-frame-clockwise' and I run it via `ace-window' dispatcher (see my
-    ;; `ace-window' configuration)
-    )
-
-  (use-package ace-window
-    :defines aw-dispatch-alist
-    :bind (:map global-map ("M-o" . ace-window))
-    :custom (aw-dispatch-always t)   ; dispatch even only two windows or less
-    :config
-    (add-to-list 'aw-dispatch-alist '(?t rotate-frame-clockwise)))
 #+end_src
 
-With =ace-window= package, I feel no more need of =windmove=, =C-x 4 4= or
-=lgf-tiling=. Below are Some =ace-window= hotkeys I frequently use (run =M-o ?=
-to see more):
-- =M-o N= :: jump to window numbered ~N~.
-- =M-o m N= :: swap the current window with window ~N~.
-- =M-o x N= :: delete window ~N~.
-- =M-o u N= :: change the buffer of window ~N~.
-- =M-o t= :: run =rotate-frame-clockwise= (from =transpose-frame=).
+Since Emacs 31, built-in commands cover all my window-management needs, so
+=ace-window=, =windmove= and similar packages are no longer necessary for me.
+
+- =M-o= or the default =C-x o= :: jump to the other window (=other-window=)
+- =C-x w f= followed by <up>/<down>/<left>/<right> :: flip the windows
+- =C-x w t= :: transpose the window layout
+- =C-x w r <right>/<left>= :: rotate the whole layout clockwise/anticlockwise
+- =C-x w o <right>/<left>= :: rotate the windows in cyclic ordering
 
 ** Popper
 
