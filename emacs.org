@@ -2404,6 +2404,7 @@ If using karthink's org-mode fork (see below):
     :after org
     :config
     (setq org-latex-preview-process-default 'dvisvgm)
+    (setq org-latex-preview-cache "/tmp/ltximg/")
     (setq org-latex-preview-appearance-options
           (plist-put org-latex-preview-appearance-options :zoom 1.2)))
 #+end_src
@@ -2414,6 +2415,7 @@ Otherwise, using the built-in org-mode:
     :unless (locate-library "org-latex-preview")
     :config
     (setq org-preview-latex-default-process 'dvisvgm)
+    (setq org-preview-latex-image-directory "/tmp/ltximg/")
     (setq org-format-latex-options
           (plist-put org-format-latex-options :scale
                      (/ (face-attribute 'default :height) 100.0))))
