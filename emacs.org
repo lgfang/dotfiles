@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-07 +1000
+#+DATE: 2026-09-09 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1674,16 +1674,17 @@ position, making the new location immediately obvious.
 #+begin_src emacs-lisp
   (use-package font-lock
     :ensure nil                           ; Feature, not package
+    :preface
+    (defun my/highlight-keywords ()
+      ;; Keywords cover the semantic range: FIXME (broken), TODO (pending),
+      ;; NOTE (info), ASK (question for AI agents), lgfang (personal
+      ;; annotations).
+      (font-lock-add-keywords
+       nil
+       '(("\\<\\(lgfang\\|TODO\\|FIXME\\|NOTE\\|ASK\\)\\>"
+          . (0 font-lock-warning-face t)))))
     :hook
-    (font-lock-mode . (lambda ()
-                        ;; Exclude dired-mode to prevent custom keywords (e.g.,
-                        ;; 'lgfang' in the path) from incorrectly overriding the
-                        ;; standard 'dired-header' face.
-                        (unless (eq major-mode 'dired-mode)
-                          (font-lock-add-keywords
-                           nil
-                           '(("\\<\\(lgfang\\|TODO\\|FIXME\\|NOTE\\|IMPORTANT\\)"
-                              . (0 font-lock-warning-face t)))))))
+    (font-lock-mode . my/highlight-keywords)
     :config
     (font-lock-add-keywords
      'c-mode
