@@ -256,8 +256,7 @@ following commands to see the statistics:
     :ensure nil                           ; Built-in
     :config
     (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-    (package-initialize)
-  )
+    (package-initialize))
 #+end_src
 
 To manually upgrade install packages in batch,
@@ -3063,6 +3062,9 @@ restriction of having to start Emacs from that specific directory.
 ** Breadcrumb
 #+begin_src emacs-lisp
   (use-package breadcrumb
+    ;; Track upstream master: the stable ELPA release (1.0.1, Sep 2023) predates
+    ;; the fix for dead imenu markers in org buffers (github#22).
+    :vc (:url "https://github.com/joaotavora/breadcrumb" :rev :newest)
     :demand t
     :custom
     (breadcrumb-project-max-length 0.3)
