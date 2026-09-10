@@ -3640,30 +3640,26 @@ working on local, unpushed branches.
 #+begin_src emacs-lisp
   (use-package git-link
     :custom
-    (git-link-open-in-browser t)
+    (git-link-open-in-browser (not my/work-station-p))
     (git-link-default-branch "master")
     (git-link-use-commit nil))
 #+end_src
 
 *** Rationale and Usage
 
-This configuration provides flexibility for two common scenarios:
+This configuration serves two scenarios:
 
-- Linking to code when I am on a local, unpushed branch
+- Linking to code on a local, unpushed branch
 
-  + Problem :: When working on a local branch, the commit hash is not yet
-    visible to others. A permalink to that commit would be a broken link.
-  + Solution :: With the configuration above, running ~M-x git-link~ generates a
-    link to the file's latest version on the default branch (e.g., ~master~).
-    This provides a stable, shareable reference point. The link opens in your
-    browser, where I can manually select lines and create a permalink.
+  Because the commit is unavailable remotely, its permalink would be broken. Run
+  ~M-x git-link~ to link to the file on the default branch (~master~). The URL
+  is copied to the kill ring and, except on my workstation (assumed to have no
+  browser), opened so I can find the designated lines and create a permalink.
 
-- Linking to code when I am on a pushed commit
-  + Problem :: Since the commit is already on the remote, we can get a permalink
-    without directly.
-  + Solution :: Simply use double prefix argument, i.e. ~C-u C-u M-x git-link~.
-    This overrides the default settings and copies a full permalink (including
-    the commit hash) directly to my kill-ring, ready to be shared.
+- Linking to code on a pushed commit
+
+  Run ~C-u C-u M-x git-link~ to copy a permalink containing the commit hash to
+  the kill ring.
 
 ** blamer
 
