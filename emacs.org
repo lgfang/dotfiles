@@ -875,32 +875,37 @@ Sometimes it can be more convenient than the later.
     ;; Automatically close buffers inactive for a long time
     (midnight-mode t)
     :custom
-    ;; Ask for confirmation before killing Emacs
-    (confirm-kill-emacs #'yes-or-no-p)
-    )
+    ;; Ask for confirmation before killing Emacs. As I typically run the same
+    ;; Emacs instance for days, an accidental `C-x C-c' would cost me the whole
+    ;; session.
+    (confirm-kill-emacs #'yes-or-no-p))
+#+end_src
 
+#+begin_src emacs-lisp
   (use-package recentf                    ; built-in package
     :demand t
     :defines recentf-keep
     :custom
-    (recentf-max-saved-items 666)
-    (recentf-auto-cleanup 60)
+    (recentf-max-saved-items 66)
+    (recentf-auto-cleanup 'never)
     :config
     (recentf-mode 1)
     (add-to-list 'recentf-keep 'file-remote-p)
     :bind
-    (:map global-map ("<f1>" . recentf-open))
-    )
+    (:map global-map ("<f1>" . recentf-open)))
 #+end_src
 
 Note that, for =recentf= we add =file-remote-p= to the head of the
 =recentf-keep= list so that remote file names are kept without connecting to the
 remote server to check if these files do exist.
 
-As I typically run the same Emacs instance for days, an accidental =C-x C-c=
-would cost me the whole session (there is no desktop saving); setting
-=confirm-kill-emacs= to =yes-or-no-p= makes killing Emacs a deliberate act
-instead of an accident.
+Automatic cleanup is disabled: with =recentf-auto-cleanup= set to ='mode'= it
+would run while enabling =recentf-mode= at startup and slow startup down, and a
+periodic timer (a number) runs a full scan of the list that is rarely
+worthwhile. Obsolete entries are left to age out on their own: the list is kept
+in LRU order and truncated to =recentf-max-saved-items= each time it is saved,
+so dead files sink to the tail as new files are opened. When I cannot wait for
+that, =M-x recentf-cleanup= cleans the list by hand.
 
 * Server (daemon)
 
