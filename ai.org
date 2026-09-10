@@ -1,9 +1,9 @@
 # -*- mode:org; coding:utf-8; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
 # Created: Fang Lungang 2025-08-09 +1000
 
-#+TITLE: AI/LLM Configurations
+#+TITLE: My AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-02 +1000
+#+DATE: 2026-09-10 +1000
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 
@@ -341,6 +341,7 @@ this rule.
 #+begin_src json-ts :tangle no :noweb-ref claude-ask
   "Bash(git push:*)",
   "Bash(git amend:*)",
+  "Bash(git commit --amend:*)",
 #+end_src
 
 *** GitHub
@@ -661,6 +662,7 @@ order into the rules file.
   prefix_rule(pattern = ["git"], decision = "allow")
   prefix_rule(pattern = ["git", "push"], decision = "prompt")
   prefix_rule(pattern = ["git", "amend"], decision = "prompt")
+  prefix_rule(pattern = ["git", "commit", "--amend"], decision = "prompt")
 #+end_src
 
 *** GitHub
@@ -836,6 +838,7 @@ The gateway prefixes Evergreen tools with =evg_=; verify exact names after
 connecting with =opencode mcp list=.
 
 #+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-mcp
+  "mdb-devprod_*": "ask",
   "mdb-devprod_bb_get_bf": "allow",
   "mdb-devprod_bb_search_bfgs": "allow",
   "mdb-devprod_jira_get_issue": "allow",
@@ -878,6 +881,7 @@ On a headless host, see [[#headless-mcp-auth]] instead.
 
 **** Permissions
 #+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-mcp
+  "mdb-glean_*": "ask",
   "mdb-glean_search": "allow",
   "mdb-glean_read_document": "allow",
   "mdb-glean_chat": "allow",
@@ -909,10 +913,13 @@ On a headless host, see [[#headless-mcp-auth]] instead.
 Opencode's bash permission uses ="cmd *": "action"= glob patterns with *last
 match wins*. A leading ="*": "ask"= catch-all makes any unmatched command prompt
 instead of falling back to opencode's default =allow=; every rule below
-overrides it for the commands it matches. Rules are grouped by command/tool:
-within each group broad =allow= rules come before narrower =ask= overrides so
-the ask wins on overlap. All blocks share =:noweb-ref opencode-perm-bash=
-and are accumulated in document order into the =bash= object.
+overrides it for the commands it matches. All rule blocks, bash and MCP alike,
+follow one ordering principle: *broadest first, narrowest last*, so a narrower
+rule always overrides a broader one on overlap; within the same specificity
+tier =ask= entries come after =allow= entries so the ask wins. The bash rules
+are grouped by command/tool; all bash blocks share =:noweb-ref
+opencode-perm-bash= and are accumulated in document order into the =bash=
+object.
 
 *** MongoDB
 
@@ -957,6 +964,7 @@ and are accumulated in document order into the =bash= object.
   "git *": "allow",
   "git push *": "ask",
   "git amend *": "ask",
+  "git commit --amend *": "ask",
 #+end_src
 
 *** GitHub
