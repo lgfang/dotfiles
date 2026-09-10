@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-09 +1000
+#+DATE: 2026-09-10 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -127,7 +127,6 @@
   - [[#syntax-check-flymake][Syntax check: flymake]]
   - [[#syntax-parser-tree-sitter][Syntax parser: tree-sitter]]
   - [[#code-formatter][Code Formatter]]
-  - [[#which-function][Which function]]
   - [[#breadcrumb][Breadcrumb]]
   - [[#imenu][Imenu]]
   - [[#project][Project]]
@@ -1357,6 +1356,7 @@ listed in ~.gitignore~.
 
 #+begin_src emacs-lisp
   (use-package elec-pair
+    :demand t
     :config
     (electric-pair-mode 1)                ; enable the mode globally
     :custom
@@ -3053,7 +3053,7 @@ restriction of having to start Emacs from that specific directory.
     }
   #+end_src
 
-** Which function
+** COMMENT Which function
 #+begin_src emacs-lisp
   (use-package which-func
     :init (which-function-mode t)
@@ -3063,12 +3063,13 @@ restriction of having to start Emacs from that specific directory.
 ** Breadcrumb
 #+begin_src emacs-lisp
   (use-package breadcrumb
-    :commands breadcrumb-mode
+    :demand t
     :custom
     (breadcrumb-project-max-length 0.3)
-    (breadcrumb-imenu-max-length 0.9))
+    (breadcrumb-imenu-max-length 0.9)
+    :config
+    (breadcrumb-mode 1))                  ; enable the mode globally
 #+end_src
-- Note: consider replacing =which-function= with this.
 
 ** Imenu
 
