@@ -2011,7 +2011,8 @@ The packages works with limited privileges. Frequently used hotkeys:
 #+begin_src emacs-lisp
   (use-package org
     :custom
-    (org-startup-folded nil))
+    (org-startup-folded nil)
+    (org-imenu-depth 3))
 #+end_src
 
 ** Org-contrib
