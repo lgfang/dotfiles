@@ -3,7 +3,7 @@
 
 #+TITLE: My AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-10 +1000
+#+DATE: 2026-09-11 +1000
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 
@@ -720,17 +720,28 @@ Test with:
 
 ** Install
 
+*** Agent and ACP
+
+OpenCode CLI comes with an ACP, no need to install a standalone ACP for it.
 #+begin_src sh
   curl -fsSL https://opencode.ai/install | bash
 #+end_src
-OpenCode CLI comes with an ACP, no need to install a standalone ACP for it.
+
+*** Provider plugin
+
+The MongoDB Grove AI gateway plugin is needed to access the models provided via
+Grove.
 
 #+begin_src sh
   gh api repos/10gen/grove-gateway-opencode-plugin/contents/install.sh \
     -H "Accept: application/vnd.github.raw" | bash
 #+end_src
-The MongoDB Grove AI gateway plugin is needed to access the models provided via
-Grove. Search internal documents for up-to-date instructions.
+
+*** Connect to LLM providers
+
+We now connect to two LLM providers: Grove and Fireworks. Both providers
+authenticate OpenCode with an API key pasted into =/connect=; they differ only
+in where the key comes from.
 
 ** Global instructions
 
