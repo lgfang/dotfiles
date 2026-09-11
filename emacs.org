@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-10 +1000
+#+DATE: 2026-09-11 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3326,7 +3326,7 @@ Prerequisites:
      (cons 'preselect (if my/work-machine-p 'claude-code 'opencode)))
 
     ;; Anthropic
-    (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "Fable"))
+    (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "GLM 5.3 Flash"))
 
     ;; OpenAI
     (agent-shell-openai-codex-environment
@@ -3345,7 +3345,9 @@ Prerequisites:
     ;; OpenCode
     (agent-shell-opencode-default-model-id
      ;; choose model based on work/personal laptop
-     (if my/work-machine-p "grove-misc/fw-glm-5.2" "deepseek/deepseek-v4-flash"))
+     (if my/work-machine-p
+         "fireworks-ai/accounts/fireworks/models/glm-5p3-flash"
+       "deepseek/deepseek-flash"))
     )
 #+end_src
 
