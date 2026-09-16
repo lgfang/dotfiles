@@ -3441,6 +3441,22 @@ multiple ~agent-shell~ sessions, organised by project.
           ;;                 key
           ;;               (error "Failed to retrieve API key: [%s]" key))))))
 
+          (fireworks
+           ;; Fireworks' OpenAI-compatible API, accessed directly. The
+           ;; auth-source entry distinguishes laptop/workstation keys:
+           ;; machine fireconnect login laptop|workstation
+           ;;
+           ;; :models must be explicit: gptel-make-openai otherwise defaults
+           ;; to OpenAI's public catalog, which does not include
+           ;; account-scoped Fireworks models like the GLM ones.
+           (gptel-make-openai "Fireworks"
+             :stream t
+             :host "api.fireworks.ai"
+             :endpoint "/inference/v1/chat/completions"
+             :models '(accounts/fireworks/models/glm-5p3-flash)
+             :key (my/gptel-get-key "fireconnect"
+                                    (if my/work-machine-p "workstation" "laptop"))))
+
           (grove
            (gptel-make-openai "Grove"
              :stream nil
@@ -3453,8 +3469,8 @@ multiple ~agent-shell~ sessions, organised by project.
 
       (if my/work-machine-p
           (progn
-            (setq-default gptel-backend grove)
-            (setq-default gptel-model 'gpt-5.6-sol))
+            (setq-default gptel-backend fireworks)
+            (setq-default gptel-model 'accounts/fireworks/models/glm-5p3-flash))
         (progn
           (setq-default gptel-backend deepseek)
           (setq-default gptel-model 'deepseek-v4-flash)
