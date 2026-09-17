@@ -188,8 +188,18 @@ surface, connect to a subset URL (e.g. =/mcp/evg= for Evergreen only).
 #+begin_src json-ts :tangle no :noweb-ref claude-perm-mcp
   "mcp__mdb-devprod__bb_get_bf",
   "mcp__mdb-devprod__bb_search_bfgs",
+  "mcp__mdb-devprod__docs_get_page",
+  "mcp__mdb-devprod__docs_list_pages",
+  "mcp__mdb-devprod__docs_read_file",
+  "mcp__mdb-devprod__docs_search",
+  "mcp__mdb-devprod__git_log",
+  "mcp__mdb-devprod__git_search",
+  "mcp__mdb-devprod__git_show",
+  "mcp__mdb-devprod__jira_get_fields",
   "mcp__mdb-devprod__jira_get_issue",
   "mcp__mdb-devprod__jira_get_issue_comments",
+  "mcp__mdb-devprod__jira_get_issue_transitions",
+  "mcp__mdb-devprod__jira_list_projects",
   "mcp__mdb-devprod__jira_search_issues",
   "mcp__mdb-devprod__evg_debug_task",
   "mcp__mdb-devprod__evg_download_task_artifacts",
@@ -227,6 +237,8 @@ surface, connect to a subset URL (e.g. =/mcp/evg= for Evergreen only).
   "mcp__mdb-glean__search",
   "mcp__mdb-glean__read_document",
   "mcp__mdb-glean__chat",
+  "mcp__mdb-glean__Brave_Actions_web_search",
+  "mcp__mdb-glean__memory_schema",
 #+end_src
 
 *** Claude.ai connectors
@@ -241,9 +253,13 @@ following MCP/connectors:
 **** Permissions
 
 #+begin_src json-ts :tangle no :noweb-ref claude-perm-mcp
+  "mcp__claude_ai_Slack__slack_read_channel",
   "mcp__claude_ai_Slack__slack_read_thread",
+  "mcp__claude_ai_Slack__slack_search_public",
   "mcp__claude_ai_Slack__slack_search_public_and_private",
+  "mcp__claude_ai_Slack__slack_search_channels",
   "mcp__claude_ai_Slack__slack_search_users",
+  "mcp__claude_ai_Google_Drive__read_file_content",
 #+end_src
 
 ** Global permissions
@@ -536,8 +552,16 @@ without prompting (confirmed in =codex-rs/config/src/mcp_types.rs=
   [mcp_servers.mdb-devprod.tools]
   bb_get_bf = { approval_mode = "approve" }
   bb_search_bfgs = { approval_mode = "approve" }
+  docs_get_page = { approval_mode = "approve" }
+  docs_list_pages = { approval_mode = "approve" }
+  docs_read_file = { approval_mode = "approve" }
+  docs_search = { approval_mode = "approve" }
+  git_log = { approval_mode = "approve" }
+  git_search = { approval_mode = "approve" }
+  git_show = { approval_mode = "approve" }
   jira_get_issue = { approval_mode = "approve" }
   jira_get_issue_comments = { approval_mode = "approve" }
+  jira_get_issue_transitions = { approval_mode = "approve" }
   jira_search_issues = { approval_mode = "approve" }
   jira_create_issue = { approval_mode = "prompt" }
   evg_debug_task = { approval_mode = "approve" }
@@ -577,6 +601,7 @@ Remote (streamable HTTP) servers need the rmcp client, a top-level option:
   search = { approval_mode = "approve" }
   read_document = { approval_mode = "approve" }
   chat = { approval_mode = "approve" }
+  memory_schema = { approval_mode = "approve" }
 #+end_src
 
 =mdb-glean= requires OAuth. Authenticate with:
@@ -890,8 +915,18 @@ connecting with =opencode mcp list=.
   "mdb-devprod_*": "ask",
   "mdb-devprod_bb_get_bf": "allow",
   "mdb-devprod_bb_search_bfgs": "allow",
+  "mdb-devprod_docs_get_page": "allow",
+  "mdb-devprod_docs_list_pages": "allow",
+  "mdb-devprod_docs_read_file": "allow",
+  "mdb-devprod_docs_search": "allow",
+  "mdb-devprod_git_log": "allow",
+  "mdb-devprod_git_search": "allow",
+  "mdb-devprod_git_show": "allow",
+  "mdb-devprod_jira_get_fields": "allow",
   "mdb-devprod_jira_get_issue": "allow",
   "mdb-devprod_jira_get_issue_comments": "allow",
+  "mdb-devprod_jira_get_issue_transitions": "allow",
+  "mdb-devprod_jira_list_projects": "allow",
   "mdb-devprod_jira_search_issues": "allow",
   "mdb-devprod_jira_create_issue": "ask",
   "mdb-devprod_evg_debug_task": "allow",
@@ -934,6 +969,8 @@ On a headless host, see [[#headless-mcp-auth]] instead.
   "mdb-glean_search": "allow",
   "mdb-glean_read_document": "allow",
   "mdb-glean_chat": "allow",
+  "mdb-glean_Brave_Actions_web_search": "allow",
+  "mdb-glean_memory_schema": "allow",
 #+end_src
 
 *** Shared placeholder
