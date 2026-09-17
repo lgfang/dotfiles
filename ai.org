@@ -300,6 +300,27 @@ auto-approve arbitrary execution.
 NOTE: company rules defined in =~/.claude/remote-settings.json= may override
 this rule.
 
+*** kubectl
+
+#+begin_src json-ts :tangle no :noweb-ref claude-allow
+  "Bash(kubectl get:*)",
+  "Bash(kubectl logs:*)",
+  "Bash(kubectl describe:*)",
+  "Bash(kubectl top:*)",
+  "Bash(kubectl explain:*)",
+  "Bash(kubectl api-resources:*)",
+  "Bash(kubectl version:*)",
+  "Bash(kubectl events:*)",
+  "Bash(kubectl config view:*)",
+  "Bash(kubectl config current-context:*)",
+  "Bash(kubectl config get-contexts:*)",
+  "Bash(kubectl auth can-i:*)",
+#+end_src
+
+#+begin_src json-ts :tangle no :noweb-ref claude-ask
+  "Bash(kubectl config use-context:*)",
+#+end_src
+
 *** File read & edit
 
 **** Allow editing current project files
@@ -695,6 +716,24 @@ order into the rules file.
   prefix_rule(pattern = ["which"], decision = "allow")
 #+end_src
 
+*** kubectl
+
+#+begin_src starlark :tangle no :noweb-ref codex-rules
+  prefix_rule(pattern = ["kubectl", "get"], decision = "allow")
+  prefix_rule(pattern = ["kubectl", "logs"], decision = "allow")
+  prefix_rule(pattern = ["kubectl", "describe"], decision = "allow")
+  prefix_rule(pattern = ["kubectl", "top"], decision = "allow")
+  prefix_rule(pattern = ["kubectl", "explain"], decision = "allow")
+  prefix_rule(pattern = ["kubectl", "api-resources"], decision = "allow")
+  prefix_rule(pattern = ["kubectl", "version"], decision = "allow")
+  prefix_rule(pattern = ["kubectl", "events"], decision = "allow")
+  prefix_rule(pattern = ["kubectl", "config", "view"], decision = "allow")
+  prefix_rule(pattern = ["kubectl", "config", "current-context"], decision = "allow")
+  prefix_rule(pattern = ["kubectl", "config", "get-contexts"], decision = "allow")
+  prefix_rule(pattern = ["kubectl", "config", "use-context"], decision = "prompt")
+  prefix_rule(pattern = ["kubectl", "auth", "can-i"], decision = "allow")
+#+end_src
+
 *** Terraform
 
 #+begin_src starlark :tangle no :noweb-ref codex-rules
@@ -1000,6 +1039,24 @@ object.
   "jira issue create *": "ask",
   "jira issue edit *": "ask",
   "jira issue move *": "ask",
+#+end_src
+
+*** kubectl
+
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
+  "kubectl get *": "allow",
+  "kubectl logs *": "allow",
+  "kubectl describe *": "allow",
+  "kubectl top *": "allow",
+  "kubectl explain *": "allow",
+  "kubectl api-resources *": "allow",
+  "kubectl version *": "allow",
+  "kubectl events *": "allow",
+  "kubectl config view *": "allow",
+  "kubectl config current-context *": "allow",
+  "kubectl config get-contexts *": "allow",
+  "kubectl config use-context *": "ask",
+  "kubectl auth can-i *": "allow",
 #+end_src
 
 *** Operating System probe
