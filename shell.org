@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-08-08 +1000
+#+DATE: 2026-09-17 +1000
 
 * COMMENT Bash
 ** bash_profile
@@ -238,7 +238,10 @@ fi
   fi
 #+end_src
 
-*** Kubernetes
+*** COMMENT Kubernetes
+
+Uncomment and adjust this block if multiple config files are used.
+
 #+begin_src bash
   KUBECONFIG=~/.kube/config.prod:~/.kube/config.staging
   export KUBECONFIG
@@ -1114,11 +1117,8 @@ EXEC 00;38;5;64
       set -gx LIBGS /opt/homebrew/lib/libgs.dylib
   end
 
-  # KUBECONFIG
-  set -l kube_configs ~/.kube/config.*
-  if test (count $kube_configs) -gt 0
-      set -gx KUBECONFIG (string join : $kube_configs)
-  end
+  # KUBECONFIG is not set/exported: use the default ~/.kube/config. Export
+  # KUBECONFIG only when override is needed.
 
   # JIRA API TOKEN
   if test "$TERM" != dumb        # Don't load this TOKEN for Emacs Tramp etc.
