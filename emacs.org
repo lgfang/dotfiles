@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-11 +1000
+#+DATE: 2026-09-18 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2320,6 +2320,16 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
                           '(my/skip-unless-worked-on ,days)))))))))
         (org-agenda nil "r")))
 
+    (defun my/agenda-skip-scheduled-no-deadline ()
+      "Skip scheduled entries that have no deadline.
+
+     Scheduled tasks without a deadline are displayed in the `todo'
+     sections of the custom agenda commands instead.  Entries with a
+     deadline are kept. Appointments (plain timestamps)
+     are unaffected and display in the `agenda' section."
+      (unless (org-entry-get (point) "DEADLINE")
+        (org-agenda-skip-entry-if 'scheduled)))
+
     ;; Settings that depend on my-personal-path (evaluated at load time)
     (setq org-agenda-files
           (mapcar (lambda (x) (concat my-personal-path x))
@@ -2341,7 +2351,8 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
               (todo "PROG" ((org-agenda-todo-ignore-scheduled 'future)))
               (todo "TODO" ((org-agenda-todo-ignore-scheduled 'future)))
               (agenda "" ((org-agenda-span 2)
-                          (org-deadline-warning-days 7)))))
+                          (org-deadline-warning-days 7)
+                          (org-agenda-skip-function 'my/agenda-skip-scheduled-no-deadline)))))
             ("y" "TODO items @WORK@"
              ((todo "INBX"
                     ((org-agenda-files '(,(concat my-personal-path "work.gtd")))
@@ -2355,7 +2366,8 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
               (agenda ""
                       ((org-agenda-span 2)
                        (org-deadline-warning-days 7)
-                       (org-agenda-files '(,(concat my-personal-path "work.gtd")))))))
+                       (org-agenda-files '(,(concat my-personal-path "work.gtd")))
+                       (org-agenda-skip-function 'my/agenda-skip-scheduled-no-deadline)))))
             ("p" "PENDING items"
              ((todo "WAIT") (todo "HOLD") (todo "MAYB")))
             ("r" "Report worked on tasks"
