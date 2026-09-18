@@ -2288,23 +2288,42 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
 
     :config
     (defun my/skip-unless-worked-on (&optional days)
-      "Skip unless transitioned from PROG within DAYS (default 2)."
+      "Skip unless worked on within the last DAYS days (default 2).
+
+  An entry counts as worked on if it was closed within DAYS days, or
+  had a LOGBOOK state transition to or from PROG within DAYS days.
+  Entries currently in PROG are not handled here; the companion
+  `todo' PROG block of the report lists them regardless of when they
+  started."
       (let ((end (save-excursion (outline-next-heading) (point)))
             (case-fold-search nil)
             (cutoff (format-time-string
                      "%Y-%m-%d"
                      (time-subtract (current-time)
-                                    (days-to-time (or days 2))))))
+                                    (days-to-time (or days 2)))))
+            found)
         (save-excursion
-          (let ((found nil))
-            (while (re-search-forward
-                    "State \"\\(\\w+\\)\" +from \"PROG\" +\\[\\([0-9-]+\\)" end t)
-              (when (string> (match-string 2) cutoff)
-                (setq found t)))
-            (if found nil (point-at-eol))))))
+          (while (and (not found)
+                      (re-search-forward
+                       "^\\(?: *CLOSED: *\\| *- State \"\\(\\w+\\)\" +from \"\\(\\w+\\)\" +\\)\\[\\([0-9-]+\\)"
+                       end t))
+            (let ((date (match-string 3))
+                  (to (match-string 1))
+                  (from (match-string 2)))
+              (when (and (string> date cutoff)
+                         (or (null to)            ; a CLOSED line
+                             (equal to "PROG")    ; entered PROG
+                             (equal from "PROG"))) ; left PROG
+                (setq found t)))))
+        (if found nil (point-at-eol))))
 
     (defun my/report-worked-on-tasks (days)
-      "Show tasks worked on in the last DAYS days (default 2)."
+      "Show tasks worked on in the last DAYS days (default 2).
+
+  An entry is included if it is currently PROG, was closed within
+  DAYS days, or had a state transition to or from PROG within DAYS
+  days.  The first block lists entries still in PROG; the second
+  lists the closed/recently-transitioned ones."
       (interactive
        (list (cond ((null current-prefix-arg) 2)
                    ((integerp current-prefix-arg) current-prefix-arg)
@@ -2323,10 +2342,10 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
     (defun my/agenda-skip-scheduled-no-deadline ()
       "Skip scheduled entries that have no deadline.
 
-     Scheduled tasks without a deadline are displayed in the `todo'
-     sections of the custom agenda commands instead.  Entries with a
-     deadline are kept. Appointments (plain timestamps)
-     are unaffected and display in the `agenda' section."
+       Scheduled tasks without a deadline are displayed in the `todo'
+       sections of the custom agenda commands instead.  Entries with a
+       deadline are kept. Appointments (plain timestamps)
+       are unaffected and display in the `agenda' section."
       (unless (org-entry-get (point) "DEADLINE")
         (org-agenda-skip-entry-if 'scheduled)))
 
