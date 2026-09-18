@@ -386,13 +386,17 @@ this rule.
 *** GitHub
 
 #+begin_src json-ts :tangle no :noweb-ref claude-allow
+  "Bash(gh auth status)",
   "Bash(gh search:*)",
   "Bash(gh issue view:*)",
   "Bash(gh pr view:*)",
   "Bash(gh pr checks:*)",
   "Bash(gh pr diff:*)",
+  "Bash(gh pr checkout:*)",
   "Bash(gh api repos/*/files:*)",
   "Bash(gh api repos/*/comments:*)",
+  "Bash(gh api repos/*/issues/*/events:*)",
+  "Bash(gh api orgs/10gen/teams/*/members:*)",
   "WebFetch(domain:github.com)",
 #+end_src
 
@@ -724,11 +728,17 @@ order into the rules file.
 *** GitHub
 
 #+begin_src starlark :tangle no :noweb-ref codex-rules
+  prefix_rule(pattern = ["gh", "auth", "status"], decision = "allow")
   prefix_rule(pattern = ["gh", "search"], decision = "allow")
   prefix_rule(pattern = ["gh", "pr", "view"], decision = "allow")
   prefix_rule(pattern = ["gh", "pr", "checks"], decision = "allow")
   prefix_rule(pattern = ["gh", "pr", "diff"], decision = "allow")
+  prefix_rule(pattern = ["gh", "pr", "checkout"], decision = "allow")
   prefix_rule(pattern = ["gh", "pr", "create"], decision = "prompt")
+  prefix_rule(pattern = ["gh", "api", "orgs/10gen/teams/devprod-performance-infrastructure/members"], decision = "allow")
+  # Read-only endpoint (GET-only in GitHub's API), so safe to allow.
+  prefix_rule(pattern = ["gh", "api", "repos/10gen/signal-processing-service/issues/*/events"], decision = "allow")
+  prefix_rule(pattern = ["gh", "api", "repos/10gen/dsi/issues/*/events"], decision = "allow")
   # TODO: "gh api repos/*/files" and "gh api repos/*/comments" need
   # mid-pattern wildcards that prefix_rule does not support.
 #+end_src
@@ -1066,15 +1076,19 @@ object.
 *** GitHub
 
 #+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
+  "gh auth status": "allow",
   "gh search *": "allow",
   "gh issue view *": "allow",
   "gh pr list *": "allow",
   "gh pr view *": "allow",
   "gh pr checks *": "allow",
   "gh pr diff *": "allow",
+  "gh pr checkout *": "allow",
   "gh pr create *": "ask",
   "gh api repos/*/files *": "allow",
   "gh api repos/*/comments *": "allow",
+  "gh api orgs/10gen/teams/*/members *": "allow",
+  "gh api repos/*/issues/*/events *": "allow",
 #+end_src
 
 *** JIRA CLI
