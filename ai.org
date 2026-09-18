@@ -293,6 +293,8 @@ auto-approve arbitrary execution.
   "Bash(./run-dsi setup)",
   "Bash(.poetry/bin/poetry run pre-commit run:*)",
   "Bash(.poetry/bin/poetry run pytest:*)",
+  "Bash(uv run pytest:*)",
+  "Bash(.poetry/bin/poetry run ruff:*)",
 #+end_src
 
 #+begin_src json-ts :tangle no :noweb-ref claude-ask
@@ -658,6 +660,14 @@ order into the rules file.
   )
   prefix_rule(
       pattern = [".poetry/bin/poetry", "run", "pytest"],
+      decision = "allow",
+  )
+  prefix_rule(
+      pattern = ["uv", "run", "pytest"],
+      decision = "allow",
+  )
+  prefix_rule(
+      pattern = [".poetry/bin/poetry", "run", "ruff"],
       decision = "allow",
   )
 #+end_src
@@ -1109,6 +1119,8 @@ object.
   ".poetry/bin/poetry run *": "ask",
   ".poetry/bin/poetry run pre-commit run *": "allow",
   ".poetry/bin/poetry run pytest *": "allow",
+  "uv run pytest *": "allow",
+  ".poetry/bin/poetry run ruff *": "allow",
 #+end_src
 
 *** Terraform
