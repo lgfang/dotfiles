@@ -1167,7 +1167,8 @@ unless overridden).
 #+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-external
   "external_directory": {
     "*": "ask",
-    "/Users/lgfang/Downloads/**": "allow",
+    "$HOME/.config/opencode/**": "allow",
+    "$HOME/Downloads/**": "allow",
     "/tmp/agent-scratch/**": "allow",
     "/private/tmp/agent-scratch/**": "allow",
     "/tmp/jira-drafts/**": "allow",
