@@ -3488,7 +3488,7 @@ multiple ~agent-shell~ sessions, organised by project.
              :endpoint "/inference/v1/chat/completions"
              :models '(accounts/fireworks/routers/glm-flash-latest)
              :key (my/gptel-get-key "fireconnect"
-                                    (if my/work-machine-p "workstation" "laptop"))))
+                                    (if my/work-station-p "workstation" "laptop"))))
 
           (grove
            (gptel-make-openai "Grove"
