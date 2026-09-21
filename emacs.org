@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-18 +1000
+#+DATE: 2026-09-21 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3420,6 +3420,8 @@ multiple ~agent-shell~ sessions, organised by project.
 
     :custom
     (gptel-default-mode 'org-mode)
+    ;; Don't show the reasoning ("thinking") blocks some models may spit
+    (gptel-include-reasoning nil)
 
     :preface
     (defun my/gptel-get-key (host login)
