@@ -3357,7 +3357,7 @@ Prerequisites:
      (cons 'preselect (if my/work-machine-p 'claude-code 'opencode)))
 
     ;; Anthropic
-    (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "GLM 5.3 Flash"))
+    (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "glm.*flash.*latest"))
 
     ;; OpenAI
     (agent-shell-openai-codex-environment
@@ -3377,7 +3377,7 @@ Prerequisites:
     (agent-shell-opencode-default-model-id
      ;; choose model based on work/personal laptop
      (if my/work-machine-p
-         "fireworks-ai/accounts/fireworks/models/glm-5p3-flash"
+         "fireworks-ai/accounts/fireworks/routers/glm-flash-latest"
        "deepseek/deepseek-flash"))
     )
 #+end_src
@@ -3484,7 +3484,7 @@ multiple ~agent-shell~ sessions, organised by project.
              :stream t
              :host "api.fireworks.ai"
              :endpoint "/inference/v1/chat/completions"
-             :models '(accounts/fireworks/models/glm-5p3-flash)
+             :models '(accounts/fireworks/routers/glm-flash-latest)
              :key (my/gptel-get-key "fireconnect"
                                     (if my/work-machine-p "workstation" "laptop"))))
 
@@ -3501,7 +3501,7 @@ multiple ~agent-shell~ sessions, organised by project.
       (if my/work-machine-p
           (progn
             (setq-default gptel-backend fireworks)
-            (setq-default gptel-model 'accounts/fireworks/models/glm-5p3-flash))
+            (setq-default gptel-model 'accounts/fireworks/routers/glm-flash-latest))
         (progn
           (setq-default gptel-backend deepseek)
           (setq-default gptel-model 'deepseek-v4-flash)
