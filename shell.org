@@ -3,7 +3,7 @@
 
 #+TITLE: My Shell Related Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-17 +1000
+#+DATE: 2026-09-22 +1000
 
 * COMMENT Bash
 ** bash_profile
@@ -1101,6 +1101,12 @@ EXEC 00;38;5;64
 ** config.fish
 
 #+begin_src fish :tangle ~/.config/fish/config.fish :mkdirp yes
+  # On macOS, Pyright (run by Emacs eglot) can easily exceed the default value in
+  # non-trivial Python projects.
+  if test (ulimit -n) -lt 65536
+      ulimit -n 65536
+  end
+
   if status is-interactive
       and not set -q TMUX
       and test "$TERM" != dumb
