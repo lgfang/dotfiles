@@ -1319,6 +1319,23 @@ corresponding sections.
          (buffer-string)))`
 #+end_src
 
+*** TODO/ASK notes
+
+Snippets for annotating files with notes for AI agents.
+
+NOTE: these are defined in elisp instead of as snippet files in
+=~/.emacs.d/snippets/text-mode/= on purpose: org-babel tangling always ends the
+tangled file with a newline, and, so file-based snippets would insert an
+unwanted trailing newline on every expansion. =yas-define-snippets= gives exact
+control over the template string.
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'yasnippet
+    (yas-define-snippets 'text-mode
+      '(("todo" "[TODO: $1]" "TODO note")
+        ("ask"  "[ASK: $1]"  "ASK note"))))
+#+end_src
+
 ** Find and replace in multiple files
 
 *** rg
