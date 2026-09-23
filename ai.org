@@ -192,6 +192,7 @@ surface, connect to a subset URL (e.g. =/mcp/evg= for Evergreen only).
   "mcp__mdb-devprod__docs_list_pages",
   "mcp__mdb-devprod__docs_read_file",
   "mcp__mdb-devprod__docs_search",
+  "mcp__mdb-devprod__git_blame",
   "mcp__mdb-devprod__git_log",
   "mcp__mdb-devprod__git_search",
   "mcp__mdb-devprod__git_show",
@@ -562,6 +563,7 @@ without prompting (confirmed in =codex-rs/config/src/mcp_types.rs=
   docs_list_pages = { approval_mode = "approve" }
   docs_read_file = { approval_mode = "approve" }
   docs_search = { approval_mode = "approve" }
+  git_blame = { approval_mode = "approve" }
   git_log = { approval_mode = "approve" }
   git_search = { approval_mode = "approve" }
   git_show = { approval_mode = "approve" }
@@ -939,6 +941,7 @@ connecting with =opencode mcp list=.
   "mdb-devprod_docs_list_pages": "allow",
   "mdb-devprod_docs_read_file": "allow",
   "mdb-devprod_docs_search": "allow",
+  "mdb-devprod_git_blame": "allow",
   "mdb-devprod_git_log": "allow",
   "mdb-devprod_git_search": "allow",
   "mdb-devprod_git_show": "allow",
