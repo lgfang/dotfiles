@@ -66,9 +66,9 @@ An entity reference (`&lambda;`) names a character; a numeric character referenc
 
 |     Construct | CommonMark | GFM |
 |--------------:|:----------:|:---:|
-|        Tables |     ✗      |  ✓  |
-|    Task lists |     ✗      |  ✓  |
-| Strikethrough |     ✗      |  ✓  |
+| Tables        |  ✗         |   ✓ |
+| Task lists    |  ✗         |   ✓ |
+| Strikethrough |  ✗         |   ✓ |
 
 Column alignment is optional, controlled by colons in the delimiter row: `:---` left, `:---:` centre, `---:` right. A column without colons defaults to left alignment.
 
