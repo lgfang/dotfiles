@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-22 +1000
+#+DATE: 2026-09-24 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -4102,9 +4102,9 @@ alternative emerges.
 *** markdown-ts-mode
 
 The built-in ~markdown-ts-mode~ (Emacs 32+) supersedes the obsolete
-~markdown-mode~. Not currently in use (~:tangle no~).
+~markdown-mode~. It is now the default major mode for =.md= files.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package markdown-ts-mode
     :mode "\\.md\\'" ; remove when all my Emacs are 32+, where the .md association is built-in
     :custom (markdown-ts-hide-markup t)
@@ -4113,16 +4113,19 @@ The built-in ~markdown-ts-mode~ (Emacs 32+) supersedes the obsolete
 
 *** md-mode
 
-My preferred Markdown mode. Advantages over ~markdown-ts-mode~:
-- View mode with single-key navigation, ideal for reading (most of my Markdown
-  time is reading, not editing).
-- Correct wrapping of bullet lists in ~visual-line-mode~.
-- Rendering style that I prefer.
+I find ~markdown-ts-mode~'s colours normally look more comfortable. But
+~md-mode~ can be useful in some cases:
+- View mode enables single-key navigation, ideal for reading (most of my
+  Markdown time is reading, not editing).
+- Correct wrapping of bullet lists and table cells.
+- LaTeX math equation rendering.
 
+Therefore, install this package but do not set it as the default major mode for
+Markdown.
 #+begin_src emacs-lisp
   (use-package md-mode
     :vc (:url "https://github.com/yibie/md-mode" :rev :newest)
-    :mode "\\.md\\'"
+    ;; :mode "\\.md\\'"
     :hook ((md-mode . visual-line-mode)
            (md-mode . md-mode-render)))
 #+end_src
