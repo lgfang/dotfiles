@@ -2102,6 +2102,7 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
                                           "~/.dotfiles/terminal-emulator.org"
                                           "~/.dotfiles/karabiner.org"
                                           "~/.dotfiles/ai.org"
+                                          "~/.dotfiles/vim.org"
                                           )))
     (defun lgf-tangle-configs ()
       (add-hook 'after-save-hook
