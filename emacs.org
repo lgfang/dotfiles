@@ -1933,21 +1933,14 @@ NOTE:
        ("https://emacs-china.org/latest.rss" zh emacs)
 
        ;; Tech
-       ("https://hnrss.org/frontpage" en tech news hn)
+       ("https://hnrss.org/frontpage" en tech hn)
 
-       ;; Chinese & World News
-       ("https://plink.anyfeeder.com/newscn/whxw" zh news xinhua)
-       ("https://plink.anyfeeder.com/zaobao/realtime/china" zh news zaobao)
-       ("https://plink.anyfeeder.com/zaobao/realtime/world" zh news zaobao)
-
+       ;; Chinese news
+       ("http://feeds.sbs.com.au/sbs-mandarin" zh news sbs)
        ;; Australia News
-       ("https://www.abc.net.au/news/feed/51120/rss.xml" en news abc)
        ("https://www.theguardian.com/australia-news/rss" en news guardian)
-       ("https://www.sbs.com.au/news/feed" en news sbs)
-       ("https://www.smh.com.au/rss/feed.xml" en news smh)
-       ("https://theconversation.com/au/articles.atom" en conversation)
-       ("https://www.news.com.au/national/rss" en news newscorp))
-     ))
+       ("https://www.abc.net.au/news/feed/51120/rss.xml" en news abc)))
+    )
 #+end_src
 
 ** COMMENT IRC
