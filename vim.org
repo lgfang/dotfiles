@@ -1,0 +1,90 @@
+# -*-mode:org; time-stamp-pattern:"8/#\\+DATE:[ \t]+%Y-%02m-%02d %5z$" -*-
+# Created: Fang Lungang 2026-09-24
+#+export_exclude_tags: noexport
+
+#+TITLE: My Vim Configurations
+#+AUTHOR: Fang Lungang
+#+DATE: 2026-09-25 +1000
+#+DESCRIPTION: My Vim configurations
+#+KEYWORDS: Vim
+#+PROPERTY: header-args:vimrc :tangle ~/.vimrc
+
+I normally use Emacs; Vim is only as a fallback or for quick edits, so this file
+stays small and basic.
+
+* Core configurations
+
+#+begin_src vimrc
+  set nocompatible                " disable vi emulation mode; this turns on Vim-only features
+  set mouse=a                     " enable mouse
+  set ffs=unix,dos,mac            " file format detection order
+  set clipboard+=unnamed          " use OS clipboard
+
+  " make Backspace work "normally": can delete past the start of insert, over
+  " autoindent, and over line break
+  set backspace=start,eol,indent
+
+  " make the cursor keys (left/right arrow keys and h/l) work "normally": can move
+  " cross line edges
+  set whichwrap+=<,>,h,l
+
+  " enhanced command-line completion menu (candidates shown in a bar above the
+  " status line).
+  set wildmenu
+  " first Tab lists all matches and completes the longest common prefix; second
+  " Tab cycles through them in full.
+  set wildmode=list:longest,full
+
+  " on quit with unsaved changes, ask Save/Discard/Cancel instead of erroring
+  set confirm
+
+  filetype plugin on              " detect file type AND load ftplugin files
+#+end_src
+
+* Search
+#+begin_src vimrc
+  set ignorecase                  " search case-insensitively
+  set smartcase
+  set hlsearch                    " highlight searched-for phrases
+  set incsearch                   " BUT do highlight as you type you search phrase
+#+end_src
+
+* Text Formatting
+
+#+begin_src vimrc
+  set autoindent       " new lines inherit the previous line's indent
+  set tabstop=4        " a Tab displays as 4 columns.
+  set shiftwidth=4     " indent added by >>, <<, and autoindent is 4 columns.
+  set expandtab        " the Tab key inserts spaces, Ctrl-V<Tab> inserts a literal tab
+  set softtabstop=4    " Tab/Backspace in insert mode act on 4-column steps
+#+end_src
+
+* Visual Cues
+
+#+begin_src vimrc
+  syntax on
+
+  set laststatus=2                " always show the status line
+
+  " keep at least N lines of context visible above/below the cursor
+  set scrolloff=5
+
+  " how invisible characters are rendered while :set list is active:
+  " tab -> "| " (2 cols), trailing spaces -> ".", text cut off at right/left
+  " edge -> ">/<", end of line -> "$". extends/precedes have no default, so
+  " they must be listed here; tab/eol would default to ^I/$ anyway.
+  set listchars=tab:\|\ ,trail:.,extends:>,precedes:<,eol:$
+#+end_src
+
+* Commands reference
+
+- Auto-completion :: =C-n= / =C-p= in insert mode
+- Format :: select text in visual mode, then ="="
+- Open file at point :: =gf=
+- paste :: =set paste= inserts text literally — it disables auto-indent,
+  =indentexpr=, and smart-bracket features, so pasted text is not re-indented or mangled
+- Window operations :: =:split= split window, =C-w C-w= switch window, =:close=
+  close current window
+- Buffer operations :: =:ls= list buffers, =:b n= switch to buffer n, =:bn=
+  switch to next buffer, =:sb n= split and open buffer n
+- Command line options: =vim +linum filename= go to line upon file open, =vim -d file1 file2 [file3]= diff files
