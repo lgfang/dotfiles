@@ -1237,12 +1237,13 @@ If two buffers are both named "buffer_name", they will be renamed to
   (use-package emacs
     :config
     (defun my/current-file-path ()
-      "Copy current path/to/file_name to the kill ring."
+      "Copy current file path to the kill ring.
+If the buffer is not visiting a file, copy its default directory instead."
       (interactive)
-      (let ((string (buffer-file-name)))
-        (if string ;; Ensure there's a file name to copy
-            (progn (message "Current file: %s" string) (kill-new string))
-          (error "Current buffer is not associated with a file"))))
+      (let ((string (or (buffer-file-name)
+                        (expand-file-name default-directory))))
+        (message "Current file: %s" string)
+        (kill-new string)))
     )
 #+end_src
 
