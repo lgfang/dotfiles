@@ -1177,7 +1177,8 @@ Below are two examples:
 #+begin_src emacs-lisp
   (use-package dired
     :ensure nil                           ; Built-in
-    :hook (dired-mode . dired-hide-details-mode))
+    :hook (dired-mode . dired-hide-details-mode)
+    :bind (:map dired-mode-map ("`" . dired-hide-details-mode)))
 #+end_src
 
 #+begin_src emacs-lisp
