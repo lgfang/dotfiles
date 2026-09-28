@@ -3359,11 +3359,6 @@ Prerequisites:
            ("C-c RET" . shell-maker-submit))
 
     :custom
-    ;; Use single-frame busy indicator so that it emits no extra terminal output
-    ;; while thinking. Under tmux this means the window is flagged as active only
-    ;; when real output appears, not the moment the agent starts thinking.
-    (agent-shell-busy-indicator-frames '("⏳Thinking..."))
-
     (agent-shell-session-strategy 'prompt)
 
     ;; Blocking sleep on macOS only. Do that on headless workstations makes no
@@ -3398,6 +3393,14 @@ Prerequisites:
      (if my/work-machine-p
          "fireworks-ai/accounts/fireworks/routers/glm-flash-latest"
        "deepseek/deepseek-flash"))
+
+    :config
+    (setq
+     ;; Static busy indicators: under tmux the window is flagged active only
+     ;; on real outputs.
+     agent-shell-busy-indicator-frames '("⏳Thinking...") ; header/mode-line
+     agent-shell-chat-busy-frames ["◔"]) ; precedes the ❯ prompt; plain defvar, so :custom won't work
+
     )
 #+end_src
 
