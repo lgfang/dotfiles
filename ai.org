@@ -14,6 +14,7 @@
   - [[#install][Install]]
   - [[#global-instructions][Global instructions]]
   - [[#config-file-skeleton][Config file skeleton]]
+  - [[#sub-agents][Sub-agents]]
   - [[#mcp-servers][MCP servers]]
   - [[#global-permissions][Global permissions]]
 - [[#codex][Codex]]
@@ -28,7 +29,7 @@
   - [[#global-instructions-2][Global instructions]]
   - [[#config-file-skeleton---work-machine][Config file skeleton - work machine]]
   - [[#config-file-skeleton---personal-laptop][Config file skeleton - personal laptop]]
-  - [[#sub-agents][Sub-agents]]
+  - [[#sub-agents-1][Sub-agents]]
   - [[#mcp-servers-2][MCP servers]]
   - [[#global-permissions-2][Global permissions]]
 - [[#authenticate-an-mcp-server-on-a-headless-host][Authenticate an MCP server on a headless host]]
@@ -157,8 +158,22 @@ Claude configuration files:
   {
     "includeCoAuthoredBy": false,
     "cleanupPeriodDays": 180,
+    <<claude-env>>,
     <<claude-permissions>>,
     <<claude-sandbox>>
+  }
+#+end_src
+
+** Sub-agents
+
+agent-shell runs Claude via ACP (=claude-agent-acp=), which may hang on
+background sub-agents due to permission requests. Running all sub-agents in the
+foreground (=CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=, parallel fan-out still
+works) avoids it. Note that this also disables background Bash commands.
+
+#+begin_src json-ts :tangle no :noweb yes :noweb-ref claude-env
+  "env": {
+    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"
   }
 #+end_src
 
