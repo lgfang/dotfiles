@@ -3370,7 +3370,7 @@ Prerequisites:
     (agent-shell-preferred-agent-config
      (cons 'preselect (if my/work-machine-p 'claude-code 'opencode)))
 
-    ;; Anthropic
+    ;; Claude
     (agent-shell-anthropic-default-model-id (my/anthropic-model-id-from-name "glm.*flash.*latest"))
 
     ;; OpenAI
@@ -3513,19 +3513,19 @@ multiple ~agent-shell~ sessions, organised by project.
                                     (if my/work-station-p "workstation" "laptop"))))
 
           (grove
-           (gptel-make-openai "Grove"
-             :stream nil
-             :host "grove-gateway-prod.azure-api.net"
-             :endpoint "/grove-foundry-prod/openai/v1/chat/completions"
-             :key (my/gptel-get-key "grove" "code-gen-api")
-             :header (lambda (_info)
-                       `(("api-key" . ,(funcall (my/gptel-get-key "grove" "code-gen-api")))))
-             )))
+            ;; GPT-5.5+/GPT-5.6/GPT-6/Codex are only served via the OpenAI
+            ;; Responses API, so this uses gptel's Responses backend.
+            (gptel-make-openai-responses "Grove"
+              :stream t
+              :host "ai-gateway.corp.mongodb.com"
+              :endpoint "/openai/v1/responses"
+              :models '(gpt-5.6-sol gpt-5.6-luna gpt-5.6-terra gpt-5.4)
+              :key (my/gptel-get-key "grove" "code-gen-api"))))
 
       (if my/work-machine-p
           (progn
-            (setq-default gptel-backend fireworks)
-            (setq-default gptel-model 'accounts/fireworks/routers/glm-flash-latest))
+            (setq-default gptel-backend grove)
+            (setq-default gptel-model 'gpt-5.6-sol))
         (progn
           (setq-default gptel-backend deepseek)
           (setq-default gptel-model 'deepseek-v4-flash)
