@@ -208,6 +208,10 @@ surface, connect to a subset URL (e.g. =/mcp/evg= for Evergreen only).
 
 #+begin_src json-ts :tangle no :noweb-ref claude-perm-mcp
   "mcp__mdb-devprod__bb_get_bf",
+  "mcp__mdb-devprod__bb_get_bfg",
+  "mcp__mdb-devprod__bb_get_bfg_by_task",
+  "mcp__mdb-devprod__bb_get_bfg_raw",
+  "mcp__mdb-devprod__bb_debug_bfg",
   "mcp__mdb-devprod__bb_search_bfgs",
   "mcp__mdb-devprod__docs_get_page",
   "mcp__mdb-devprod__docs_list_pages",
@@ -576,6 +580,10 @@ without prompting (confirmed in =codex-rs/config/src/mcp_types.rs=
 #+begin_src toml :tangle no :noweb-ref codex-tables
   [mcp_servers.mdb-devprod.tools]
   bb_get_bf = { approval_mode = "approve" }
+  bb_get_bfg = { approval_mode = "approve" }
+  bb_get_bfg_by_task = { approval_mode = "approve" }
+  bb_get_bfg_raw = { approval_mode = "approve" }
+  bb_debug_bfg = { approval_mode = "approve" }
   bb_search_bfgs = { approval_mode = "approve" }
   docs_get_page = { approval_mode = "approve" }
   docs_list_pages = { approval_mode = "approve" }
@@ -953,6 +961,10 @@ connecting with =opencode mcp list=.
 #+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-mcp
   "mdb-devprod_*": "ask",
   "mdb-devprod_bb_get_bf": "allow",
+  "mdb-devprod_bb_get_bfg": "allow",
+  "mdb-devprod_bb_get_bfg_by_task": "allow",
+  "mdb-devprod_bb_get_bfg_raw": "allow",
+  "mdb-devprod_bb_debug_bfg": "allow",
   "mdb-devprod_bb_search_bfgs": "allow",
   "mdb-devprod_docs_get_page": "allow",
   "mdb-devprod_docs_list_pages": "allow",
