@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-30 +1000
+#+DATE: 2026-10-02 +1000
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -42,7 +42,7 @@
 - [[#frame-and-window][Frame and window]]
   - [[#popper][Popper]]
 - [[#fonts][Fonts]]
-- [[#color-themes][Color themes]]
+- [[#colour-themes][Colour themes]]
   - [[#themes][Themes]]
   - [[#my-tweaks][My tweaks]]
 - [[#files-and-directories][Files and directories]]
@@ -1033,31 +1033,51 @@ different fonts are determined through trial and error. Note:
     )
 #+end_src
 
-* Color themes
+* Colour themes
 
-NOTE: To fully utilize color themes in text-based Emacs, make sure your terminal
-is set up to support "true color". See the [[file:shell.org::*Term & color][Term & color]] section in my shell
-configuration file for the details
+NOTE: To fully utilise colour themes in text-based Emacs, make sure your
+terminal is set up to support "true colour". See the [[file:shell.org::*Term & colour][Term & colour]] section in my
+shell configuration file for the details
+
+NOTE: If themes look overly bright, turn down the monitor's brightness first.
+Most themes looked harsh until I lowered mine from 50 to 30, after which many
+looked great.
 
 ** Themes
 
-I use a different theme on my workstation so the color scheme also serves as a
-visual cue for which environment I'm in.
+Use different themes on different machines so the colour scheme serves as a
+visual clue for which environment I'm in.
 
-The themes I choose are low-contrast ones that are easy on the eyes.
+The following block lists some popular themes alongside the ones in use. To
+switch themes, move the ~:disabled t~ and ~:if ...~ directives around.
 
 #+begin_src emacs-lisp
   (use-package solarized-theme
+    :disabled t
     :if (not my/work-station-p)
     :demand t
     :config
     (load-theme 'solarized-gruvbox-dark t))
 
+  (use-package catppuccin-theme
+    :if (not my/work-station-p)
+    :demand t
+    :config
+    (load-theme 'catppuccin :no-confirm))
+
   (use-package doom-themes
+    :disabled t
     :if my/work-station-p
     :demand t
     :config
     (load-theme 'doom-tomorrow-night t))
+
+  (use-package tokyo-night
+    :if my/work-station-p
+    :demand t
+    :config
+    (load-theme 'tokyo-night t))
+
 #+end_src
 
 ** My tweaks
