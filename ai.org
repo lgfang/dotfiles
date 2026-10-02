@@ -313,6 +313,7 @@ auto-approve arbitrary execution.
 
 #+begin_src json-ts :tangle no :noweb-ref claude-allow
   "Bash(./run-dsi setup)",
+  "Bash(./emacs-buffer-status:*)",
   "Bash(.poetry/bin/poetry run pre-commit run:*)",
   "Bash(.poetry/bin/poetry run pytest:*)",
   "Bash(uv run pytest:*)",
@@ -679,6 +680,10 @@ order into the rules file.
 #+begin_src starlark :tangle no :noweb-ref codex-rules
   prefix_rule(
       pattern = ["./run-dsi", "setup"],
+      decision = "allow",
+  )
+  prefix_rule(
+      pattern = ["./emacs-buffer-status"],
       decision = "allow",
   )
   prefix_rule(
@@ -1057,6 +1062,7 @@ object.
 
 #+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
   "./run-dsi setup": "allow",
+  "./emacs-buffer-status *": "allow",
 #+end_src
 
 **** Evergreen
