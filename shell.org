@@ -96,7 +96,7 @@ fi
   export EDITOR=vi
 #+end_src
 
-**** Term & color
+**** Term & colour
 
 #+begin_src bash
   if [[ $- == *i* && "$TERM" != "dumb" ]]; then
