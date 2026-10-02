@@ -3,7 +3,7 @@
 
 #+TITLE: My AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-11 +1000
+#+DATE: 2026-10-02 +1000
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 
@@ -85,6 +85,12 @@
        API: `POST /repos/{owner}/{repo}/pulls/{n}/reviews` with a body and no event
        field (omitting event defaults to PENDING). Never pass
        event=COMMENT/APPROVE/REQUEST_CHANGES without my explicit go-ahead.
+
+  5. When reviewing PRs, do not run unit tests or builds — verifying the code
+     passes CI is the PR author's responsibility.
+
+  6. Feel free to check out the branch under review into the current worktree,
+     preferably via `gh pr checkout <number>`.
 #+end_src
 
 * Agent skills
