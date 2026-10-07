@@ -3,7 +3,7 @@
 
 #+TITLE: My AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-10-02 +1000
+#+DATE: 2026-10-07 +1100
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 
@@ -48,9 +48,9 @@
 
   ## Scratch / temp files
 
-  Write scratch and intermediate files under `<repo_root>/agent-scratch/` (create
-  the directory if needed). Use `/tmp/agent-scratch/` only for data that may be
-  lost, since it is cleared on reboot.
+  Write scratch and intermediate files under `<project_root>/agent-scratch/`
+  (create the directory if needed). Use `/tmp/agent-scratch/` only for data that
+  may be lost, since it is cleared on reboot.
 
   ## Headless hosts (no browser / GUI)
 
@@ -67,12 +67,24 @@
 
   ## Git & GitHub
 
-  1. Run `git commit --amend` and `git push` as standalone commands, never chained
+  1. If creating a git worktree is needed, create it under
+     `<main_repo_root>/.agent-shell/worktrees`. This is where agent-shell puts
+     worktrees it creates.
+
+  2. Run `git commit --amend` and `git push` as standalone commands, never chained
      with other operations. They often require explicit approval, and chaining
      would hold the other commands hostage to that approval.
 
-  2. Do not amend a commit that has already been pushed, create a new commit
+  3. Do not amend a commit that has already been pushed, create a new commit
      instead. Amend only unpushed commits.
+
+  ## Pull request review
+
+  1. Feel free to check out the branch under review into the current worktree,
+     preferably via `gh pr checkout <number>`.
+
+  2. When reviewing PRs, do not run unit tests or builds — verifying the code
+     passes CI is the PR author's responsibility.
 
   3. Never post a PR review output (top-level review bodies, inline review
      comments and replies to review comments etc.) without my explicit
@@ -85,12 +97,6 @@
        API: `POST /repos/{owner}/{repo}/pulls/{n}/reviews` with a body and no event
        field (omitting event defaults to PENDING). Never pass
        event=COMMENT/APPROVE/REQUEST_CHANGES without my explicit go-ahead.
-
-  5. When reviewing PRs, do not run unit tests or builds — verifying the code
-     passes CI is the PR author's responsibility.
-
-  6. Feel free to check out the branch under review into the current worktree,
-     preferably via `gh pr checkout <number>`.
 #+end_src
 
 * Agent skills
