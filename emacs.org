@@ -1470,9 +1470,7 @@ hunspell does not ship dictionaries and there are no Homebrew packages for them.
   (use-package jinx
     :delight
     :hook (emacs-startup . global-jinx-mode)
-    :bind (("<f6>" . jinx-correct)
-           ("M-$" . jinx-correct)
-           ("C-M-$" . jinx-languages))
+    :bind (("M-$" . jinx-correct))
     :custom
     (jinx-languages "en_AU")
     :config
