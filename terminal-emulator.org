@@ -56,8 +56,8 @@ nerd font mono, and nerd font propo).
 Some popular fonts:
 - ~Liga SFMono Nerd Font~: ~brew install font-sf-mono-nerd-font-ligaturized~
 - ~FiraCode Nerd Font~: ~brew install font-fira-code-nerd-font~
-- ~JetBrains Mono~: builtin
-- ~Cascadia Code NF~ (with ~DemiLight~ weight): ~brew install font-cascadia-code-nf~
+- ~JetBrains Mono~: bundled with WezTerm
+- ~Cascadia Code NF~: ~brew install font-cascadia-code-nf~
 
 On fallback fonts:
 - ~wezterm.font_with_fallback~ takes a list: the first entry is the main font,
@@ -94,7 +94,7 @@ On fallback fonts:
       })
   end
 
-  config.font = font_with_weight('DemiLight')
+  config.font = font_with_weight('Regular')
 #+end_src
 
 Optionally set weights per intensity. An unavailable weight silently falls back
