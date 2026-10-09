@@ -3409,7 +3409,7 @@ Prerequisites:
     (agent-shell-opencode-default-model-id
      ;; choose model based on work/personal laptop
      (if my/work-machine-p
-         "fireworks-ai/accounts/fireworks/routers/glm-flash-latest"
+         "ai-gateway-misc/fw-glm-5.3-flash"
        "deepseek/deepseek-flash"))
 
     :config
