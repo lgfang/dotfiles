@@ -3377,6 +3377,11 @@ Prerequisites:
            ("C-c RET" . shell-maker-submit))
 
     :custom
+    ;; Use static busy indicators so that under tmux the window is flagged active
+    ;; only on real outputs.
+    (agent-shell-busy-indicator-frames '("⏳Thinking...")) ; header/mode-line
+    (agent-shell-prompt-busy-frames ["◔"]) ; precedes the ❯ prompt
+
     (agent-shell-session-strategy 'prompt)
 
     ;; Blocking sleep on macOS only. Do that on headless workstations makes no
@@ -3411,14 +3416,6 @@ Prerequisites:
      (if my/work-machine-p
          "ai-gateway-misc/fw-glm-5.3-flash"
        "deepseek/deepseek-flash"))
-
-    :config
-    (setq
-     ;; Static busy indicators: under tmux the window is flagged active only
-     ;; on real outputs.
-     agent-shell-busy-indicator-frames '("⏳Thinking...") ; header/mode-line
-     agent-shell-chat-busy-frames ["◔"]) ; precedes the ❯ prompt; plain defvar, so :custom won't work
-
     )
 #+end_src
 
