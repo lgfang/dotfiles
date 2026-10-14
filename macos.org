@@ -29,6 +29,10 @@
     * "Sound": change to "Always Show"
     * "Bluetooth": tick
 - Remote Login: toggle on/off as needed
+- Battery:
+  + Options
+    + "Prevent automatic sleeping on power adapter when the display is off":
+      toggle on.
 
 * Install homebrew
 
@@ -379,7 +383,7 @@ macOS has NO built-in setting for this. Desired behaviour:
     fi
   #+end_src
 
-*** Activate
+*** Activate the hook
 
 #+begin_src bash
   brew services start sleepwatcher
@@ -395,11 +399,18 @@ Notes:
   =-s= and =-w= hooks used here.
 - The marker file means Bluetooth is only re-enabled if the script disabled it,
   so a manual "Bluetooth off" is never overridden on wake.
-- NOTE: unplugging, or closing the lid on, an *already sleeping* Mac
-  fires no sleep event, so Bluetooth stays on and the battery drains.
-  =sleepwatcher -w= fires only on full wakes, never on dark wakes (measured), so
-  no wake hook can cover this. Wake the Mac first, then unplug, and it sleeps
-  again normally.
+
+*** Prevent auto-sleep on AC
+
+Unplugging, or closing the lid on, an *already sleeping* Mac does NOT fire a
+sleep event, so Bluetooth stays on and the battery drains.
+
+The most common scenario is: the Mac idle-sleeps *on AC*, then is unplugged
+(with lid-closed), so no sleep event fired and the hook never ran.
+
+To avoid this from happening, ensure "System Settings -> Battery -> Options ->
+Prevent automatic sleeping on power adapter when the display is off" is toggled
+on.
 
 ** Diagnostics (reference only)
 
