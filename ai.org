@@ -3,7 +3,7 @@
 
 #+TITLE: My AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-10-07 +1100
+#+DATE: 2026-10-16 +1100
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 
@@ -864,16 +864,6 @@ in where the key comes from.
 
 #+begin_src markdown-ts :tangle "~/.config/opencode/AGENTS.md" :noweb yes :mkdirp yes
   <<shared-instructions>>
-
-  ## Sub-agent model routing
-
-  Sub-agents cannot switch models per invocation; each runs on its configured
-  model. When dispatching sub-agents for the superpowers workflows
-  (`subagent-driven-development`, `dispatching-parallel-agents`) or any task
-  where the sub-agent does substantial implementation work, dispatch the
-  `implementer` sub-agent rather than `general` — it runs a more capable
-  model.
-  Reserve `general` for lightweight research and execution.
 #+end_src
 
 ** Config file skeleton - work machine
@@ -904,28 +894,33 @@ in where the key comes from.
 
 ** Sub-agents
 
-Built-in sub-agents inherit the invoking primary agent's model unless
-overridden. The Task tool has no per-invocation model override, so models are
-assigned per sub-agent instead: a custom =implementer= sub-agent is defined
-for heavyweight dispatched work, and the built-in sub-agents (=general=,
-=scout=, =explore=) are overridden with per-agent models. The primary agent is
-instructed (see Global instructions) to prefer =implementer= for heavy
-lifting.
+Neither block below is tangled: the primary agent's model is already cheap
+and reasonably capable, so sub-agents run on it and no routing instruction is
+needed in AGENTS.md.
 
-- implementer :: dispatched engineering work, e.g. the superpowers
-  =subagent-driven-development= and =dispatching-parallel-agents= workflows;
-  gets the most capable model when models are differentiated
-- general :: lightweight research and execution
-- scout :: external/dependency research
-- explore :: fast read-only codebase search
-- small_model :: hidden background agents (session titles, summaries,
-  compaction)
+In the future, to differentiate sub-agents again, add
+=<<opencode-subagent-routing>>= to the OpenCode Global instructions block and
+=<<opencode-subagents>>,= to the work-machine config skeleton, then re-tangle
+the file.
 
-NOTE: the configuration block below is *not* tangled into =opencode.json=;
-all sub-agents run the primary agent's model as it is cheap and reasonably
-capable. To differentiate the sub-agents again, add =<<opencode-subagents>>,=
-back to the work-machine config skeleton and re-tangle on both work machines
-(laptop and workstation).
+#+begin_src markdown-ts :tangle no :noweb-ref opencode-subagent-routing
+  ## Sub-agent model routing
+
+  Sub-agents cannot switch models per invocation; each runs on its configured
+  model (the Task tool has no per-invocation model override, so models are
+  assigned per sub-agent). The agents:
+
+  - `implementer` — dispatched engineering work, e.g. the superpowers
+    `subagent-driven-development` and `dispatching-parallel-agents`
+    workflows or any task where the sub-agent does substantial
+    implementation work; runs a more capable model when models are
+    differentiated. Prefer it over `general` for heavy lifting.
+  - `general` — lightweight research and execution
+  - `scout` — external/dependency research
+  - `explore` — fast read-only codebase search
+  - `small_model` — hidden background agents (session titles, summaries,
+    compaction)
+#+end_src
 
 #+begin_src json-ts :tangle no :noweb-ref opencode-subagents
   "agent": {
