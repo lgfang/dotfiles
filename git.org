@@ -41,6 +41,11 @@ Refer to https://github.com/github/gitignore for more to ignore.
   /agent-scratch/
 #+end_src
 
+** Emacs
+#+begin_src conf
+  .dir-locals.el
+#+end_src
+
 * Global git config
 
 #+begin_src conf :tangle ~/.gitconfig
