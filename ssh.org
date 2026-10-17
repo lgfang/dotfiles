@@ -3,7 +3,7 @@
 
 #+TITLE: My SSH Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-05 +1000
+#+DATE: 2026-10-17 +1100
 
 * .ssh/config
 :PROPERTIES:
@@ -13,10 +13,15 @@
 ** Home LAN SSH servers
 
 #+begin_src conf
-  Host mine
-       # my personal laptop
-       HostName 192.168.0.1
-       User mylogin
+  Host ha homeassistant
+      HostName 192.168.0.6
+      User root
+      IdentityFile ~/.ssh/ha
+      AddKeysToAgent yes
+
+  Host mine-mac
+       HostName 192.168.0.8
+       User lgfang
 #+end_src
 
 To keep this config stable, I configure the DHCP server to assign a static IP
@@ -67,10 +72,10 @@ needed before this works:
 
 ** Reaching an internal host through a bastion (ProxyJump)
 
-This pair shows how to reach a host that has *no* public IP by tunneling through
-a publicly reachable bastion. With both blocks defined, a single =ssh target=
-opens the tunnel via =bastion= and lands you on the target - no manual two-step
-hop.
+This pair shows how to reach a host that has *no* public IP by tunnelling
+through a publicly reachable bastion. With both blocks defined, a single =ssh
+target= opens the tunnel via =bastion= and lands you on the target - no manual
+two-step hop.
 
 Note that both =IdentityFile= keys live locally, on this client: SSH
 authenticates end-to-end from here to each hop, so the bastion never needs the
@@ -133,7 +138,7 @@ benefit contained.
        ControlPersist 10m
 #+end_src
 
-** Interoperating with legacy servers
+** Interoperate with legacy servers
 
 Some old servers only offer algorithms that modern OpenSSH disables by default,
 causing =Unable to negotiate= errors. This block re-enables the weak algorithms
