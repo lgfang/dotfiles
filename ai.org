@@ -3,7 +3,7 @@
 
 #+TITLE: My AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-10-16 +1100
+#+DATE: 2026-10-19 +1100
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 
@@ -960,45 +960,45 @@ The gateway prefixes Evergreen tools with =evg_=; verify exact names after
 connecting with =opencode mcp list=.
 
 #+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-mcp
-  "mdb-devprod_*": "ask",
-  "mdb-devprod_bb_get_bf": "allow",
-  "mdb-devprod_bb_get_bfg": "allow",
-  "mdb-devprod_bb_get_bfg_by_task": "allow",
-  "mdb-devprod_bb_get_bfg_raw": "allow",
-  "mdb-devprod_bb_debug_bfg": "allow",
-  "mdb-devprod_bb_search_bfgs": "allow",
-  "mdb-devprod_docs_get_page": "allow",
-  "mdb-devprod_docs_list_pages": "allow",
-  "mdb-devprod_docs_read_file": "allow",
-  "mdb-devprod_docs_search": "allow",
-  "mdb-devprod_git_blame": "allow",
-  "mdb-devprod_git_log": "allow",
-  "mdb-devprod_git_search": "allow",
-  "mdb-devprod_git_show": "allow",
-  "mdb-devprod_jira_get_fields": "allow",
-  "mdb-devprod_jira_get_issue": "allow",
-  "mdb-devprod_jira_get_issue_comments": "allow",
-  "mdb-devprod_jira_get_issue_transitions": "allow",
-  "mdb-devprod_jira_list_projects": "allow",
-  "mdb-devprod_jira_search_issues": "allow",
-  "mdb-devprod_jira_create_issue": "ask",
-  "mdb-devprod_evg_debug_task": "allow",
-  "mdb-devprod_evg_download_task_artifacts": "allow",
-  "mdb-devprod_evg_get_inferred_project_ids": "allow",
-  "mdb-devprod_evg_get_patch_failed_jobs": "allow",
-  "mdb-devprod_evg_get_raw_task_logs": "allow",
-  "mdb-devprod_evg_get_task": "allow",
-  "mdb-devprod_evg_get_task_annotations": "allow",
-  "mdb-devprod_evg_get_task_history": "allow",
-  "mdb-devprod_evg_get_task_log_summary": "allow",
-  "mdb-devprod_evg_get_task_raw": "allow",
-  "mdb-devprod_evg_get_task_reliability": "allow",
-  "mdb-devprod_evg_get_test_results_detailed": "allow",
-  "mdb-devprod_evg_get_test_results_summary": "allow",
-  "mdb-devprod_evg_get_version": "allow",
-  "mdb-devprod_evg_list_names": "allow",
-  "mdb-devprod_evg_list_project_versions": "allow",
-  "mdb-devprod_evg_list_user_recent_patches": "allow",
+  { "action": "mdb-devprod_*", "resource": "*", "effect": "ask" },
+  { "action": "mdb-devprod_bb_get_bf", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_bb_get_bfg", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_bb_get_bfg_by_task", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_bb_get_bfg_raw", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_bb_debug_bfg", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_bb_search_bfgs", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_docs_get_page", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_docs_list_pages", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_docs_read_file", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_docs_search", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_git_blame", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_git_log", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_git_search", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_git_show", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_jira_get_fields", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_jira_get_issue", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_jira_get_issue_comments", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_jira_get_issue_transitions", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_jira_list_projects", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_jira_search_issues", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_jira_create_issue", "resource": "*", "effect": "ask" },
+  { "action": "mdb-devprod_evg_debug_task", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_download_task_artifacts", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_get_inferred_project_ids", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_get_patch_failed_jobs", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_get_raw_task_logs", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_get_task", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_get_task_annotations", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_get_task_history", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_get_task_log_summary", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_get_task_raw", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_get_task_reliability", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_get_test_results_detailed", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_get_test_results_summary", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_get_version", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_list_names", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_list_project_versions", "resource": "*", "effect": "allow" },
+  { "action": "mdb-devprod_evg_list_user_recent_patches", "resource": "*", "effect": "allow" },
 #+end_src
 
 *** MongoDB: Glean
@@ -1018,12 +1018,12 @@ On a headless host, see [[#headless-mcp-auth]] instead.
 
 **** Permissions
 #+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-mcp
-  "mdb-glean_*": "ask",
-  "mdb-glean_search": "allow",
-  "mdb-glean_read_document": "allow",
-  "mdb-glean_chat": "allow",
-  "mdb-glean_Brave_Actions_web_search": "allow",
-  "mdb-glean_memory_schema": "allow",
+  { "action": "mdb-glean_*", "resource": "*", "effect": "ask" },
+  { "action": "mdb-glean_search", "resource": "*", "effect": "allow" },
+  { "action": "mdb-glean_read_document", "resource": "*", "effect": "allow" },
+  { "action": "mdb-glean_chat", "resource": "*", "effect": "allow" },
+  { "action": "mdb-glean_Brave_Actions_web_search", "resource": "*", "effect": "allow" },
+  { "action": "mdb-glean_memory_schema", "resource": "*", "effect": "allow" },
 #+end_src
 
 *** Shared placeholder
@@ -1035,153 +1035,159 @@ On a headless host, see [[#headless-mcp-auth]] instead.
 ** Global permissions
 
 #+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-permissions
-  "permission": {
-    "bash": {
-      "*": "ask",
-      <<opencode-perm-bash>>
-      "true": "allow"
-    },
-    <<opencode-perm-external>>,
-    <<opencode-perm-web>>,
-    <<opencode-perm-skill>>,
+  "permissions": [
+    { "action": "shell", "resource": "*", "effect": "ask" },
+    <<opencode-perm-shell>>
+    <<opencode-perm-external>>
+    <<opencode-perm-web>>
+    <<opencode-perm-skill>>
     <<opencode-perm-mcp>>
-    "true": "allow"
-  }
+    { "action": "shell", "resource": "true", "effect": "allow" }
+  ]
 #+end_src
 
-Opencode's bash permission uses ="cmd *": "action"= glob patterns with *last
-match wins*. A leading ="*": "ask"= catch-all makes any unmatched command prompt
-instead of falling back to opencode's default =allow=; every rule below
-overrides it for the commands it matches. All rule blocks, bash and MCP alike,
-follow one ordering principle: *broadest first, narrowest last*, so a narrower
-rule always overrides a broader one on overlap; within the same specificity
-tier =ask= entries come after =allow= entries so the ask wins. The bash rules
-are grouped by command/tool; all bash blocks share =:noweb-ref
-opencode-perm-bash= and are accumulated in document order into the =bash=
-object.
+OpenCode V2 permissions are an ordered =permissions= array of
+={ "action", "resource", "effect" }= rules with *last match wins*. The leading
+shell catch-all makes any unmatched command prompt instead of falling back to
+opencode's default =allow=; every rule below overrides it for the resources it
+matches. The =shell= resource is the scanner-produced command string: compound
+commands (pipes, =;=, command substitution) produce *several* resources and any
+part resolving to =ask= or =deny= decides the whole command, so every component
+of a pipeline needs an allow rule (e.g. =cut= inside a command substitution).
+MCP tools use =<server>_<tool>= as the action with resource ="*"=. All rule
+blocks follow one ordering principle: *broadest first, narrowest last*, so a
+narrower rule always overrides a broader one on overlap; within the same
+specificity tier =ask= entries come after =allow= entries so the ask wins. The
+shell rules are grouped by command/tool; all shell blocks share =:noweb-ref
+opencode-perm-shell= and are accumulated in document order into the
+=permissions= array. The trailing =true= rule allows the no-op =true= command
+and keeps the JSON comma structure of the blocks uniform.
 
 *** MongoDB
 
 **** DSI
 
-#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
-  "./run-dsi setup": "allow",
-  "./emacs-buffer-status *": "allow",
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-shell
+  { "action": "shell", "resource": "./run-dsi setup", "effect": "allow" },
+  { "action": "shell", "resource": "./run-dsi selftest", "effect": "allow" },
+  { "action": "shell", "resource": "./emacs-buffer-status *", "effect": "allow" },
 #+end_src
 
 **** Evergreen
 
-#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
-  "evergreen patch *": "ask",
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-shell
+  { "action": "shell", "resource": "evergreen patch *", "effect": "ask" },
 #+end_src
 
 *** AWS CLI
 
-#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
-  "aws ec2 describe-instances *": "allow",
-  "aws ec2 describe-vpcs *": "allow",
-  "aws ec2 describe-subnets *": "allow",
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-shell
+  { "action": "shell", "resource": "aws ec2 describe-instances *", "effect": "allow" },
+  { "action": "shell", "resource": "aws ec2 describe-vpcs *", "effect": "allow" },
+  { "action": "shell", "resource": "aws ec2 describe-subnets *", "effect": "allow" },
 #+end_src
 
 *** File utilities
 
-#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
-  "mkdir *": "allow",
-  "echo *": "allow",
-  "head *": "allow",
-  "tail *": "allow",
-  "grep *": "allow",
-  "rg *": "allow",
-  "find *": "allow",
-  "ls *": "allow",
-  "awk *": "allow",
-  "sed *": "allow",
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-shell
+  { "action": "shell", "resource": "mkdir *", "effect": "allow" },
+  { "action": "shell", "resource": "echo *", "effect": "allow" },
+  { "action": "shell", "resource": "head *", "effect": "allow" },
+  { "action": "shell", "resource": "tail *", "effect": "allow" },
+  { "action": "shell", "resource": "grep *", "effect": "allow" },
+  { "action": "shell", "resource": "rg *", "effect": "allow" },
+  { "action": "shell", "resource": "find *", "effect": "allow" },
+  { "action": "shell", "resource": "ls *", "effect": "allow" },
+  { "action": "shell", "resource": "awk *", "effect": "allow" },
+  { "action": "shell", "resource": "sed *", "effect": "allow" },
+  { "action": "shell", "resource": "cut *", "effect": "allow" },
+  { "action": "shell", "resource": "uniq *", "effect": "allow" },
 #+end_src
 
 *** Git
 
-#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
-  "git *": "allow",
-  "git push *": "ask",
-  "git amend *": "ask",
-  "git commit --amend *": "ask",
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-shell
+  { "action": "shell", "resource": "git *", "effect": "allow" },
+  { "action": "shell", "resource": "git push *", "effect": "ask" },
+  { "action": "shell", "resource": "git amend *", "effect": "ask" },
+  { "action": "shell", "resource": "git commit --amend *", "effect": "ask" },
 #+end_src
 
 *** GitHub
 
-#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
-  "gh auth status": "allow",
-  "gh search *": "allow",
-  "gh issue view *": "allow",
-  "gh pr list *": "allow",
-  "gh pr view *": "allow",
-  "gh pr checks *": "allow",
-  "gh pr diff *": "allow",
-  "gh pr checkout *": "allow",
-  "gh pr create *": "ask",
-  "gh api repos/*/files *": "allow",
-  "gh api repos/*/comments *": "allow",
-  "gh api orgs/10gen/teams/*/members *": "allow",
-  "gh api repos/*/issues/*/events *": "allow",
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-shell
+  { "action": "shell", "resource": "gh auth status", "effect": "allow" },
+  { "action": "shell", "resource": "gh search *", "effect": "allow" },
+  { "action": "shell", "resource": "gh issue view *", "effect": "allow" },
+  { "action": "shell", "resource": "gh pr list *", "effect": "allow" },
+  { "action": "shell", "resource": "gh pr view *", "effect": "allow" },
+  { "action": "shell", "resource": "gh pr checks *", "effect": "allow" },
+  { "action": "shell", "resource": "gh pr diff *", "effect": "allow" },
+  { "action": "shell", "resource": "gh pr checkout *", "effect": "allow" },
+  { "action": "shell", "resource": "gh pr create *", "effect": "ask" },
+  { "action": "shell", "resource": "gh api repos/*/files *", "effect": "allow" },
+  { "action": "shell", "resource": "gh api repos/*/comments *", "effect": "allow" },
+  { "action": "shell", "resource": "gh api orgs/10gen/teams/*/members *", "effect": "allow" },
+  { "action": "shell", "resource": "gh api repos/*/issues/*/events *", "effect": "allow" },
 #+end_src
 
 *** JIRA CLI
 
-#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
-  "jira issue list *": "allow",
-  "jira issue view *": "allow",
-  "jira epic list *": "allow",
-  "jira issue create *": "ask",
-  "jira issue edit *": "ask",
-  "jira issue move *": "ask",
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-shell
+  { "action": "shell", "resource": "jira issue list *", "effect": "allow" },
+  { "action": "shell", "resource": "jira issue view *", "effect": "allow" },
+  { "action": "shell", "resource": "jira epic list *", "effect": "allow" },
+  { "action": "shell", "resource": "jira issue create *", "effect": "ask" },
+  { "action": "shell", "resource": "jira issue edit *", "effect": "ask" },
+  { "action": "shell", "resource": "jira issue move *", "effect": "ask" },
 #+end_src
 
 *** kubectl
 
-#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
-  "kubectl get *": "allow",
-  "kubectl logs *": "allow",
-  "kubectl describe *": "allow",
-  "kubectl top *": "allow",
-  "kubectl explain *": "allow",
-  "kubectl api-resources *": "allow",
-  "kubectl version *": "allow",
-  "kubectl events *": "allow",
-  "kubectl config view *": "allow",
-  "kubectl config current-context *": "allow",
-  "kubectl config get-contexts *": "allow",
-  "kubectl config use-context *": "ask",
-  "kubectl auth can-i *": "allow",
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-shell
+  { "action": "shell", "resource": "kubectl get *", "effect": "allow" },
+  { "action": "shell", "resource": "kubectl logs *", "effect": "allow" },
+  { "action": "shell", "resource": "kubectl describe *", "effect": "allow" },
+  { "action": "shell", "resource": "kubectl top *", "effect": "allow" },
+  { "action": "shell", "resource": "kubectl explain *", "effect": "allow" },
+  { "action": "shell", "resource": "kubectl api-resources *", "effect": "allow" },
+  { "action": "shell", "resource": "kubectl version *", "effect": "allow" },
+  { "action": "shell", "resource": "kubectl events *", "effect": "allow" },
+  { "action": "shell", "resource": "kubectl config view *", "effect": "allow" },
+  { "action": "shell", "resource": "kubectl config current-context *", "effect": "allow" },
+  { "action": "shell", "resource": "kubectl config get-contexts *", "effect": "allow" },
+  { "action": "shell", "resource": "kubectl config use-context *", "effect": "ask" },
+  { "action": "shell", "resource": "kubectl auth can-i *", "effect": "allow" },
 #+end_src
 
 *** Operating System probe
 
-#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
-  "command -v *": "allow",
-  "which *": "allow",
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-shell
+  { "action": "shell", "resource": "command -v *", "effect": "allow" },
+  { "action": "shell", "resource": "which *", "effect": "allow" },
 #+end_src
 
 *** Poetry
 
-#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
-  ".poetry/bin/poetry run *": "ask",
-  ".poetry/bin/poetry run pre-commit run *": "allow",
-  ".poetry/bin/poetry run pytest *": "allow",
-  "uv run pytest *": "allow",
-  ".poetry/bin/poetry run ruff *": "allow",
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-shell
+  { "action": "shell", "resource": ".poetry/bin/poetry run *", "effect": "ask" },
+  { "action": "shell", "resource": ".poetry/bin/poetry run pre-commit run *", "effect": "allow" },
+  { "action": "shell", "resource": ".poetry/bin/poetry run pytest *", "effect": "allow" },
+  { "action": "shell", "resource": "uv run pytest *", "effect": "allow" },
+  { "action": "shell", "resource": ".poetry/bin/poetry run ruff *", "effect": "allow" },
 #+end_src
 
 *** Terraform
 
-#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
-  "terraform init *": "allow",
-  "terraform validate *": "allow",
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-shell
+  { "action": "shell", "resource": "terraform init *", "effect": "allow" },
+  { "action": "shell", "resource": "terraform validate *", "effect": "allow" },
 #+end_src
 
 *** Web download
 
-#+begin_src json-ts :tangle no :noweb-ref opencode-perm-bash
-  "curl *": "allow",
+#+begin_src json-ts :tangle no :noweb-ref opencode-perm-shell
+  { "action": "shell", "resource": "curl *", "effect": "allow" },
 #+end_src
 
 *** File read & edit
@@ -1194,39 +1200,36 @@ directory]]).
 *** External directory
 
 This is where Claude's =Read()= and =Edit()= allow rules for external paths
-now live. =external_directory= defaults to ="ask"=, so paths not listed here
-will prompt. Paths listed here inherit the =read= / =edit= defaults (=allow=
-unless overridden).
+now live. The leading ={ "action": "external_directory", "resource": "*", "effect": "ask" }=
+rule makes paths not listed here prompt. Paths listed here inherit the =read= /
+=edit= defaults (=allow= unless overridden).
 
 #+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-external
-  "external_directory": {
-    "*": "ask",
-    "$HOME/.config/opencode/**": "allow",
-    "$HOME/Downloads/**": "allow",
-    "/tmp/agent-scratch/**": "allow",
-    "/private/tmp/agent-scratch/**": "allow",
-    "/tmp/jira-drafts/**": "allow",
-    "/private/tmp/jira-drafts/**": "allow"
-  }
+  { "action": "external_directory", "resource": "*", "effect": "ask" },
+  { "action": "external_directory", "resource": "$HOME/.config/opencode/**", "effect": "allow" },
+  { "action": "external_directory", "resource": "$HOME/Downloads/**", "effect": "allow" },
+  { "action": "external_directory", "resource": "/tmp/agent-scratch/**", "effect": "allow" },
+  { "action": "external_directory", "resource": "/private/tmp/agent-scratch/**", "effect": "allow" },
+  { "action": "external_directory", "resource": "/tmp/jira-drafts/**", "effect": "allow" },
+  { "action": "external_directory", "resource": "/private/tmp/jira-drafts/**", "effect": "allow" },
 #+end_src
 
 *** Web
 
-=webfetch= and =websearch= only accept flat actions. Claude's per-domain
-=WebFetch(domain:...)= restrictions (~github.com~, ~jira.mongodb.org~,
-~claude.com~) are lost --- all web fetches share one action.
+In V2, =webfetch= and =websearch= are ordinary rules (the resource is the URL
+or query), so per-domain =webfetch= rules would be possible; currently both
+allow everything. Claude's per-domain =WebFetch(domain:...)= restrictions
+(~github.com~, ~jira.mongodb.org~, ~claude.com~) were not carried over.
 
 #+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-web
-  "webfetch": "allow",
-  "websearch": "allow"
+  { "action": "webfetch", "resource": "*", "effect": "allow" },
+  { "action": "websearch", "resource": "*", "effect": "allow" },
 #+end_src
 
 *** Skill
 
 #+begin_src json-ts :tangle no :noweb yes :noweb-ref opencode-perm-skill
-  "skill": {
-    "*": "allow"
-  }
+  { "action": "skill", "resource": "*", "effect": "allow" },
 #+end_src
 
 * Authenticate an MCP server on a headless host
