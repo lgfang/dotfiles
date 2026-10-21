@@ -3664,6 +3664,8 @@ copilot-login=.
     ;; Use the standard mechanism (configurable via `display-buffer-alist')
     ;; instead of forcing reuse of the same window.
     (magit-display-buffer-function #'display-buffer)
+    ;; Delete files outright instead of moving them to trash directory
+    (magit-delete-by-moving-to-trash nil)
 
     :hook
     (magit-refresh-buffer
