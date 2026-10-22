@@ -271,6 +271,8 @@ surface, connect to a subset URL (e.g. =/mcp/evg= for Evergreen only).
   "mcp__mdb-glean__chat",
   "mcp__mdb-glean__Brave_Actions_web_search",
   "mcp__mdb-glean__memory_schema",
+  "mcp__mdb-glean__memory",
+  "mcp__mdb-glean__code_search",
 #+end_src
 
 *** Claude.ai connectors
@@ -642,6 +644,8 @@ Remote (streamable HTTP) servers need the rmcp client, a top-level option:
   read_document = { approval_mode = "approve" }
   chat = { approval_mode = "approve" }
   memory_schema = { approval_mode = "approve" }
+  memory = { approval_mode = "approve" }
+  code_search = { approval_mode = "approve" }
 #+end_src
 
 =mdb-glean= requires OAuth. Authenticate with:
@@ -1024,6 +1028,8 @@ On a headless host, see [[#headless-mcp-auth]] instead.
   { "action": "mdb-glean_chat", "resource": "*", "effect": "allow" },
   { "action": "mdb-glean_Brave_Actions_web_search", "resource": "*", "effect": "allow" },
   { "action": "mdb-glean_memory_schema", "resource": "*", "effect": "allow" },
+  { "action": "mdb-glean_memory", "resource": "*", "effect": "allow" },
+  { "action": "mdb-glean_code_search", "resource": "*", "effect": "allow" },
 #+end_src
 
 *** Shared placeholder
