@@ -182,7 +182,7 @@ title prefix set by =set-titles-string= (see tmux.org).
       function(window, pane)
           local title = pane:get_title()
           if title and title:match('^ws:') then
-              window:set_config_overrides({ color_scheme = 'Solarized Dark - Patched' })
+              window:set_config_overrides({ color_scheme = 'Tokyo Night' })
           else
               window:set_config_overrides({ color_scheme = 'GruvboxDark' })
           end
