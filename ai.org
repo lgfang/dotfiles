@@ -294,6 +294,7 @@ following MCP/connectors:
   "mcp__claude_ai_Slack__slack_search_channels",
   "mcp__claude_ai_Slack__slack_search_users",
   "mcp__claude_ai_Google_Drive__read_file_content",
+  "mcp__claude_ai_Google_Docs__read_doc",
 #+end_src
 
 ** Global permissions
