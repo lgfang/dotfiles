@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-10-02 +1000
+#+DATE: 2026-11-10 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -3789,7 +3789,7 @@ streamline the process:
    - Press =C-j= at a line to navigate to the corresponding source file,
      allowing you to move around the codebase as usual to examine related code.
 
-*** Read and write feedback offline with forge and code-review
+*** COMMENT Read and write feedback offline with forge and code-review
 
 Normally I do not require this. However, when needed, I use a combination of
 forge and code-review, though this setup is not entirely perfect. Forge can
