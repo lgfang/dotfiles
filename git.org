@@ -3,7 +3,7 @@
 
 #+TITLE: My Git Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-09-02 +1000
+#+DATE: 2026-10-24 +1100
 
 * Global git ignore
 :PROPERTIES:
@@ -33,6 +33,7 @@ Refer to https://github.com/github/gitignore for more to ignore.
 #+begin_src conf
   .Trashes
   Thumbs.db
+  .DS_Store
 #+end_src
 
 ** AI Agent files
