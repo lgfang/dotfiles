@@ -1949,6 +1949,7 @@ NOTE:
     :custom
     (elfeed-search-title-max-width 120)
     (elfeed-search-filter "@1-weeks-ago +unread")
+    (elfeed-search-sort-function #'elfeed-search-group-by-feed)
     (elfeed-feeds
      (append
       '(;; Emacs
