@@ -3,7 +3,7 @@
 
 #+TITLE: My AI/LLM Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-10-19 +1100
+#+DATE: 2026-11-11 +1100
 #+DESCRIPTION: My AI/LLM related configurations
 #+KEYWORDS: AI LLM Claude
 
@@ -97,6 +97,12 @@
        API: `POST /repos/{owner}/{repo}/pulls/{n}/reviews` with a body and no event
        field (omitting event defaults to PENDING). Never pass
        event=COMMENT/APPROVE/REQUEST_CHANGES without my explicit go-ahead.
+
+  ## Code comments
+
+  Do not add comments unless they explain non-obvious reasoning, trade-offs,
+  workarounds, links to context the code cannot show, or complicated logic. When
+  you do comment, keep it concise.
 #+end_src
 
 * Agent skills
