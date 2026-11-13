@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-11-10 +1100
+#+DATE: 2026-11-13 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -1527,6 +1527,8 @@ Note, this works for GUI Emacs only.
     ;; Disable line wrapping by default. Turn on `visual-line-mode' (built-in)
     ;; manually or via mode hooks if soft-wrapping is neeeded.
     (setq-default truncate-lines t)
+    ;; Allow line breaks (wrap) at CJK/Latin boundaries without spaces.
+    (setq-default word-wrap-by-category t)
     )
 #+end_src
 
@@ -2512,13 +2514,38 @@ built-in org:
 
 ** Presentation
 
-*** org-tree-slide
+*** org-tree-slide + olivetti
+
+Olivetti centres the text, and org-tree-slide handles outline pagination and
+presentation controls.
+
 #+begin_src emacs-lisp
+  (use-package olivetti)
+
   (use-package org-tree-slide
-    :commands org-tree-slide-mode)
+    :commands org-tree-slide-mode
+    :hook
+    ((org-tree-slide-play . (lambda ()
+                              (olivetti-mode 1)
+                              ;; Hide mode-line
+                              (setq-local mode-line-format nil)))
+     (org-tree-slide-stop . (lambda ()
+                              (olivetti-mode -1)
+                              ;; Restore mode-line
+                              (kill-local-variable 'mode-line-format)
+                              (force-mode-line-update))))
+    :bind
+    (:map org-tree-slide-mode-map
+          ("<next>"  . org-tree-slide-move-next-tree)      ; gPageDown
+          ("<prior>" . org-tree-slide-move-previous-tree)) ; PageUp
+  )
 #+end_src
 
-*** reveal
+Hotkeys to adjust font size (per my configuration):
+- In GUI Emacs :: ~C-x C-=~ / ~C-x C--~
+- In wezterm :: ~⌘-=+~ / ~⌘--~
+
+*** COMMENT reveal
 
 Convert an org file to HTML reveal slides. Prefer =org-tree-slide= for live presentations.
 #+begin_src emacs-lisp
