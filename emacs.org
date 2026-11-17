@@ -2057,7 +2057,14 @@ The packages works with limited privileges. Frequently used hotkeys:
   (use-package org
     :custom
     (org-startup-folded nil)
-    (org-imenu-depth 3))
+    (org-imenu-depth 3)
+    (org-hide-emphasis-markers t))
+
+  (use-package org-appear
+    :hook (org-mode)
+    :custom
+    (org-appear-autolinks t)
+    )
 #+end_src
 
 ** Org-contrib
