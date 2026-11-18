@@ -2053,12 +2053,17 @@ The packages works with limited privileges. Frequently used hotkeys:
 
 ** Core settings
 
+Instead of inserting hard newlines (the traditional Emacs ~fill-paragraph~ workflow), use ~visual-line-mode~ so lines wrap softly at the window edge - the behaviour most modern editors have. Turn on ~org-indent-mode~ so wrapped and bullet items are visually indented correctly instead of jumping back to the left margin.
+
 #+begin_src emacs-lisp
   (use-package org
     :custom
     (org-startup-folded nil)
     (org-imenu-depth 3)
-    (org-hide-emphasis-markers t))
+    (org-hide-emphasis-markers t)
+    :hook
+    (org-mode . visual-line-mode)
+    (org-mode . org-indent-mode))
 
   (use-package org-appear
     :hook (org-mode)
