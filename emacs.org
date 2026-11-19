@@ -2425,7 +2425,9 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
               (todo "TODO" ((org-agenda-todo-ignore-scheduled 'future)))
               (agenda "" ((org-agenda-span 2)
                           (org-deadline-warning-days 7)
-                          (org-agenda-skip-function 'my/agenda-skip-scheduled-no-deadline)))))
+                          (org-agenda-skip-function 'my/agenda-skip-scheduled-no-deadline)))
+              (todo "WAIT")
+              ))
             ("y" "TODO items @WORK@"
              ((todo "INBX"
                     ((org-agenda-files '(,(concat my-personal-path "work.gtd")))
@@ -2440,7 +2442,9 @@ buffer file is my configuration file, tangle it. Otherwise, do nothing.
                       ((org-agenda-span 2)
                        (org-deadline-warning-days 7)
                        (org-agenda-files '(,(concat my-personal-path "work.gtd")))
-                       (org-agenda-skip-function 'my/agenda-skip-scheduled-no-deadline)))))
+                       (org-agenda-skip-function 'my/agenda-skip-scheduled-no-deadline)))
+              (todo "WAIT")
+              ))
             ("p" "PENDING items"
              ((todo "WAIT") (todo "HOLD") (todo "MAYB")))
             ("r" "Report worked on tasks"
