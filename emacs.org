@@ -2818,6 +2818,8 @@ To create an additional eshell buffer, run =C-u M-x eshell=.
     :defines displayed-month displayed-year
     :functions calendar-day-of-week
     :commands calendar
+    :custom
+    (calendar-week-start-day 1)           ; A week starts from Monday
     :config
     (require 'holidays)
     (require 'cal-china-x nil t))
