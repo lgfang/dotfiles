@@ -49,24 +49,28 @@ Refer to https://github.com/github/gitignore for more to ignore.
 
 * Global git config
 
+** core
 #+begin_src conf :tangle ~/.gitconfig
-  [github]
-      user = GITHUB_USERNAME
-
-  [user]
-      name = Your Name
-      email = you@email.com
-
   [checkout]
       defaultRemote=origin
 
   [core]
-      excludesfile = ~/.gitignore # A global ignore file
+      excludesfile = ~/.gitignore # the global ignore file
       # autocrlf = false
       # filemode = false
       # pager = less -r   # uncomment this line to have "less" wrap long lines when 'git diff'
       # editor = emacsclient -a \"\" -t
 
+  [color]
+      ui = auto
+
+  [apply]
+      whitespace = warn
+#+end_src
+
+** alias
+
+#+begin_src conf :tangle ~/.gitconfig
   [alias]
       st = status
       df = diff
@@ -90,12 +94,6 @@ Refer to https://github.com/github/gitignore for more to ignore.
       nohp = config --global http.proxy ""
 
       recent-branches = for-each-ref refs/heads --sort='-committerdate' --format='%(committerdate:iso) %(refname:short)%09 %(authorname)%09 - %(contents:subject)'
-
-  [color]
-      ui = auto
-
-  [apply]
-      whitespace = warn
 #+end_src
 
 ** diff
@@ -108,16 +106,23 @@ Refer to https://github.com/github/gitignore for more to ignore.
       textconv = gpg --no-tty --decrypt
 #+end_src
 
-** credential
+** credentials
 
 #+begin_src conf :tangle ~/.gitconfig
+  [user]
+      name = Your Name
+      email = you@email.com
+
   [credential]
       helper = cache --timeout=3600
 #+end_src
 
-*** Use gh for github on work machines
+*** github
 
 #+begin_src conf :tangle (if (bound-and-true-p my/work-machine-p) "~/.gitconfig" "no") :noweb yes :mkdirp yes
+  [github]
+      user = GITHUB_USERNAME
+
   [credential "https://github.com"]
       helper =
       helper = !gh auth git-credential
