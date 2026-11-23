@@ -78,6 +78,10 @@
   3. Do not amend a commit that has already been pushed, create a new commit
      instead. Amend only unpushed commits.
 
+  4. Keep commit messages concise: a single summary line under 72 characters,
+     imperative mood, with a body only when the reason or implementation for the
+     change isn't obvious from the diff.
+
   ## Pull request review
 
   1. Feel free to check out the branch under review into the current worktree,
