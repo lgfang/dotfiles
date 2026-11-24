@@ -3414,9 +3414,9 @@ Prerequisites:
                              (agent-shell--get-available-models agent-shell--state))
                    #'string-greaterp))))
 
-    :bind (("C-c a a" . my/agent-shell)
-           ("C-c a w" . agent-shell-new-worktree-shell)
-           ("C-c a r" . agent-shell-send-region-to)
+    :bind (("C-x a a" . my/agent-shell)
+           ("C-x a w" . agent-shell-new-worktree-shell)
+           ("C-x a r" . agent-shell-send-region-to)
            :map agent-shell-mode-map
            ;; Use RET for newline, C-c RET to submit: not C-c C-c, because most AI
            ;; agent CLI tools (opencode, claude, etc.) use C-c C-c to quit, so
@@ -3483,8 +3483,8 @@ multiple ~agent-shell~ sessions, organised by project.
     :vc (:url "https://github.com/SreenivasVRao/agent-shell-hq"
         :rev :newest)
     :commands (agent-shell-hq-peek agent-shell-hq-label agent-shell-hq-toggle agent-shell-hq-toggle-jump-to-sidebar)
-    :bind (("C-c a p" . agent-shell-hq-peek)
-           ("C-c a s" . agent-shell-hq-toggle-jump-to-sidebar))
+    :bind (("C-x a p" . agent-shell-hq-peek)
+           ("C-x a s" . agent-shell-hq-toggle-jump-to-sidebar))
     :custom
     (agent-shell-hq-peek-position 'right))
 #+end_src
