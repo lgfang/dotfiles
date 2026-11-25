@@ -4,7 +4,7 @@
 
 #+TITLE: My Terminal Emulator Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-08-26 +1000
+#+DATE: 2026-11-25 +1100
 
 * Timestamp                                                        :noexport:
 
@@ -45,6 +45,8 @@ panes. That narrows the choice down to a few points that actually matter to me:
   config.window_padding = { left = 0, right = 0, top = 0, bottom = 0}
   config.enable_tab_bar = false
 #+end_src
+
+To move a window, hold ~CMD+Shift~ and drag with the left mouse button, anywhere within the window. ~CMD~ + drag also works, but only when the application inside the terminal has not enabled mouse event tracking. My tmux configuration enables it, so mouse events are passed straight to tmux and ~CMD~ + drag stops working. The extra ~Shift~ key tells WezTerm not to pass the mouse event through.
 
 *** Fonts
 
