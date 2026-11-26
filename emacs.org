@@ -4174,14 +4174,14 @@ alternative emerges.
 
 *** markdown-ts-mode
 
-The built-in ~markdown-ts-mode~ (Emacs 32+) supersedes the obsolete
-~markdown-mode~. It is now the default major mode for =.md= files.
-
 #+begin_src emacs-lisp
   (use-package markdown-ts-mode
     :mode "\\.md\\'" ; remove when all my Emacs are 32+, where the .md association is built-in
-    :custom (markdown-ts-hide-markup t)
     :hook (markdown-ts-mode . visual-line-mode))
+
+  (use-package markdown-ts-appear
+    :pin nongnu
+    :hook (markdown-ts-mode . markdown-ts-appear-mode))
 #+end_src
 
 *** md-mode
