@@ -4,7 +4,7 @@
 
 #+TITLE: My Emacs Configurations
 #+AUTHOR: Fang Lungang
-#+DATE: 2026-11-15 +1100
+#+DATE: 2026-11-26 +1100
 #+DESCRIPTION: My Emacs configurations
 #+KEYWORDS: Emacs
 #+PROPERTY: header-args:emacs-lisp :lexical yes :tangle ~/.emacs.d/init.el :mkdirp yes
@@ -2530,10 +2530,13 @@ built-in org:
 
 ** Presentation
 
-*** org-tree-slide + olivetti
+*** org-tree-slide + olivetti + focus mode
 
-Olivetti centres the text, and org-tree-slide handles outline pagination and
-presentation controls.
+- Org-tree-slide: outline pagination and presentation controls.
+- Olivetti: centres the text.
+- Focus mode: highlights the current bullet.
+
+For less distraction, turn off breadcrumb mode and hide the tmux status bar.
 
 #+begin_src emacs-lisp
   (use-package olivetti)
@@ -2552,14 +2555,14 @@ presentation controls.
                               (force-mode-line-update))))
     :bind
     (:map org-tree-slide-mode-map
-          ("<next>"  . org-tree-slide-move-next-tree)      ; gPageDown
-          ("<prior>" . org-tree-slide-move-previous-tree)) ; PageUp
+          ("<next>"  . org-tree-slide-move-next-tree)      ; PageDown (Fn+↓)
+          ("<prior>" . org-tree-slide-move-previous-tree)) ; PageUp (Fn+↑)
   )
 #+end_src
 
-Hotkeys to adjust font size (per my configuration):
+Font size hotkeys (per my configuration):
 - In GUI Emacs :: ~C-x C-=~ / ~C-x C--~
-- In wezterm :: ~⌘-=+~ / ~⌘--~
+- In wezterm :: ~⌘-=~ / ~⌘--~
 
 *** COMMENT reveal
 
